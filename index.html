@@ -7487,42 +7487,25 @@ function installForgotPasswordButton(){
   b.style.pointerEvents='auto';
   b.style.position='relative';
   b.style.zIndex='100001';
+  b.style.touchAction='manipulation';
+  // Use one click handler only. Multiple pointer/touch handlers can fire more
+  // than once on Android and cause the modal to be opened/overwritten rapidly.
   if(b.dataset.erecpassForgotReady==='1') return;
   b.dataset.erecpassForgotReady='1';
-  const open=function(ev){
-    if(ev){ev.preventDefault();ev.stopPropagation();if(ev.stopImmediatePropagation)ev.stopImmediatePropagation();}
+  b.addEventListener('click',async function(ev){
+    ev.preventDefault();
+    ev.stopPropagation();
     try{
-      if(typeof window.openErecpassForgotPassword==='function') window.openErecpassForgotPassword();
-      else alert('Forgot Password is still loading. Please try again.');
+      if(typeof window.openErecpassForgotPassword!=='function'){
+        throw new Error('Password recovery module has not finished loading.');
+      }
+      await window.openErecpassForgotPassword();
     }catch(e){
       console.error('[ERecPass] Forgot Password failed:',e);
       alert('Forgot Password could not be opened. Please reload the page and try again.');
     }
-    return false;
-  };
-  b.addEventListener('click',open,true);
-  b.addEventListener('pointerup',open,true);
-  b.addEventListener('touchend',open,{capture:true,passive:false});
+  },true);
 }
-// Global capture fallback: opens Forgot Password even if another page layer intercepts the button click.
-document.addEventListener('click',function(ev){
-  const t=ev.target && ev.target.closest ? ev.target.closest('#erecpassForgotBtnAdded') : null;
-  if(!t) return;
-  ev.preventDefault();
-  ev.stopPropagation();
-  try{
-    if(typeof window.openErecpassForgotPassword==='function') window.openErecpassForgotPassword();
-  }catch(e){ console.error('[ERecPass] Forgot Password failed:',e); }
-},true);
-document.addEventListener('pointerup',function(ev){
-  const t=ev.target && ev.target.closest ? ev.target.closest('#erecpassForgotBtnAdded') : null;
-  if(!t) return;
-  ev.preventDefault();
-  ev.stopPropagation();
-  try{
-    if(typeof window.openErecpassForgotPassword==='function') window.openErecpassForgotPassword();
-  }catch(e){ console.error('[ERecPass] Forgot Password failed:',e); }
-},true);
 function installAddedUI(){
   installPasswordEyes();
   installForgotPasswordButton();

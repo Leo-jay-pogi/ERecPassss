@@ -7174,19 +7174,29 @@ window.epInitPasswordRecoveryListener=function(){
     }
   });
 
-  // Supabase may finish processing the recovery URL just before the listener
-  // is attached. Check both the hash and query string after initialization.
-  setTimeout(async function(){
+  // Supabase may process the email link before this listener attaches.
+  // Accept recovery markers in the URL hash or query string, and allow a
+  // short retry window while Supabase restores the recovery session.
+  let recoveryChecks=0;
+  const checkRecoverySession=async function(){
     try{
       const recoveryUrl=(location.hash||'')+' '+(location.search||'');
-      if(!/(^|[&#?&])type=recovery(&|$|#)/.test(recoveryUrl)) return;
+      const hasRecoveryMarker=/(^|[&#?&])type=recovery(&|$|#)/i.test(recoveryUrl);
+      const hasRecoveryTokens=/(^|[&#?&])access_token=/.test(recoveryUrl) &&
+        /(access_token|refresh_token)/.test(recoveryUrl);
       const r=await auth.getSession();
-      if(r.data?.session){
+      if(r.data?.session && (hasRecoveryMarker || hasRecoveryTokens || window.epPasswordRecoveryReady)){
         window.epPasswordRecoveryReady=true;
         epShowPasswordRecoveryForm();
+        return;
+      }
+      recoveryChecks++;
+      if(recoveryChecks<8 && (hasRecoveryMarker || hasRecoveryTokens)){
+        setTimeout(checkRecoverySession,500);
       }
     }catch(e){ console.warn('Password recovery session check:',e); }
-  },300);
+  };
+  setTimeout(checkRecoverySession,250);
 };
 try{ window.epInitPasswordRecoveryListener(); }catch(e){ console.warn('Password recovery listener:',e); }
 

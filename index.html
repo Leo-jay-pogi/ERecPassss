@@ -7110,7 +7110,13 @@ window.openErecpassForgotPassword=async function(){
     '<p style="color:#8fb9b5;font-size:11px">Enter your registered email. We will send a secure password-reset link.</p>'+
     '<label>Email</label><input id="epResetEmail" type="email" autocomplete="email" placeholder="patient@example.com">'+
     '<div class="erecpass-added-actions"><button type="button" onclick="sendErecpassPasswordReset()">Send to Email</button></div>'+
-    '<div id="epResetStep" style="margin-top:12px"></div>');
+    '<div id="epResetStep" style="margin-top:12px"></div>'+
+    '<div style="border-top:1px solid rgba(0,240,255,.2);margin-top:16px;padding-top:14px">'+
+      '<p style="color:#8fb9b5;font-size:11px;margin-bottom:10px">After opening the secure reset link from your email, you can set your new password here.</p>'+
+      '<label>New Password</label><input id="epResetNewPass" type="password" autocomplete="new-password" placeholder="At least 8 characters">'+
+      '<label>Confirm New Password</label><input id="epResetNewPass2" type="password" autocomplete="new-password" placeholder="Re-enter new password">'+
+      '<div class="erecpass-added-actions"><button type="button" onclick="verifyErecpassPasswordReset()">Update Password</button></div>'+
+    '</div>');
 };
 
 window.sendErecpassPasswordReset=async function(){

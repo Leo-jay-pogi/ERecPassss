@@ -16,7 +16,7 @@ window.updateApptStatus=async function(id,status){
  try{
   const client=await getAdminClient();
   const raw=String(id).trim();
-  if(!/^\\d+$/.test(raw)) throw new Error('Invalid appointment ID. Please refresh the list.');
+  if(!/^\d+$/.test(raw)) throw new Error('Invalid appointment ID. Please refresh the list.');
   const appointmentId=Number(raw);
   const rpc=await client.rpc('admin_update_appointment_status',{p_appointment_id:appointmentId,p_status:status});
   if(rpc.error) throw rpc.error;

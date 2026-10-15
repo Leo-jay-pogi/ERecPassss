@@ -26,4 +26,9 @@
       }
     }
   );
+
+  // Initialize password recovery after the Supabase client exists.
+  if (typeof window.epInitPasswordRecoveryListener === "function") {
+    window.epInitPasswordRecoveryListener();
+  }
 })();

@@ -5527,75 +5527,7 @@ margin-right: auto;
 </style>
 
 <!-- ERECPASS APPOINTMENT SYNC: handled by supabase-runtime.js; do not re-push local appointments on startup. -->
-<!-- ERECPASS ADDITION ONLY: ADMIN APPOINTMENT APPROVE / CANCEL ENHANCEMENT -->
-<script>
-// Add-only enhancement. Existing appointment code remains untouched.
-// Admin can approve or cancel each appointment from Manage Appointments.
-window.renderAdminAppointmentsList = function() {
-const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS)) || [];
-const container = document.getElementById('adminAppointmentsList');
-if (!container) return;
-container.innerHTML = '';
-
-if (!appts.length) {
-container.innerHTML = '<p class="text-xs text-slate-400 p-3">No appointments found.</p>';
-return;
-}
-
-appts.forEach(function(a) {
-const status = a.status || 'Pending';
-const isFinal = status === 'Approved' || status === 'Cancelled';
-const statusClass = status === 'Approved'
-? 'bg-emerald-950 text-emerald-300 border-emerald-500/30'
-: status === 'Cancelled'
-? 'bg-rose-950 text-rose-300 border-rose-500/30'
-: 'bg-amber-950 text-amber-300 border-amber-500/30';
-
-container.innerHTML += `
-<div class="glass-card p-3 rounded-xl flex flex-col md:flex-row md:justify-between md:items-center gap-3 text-xs">
-<div>
-<strong class="text-white block">${a.patientName || 'Unknown Patient'} - ${a.reason || 'Consultation'}</strong>
-<p class="text-slate-400">Doctor: ${a.doctor || 'N/A'} · Date: ${a.date || 'N/A'}</p>
-<span class="inline-block mt-2 px-2 py-1 rounded-lg border ${statusClass}">${status}</span>
-</div>
-<div class="flex gap-1">
-<button onclick="updateApptStatus(${a.id}, 'Approved')" ${isFinal ? 'disabled' : ''} class="px-2 py-1 bg-emerald-950 text-emerald-300 rounded font-tech text-[10px] ${isFinal ? 'opacity-40 cursor-not-allowed' : ''}">Approve</button>
-<button onclick="updateApptStatus(${a.id}, 'Cancelled')" ${isFinal ? 'disabled' : ''} class="px-2 py-1 bg-rose-950 text-rose-300 rounded font-tech text-[10px] ${isFinal ? 'opacity-40 cursor-not-allowed' : ''}">Cancel</button>
-</div>
-</div>
-`;
-});
-};
-
-// Keep the existing update function behavior, while adding safe status handling.
-window.updateApptStatus = async function(id, status) {
-const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS)) || [];
-const a = appts.find(function(item) { return item.id === id; });
-if (!a) return;
-if (a.status === 'Approved' || a.status === 'Cancelled') return;
-try {
-  a.status = status;
-  epStore.setItem(DB_KEYS.APPOINTMENTS, JSON.stringify(appts));
-  if (typeof addLog === 'function') {
-    addLog('Admin ' + status.toLowerCase() + ' appointment for ' + (a.patientName || 'patient') + '.');
-  }
-  window.renderAdminAppointmentsList();
-  await window.erecpassCloudFlush?.();
-} catch (error) {
-  console.error('Appointment status save failed:', error);
-  alert('Appointment changed on screen, but Supabase save failed. Please try again.');
-}
-};
-
-// Refresh the admin appointment list when the page is ready.
-if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', function() {
-if (document.getElementById('adminAppointmentsList')) window.renderAdminAppointmentsList();
-});
-} else if (document.getElementById('adminAppointmentsList')) {
-window.renderAdminAppointmentsList();
-}
-</script>
+<!-- APPOINTMENT ACTION FIX: keep the existing Supabase-backed admin list and status updater as the single source of truth. -->
 
 <!-- HELP CENTER ADDITION: Guest pre-login support + Admin conversation center -->
 <style>

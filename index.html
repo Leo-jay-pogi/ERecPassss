@@ -7120,7 +7120,7 @@ window.sendErecpassPasswordReset=async function(){
   try{
     // Always return to the real GitHub Pages app root so recovery links do not
     // point to a missing route (404) when opened from another page/path.
-    const redirectTo='https://paquibojm5-stack.github.io/ERECPASS-/';
+    const redirectTo='https://jomarportfolio.github.io/ERECPASS-/';
     const result=await window.erecpassSupabase.auth.resetPasswordForEmail(email,{redirectTo});
     if(result.error) throw result.error;
     const step=document.getElementById('epResetStep');

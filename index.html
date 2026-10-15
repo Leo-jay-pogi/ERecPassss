@@ -7117,17 +7117,35 @@ window.sendErecpassPasswordReset=async function(){
   const email=String(document.getElementById('epResetEmail')?.value||'').trim().toLowerCase();
   if(!email){ alert('Enter your registered email.'); return; }
   if(!window.erecpassSupabase?.auth){ alert('Secure password reset is unavailable because Supabase Auth is not connected.'); return; }
+
+  // Avoid repeated taps triggering more Auth emails. Supabase/provider limits
+  // still apply; this short client-side cooldown only reduces accidental repeats.
+  const cooldownKey='erecpass_password_reset_last_request';
+  const cooldownMs=60000;
   try{
-    // Always return to the real GitHub Pages app root so recovery links do not
-    // point to a missing route (404) when opened from another page/path.
+    const lastRequest=Number(localStorage.getItem(cooldownKey)||0);
+    const remaining=cooldownMs-(Date.now()-lastRequest);
+    if(remaining>0){
+      alert('Please wait '+Math.ceil(remaining/1000)+' seconds before requesting another reset email.');
+      return;
+    }
+  }catch(_){ /* Continue if browser storage is unavailable. */ }
+
+  try{
     const redirectTo='https://jomarportfolio.github.io/ERECPASS-/';
     const result=await window.erecpassSupabase.auth.resetPasswordForEmail(email,{redirectTo});
     if(result.error) throw result.error;
+    try{ localStorage.setItem(cooldownKey,String(Date.now())); }catch(_){}
     const step=document.getElementById('epResetStep');
-    if(step) step.innerHTML='<p style="color:#8fb9b5;font-size:11px">Reset link sent. Check your inbox and Spam/Junk folder. Open the link on this device to create a new password.</p>';
+    if(step) step.innerHTML='<p style="color:#8fb9b5;font-size:11px">Reset link requested. Check your inbox and Spam/Junk folder. If it does not arrive, wait before trying again.</p>';
   }catch(e){
     console.error('Password reset request failed:',e);
-    alert('Could not send reset link: '+(e.message||'Please try again.'));
+    const message=String(e.message||'');
+    if(/rate limit|too many requests|email rate/i.test(message)){
+      alert('Supabase email rate limit reached. Please wait and try again later. For a much higher sending limit, configure custom SMTP in Supabase; the app cannot remove the provider limit by itself.');
+    }else{
+      alert('Could not send reset link: '+(message||'Please try again.'));
+    }
   }
 };
 

@@ -7492,19 +7492,47 @@ function installForgotPasswordButton(){
   // than once on Android and cause the modal to be opened/overwritten rapidly.
   if(b.dataset.erecpassForgotReady==='1') return;
   b.dataset.erecpassForgotReady='1';
-  b.addEventListener('click',async function(ev){
+  b.addEventListener('click',function(ev){
     ev.preventDefault();
     ev.stopPropagation();
+    // Open the dialog synchronously so Android WebView/browser taps never
+    // depend on an async auth check before the UI appears.
     try{
-      if(typeof window.openErecpassForgotPassword!=='function'){
-        throw new Error('Password recovery module has not finished loading.');
+      if(typeof window.openErecpassForgotPassword==='function'){
+        Promise.resolve(window.openErecpassForgotPassword()).catch(function(e){
+          console.error('[ERecPass] Forgot Password initialization failed:',e);
+          epOpenForgotPasswordFallback();
+        });
+      }else{
+        epOpenForgotPasswordFallback();
       }
-      await window.openErecpassForgotPassword();
     }catch(e){
       console.error('[ERecPass] Forgot Password failed:',e);
-      alert('Forgot Password could not be opened. Please reload the page and try again.');
+      epOpenForgotPasswordFallback();
     }
   },true);
+}
+function epOpenForgotPasswordFallback(){
+  try{
+    var modal=document.getElementById('erecpassForgotModal');
+    if(!modal){
+      modal=document.createElement('div');
+      modal.id='erecpassForgotModal';
+      modal.className='erecpass-added-modal';
+      document.body.appendChild(modal);
+    }
+    modal.innerHTML='<div class="erecpass-added-card"><h2>Forgot Password</h2>'+
+      '<p style="color:#8fb9b5;font-size:11px">Enter your registered email. We will send a secure password-reset link.</p>'+
+      '<label>Email</label><input id="epResetEmail" type="email" autocomplete="email" placeholder="patient@example.com">'+
+      '<div class="erecpass-added-actions"><button type="button" onclick="sendErecpassPasswordReset()">Send to Email</button>'+
+      '<button type="button" onclick="document.getElementById(\'erecpassForgotModal\').classList.remove(\'active\')">Close</button></div>'+
+      '<div id="epResetStep" style="margin-top:12px"></div></div>';
+    modal.classList.add('active');
+  }catch(e){
+    console.error('[ERecPass] Fallback forgot-password dialog failed:',e);
+    alert('Forgot Password could not open. Please refresh the page and try again.');
+  }
+}
 }
 function installAddedUI(){
   installPasswordEyes();

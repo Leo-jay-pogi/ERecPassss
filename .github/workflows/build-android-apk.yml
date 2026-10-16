@@ -82,6 +82,19 @@ jobs:
           chmod +x gradlew
           ./gradlew assembleDebug
 
+      - name: Verify APK signature and Android compatibility
+        shell: bash
+        run: |
+          set -euo pipefail
+          APK="android/app/build/outputs/apk/debug/app-debug.apk"
+          test -s "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/apksigner" verify --verbose --print-certs "$APK"
+          "$ANDROID_HOME/build-tools/35.0.0/aapt" dump badging "$APK" | tee /tmp/erecpass-apk-badging.txt
+          grep -q "package: name='com.erecpass.hospital'" /tmp/erecpass-apk-badging.txt
+          grep -q "sdkVersion:'22'" /tmp/erecpass-apk-badging.txt
+          sha256sum "$APK"
+          unzip -t "$APK" | tail -n 2
+
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:

@@ -107,7 +107,7 @@ jobs:
               match = re.search(r'<manifest\b[^>]*>', s)
               if not match:
                   raise SystemExit("Could not locate manifest root to add camera permission")
-              s = s[:match.end()] + "\\n    " + permission + s[match.end():]
+              s = s[:match.end()] + "\n    " + permission + s[match.end():]
               p.write_text(s)
           PY
           cat > capacitor.config.json <<'EOF'

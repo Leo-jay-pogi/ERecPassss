@@ -15,15 +15,36 @@
       return;
     }
 
-    const client = window.erecpassSupabase;
-    if (!client?.auth) {
+    // Always authenticate against the configured ERecPass Supabase project.
+    // Android WebView may retain a client initialized by an older cached script;
+    // replace it only when its URL/key do not match, keeping the UI unchanged.
+    const expectedUrl = 'https://bfboehvgrivanmrfqquw.supabase.co';
+    const expectedKey = 'sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_';
+    let client = window.erecpassSupabase;
+    const urlMatches = String(client?.supabaseUrl || '').replace(/\\/+$/, '') === expectedUrl;
+    const keyMatches = String(client?.supabaseKey || '') === expectedKey;
+
+    if ((!client?.auth || !urlMatches || !keyMatches) &&
+        window.supabase && typeof window.supabase.createClient === 'function') {
+      client = window.supabase.createClient(expectedUrl, expectedKey, {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
+      });
+      window.erecpassSupabase = client;
+      console.info('[ERecPass] Admin login initialized the configured Supabase client.');
+    }
+
+    if (!client?.auth || !urlMatches && !client?.supabaseUrl || typeof client.auth.signInWithPassword !== 'function') {
       alert('Cannot connect to the secure login service. Check your internet connection, then close and reopen ERecPass. If the issue continues, install the latest APK.');
       console.error('[ERecPass] Supabase client unavailable during Admin login.');
       return;
     }
 
     try {
-      const authResult = await client.auth.signInWithPassword({ email: user, password: pass });
+      const authResult = await client.auth.signInWithPassword({ email, password: pass });
       if (authResult.error) throw authResult.error;
 
       const authUser = authResult.data?.user;

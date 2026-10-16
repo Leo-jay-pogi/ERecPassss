@@ -3791,8 +3791,29 @@ async function downloadPatientQR() {
       blob = await response.blob();
     }
 
-    // Web Share with a file is supported on some Android WebViews and gives
-    // users a Save/Files destination when direct download is unavailable.
+    // Native Android APK: write the PNG directly into the public Downloads folder.
+    // This avoids Android WebView's unsupported <a download> behavior.
+    if (window.ERecPassNative && typeof window.ERecPassNative.savePng === 'function') {
+      const base64 = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onloadend = () => {
+          const result = String(reader.result || '');
+          const comma = result.indexOf(',');
+          if (comma < 0) reject(new Error('Could not encode QR image'));
+          else resolve(result.slice(comma + 1));
+        };
+        reader.onerror = () => reject(new Error('Could not read QR image'));
+        reader.readAsDataURL(blob);
+      });
+      const nativeResult = window.ERecPassNative.savePng(base64, fileName);
+      if (String(nativeResult).startsWith('OK:')) {
+        alert('Patient QR saved to Downloads/ERecPass/' + fileName);
+        return;
+      }
+      throw new Error(String(nativeResult || 'Android could not save the QR image'));
+    }
+
+    // Browser fallback for the web version and older builds.
     if (navigator.share && typeof File !== 'undefined') {
       const file = new File([blob], fileName, { type: 'image/png' });
       if (!navigator.canShare || navigator.canShare({ files: [file] })) {

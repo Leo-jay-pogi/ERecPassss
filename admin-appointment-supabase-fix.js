@@ -37,9 +37,15 @@ window.deleteErecpassAppointment=async function(id){
  if(result.data!==true) throw new Error('Supabase did not confirm that the appointment was deleted.');
  // Refresh from the cloud so the deleted booking cannot be re-added from stale local state.
  if(typeof window.erecpassCloudHydrate==='function') await window.erecpassCloudHydrate();
- const verify=await client.from('appointments').select('id').or('legacy_id.eq.'+key+',id.eq.'+key);
- if(verify.error) throw verify.error;
- if((verify.data||[]).length) throw new Error('The appointment still appears in Supabase. Please refresh and try again.');
+ const byLegacy=await client.from('appointments').select('id').eq('legacy_id',key);
+ if(byLegacy.error) throw byLegacy.error;
+ let stillExists=(byLegacy.data||[]).length>0;
+ if(!stillExists && /^\\d+$/.test(key)){
+   const byId=await client.from('appointments').select('id').eq('id',Number(key));
+   if(byId.error) throw byId.error;
+   stillExists=(byId.data||[]).length>0;
+ }
+ if(stillExists) throw new Error('The appointment still appears in Supabase. Please refresh and try again.');
  return true;
 };
 

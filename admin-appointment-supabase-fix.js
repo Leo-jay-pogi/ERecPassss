@@ -27,4 +27,20 @@ window.updateApptStatus=async function(id,status){
   alert('Could not '+(status==='Approved'?'approve':'cancel')+' appointment: '+(e?.message||'Please try again.'));
  }
 };
+
+window.deleteErecpassAppointment=async function(id){
+ const client=await getAdminClient();
+ const key=String(id??'').trim();
+ if(!key) throw new Error('Invalid appointment ID. Please refresh the list.');
+ const result=await client.rpc('admin_delete_appointment',{p_appointment_key:key});
+ if(result.error) throw result.error;
+ if(result.data!==true) throw new Error('Supabase did not confirm that the appointment was deleted.');
+ // Refresh from the cloud so the deleted booking cannot be re-added from stale local state.
+ if(typeof window.erecpassCloudHydrate==='function') await window.erecpassCloudHydrate();
+ const verify=await client.from('appointments').select('id').or('legacy_id.eq.'+key+',id.eq.'+key);
+ if(verify.error) throw verify.error;
+ if((verify.data||[]).length) throw new Error('The appointment still appears in Supabase. Please refresh and try again.');
+ return true;
+};
+
 })();

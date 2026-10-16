@@ -6947,54 +6947,50 @@ Never place a service_role/secret key in browser code. -->
   }
 
   async function deleteSelectedAppointment() {
-    if (selectedDeleteAppointmentId === null || typeof DB_KEYS === 'undefined') return;
+    if (selectedDeleteAppointmentId === null) return;
 
-    const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS)) || [];
-    const index = appts.findIndex(function(a) {
-      return String(a.id) === String(selectedDeleteAppointmentId);
-    });
-
-    if (index === -1) {
-      selectedDeleteAppointmentId = null;
-      document.getElementById('erecpassDeleteAppointmentModal').classList.remove('active');
-      if (typeof window.renderAdminAppointmentsList === 'function') {
-        window.renderAdminAppointmentsList();
-      }
-      return;
+    const confirmButton = document.getElementById('erecpassDeleteConfirmBtn');
+    const originalLabel = confirmButton ? confirmButton.textContent : 'Delete';
+    if (confirmButton) {
+      confirmButton.disabled = true;
+      confirmButton.textContent = 'Deleting…';
     }
-
-    const deletedAppointment = appts[index];
-
-    // Permanently remove the appointment from the local appointment database.
-    appts.splice(index, 1);
-    epStore.setItem(DB_KEYS.APPOINTMENTS, JSON.stringify(appts));
 
     try {
-      if (typeof window.erecpassCloudFlush === 'function') {
-        await window.erecpassCloudFlush();
+      if (typeof window.deleteErecpassAppointment !== 'function') {
+        throw new Error('Secure appointment deletion is not loaded. Please update and reopen ERecPass.');
       }
-      if (typeof syncAllLocalAppointments === 'function') {
-        await syncAllLocalAppointments();
+
+      const deletedAppointmentId = String(selectedDeleteAppointmentId);
+      const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS) || '[]');
+      const deletedAppointment = appts.find(function(a) {
+        return String(a.id) === deletedAppointmentId;
+      });
+
+      // Delete from Supabase first; do not remove it locally until the server confirms.
+      await window.deleteErecpassAppointment(deletedAppointmentId);
+
+      selectedDeleteAppointmentId = null;
+      document.getElementById('erecpassDeleteAppointmentModal').classList.remove('active');
+
+      if (typeof addLog === 'function') {
+        addLog('Admin deleted appointment for ' + ((deletedAppointment && deletedAppointment.patientName) || 'patient') + '.');
       }
-      if (typeof window.erecpassCloudFlush === 'function') {
-        await window.erecpassCloudFlush();
+
+      // Render only after the cloud-backed refresh so the removed appointment does not reappear.
+      if (typeof window.renderAdminAppointmentsList === 'function') {
+        await window.renderAdminAppointmentsList();
       }
     } catch (e) {
-      console.error('Admin appointment delete cloud save failed:', e);
-      alert('Appointment was removed from this screen, but the Supabase delete could not be confirmed. Please check your connection and try again.');
-      return;
+      console.error('[ERecPass] Admin appointment delete failed:', e);
+      alert('Could not delete appointment: ' + (e && e.message ? e.message : 'Please check your connection and try again.'));
+    } finally {
+      if (confirmButton) {
+        confirmButton.disabled = false;
+        confirmButton.textContent = originalLabel;
+      }
     }
-
-    if (typeof addLog === 'function') {
-      addLog('Admin deleted appointment for ' + (deletedAppointment.patientName || 'patient') + '.');
-    }
-
-    selectedDeleteAppointmentId = null;
-    document.getElementById('erecpassDeleteAppointmentModal').classList.remove('active');
-
-    if (typeof window.renderAdminAppointmentsList === 'function') {
-      window.renderAdminAppointmentsList();
-    }  }
+  }
 
   function addDeleteButtonsToAdminAppointments() {
     const container = document.getElementById('adminAppointmentsList');
@@ -8279,7 +8275,7 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 </script>
 <!-- END ERECPASS PATIENT PROFILE FINAL RESTORE -->
 <!-- ERECPASS SUPABASE ADMIN APPOINTMENT ACTIONS -->
-<script src="./admin-appointment-supabase-fix.js?v=6dfa09b"></script>
+<script src="./admin-appointment-supabase-fix.js?v=20261016-deletefix"></script>
 <!-- ERECPASS SUPABASE ADMIN CHAT REPLY OVERRIDE -->
 <script src="./admin-chat-supabase-fix.js?v=1026179"></script>
 <!-- ERecPass Admin login compatibility fix; load inside body and refresh cached script -->

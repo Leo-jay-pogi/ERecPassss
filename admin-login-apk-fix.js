@@ -21,10 +21,11 @@
     const expectedUrl = 'https://bfboehvgrivanmrfqquw.supabase.co';
     const expectedKey = 'sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_';
     let client = window.erecpassSupabase;
-    const urlMatches = String(client?.supabaseUrl || '').replace(/\\/+$/, '') === expectedUrl;
-    const keyMatches = String(client?.supabaseKey || '') === expectedKey;
+    const clientMatches = () =>
+      String(client?.supabaseUrl || '').replace(/\\/+$/, '') === expectedUrl &&
+      String(client?.supabaseKey || '') === expectedKey;
 
-    if ((!client?.auth || !urlMatches || !keyMatches) &&
+    if ((!client?.auth || !clientMatches()) &&
         window.supabase && typeof window.supabase.createClient === 'function') {
       client = window.supabase.createClient(expectedUrl, expectedKey, {
         auth: {
@@ -37,9 +38,9 @@
       console.info('[ERecPass] Admin login initialized the configured Supabase client.');
     }
 
-    if (!client?.auth || !urlMatches && !client?.supabaseUrl || typeof client.auth.signInWithPassword !== 'function') {
+    if (!client?.auth || typeof client.auth.signInWithPassword !== 'function' || !clientMatches()) {
       alert('Cannot connect to the secure login service. Check your internet connection, then close and reopen ERecPass. If the issue continues, install the latest APK.');
-      console.error('[ERecPass] Supabase client unavailable during Admin login.');
+      console.error('[ERecPass] Supabase client unavailable or configured for the wrong project during Admin login.');
       return;
     }
 

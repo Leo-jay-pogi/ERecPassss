@@ -8263,5 +8263,35 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 <script src="./admin-chat-supabase-fix.js?v=1026179"></script>
 <!-- ERecPass Admin login compatibility fix; load inside body and refresh cached script -->
 <script src="./admin-login-apk-fix.js?v=20261016-admin2-apk-fix"></script>
+
+<!-- ERECPASS FINAL LIVE GUARD: remove any stale Change Language control; keep theme toggle -->
+<script>
+(function(){
+  'use strict';
+  function removeLanguageControl(){
+    const re = /change\s*language|language\s*selector|select\s*language/i;
+    document.querySelectorAll('body *').forEach(function(el){
+      if(!el || el.children.length > 3) return;
+      const txt = (el.innerText || el.textContent || '').replace(/\s+/g,' ').trim();
+      if(!txt || txt.length > 80 || !re.test(txt)) return;
+      let target = el;
+      for(let i=0;i<3 && target.parentElement && target.parentElement !== document.body;i++){
+        const p = target.parentElement;
+        const ptxt = (p.innerText || p.textContent || '').replace(/\s+/g,' ').trim();
+        if(ptxt.length <= 140 && (p.querySelector('select, [role="combobox"], option') || re.test(ptxt))) target = p;
+        else break;
+      }
+      target.remove();
+    });
+  }
+  if(document.readyState === 'loading') document.addEventListener('DOMContentLoaded', removeLanguageControl);
+  else removeLanguageControl();
+  const observer = new MutationObserver(removeLanguageControl);
+  observer.observe(document.documentElement, {childList:true, subtree:true});
+  setTimeout(removeLanguageControl, 300);
+  setTimeout(removeLanguageControl, 1200);
+  setTimeout(removeLanguageControl, 3000);
+})();
+</script>
 </body>
 </html>

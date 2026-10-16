@@ -43,21 +43,32 @@ jobs:
             --exclude 'android/' --exclude 'node_modules/' \
             --exclude 'package-lock.json' --exclude 'package.json'
           npm init -y
-          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2
+          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode
           npm install --save-dev @capacitor/cli@^6 esbuild
           # Bundle Supabase locally for Android WebView so Admin login does not
           # depend on loading the Supabase SDK from a third-party CDN at runtime.
           mkdir -p www/vendor
           npx esbuild node_modules/@supabase/supabase-js/dist/module/index.js --bundle --format=iife --global-name=supabase --outfile=www/vendor/supabase.js
+          # Package QR generation and camera-scanner libraries locally so the APK
+          # does not rely on public CDNs for these core patient/staff functions.
+          test -s node_modules/qrcodejs/qrcode.min.js
+          test -s node_modules/html5-qrcode/html5-qrcode.min.js
+          cp node_modules/qrcodejs/qrcode.min.js www/vendor/qrcode.min.js
+          cp node_modules/html5-qrcode/html5-qrcode.min.js www/vendor/html5-qrcode.min.js
           python3 - <<'PY'
           from pathlib import Path
           p = Path("www/index.html")
           s = p.read_text()
-          old = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
-          new = '<script src="./vendor/supabase.js"></script>'
-          if old not in s:
-              raise SystemExit("Could not find Supabase CDN script in packaged index.html")
-          p.write_text(s.replace(old, new, 1))
+          replacements = {
+              '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>': '<script src="./vendor/supabase.js"></script>',
+              '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>': '<script src="./vendor/qrcode.min.js"></script>',
+              '<script src="https://unpkg.com/html5-qrcode"></script>': '<script src="./vendor/html5-qrcode.min.js"></script>',
+          }
+          for old, new in replacements.items():
+              if old not in s:
+                  raise SystemExit("Could not find expected script tag in packaged index.html: " + old)
+              s = s.replace(old, new, 1)
+          p.write_text(s)
           PY
           cat > capacitor.config.json <<'EOF'
           {

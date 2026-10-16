@@ -54,6 +54,68 @@ jobs:
           }
           EOF
           npx cap add android
+          # Native Android bridge for saving patient QR PNGs to Downloads.
+          mkdir -p android/app/src/main/java/com/erecpass/hospital
+          cat > android/app/src/main/java/com/erecpass/hospital/MainActivity.java <<'JAVA'
+          package com.erecpass.hospital;
+
+          import android.content.ContentValues;
+          import android.net.Uri;
+          import android.os.Build;
+          import android.os.Bundle;
+          import android.os.Environment;
+          import android.provider.MediaStore;
+          import android.util.Base64;
+          import android.webkit.JavascriptInterface;
+          import java.io.OutputStream;
+          import com.getcapacitor.BridgeActivity;
+
+          public class MainActivity extends BridgeActivity {
+            @Override
+            public void onCreate(Bundle savedInstanceState) {
+              super.onCreate(savedInstanceState);
+              if (bridge != null && bridge.getWebView() != null) {
+                bridge.getWebView().addJavascriptInterface(new PatientQrDownloader(), "ERecPassNative");
+              }
+            }
+
+            private class PatientQrDownloader {
+              @JavascriptInterface
+              public String savePng(String base64Png, String requestedName) {
+                if (Build.VERSION.SDK_INT < Build.VERSION_CODES.Q) {
+                  return "ERROR: Direct Downloads saving requires Android 10 or newer.";
+                }
+                Uri uri = null;
+                try {
+                  String safeName = requestedName == null ? "ERecPass-Patient-QR.png"
+                    : requestedName.replaceAll("[^a-zA-Z0-9._-]", "_");
+                  ContentValues values = new ContentValues();
+                  values.put(MediaStore.Downloads.DISPLAY_NAME, safeName);
+                  values.put(MediaStore.Downloads.MIME_TYPE, "image/png");
+                  values.put(MediaStore.Downloads.RELATIVE_PATH, Environment.DIRECTORY_DOWNLOADS + "/ERecPass");
+                  values.put(MediaStore.Downloads.IS_PENDING, 1);
+                  uri = getContentResolver().insert(MediaStore.Downloads.EXTERNAL_CONTENT_URI, values);
+                  if (uri == null) return "ERROR: Android could not create the Downloads file.";
+                  byte[] bytes = Base64.decode(base64Png, Base64.DEFAULT);
+                  try (OutputStream out = getContentResolver().openOutputStream(uri)) {
+                    if (out == null) throw new IllegalStateException("Could not open Downloads file");
+                    out.write(bytes);
+                    out.flush();
+                  }
+                  ContentValues complete = new ContentValues();
+                  complete.put(MediaStore.Downloads.IS_PENDING, 0);
+                  getContentResolver().update(uri, complete, null, null);
+                  return "OK:" + uri.toString();
+                } catch (Exception e) {
+                  if (uri != null) {
+                    try { getContentResolver().delete(uri, null, null); } catch (Exception ignored) {}
+                  }
+                  return "ERROR:" + e.getMessage();
+                }
+              }
+            }
+          }
+          JAVA
           npx cap sync android
 
       - name: Configure release signing

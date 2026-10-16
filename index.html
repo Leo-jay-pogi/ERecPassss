@@ -24,6 +24,7 @@
 
 <!-- Tailwind CSS CDN -->
 
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 <script src="https://cdn.tailwindcss.com"></script>
 
 <!-- HTML5 QR Code Scanner Library -->
@@ -3724,58 +3725,107 @@ ${avail}
 }
 
 function generatePatientQR() {
-
-const qrData = encodeURIComponent("ERECPASS:" + currentSession.data.id);
-
-const qrUrl = `https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=${qrData}`;
-
-document.getElementById('patientQrDisplay').innerHTML = `<img src="${qrUrl}" alt="QR" class="w-full h-full rounded-lg">`;
-
+  const qrDisplay = document.getElementById('patientQrDisplay');
+  if (!qrDisplay || !currentSession?.data?.id) {
+    if (!currentSession?.data?.id) alert("Patient QR is not available. Please log in again.");
+    return;
+  }
+  const qrText = "ERECPASS:" + currentSession.data.id;
+  qrDisplay.innerHTML = '';
+  // Generate the QR locally when the QRCode library is available. This avoids
+  // cross-origin image-download restrictions in Android WebView.
+  if (typeof QRCode !== 'undefined') {
+    new QRCode(qrDisplay, {
+      text: qrText,
+      width: 180,
+      height: 180,
+      colorDark: "#000000",
+      colorLight: "#ffffff",
+      correctLevel: QRCode.CorrectLevel.M
+    });
+    const canvas = qrDisplay.querySelector('canvas');
+    if (canvas) {
+      canvas.className = 'w-full h-full rounded-lg';
+      canvas.setAttribute('aria-label', 'Patient QR code');
+    }
+    const image = qrDisplay.querySelector('img');
+    if (image) {
+      image.className = 'w-full h-full rounded-lg';
+      image.alt = 'QR';
+    }
+    return;
+  }
+  // Keep the existing online QR service as a fallback if the library cannot load.
+  const qrUrl = 'https://api.qrserver.com/v1/create-qr-code/?size=180x180&data=' + encodeURIComponent(qrText);
+  qrDisplay.innerHTML = `<img src="${qrUrl}" alt="QR" class="w-full h-full rounded-lg">`;
 }
 
 async function downloadPatientQR() {
-
-const qrDisplay = document.getElementById('patientQrDisplay');
-if (!qrDisplay) return;
-
-let qrImg = qrDisplay.querySelector('img');
-
-if (!qrImg) {
+  const qrDisplay = document.getElementById('patientQrDisplay');
+  if (!qrDisplay) return;
   if (!currentSession?.data?.id) {
     alert("Patient QR is not available. Please log in again.");
     return;
   }
-  generatePatientQR();
-  qrImg = qrDisplay.querySelector('img');
-}
 
-const qrUrl = qrImg?.src;
-if (!qrUrl) {
-  alert("Please generate your QR code first.");
-  return;
-}
+  if (!qrDisplay.querySelector('canvas, img')) generatePatientQR();
+  const fileName = 'ERecPass-Patient-QR-' + String(currentSession.data.id).replace(/[^a-zA-Z0-9_-]/g, '_') + '.png';
 
-const fileName = 'ERecPass-Patient-QR-' + String(currentSession.data.id).replace(/[^a-zA-Z0-9_-]/g, '_') + '.png';
+  try {
+    // Prefer a locally generated canvas; it does not require CORS or internet access.
+    let canvas = qrDisplay.querySelector('canvas');
+    if (!canvas && typeof QRCode !== 'undefined') {
+      generatePatientQR();
+      canvas = qrDisplay.querySelector('canvas');
+    }
+    let blob = null;
+    if (canvas) {
+      blob = await new Promise((resolve, reject) => {
+        canvas.toBlob(value => value ? resolve(value) : reject(new Error('Could not create QR image')), 'image/png');
+      });
+    } else {
+      const qrImg = qrDisplay.querySelector('img');
+      if (!qrImg?.src) throw new Error('QR image is not ready');
+      const response = await fetch(qrImg.src, { mode: 'cors', cache: 'no-store' });
+      if (!response.ok) throw new Error('QR image could not be downloaded');
+      blob = await response.blob();
+    }
 
-try {
-  const response = await fetch(qrUrl, { mode: 'cors', cache: 'no-store' });
-  if (!response.ok) throw new Error('QR image could not be downloaded');
-  const blob = await response.blob();
-  const objectUrl = URL.createObjectURL(blob);
-  const link = document.createElement('a');
-  link.href = objectUrl;
-  link.download = fileName;
-  document.body.appendChild(link);
-  link.click();
-  link.remove();
-  setTimeout(() => URL.revokeObjectURL(objectUrl), 1500);
-  alert("QR code saved/downloaded. Check your phone's Downloads or Files app.");
-} catch (error) {
-  console.warn('ERecPass QR download fallback:', error);
-  window.open(qrUrl, '_blank', 'noopener');
-  alert("The QR image was opened. Long-press the QR image and choose Save/Download Image.");
-}
+    // Web Share with a file is supported on some Android WebViews and gives
+    // users a Save/Files destination when direct download is unavailable.
+    if (navigator.share && typeof File !== 'undefined') {
+      const file = new File([blob], fileName, { type: 'image/png' });
+      if (!navigator.canShare || navigator.canShare({ files: [file] })) {
+        try {
+          await navigator.share({ files: [file], title: 'ERecPass Patient QR' });
+          return;
+        } catch (shareError) {
+          if (shareError?.name === 'AbortError') return;
+          console.warn('ERecPass QR share fallback:', shareError);
+        }
+      }
+    }
 
+    const objectUrl = URL.createObjectURL(blob);
+    const link = document.createElement('a');
+    link.href = objectUrl;
+    link.download = fileName;
+    link.style.display = 'none';
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(objectUrl), 10000);
+    alert("QR download requested. If it does not appear in Downloads, choose Save to Files from the Android share option.");
+  } catch (error) {
+    console.warn('ERecPass QR download fallback:', error);
+    const qrImg = qrDisplay.querySelector('img');
+    if (qrImg?.src) {
+      window.open(qrImg.src, '_blank', 'noopener');
+      alert("Direct saving was blocked by Android. Long-press the QR image and choose Download image.");
+    } else {
+      alert("Unable to download the QR code right now. Please check your internet connection and try again.");
+    }
+  }
 }
 
 async function getCurrentPatientCloudRow() {

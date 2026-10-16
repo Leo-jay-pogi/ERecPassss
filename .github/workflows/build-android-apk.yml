@@ -14,6 +14,7 @@ on:
       - "*.webp"
       - "assets/**"
       - ".github/workflows/build-android-apk.yml"
+      - ".github/workflows/build-android-release.yml"
 
 permissions:
   contents: read

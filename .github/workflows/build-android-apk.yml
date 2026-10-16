@@ -142,6 +142,12 @@ jobs:
               super.onCreate(savedInstanceState);
               if (bridge != null && bridge.getWebView() != null) {
                 bridge.getWebView().addJavascriptInterface(new PatientQrDownloader(), "ERecPassNative");
+                // WebView exposes newly added JavascriptInterface objects on the next page load.
+                // Reload only on a fresh Activity launch so the QR download bridge is available
+                // before the user taps Download / Save QR.
+                if (savedInstanceState == null) {
+                  bridge.getWebView().post(() -> bridge.getWebView().reload());
+                }
               }
             }
 

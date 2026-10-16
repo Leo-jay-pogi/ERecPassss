@@ -51,8 +51,22 @@ jobs:
           mkdir -p www
           rsync -av ./ www/ --exclude '.git/' --exclude '.github/' --exclude 'www/' --exclude 'android/' --exclude 'node_modules/' --exclude 'package-lock.json' --exclude 'package.json'
           npm init -y
-          npm install @capacitor/core@^6 @capacitor/android@^6
-          npm install --save-dev @capacitor/cli@^6
+          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2
+          npm install --save-dev @capacitor/cli@^6 esbuild
+          # Bundle Supabase locally for Android WebView so Admin login does not
+          # depend on loading the Supabase SDK from a third-party CDN at runtime.
+          mkdir -p www/vendor
+          npx esbuild node_modules/@supabase/supabase-js/dist/module/index.js --bundle --format=iife --global-name=supabase --outfile=www/vendor/supabase.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("www/index.html")
+          s = p.read_text()
+          old = '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>'
+          new = '<script src="./vendor/supabase.js"></script>'
+          if old not in s:
+              raise SystemExit("Could not find Supabase CDN script in packaged index.html")
+          p.write_text(s.replace(old, new, 1))
+          PY
           cat > capacitor.config.json <<'EOF'
           {
             "appId": "com.erecpass.hospital",

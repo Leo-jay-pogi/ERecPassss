@@ -1919,6 +1919,14 @@ Already have an account?
 
 <div>
 
+<label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Birthday / Date of Birth</label>
+
+<div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
+<input type="date" id="editProfileBirthDateInput" class="w-full bg-transparent outline-none text-xs" onchange="previewPatientBirthDate()">
+<button onclick="savePatientBirthDate()" class="text-xs font-tech text-cyan-400 font-bold px-2 py-1 bg-cyan-950 rounded border border-cyan-400/40">Save</button>
+</div>
+<p id="profileAgePreview" class="text-xs text-slate-400 mt-1">Enter your birthday to calculate your age and category.</p>
+
 <label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Guardian Emergency Contact Number</label>
 
 <div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
@@ -2574,6 +2582,10 @@ Already have an account?
 </div>
 
 <div>
+
+<label class="block text-xs text-slate-400">Patient Birthday / Date of Birth</label>
+<input type="date" id="editPatientBirthDate" class="input-box w-full p-2 rounded-xl text-xs" onchange="previewAdminPatientBirthDate()">
+<p id="editPatientBirthDatePreview" class="text-xs text-slate-400 mt-1">Age and Minor/Adult category are calculated automatically.</p>
 
 <label class="block text-xs text-slate-400">Upload Lab Results (Text Notes)</label>
 
@@ -3331,6 +3343,38 @@ PATIENT PORTAL FEATURES
 
 ========================================================================== */
 
+function getPatientAgeFromBirthDate(value, today = new Date()) {
+  if (!value || !/^\d{4}-\d{2}-\d{2}$/.test(String(value))) return null;
+  const [year, month, day] = String(value).split('-').map(Number);
+  const birth = new Date(year, month - 1, day);
+  if (birth.getFullYear() !== year || birth.getMonth() !== month - 1 || birth.getDate() !== day) return null;
+  const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+  if (birth > now) return null;
+  let age = now.getFullYear() - year;
+  if (now.getMonth() < month - 1 || (now.getMonth() === month - 1 && now.getDate() < day)) age--;
+  return age;
+}
+function getPatientCategoryFromBirthDate(value) {
+  const age = getPatientAgeFromBirthDate(value);
+  return age === null ? '' : (age <= 17 ? 'Minor' : 'Adult');
+}
+function previewPatientBirthDate() {
+  const input = document.getElementById('editProfileBirthDateInput');
+  const preview = document.getElementById('profileAgePreview');
+  if (!input || !preview) return;
+  if (!input.value) { preview.textContent = 'Enter your birthday to calculate your age and category.'; return; }
+  const age = getPatientAgeFromBirthDate(input.value);
+  preview.textContent = age === null ? 'Please enter a valid birthday that is not in the future.' : 'Age: ' + age + ' · Category: ' + (age <= 17 ? 'Minor' : 'Adult');
+}
+function previewAdminPatientBirthDate() {
+  const input = document.getElementById('editPatientBirthDate');
+  const preview = document.getElementById('editPatientBirthDatePreview');
+  if (!input || !preview) return;
+  if (!input.value) { preview.textContent = 'Birthday not set; age category will be blank.'; return; }
+  const age = getPatientAgeFromBirthDate(input.value);
+  preview.textContent = age === null ? 'Please enter a valid birthday that is not in the future.' : 'Age: ' + age + ' · Category: ' + (age <= 17 ? 'Minor' : 'Adult');
+}
+
 async function refreshPatientPortal() {
   const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || "[]");
   const sessionData = currentSession?.data || {};
@@ -3393,6 +3437,9 @@ async function refreshPatientPortal() {
   const profileEmail = document.getElementById('profileEmailDisplay');
   const editName = document.getElementById('editProfileNameInput');
   const guardianInput = document.getElementById('editGuardianContactInput');
+  const birthDateInput = document.getElementById('editProfileBirthDateInput');
+  const profileAgeCategory = document.getElementById('profileAgeCategory');
+  const profileAgePreview = document.getElementById('profileAgePreview');
   const profilePhoto = document.getElementById('profilePhotoDisplay');
   const qrId = document.getElementById('patientQrIdDisplay');
 
@@ -3401,6 +3448,17 @@ async function refreshPatientPortal() {
   if (profileEmail) profileEmail.innerText = p.email || '';
   if (editName) editName.value = p.fullName || '';
   if (guardianInput) guardianInput.value = p.guardianNum || '';
+  if (birthDateInput) { birthDateInput.max = new Date().toISOString().slice(0, 10); birthDateInput.value = p.birthDate || p.birth_date || ''; }
+  const patientAge = getPatientAgeFromBirthDate(p.birthDate || p.birth_date || '');
+  const patientCategory = patientAge === null ? '' : (patientAge <= 17 ? 'Minor' : 'Adult');
+  p.birthDate = p.birthDate || p.birth_date || '';
+  p.ageCategory = patientCategory;
+  if (profileAgeCategory) {
+    profileAgeCategory.textContent = patientCategory || 'Birthday not set';
+    profileAgeCategory.className = 'text-[10px] font-tech px-2 py-0.5 rounded mt-1 inline-block ' +
+      (patientCategory === 'Minor' ? 'bg-amber-50 border border-amber-300 text-amber-700' : patientCategory === 'Adult' ? 'bg-cyan-950 border border-cyan-400/30 text-cyan-300' : 'bg-slate-100 border border-slate-300 text-slate-500');
+  }
+  if (profileAgePreview) profileAgePreview.textContent = patientAge === null ? 'Enter your birthday to calculate your age and category.' : 'Age: ' + patientAge + ' · Category: ' + patientCategory;
   if (profilePhoto) profilePhoto.src = p.photo || "https://via.placeholder.com/100";
   if (qrId) qrId.innerText = "ID: " + p.id;
 
@@ -3887,11 +3945,15 @@ async function savePatientCloudFields(fields) {
   if (Object.prototype.hasOwnProperty.call(fields, 'full_name')) payload.full_name = fields.full_name;
   if (Object.prototype.hasOwnProperty.call(fields, 'guardian_num')) payload.guardian_num = fields.guardian_num;
   if (Object.prototype.hasOwnProperty.call(fields, 'photo')) payload.photo = fields.photo;
+  if (Object.prototype.hasOwnProperty.call(fields, 'birth_date')) {
+    payload.birth_date = fields.birth_date || null;
+    payload.age_category = fields.birth_date ? getPatientCategoryFromBirthDate(fields.birth_date) : null;
+  }
 
   const updated = await client.from('patients')
     .update(payload)
     .eq('user_id', user.id)
-    .select('id,user_id,full_name,guardian_num,photo')
+    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category')
     .maybeSingle();
 
   if (updated.error) throw updated.error;
@@ -3899,7 +3961,7 @@ async function savePatientCloudFields(fields) {
 
   // Verify the value that was just written so the Save action is truly permanent.
   const verify = await client.from('patients')
-    .select('id,user_id,full_name,guardian_num,photo')
+    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category')
     .eq('id', updated.data.id)
     .maybeSingle();
 
@@ -3935,6 +3997,28 @@ async function saveProfileName() {
   } catch (error) {
     console.error("ERecPass: Permanent name save failed", error);
     alert("Name was not saved to the cloud. Please try again.");
+  }
+}
+
+async function savePatientBirthDate() {
+  const birthDate = document.getElementById('editProfileBirthDateInput')?.value || '';
+  if (!birthDate) { alert('Please select your birthday.'); return; }
+  const age = getPatientAgeFromBirthDate(birthDate);
+  if (age === null) { alert('Please enter a valid birthday that is not in the future.'); return; }
+  const category = age <= 17 ? 'Minor' : 'Adult';
+  try {
+    const saved = await savePatientCloudFields({birth_date: birthDate});
+    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
+    if (p) { p.birthDate = saved.birth_date; p.ageCategory = saved.age_category || category; }
+    epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+    Object.assign(currentSession.data, {birthDate:saved.birth_date, birth_date:saved.birth_date, ageCategory:saved.age_category || category, age_category:saved.age_category || category, id:saved.id, user_id:saved.user_id});
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    await refreshPatientPortal();
+    alert('Birthday saved. Age: ' + age + '. Category: ' + category + '.');
+  } catch (error) {
+    console.error('ERecPass: Birthday save failed', error);
+    alert('Birthday was not saved to the cloud. Please try again.');
   }
 }
 
@@ -4235,6 +4319,7 @@ try {
         sim: c.sim || '',
         photo: c.photo || '',
         ageCategory: c.age_category || '',
+        birthDate: c.birth_date || '', birth_date: c.birth_date || '',
         guardianNum: c.guardian_num || '',
         status: c.status || 'Green',
         labResults: c.lab_results || [],
@@ -4280,7 +4365,10 @@ document.getElementById('scannedName').innerText = p.fullName || p.full_name || 
 
 document.getElementById('scannedId').innerText = p.id || '--';
 
-document.getElementById('scannedAge').innerText = p.ageCategory || p.age_category || "Adult";
+const scannedBirthDate = p.birthDate || p.birth_date || '';
+const scannedAgeValue = getPatientAgeFromBirthDate(scannedBirthDate);
+const scannedCategory = scannedAgeValue === null ? (p.ageCategory || p.age_category || 'Birthday not set') : (scannedAgeValue <= 17 ? 'Minor' : 'Adult');
+document.getElementById('scannedAge').innerText = scannedAgeValue === null ? scannedCategory : scannedCategory + ' · ' + scannedAgeValue + ' years old';
 
 document.getElementById('scannedGuardian').innerText = p.guardianNum || p.guardian_num || "None";
 
@@ -4329,7 +4417,7 @@ try {
       patients = cloud.data.map(p => ({
         id: p.id, user_id: p.user_id, fullName: p.full_name || p.name || '',
         email: p.email || '', sim: p.sim || '', photo: p.photo || '',
-        ageCategory: p.age_category || '', guardianNum: p.guardian_num || '',
+        ageCategory: p.age_category || '', birthDate: p.birth_date || '', birth_date: p.birth_date || '', guardianNum: p.guardian_num || '',
         status: p.status || 'Green', labResults: p.lab_results || [],
         prescriptions: p.prescriptions || [], doctorNotes: p.doctor_notes || '',
         online: !!p.online, active: p.active !== false
@@ -4574,6 +4662,9 @@ if (!p) return;
 document.getElementById('editPatientId').value = p.id;
 
 document.getElementById('editPatientStatus').value = p.status;
+const birthDateInput = document.getElementById('editPatientBirthDate');
+if (birthDateInput) { birthDateInput.max = new Date().toISOString().slice(0, 10); birthDateInput.value = p.birthDate || p.birth_date || ''; }
+previewAdminPatientBirthDate();
 
 document.getElementById('editPatientPrescription').value = p.prescriptions.length ? p.prescriptions[0].medicine : "";
 
@@ -4606,12 +4697,20 @@ const rxText = document.getElementById('editPatientPrescription').value;
 const docNote = document.getElementById('editPatientDoctorNote').value;
 
 const guardianNum = document.getElementById('editPatientGuardianNum').value;
+const birthDate = document.getElementById('editPatientBirthDate')?.value || '';
+const birthAge = birthDate ? getPatientAgeFromBirthDate(birthDate) : null;
+if (birthDate && birthAge === null) { alert('Please enter a valid birthday that is not in the future.'); return; }
+const birthCategory = birthAge === null ? '' : (birthAge <= 17 ? 'Minor' : 'Adult');
 
 const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS));
 
 const p = patients.find(i => i.id === pid);
 
 p.status = status;
+p.birthDate = birthDate;
+p.birth_date = birthDate;
+p.ageCategory = birthCategory;
+p.age_category = birthCategory;
 
 p.doctorNotes = docNote;
 
@@ -4642,6 +4741,18 @@ photo: photoData || ""
 }
 
 epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+
+const client = window.erecpassSupabase;
+if (client && p.id) {
+  const cloudUpdate = await client.from('patients').update({birth_date: birthDate || null, age_category: birthCategory || null}).eq('id', p.id).select('id,birth_date,age_category').maybeSingle();
+  if (cloudUpdate.error) throw cloudUpdate.error;
+  if (!cloudUpdate.data) throw new Error('Supabase did not confirm the birthday update.');
+  p.birthDate = cloudUpdate.data.birth_date || '';
+  p.birth_date = cloudUpdate.data.birth_date || '';
+  p.ageCategory = cloudUpdate.data.age_category || '';
+  p.age_category = cloudUpdate.data.age_category || '';
+  epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+}
 
 addLog("Updated Patient Record: " + p.fullName);
 
@@ -7549,7 +7660,8 @@ window.erecpassSupabaseSyncPatient=async function(patient){
     email:patient.email||null,
     sim:patient.sim||null,
     photo:patient.photo||null,
-    age_category:patient.ageCategory||null,
+    age_category:patient.birthDate ? getPatientCategoryFromBirthDate(patient.birthDate) : (patient.ageCategory||null),
+    birth_date:patient.birthDate||patient.birth_date||null,
     guardian_num:patient.guardianNum||null,
     status:patient.status||'Green',
     active:patient.active!==false

@@ -15,17 +15,21 @@
     return;
   }
 
-  window.erecpassSupabase = window.supabase.createClient(
-    SUPABASE_URL,
-    SUPABASE_PUBLISHABLE_KEY,
-    {
-      auth: {
-        persistSession: true,
-        autoRefreshToken: true,
-        detectSessionInUrl: true
+  // Reuse the client created by the legacy inline bootstrap when present.
+  // Two independent Supabase clients can split auth/session state in the APK.
+  if (!window.erecpassSupabase || typeof window.erecpassSupabase.auth?.signInWithPassword !== "function") {
+    window.erecpassSupabase = window.supabase.createClient(
+      SUPABASE_URL,
+      SUPABASE_PUBLISHABLE_KEY,
+      {
+        auth: {
+          persistSession: true,
+          autoRefreshToken: true,
+          detectSessionInUrl: true
+        }
       }
-    }
-  );
+    );
+  }
 
   // Initialize password recovery after the Supabase client exists.
   if (typeof window.epInitPasswordRecoveryListener === "function") {

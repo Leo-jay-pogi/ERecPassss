@@ -11,11 +11,14 @@ ERecPass is a hospital portal with a Supabase-backed data layer. The existing UI
 - Admin account operations use the protected `admin-manage-account` Edge Function.
 - GitHub Pages workflow: `.github/workflows/pages.yml`
 
-## Current account state
-- There is currently 1 active Admin profile, 1 active Staff profile, and 2 active Patient profiles.
-- The configured main Admin email is **admin2@gmail.com**.
-- Admin can create Staff accounts, edit account details, change passwords, deactivate/activate accounts, and permanently delete Patient/Staff accounts through the server-side account function.
-- Patients and Staff cannot self-assign the Admin role.
+## Account limits (Supabase-enforced)
+- Maximum **20 Patient** profiles.
+- Maximum **15 Staff** profiles.
+- Maximum **4 Admin** profiles.
+- These are maximum account counts, not accounts automatically created.
+- A database trigger enforces the caps on profile creation and role changes; existing accounts and unrelated app functions are preserved.
+- Current Supabase profile counts at last verification: **4 Patient**, **2 Staff**, **1 Admin**.
+- Migration source: `supabase/migrations/20261016_account_limits.sql`.
 
 ## Password reset
 The app uses Supabase Auth password recovery. The reset link returns to the current GitHub Pages path and the app handles the `PASSWORD_RECOVERY` event before allowing the new password to be saved.

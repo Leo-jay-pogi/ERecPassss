@@ -6147,13 +6147,13 @@ window.requestErecPassCameraPermission = function () {
 
 </script>
 
-<!-- ERecPass ADD-ON: Dark/light mode and language -->
+<!-- ERecPass ADD-ON: Dark mode only -->
 <style>
 #epSettings{position:fixed;top:64px;right:10px;z-index:100000;font:600 12px Arial,sans-serif}
 #epSettingsToggle{pointer-events:auto;border:1px solid #1769e0;border-radius:999px;width:38px;height:38px;background:#fff;color:#16324f;box-shadow:0 2px 8px #16324f18;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
 #epSettingsPanel{display:none;margin-top:6px;padding:6px;border:1px solid #1769e0;border-radius:12px;background:#fff;color:#16324f;box-shadow:0 4px 14px #16324f22;gap:6px;align-items:center}
 #epSettings.ep-open #epSettingsPanel{display:flex}
-#epSettingsPanel button,#epSettingsPanel select{pointer-events:auto;border:1px solid #1769e0;border-radius:9px;padding:7px 9px;background:#fff;color:#16324f;box-shadow:none;cursor:pointer}
+#epSettingsPanel button{pointer-events:auto;border:1px solid #1769e0;border-radius:9px;padding:7px 9px;background:#fff;color:#16324f;box-shadow:none;cursor:pointer}
 html.ep-dark,html.ep-dark body,html.ep-dark #splashScreen{background:#101820!important;background-color:#101820!important;color:#edf4fb!important;color-scheme:dark}
 html.ep-dark body{background-image:none!important}
 html.ep-dark .auth-card,html.ep-dark .glass-card,html.ep-dark .health-card,html.ep-dark .appointment-card,html.ep-dark .list-card,html.ep-dark .record-card,html.ep-dark .medicine-card,html.ep-dark .doctor-card,html.ep-dark .large-card,html.ep-dark .hospital-card,html.ep-dark .qr-card,html.ep-dark .profile-card,html.ep-dark .help-card,html.ep-dark .modal-card,html.ep-dark .chat-card,html.ep-dark .staff-health,html.ep-dark .staff-grid button,html.ep-dark .top-header,html.ep-dark .bottom-nav,html.ep-dark .staff-header,html.ep-dark .glass,html.ep-dark .bg-white,html.ep-dark [class*="bg-white"],html.ep-dark [class*="bg-slate-50"],html.ep-dark [class*="bg-gray-50"],html.ep-dark [class*="bg-blue-50"],html.ep-dark .erecpass-added-card{background:#182532!important;color:#edf4fb!important;border-color:#334b60!important}
@@ -6162,42 +6162,25 @@ html.ep-dark .input-box,html.ep-dark .input-box input,html.ep-dark .input-box se
 html.ep-dark .quick-grid button,html.ep-dark .date-box,html.ep-dark button[class*="bg-slate-900"],html.ep-dark button[class*="bg-white"],html.ep-dark button[class*="bg-gray-"]{background:#203243!important;color:#edf4fb!important;border-color:#40566a!important}
 html.ep-dark .text-slate-900,html.ep-dark .text-gray-900,html.ep-dark .text-black{color:#edf4fb!important}
 html:not(.ep-dark){color-scheme:light}
-@media(max-width:640px){#epSettings{top:56px;right:8px}#epSettingsToggle{width:36px;height:36px;font-size:16px}#epSettingsPanel{flex-direction:column;align-items:stretch}#epSettingsPanel button,#epSettingsPanel select{padding:7px;font-size:11px}}
+@media(max-width:640px){#epSettings{top:56px;right:8px}#epSettingsToggle{width:36px;height:36px;font-size:16px}#epSettingsPanel{flex-direction:column;align-items:stretch}#epSettingsPanel button{padding:7px;font-size:11px}}
 </style>
-<div id="epSettings" aria-label="Appearance and language settings">
-<button type="button" id="epSettingsToggle" aria-label="Open appearance and language settings" aria-expanded="false">⚙️</button>
+<div id="epSettings" aria-label="Appearance settings">
+<button type="button" id="epSettingsToggle" aria-label="Open appearance settings" aria-expanded="false">⚙️</button>
 <div id="epSettingsPanel">
 <button type="button" id="epThemeBtn">🌙 Dark</button>
-<select id="epLanguage" aria-label="Language"><option value="en">English</option><option value="fil">Filipino</option></select>
 </div>
 </div>
 <script>
 (function(){
-const root=document.documentElement,settings=document.getElementById('epSettings'),settingsToggle=document.getElementById('epSettingsToggle'),themeBtn=document.getElementById('epThemeBtn'),language=document.getElementById('epLanguage');
+const root=document.documentElement,settings=document.getElementById('epSettings'),settingsToggle=document.getElementById('epSettingsToggle'),themeBtn=document.getElementById('epThemeBtn');
 settingsToggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();const open=settings.classList.toggle('ep-open');settingsToggle.setAttribute('aria-expanded',String(open));});
 document.addEventListener('click',function(e){if(!settings.contains(e.target)){settings.classList.remove('ep-open');settingsToggle.setAttribute('aria-expanded','false');}});
-
 function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore.getItem(key);if(v!==null)return v}}catch(e){}return fallback}
 function writeSetting(key,value){try{if(window.epStore)window.epStore.setItem(key,value)}catch(e){}}
 if(readSetting('erecpass_theme','light')==='dark')root.classList.add('ep-dark');else root.classList.remove('ep-dark');
-language.value=readSetting('erecpass_language','en');
 function paintTheme(){const dark=root.classList.contains('ep-dark');themeBtn.textContent=dark?'☀️ Light':'🌙 Dark';themeBtn.setAttribute('aria-pressed',String(dark));themeBtn.setAttribute('title',dark?'Switch to light mode':'Switch to dark mode');root.style.colorScheme=dark?'dark':'light'}
 function toggleTheme(){const dark=!root.classList.contains('ep-dark');root.classList.toggle('ep-dark',dark);writeSetting('erecpass_theme',dark?'dark':'light');paintTheme()}
 themeBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleTheme()});paintTheme();
-const enFil={
-"Login to your account":"Mag-login sa iyong account","Don't have an account?":"Wala ka pang account?","Create Account":"Gumawa ng Account","Already have an account?":"May account ka na?","Staff Login":"Login ng Staff","Admin Login":"Login ng Admin","Hospital Map":"Mapa ng Ospital","Emergency":"Emergency","Email":"Email","Password":"Password","Full Name":"Buong Pangalan","Full Name (with M.I.)":"Buong Pangalan (may M.I.)","SIM Mobile Number":"Numero ng Mobile","Verification Code":"Verification Code","Confirm Password":"Kumpirmahin ang Password","Login":"Mag-login","LOGIN":"MAG-LOGIN","CREATE ACCOUNT":"GUMAWA NG ACCOUNT","STAFF LOGIN":"LOGIN NG STAFF","ADMIN LOGIN":"LOGIN NG ADMIN","Patient Registration":"Pagpaparehistro ng Pasyente","Hospital Staff Login":"Login ng Staff ng Ospital","System Administration":"Pamamahala ng System","Back to Patient Login":"Bumalik sa Login ng Pasyente","Announcements":"Mga Anunsyo","Photos & Updates":"Mga Larawan at Update","No announcements yet":"Wala pang anunsyo","View Announcements":"Tingnan ang mga Anunsyo","Help Center":"Sentro ng Tulong","Email Address":"Email Address","Message":"Mensahe","Send Message":"Ipadala ang Mensahe","Back to Login":"Bumalik sa Login","Appointments":"Mga Appointment","Medical Records":"Medical Records","Lab Results":"Resulta ng Laboratoryo","Medications":"Mga Gamot","Profile":"Profile","Logout":"Mag-logout","Patient Dashboard":"Dashboard ng Pasyente","Records":"Mga Record","Upload":"Mag-upload","View Medical Records":"Tingnan ang Medical Records","View Lab Results":"Tingnan ang Resulta ng Laboratoryo","View Medications":"Tingnan ang mga Gamot","View Appointments":"Tingnan ang mga Appointment","Send Code":"Magpadala ng Code","Enter your password":"Ilagay ang iyong password","Enter the email you registered":"Ilagay ang iyong rehistradong email"
-};
-const filEn=Object.fromEntries(Object.entries(enFil).map(([a,b])=>[b,a]));
-function translate(){
-const dict=language.value==='fil'?enFil:filEn, walker=document.createTreeWalker(document.body,NodeFilter.SHOW_TEXT),nodes=[];
-while(walker.nextNode())nodes.push(walker.currentNode);
-nodes.forEach(n=>{if(!n.parentElement.closest('#epSettings')&&n.nodeValue&&dict[n.nodeValue.trim()]){const t=n.nodeValue.trim();n.nodeValue=n.nodeValue.replace(t,dict[t])}});
-document.querySelectorAll('input[placeholder],textarea[placeholder]').forEach(el=>{if(dict[el.placeholder])el.placeholder=dict[el.placeholder]});
-root.lang=language.value==='fil'?'fil':'en';
-}
-language.addEventListener('change',()=>{try{epStore.setItem('erecpass_language',language.value)}catch(e){}translate()});
-let queued=false;new MutationObserver(()=>{if(queued)return;queued=true;setTimeout(()=>{queued=false;if(language.value==='fil')translate()},0)}).observe(document.body,{childList:true,subtree:true});
-if(language.value==='fil')translate();
 })();
 </script>
 <!-- IMPORTANT: Supabase client configuration exists elsewhere in this source, but this app still

@@ -12,6 +12,7 @@ on:
       - "*.jpeg"
       - "*.svg"
       - "*.webp"
+      - "assets/**"
       - ".github/workflows/build-android-apk.yml"
 
 permissions:
@@ -23,43 +24,31 @@ jobs:
     steps:
       - name: Checkout ERecPass
         uses: actions/checkout@v4
-
       - name: Set up Java
         uses: actions/setup-java@v4
         with:
           distribution: temurin
           java-version: "21"
-
       - name: Set up Android SDK
         uses: android-actions/setup-android@v3
         with:
           packages: platform-tools
           accept-android-sdk-licenses: true
-
       - name: Install Android build packages
         shell: bash
         run: |
           set -euo pipefail
           sdkmanager "platforms;android-35" "build-tools;35.0.0"
-
       - name: Set up Node.js
         uses: actions/setup-node@v4
         with:
           node-version: "20"
-
       - name: Prepare web assets and Capacitor project
         shell: bash
         run: |
           set -euo pipefail
           mkdir -p www
-          rsync -av ./ www/ \
-            --exclude '.git/' \
-            --exclude '.github/' \
-            --exclude 'www/' \
-            --exclude 'android/' \
-            --exclude 'node_modules/' \
-            --exclude 'package-lock.json' \
-            --exclude 'package.json'
+          rsync -av ./ www/ --exclude '.git/' --exclude '.github/' --exclude 'www/' --exclude 'android/' --exclude 'node_modules/' --exclude 'package-lock.json' --exclude 'package.json'
           npm init -y
           npm install @capacitor/core@^6 @capacitor/android@^6
           npm install --save-dev @capacitor/cli@^6
@@ -68,20 +57,34 @@ jobs:
             "appId": "com.erecpass.hospital",
             "appName": "ERecPass",
             "webDir": "www",
-            "server": {
-              "androidScheme": "https"
-            }
+            "server": { "androidScheme": "https" }
           }
           EOF
           npx cap add android
           npx cap sync android
-
+      - name: Apply ERecPass launcher icon
+        shell: bash
+        run: |
+          set -euo pipefail
+          sudo apt-get update
+          sudo apt-get install -y imagemagick
+          ICON="assets/erecpass-app-icon.svg"
+          test -s "$ICON"
+          RES="android/app/src/main/res"
+          for spec in "mdpi:48" "hdpi:72" "xhdpi:96" "xxhdpi:144" "xxxhdpi:192"; do
+            density="${spec%%:*}"
+            size="${spec##*:}"
+            mkdir -p "$RES/mipmap-$density"
+            convert -background none "$ICON" -resize "${size}x${size}" "$RES/mipmap-$density/ic_launcher.png"
+            convert -background none "$ICON" -resize "${size}x${size}" "$RES/mipmap-$density/ic_launcher_foreground.png"
+          done
+          mkdir -p "$RES/drawable"
+          convert -background none "$ICON" -resize 432x432 "$RES/drawable/ic_launcher_foreground.png"
       - name: Build debug APK
         run: |
           cd android
           chmod +x gradlew
           ./gradlew assembleDebug
-
       - name: Verify APK signature and Android compatibility
         shell: bash
         run: |
@@ -94,7 +97,6 @@ jobs:
           grep -q "sdkVersion:'22'" /tmp/erecpass-apk-badging.txt
           sha256sum "$APK"
           unzip -t "$APK" | tail -n 2
-
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:

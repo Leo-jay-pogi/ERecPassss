@@ -59,24 +59,56 @@ jobs:
           npx esbuild node_modules/@supabase/supabase-js/dist/module/index.js --bundle --format=iife --global-name=supabase --outfile=www/vendor/supabase.js
           # Package QR generation and camera-scanner libraries locally so the APK
           # does not rely on public CDNs for these core patient/staff functions.
-          test -s node_modules/qrcodejs/qrcode.min.js
-          test -s node_modules/html5-qrcode/html5-qrcode.min.js
-          cp node_modules/qrcodejs/qrcode.min.js www/vendor/qrcode.min.js
-          cp node_modules/html5-qrcode/html5-qrcode.min.js www/vendor/html5-qrcode.min.js
           python3 - <<'PY'
           from pathlib import Path
+          import shutil
+
+          vendor = Path("www/vendor")
+          vendor.mkdir(parents=True, exist_ok=True)
+          packages = [
+              (Path("node_modules/qrcodejs"), "qrcode.min.js", vendor / "qrcode.min.js"),
+              (Path("node_modules/html5-qrcode"), "html5-qrcode.min.js", vendor / "html5-qrcode.min.js"),
+          ]
+          for root, filename, destination in packages:
+              matches = list(root.rglob(filename)) if root.exists() else []
+              if not matches:
+                  raise SystemExit(f"Missing {filename} in installed package {root}")
+              # Prefer a root-level distribution if the package contains duplicates.
+              matches.sort(key=lambda p: (len(p.parts), str(p)))
+              shutil.copy2(matches[0], destination)
+              if not destination.is_file() or destination.stat().st_size < 1000:
+                  raise SystemExit(f"Bundled library is missing or unexpectedly small: {destination}")
+              print(f"Bundled {matches[0]} -> {destination}")
+          PY
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
           p = Path("www/index.html")
           s = p.read_text()
-          replacements = {
-              '<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>': '<script src="./vendor/supabase.js"></script>',
-              '<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>': '<script src="./vendor/qrcode.min.js"></script>',
-              '<script src="https://unpkg.com/html5-qrcode"></script>': '<script src="./vendor/html5-qrcode.min.js"></script>',
-          }
-          for old, new in replacements.items():
-              if old not in s:
-                  raise SystemExit("Could not find expected script tag in packaged index.html: " + old)
-              s = s.replace(old, new, 1)
+          replacements = [
+              (r'<script\s+src=["\']https://cdn\.jsdelivr\.net/npm/@supabase/supabase-js@2["\']\s*></script>', '<script src="./vendor/supabase.js"></script>', "Supabase SDK"),
+              (r'<script\s+src=["\']https://cdnjs\.cloudflare\.com/ajax/libs/qrcodejs/1\.0\.0/qrcode\.min\.js["\']\s*></script>', '<script src="./vendor/qrcode.min.js"></script>', "QR generator"),
+              (r'<script\s+src=["\']https://unpkg\.com/html5-qrcode["\']\s*></script>', '<script src="./vendor/html5-qrcode.min.js"></script>', "QR scanner"),
+          ]
+          for pattern, replacement, label in replacements:
+              s, count = re.subn(pattern, lambda _m: replacement, s, count=1)
+              if count != 1:
+                  raise SystemExit(f"Could not replace expected {label} CDN script tag in packaged index.html")
           p.write_text(s)
+          PY
+          # Ensure Android declares camera access for the in-app QR scanner.
+          python3 - <<'PY'
+          from pathlib import Path
+          import re
+          p = Path("android/app/src/main/AndroidManifest.xml")
+          s = p.read_text()
+          permission = '<uses-permission android:name="android.permission.CAMERA" />'
+          if permission not in s:
+              match = re.search(r'<manifest\b[^>]*>', s)
+              if not match:
+                  raise SystemExit("Could not locate manifest root to add camera permission")
+              s = s[:match.end()] + "\\n    " + permission + s[match.end():]
+              p.write_text(s)
           PY
           cat > capacitor.config.json <<'EOF'
           {

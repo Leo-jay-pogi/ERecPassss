@@ -97,6 +97,15 @@ jobs:
                   raise SystemExit(f"Could not replace expected {label} CDN script tag in packaged index.html")
           p.write_text(s)
           PY
+          cat > capacitor.config.json <<'EOF'
+          {
+            "appId": "com.erecpass.hospital",
+            "appName": "ERecPass",
+            "webDir": "www",
+            "server": { "androidScheme": "https" }
+          }
+          EOF
+          npx cap add android
           # Ensure Android declares camera access for the in-app QR scanner.
           python3 - <<'PY'
           from pathlib import Path
@@ -111,15 +120,6 @@ jobs:
               s = s[:match.end()] + "\n    " + permission + s[match.end():]
               p.write_text(s)
           PY
-          cat > capacitor.config.json <<'EOF'
-          {
-            "appId": "com.erecpass.hospital",
-            "appName": "ERecPass",
-            "webDir": "www",
-            "server": { "androidScheme": "https" }
-          }
-          EOF
-          npx cap add android
           # Add a small native bridge so the installed APK can save patient QR PNGs
           # directly to the public Downloads folder on Android 10+.
           mkdir -p android/app/src/main/java/com/erecpass/hospital

@@ -2997,6 +2997,7 @@ emailRedirectTo: redirectTo,
 data: {
 
 full_name: fullName,
+role: "patient",
 sim: sim,
 
 age_category: "Adult",
@@ -3031,7 +3032,12 @@ showLogin();
 
 console.error("Patient registration error:", err);
 
-alert("Registration failed: " + (err?.message || "Please try again."));
+const registrationError = String(err?.message || "");
+if (registrationError.includes("PATIENT_ACCOUNT_LIMIT_REACHED")) {
+  alert("Patient account limit reached. ERecPass allows a maximum of 20 patient accounts.");
+} else {
+  alert("Registration failed: " + (registrationError || "Please try again."));
+}
 
 }
 

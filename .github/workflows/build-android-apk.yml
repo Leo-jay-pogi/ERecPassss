@@ -57,7 +57,7 @@ jobs:
           # Bundle Supabase locally for Android WebView so Admin login does not
           # depend on loading the Supabase SDK from a third-party CDN at runtime.
           mkdir -p www/vendor
-          npx esbuild node_modules/@supabase/supabase-js/dist/module/index.js --bundle --format=iife --global-name=supabase --outfile=www/vendor/supabase.js
+          npx esbuild @supabase/supabase-js --bundle --format=iife --global-name=supabase --outfile=www/vendor/supabase.js
           # Package QR generation and camera-scanner libraries locally so the APK
           # does not rely on public CDNs for these core patient/staff functions.
           python3 - <<'PY'

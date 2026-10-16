@@ -22,7 +22,7 @@
     const expectedKey = 'sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_';
     let client = window.erecpassSupabase;
     const clientMatches = () =>
-      String(client?.supabaseUrl || '').replace(/\\/+$/, '') === expectedUrl &&
+      String(client?.supabaseUrl || '').replace(/\/+$/, '') === expectedUrl &&
       String(client?.supabaseKey || '') === expectedKey;
 
     if ((!client?.auth || !clientMatches()) &&

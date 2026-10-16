@@ -45,7 +45,7 @@
     }
 
     try {
-      const authResult = await client.auth.signInWithPassword({ email, password: pass });
+      const authResult = await client.auth.signInWithPassword({ email: user, password: pass });
       if (authResult.error) throw authResult.error;
 
       const authUser = authResult.data?.user;

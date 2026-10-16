@@ -3354,6 +3354,10 @@ function getPatientAgeFromBirthDate(value, today = new Date()) {
   if (now.getMonth() < month - 1 || (now.getMonth() === month - 1 && now.getDate() < day)) age--;
   return age;
 }
+function getPatientLocalDateString() {
+  const d = new Date();
+  return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+}
 function getPatientCategoryFromBirthDate(value) {
   const age = getPatientAgeFromBirthDate(value);
   return age === null ? '' : (age <= 17 ? 'Minor' : 'Adult');
@@ -3448,7 +3452,7 @@ async function refreshPatientPortal() {
   if (profileEmail) profileEmail.innerText = p.email || '';
   if (editName) editName.value = p.fullName || '';
   if (guardianInput) guardianInput.value = p.guardianNum || '';
-  if (birthDateInput) { birthDateInput.max = new Date().toISOString().slice(0, 10); birthDateInput.value = p.birthDate || p.birth_date || ''; }
+  if (birthDateInput) { birthDateInput.max = getPatientLocalDateString(); birthDateInput.value = p.birthDate || p.birth_date || ''; }
   const patientAge = getPatientAgeFromBirthDate(p.birthDate || p.birth_date || '');
   const patientCategory = patientAge === null ? '' : (patientAge <= 17 ? 'Minor' : 'Adult');
   p.birthDate = p.birthDate || p.birth_date || '';
@@ -4367,7 +4371,7 @@ document.getElementById('scannedId').innerText = p.id || '--';
 
 const scannedBirthDate = p.birthDate || p.birth_date || '';
 const scannedAgeValue = getPatientAgeFromBirthDate(scannedBirthDate);
-const scannedCategory = scannedAgeValue === null ? (p.ageCategory || p.age_category || 'Birthday not set') : (scannedAgeValue <= 17 ? 'Minor' : 'Adult');
+const scannedCategory = scannedAgeValue === null ? 'Birthday not set' : (scannedAgeValue <= 17 ? 'Minor' : 'Adult');
 document.getElementById('scannedAge').innerText = scannedAgeValue === null ? scannedCategory : scannedCategory + ' · ' + scannedAgeValue + ' years old';
 
 document.getElementById('scannedGuardian').innerText = p.guardianNum || p.guardian_num || "None";
@@ -4663,7 +4667,7 @@ document.getElementById('editPatientId').value = p.id;
 
 document.getElementById('editPatientStatus').value = p.status;
 const birthDateInput = document.getElementById('editPatientBirthDate');
-if (birthDateInput) { birthDateInput.max = new Date().toISOString().slice(0, 10); birthDateInput.value = p.birthDate || p.birth_date || ''; }
+if (birthDateInput) { birthDateInput.max = getPatientLocalDateString(); birthDateInput.value = p.birthDate || p.birth_date || ''; }
 previewAdminPatientBirthDate();
 
 document.getElementById('editPatientPrescription').value = p.prescriptions.length ? p.prescriptions[0].medicine : "";

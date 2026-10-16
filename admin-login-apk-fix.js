@@ -106,3 +106,5 @@
     }
   };
 })();
+
+// Rebuild marker: ensure the latest Android APK includes the admin email login fix.

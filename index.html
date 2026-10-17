@@ -1919,6 +1919,16 @@ Already have an account?
 
 <div>
 
+<label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Gender</label>
+<div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
+<select id="editProfileGenderInput" class="w-full bg-transparent outline-none text-xs" aria-label="Select gender">
+<option value="">Select gender</option>
+<option value="Female">Female</option>
+<option value="Male">Male</option>
+</select>
+<button onclick="savePatientGender()" class="text-xs font-tech text-cyan-400 font-bold px-2 py-1 bg-cyan-950 rounded border border-cyan-400/40">Save</button>
+</div>
+
 <label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Birthday / Date of Birth</label>
 
 <div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
@@ -3442,6 +3452,7 @@ async function refreshPatientPortal() {
   const editName = document.getElementById('editProfileNameInput');
   const guardianInput = document.getElementById('editGuardianContactInput');
   const birthDateInput = document.getElementById('editProfileBirthDateInput');
+  const genderInput = document.getElementById('editProfileGenderInput');
   const profileAgeCategory = document.getElementById('profileAgeCategory');
   const profileAgePreview = document.getElementById('profileAgePreview');
   const profilePhoto = document.getElementById('profilePhotoDisplay');
@@ -3453,6 +3464,7 @@ async function refreshPatientPortal() {
   if (editName) editName.value = p.fullName || '';
   if (guardianInput) guardianInput.value = p.guardianNum || '';
   if (birthDateInput) { birthDateInput.max = getPatientLocalDateString(); birthDateInput.value = p.birthDate || p.birth_date || ''; }
+  if (genderInput) genderInput.value = p.gender || '';
   const patientAge = getPatientAgeFromBirthDate(p.birthDate || p.birth_date || '');
   const patientCategory = patientAge === null ? '' : (patientAge <= 17 ? 'Minor' : 'Adult');
   p.birthDate = p.birthDate || p.birth_date || '';
@@ -3953,11 +3965,12 @@ async function savePatientCloudFields(fields) {
     payload.birth_date = fields.birth_date || null;
     payload.age_category = fields.birth_date ? getPatientCategoryFromBirthDate(fields.birth_date) : null;
   }
+  if (Object.prototype.hasOwnProperty.call(fields, 'gender')) payload.gender = fields.gender || null;
 
   const updated = await client.from('patients')
     .update(payload)
     .eq('user_id', user.id)
-    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category')
+    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender')
     .maybeSingle();
 
   if (updated.error) throw updated.error;
@@ -4001,6 +4014,25 @@ async function saveProfileName() {
   } catch (error) {
     console.error("ERecPass: Permanent name save failed", error);
     alert("Name was not saved to the cloud. Please try again.");
+  }
+}
+
+async function savePatientGender() {
+  const gender = document.getElementById('editProfileGenderInput')?.value || '';
+  if (!['Female', 'Male'].includes(gender)) { alert('Please select Female or Male.'); return; }
+  try {
+    const saved = await savePatientCloudFields({gender});
+    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
+    if (p) p.gender = saved.gender;
+    epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+    Object.assign(currentSession.data, {gender:saved.gender, id:saved.id, user_id:saved.user_id});
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    await refreshPatientPortal();
+    alert('Gender saved successfully.');
+  } catch (error) {
+    console.error('ERecPass: Gender save failed', error);
+    alert('Gender was not saved to the cloud. Please try again.');
   }
 }
 

@@ -1112,6 +1112,7 @@ body::before {
   padding-top: 8px !important;
 }
 #patientBottomNav .patient-nav-see-more {
+  color: #ffffff !important;
   position: absolute;
   top: 8px;
   left: 50%;
@@ -8654,6 +8655,7 @@ function togglePatientMoreNav() {
   nav.classList.toggle('patient-nav-expanded', !expanded);
   nav.classList.toggle('patient-nav-collapsed', expanded);
   toggle.setAttribute('aria-expanded', String(!expanded));
+  toggle.textContent = expanded ? 'See More' : 'Show Less';
 }
 </script>
 

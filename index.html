@@ -2135,53 +2135,44 @@ Already have an account?
 
 </main>
 <!-- PATIENT BOTTOM NAVIGATION -->
-<nav id="patientBottomNav" class="bottom-nav fixed bottom-0 left-0 right-0 z-30 px-2 py-2" style="background:#ffffff !important; background-color:#ffffff !important; backdrop-filter:none !important;">
-  <div class="flex justify-center mb-1">
-    <button id="patientNavSeeMore" type="button" onclick="togglePatientNavMore()" aria-expanded="false" class="rounded-full px-8 py-1.5 text-base font-bold text-white shadow" style="background:#205b9e !important; color:#ffffff !important; -webkit-text-fill-color:#ffffff !important;">
-      See More
-    </button>
-  </div>
-  <div class="grid grid-cols-4 items-center justify-items-center gap-x-1 gap-y-1">
-    <button id="nav-dashboard" class="flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('dashboard')" type="button">
-      <i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><span class="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
-    </button>
-    <button id="nav-hospital-map" class="flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('hospital-map')" type="button">
-      <i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600" style="color:#16834b !important"></i><span class="text-slate-500" style="color:#66788a !important">Map</span>
-    </button>
-    <button id="nav-medicines" class="flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('medicines')" type="button">
-      <i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600" style="color:#7b2be2 !important"></i><span class="text-slate-500" style="color:#66788a !important">Meds</span>
-    </button>
-    <button id="nav-doctors" class="flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('doctors')" type="button">
-      <i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><span class="text-slate-500" style="color:#66788a !important">Staff</span>
-    </button>
-    <button id="nav-appointments" class="patient-nav-extra hidden flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('appointments')" type="button">
-      <i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><span class="text-slate-500" style="color:#66788a !important">Appts</span>
-    </button>
-    <button id="nav-medical-records" class="patient-nav-extra hidden flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('medical-records')" type="button">
-      <i class="fa-solid fa-file-medical text-2xl sm:text-3xl text-red-600" style="color:#d92f2f !important"></i><span class="text-slate-500" style="color:#66788a !important">Records</span>
-    </button>
-    <button id="nav-qr" class="patient-nav-extra hidden flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('qr')" type="button">
-      <i class="fa-solid fa-qrcode text-2xl sm:text-3xl text-sky-500" style="color:#159bd3 !important"></i><span class="text-slate-500" style="color:#66788a !important">My QR</span>
-    </button>
-    <button id="nav-help" class="patient-nav-extra hidden flex w-full min-h-[70px] flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-1" onclick="patientDashboardNavigate('help')" type="button">
-      <i class="fa-solid fa-comments text-2xl sm:text-3xl text-orange-500" style="color:#f0643d !important"></i><span class="text-slate-500" style="color:#66788a !important">Chat</span>
-    </button>
-  </div>
+
+<nav class="bottom-nav fixed bottom-0 left-0 right-0 h-[122px] border-t z-30 grid grid-cols-4 grid-rows-2 items-center justify-items-center px-2 py-2 gap-x-1 gap-y-0" style="background:#ffffff !important;">
+
+<button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
+<i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><spanclass="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
+</button>
+
+<button id="nav-hospital-map" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('hospital-map')" type="button">
+<i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600" style="color:#16834b !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Map</span>
+</button>
+
+<button id="nav-medicines" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medicines')" type="button">
+<i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600" style="color:#7b2be2 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Meds</span>
+</button>
+
+<button id="nav-doctors" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
+<i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Staff</span>
+</button>
+
+<button id="nav-appointments" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('appointments')" type="button">
+<i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Appts</span>
+</button>
+
+<button id="nav-medical-records" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medical-records')" type="button">
+<i class="fa-solid fa-file-medical text-2xl sm:text-3xl text-red-600" style="color:#d92f2f !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Records</span>
+</button>
+
+<button id="nav-qr" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('qr')" type="button">
+<i class="fa-solid fa-qrcode text-2xl sm:text-3xl text-sky-500" style="color:#159bd3 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">My QR</span>
+</button>
+
+<button id="nav-help" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('help')" type="button">
+<i class="fa-solid fa-comments text-2xl sm:text-3xl text-orange-500" style="color:#f0643d !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Chat</span>
+</button>
+
 </nav>
-<script>
-window.togglePatientNavMore = function() {
-  const extras = document.querySelectorAll('#patientBottomNav .patient-nav-extra');
-  const button = document.getElementById('patientNavSeeMore');
-  const expanded = button && button.getAttribute('aria-expanded') === 'true';
-  extras.forEach(item => item.classList.toggle('hidden', expanded));
-  if (button) {
-    button.setAttribute('aria-expanded', expanded ? 'false' : 'true');
-    button.textContent = expanded ? 'See More' : 'See Less';
-  }
-  const nav = document.getElementById('patientBottomNav');
-  if (nav) nav.style.maxHeight = expanded ? '155px' : '280px';
-};
-</script>
+
+</div>
 
 <!-- 7. STAFF APPLICATION VIEW -->
 

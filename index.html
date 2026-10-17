@@ -3967,14 +3967,21 @@ async function savePatientCloudFields(fields) {
   }
   if (Object.prototype.hasOwnProperty.call(fields, 'gender')) payload.gender = fields.gender || null;
 
+  // Restrict the update to the exact patient row owned by the authenticated user.
+  // Using both the row ID and auth user ID avoids accidentally targeting a different row.
+  if (!row.user_id || String(row.user_id) !== String(user.id)) {
+    throw new Error("The signed-in account does not own this patient profile. Please sign out and sign in with the patient account.");
+  }
+
   const updated = await client.from('patients')
     .update(payload)
+    .eq('id', row.id)
     .eq('user_id', user.id)
     .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender')
     .maybeSingle();
 
   if (updated.error) throw updated.error;
-  if (!updated.data) throw new Error("Supabase did not confirm the patient profile update.");
+  if (!updated.data) throw new Error("Supabase returned no updated patient row. Check that this account has an active patient profile and is signed in to Supabase.");
 
   // Verify the value that was just written so the Save action is truly permanent.
   const verify = await client.from('patients')
@@ -4032,7 +4039,8 @@ async function savePatientGender() {
     alert('Gender saved successfully.');
   } catch (error) {
     console.error('ERecPass: Gender save failed', error);
-    alert('Gender was not saved to the cloud. Please try again.');
+    const reason = error?.message || error?.details || error?.hint || 'Unknown Supabase error';
+    alert('Gender was not saved to the cloud. ' + reason);
   }
 }
 

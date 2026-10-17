@@ -1099,6 +1099,59 @@ body::before {
 }
 </style>
 <!-- END WHITE BACKGROUND THEME OVERRIDE -->
+<style id="erecpass-staff-admin-visibility-fix">
+/* Fix staff/admin dashboard readability on the white page without changing behavior */
+#staffApp, #adminApp {
+  color: #16324f !important;
+}
+#staffApp .glass-card, #adminApp .glass-card,
+#staffApp .health-card, #adminApp .health-card,
+#staffApp .appointment-card, #adminApp .appointment-card,
+#staffApp .list-card, #adminApp .list-card,
+#staffApp .record-card, #adminApp .record-card,
+#staffApp .medicine-card, #adminApp .medicine-card,
+#staffApp .doctor-card, #adminApp .doctor-card,
+#staffApp .large-card, #adminApp .large-card,
+#staffApp .hospital-card, #adminApp .hospital-card,
+#staffApp .qr-card, #adminApp .qr-card,
+#staffApp .profile-card, #adminApp .profile-card,
+#staffApp .help-card, #adminApp .help-card,
+#staffApp .chat-card, #adminApp .chat-card {
+  background: #ffffff !important;
+  color: #16324f !important;
+  border-color: #d7e3ee !important;
+  box-shadow: 0 4px 16px rgba(22,50,79,.08) !important;
+}
+#staffApp h1, #staffApp h2, #staffApp h3, #staffApp h4,
+#adminApp h1, #adminApp h2, #adminApp h3, #adminApp h4,
+#staffApp p, #staffApp span, #staffApp label, #staffApp li,
+#adminApp p, #adminApp span, #adminApp label, #adminApp li,
+#staffApp td, #staffApp th, #adminApp td, #adminApp th,
+#staffApp strong, #adminApp strong {
+  color: #16324f;
+}
+#staffApp .text-white, #adminApp .text-white,
+#staffApp [class*="text-slate-"], #adminApp [class*="text-slate-"],
+#staffApp [class*="text-gray-"], #adminApp [class*="text-gray-"] {
+  color: #16324f !important;
+}
+#staffApp input, #staffApp select, #staffApp textarea,
+#adminApp input, #adminApp select, #adminApp textarea {
+  background: #ffffff !important;
+  color: #16324f !important;
+  border-color: #cbd8e5 !important;
+}
+#staffApp .staff-header, #adminApp .top-header {
+  background: #ffffff !important;
+  color: #16324f !important;
+  border-color: #d7e3ee !important;
+  box-shadow: 0 2px 12px rgba(22,50,79,.08) !important;
+}
+#staffApp .staff-header .brand strong, #adminApp .top-header .brand strong {
+  color: #16324f !important;
+}
+</style>
+
 <style id="erecpass-transparent-patient-nav">
 /* Remove only the patient navigation bar background; preserve buttons and handlers */
 #patientApp .bottom-nav {

@@ -2018,62 +2018,57 @@ Already have an account?
 <!-- PATIENT BOTTOM NAVIGATION -->
 <nav class="bottom-nav fixed bottom-0 left-0 right-0 z-30 border-t px-2 pt-1 pb-2" style="background:#ffffff !important;">
 <div id="patientNavItems" class="grid grid-cols-4 grid-rows-2 items-center justify-items-center px-1 gap-x-1 gap-y-0">
-<button id="nav-appointments" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('appointments')" type="button">
+<button id="nav-appointments" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('appointments')" type="button">
 <i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Appts</span>
 </button>
 
-<button id="nav-medical-records" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medical-records')" type="button">
+<button id="nav-medical-records" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medical-records')" type="button">
 <i class="fa-solid fa-file-medical text-2xl sm:text-3xl text-red-600" style="color:#d92f2f !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Records</span>
 </button>
 
-<button id="nav-qr" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('qr')" type="button">
+<button id="nav-qr" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('qr')" type="button">
 <i class="fa-solid fa-qrcode text-2xl sm:text-3xl text-sky-500" style="color:#159bd3 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">My QR</span>
 </button>
 
-<button id="nav-help" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('help')" type="button">
+<button id="nav-help" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('help')" type="button">
 <i class="fa-solid fa-comments text-2xl sm:text-3xl text-orange-500" style="color:#f0643d !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Chat</span>
 </button>
 
-<button id="nav-dashboard" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
+<button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
 <i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><spanclass="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
 </button>
 
-<button id="nav-hospital-map" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('hospital-map')" type="button">
+<button id="nav-hospital-map" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('hospital-map')" type="button">
 <i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600" style="color:#16834b !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Map</span>
 </button>
 
-<button id="nav-medicines" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medicines')" type="button">
+<button id="nav-medicines" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medicines')" type="button">
 <i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600" style="color:#7b2be2 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Meds</span>
 </button>
 
-<button id="nav-doctors" class="hidden flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
+<button id="nav-doctors" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
 <i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Staff</span>
 </button>
 </div>
 <button id="patientNavToggle" type="button" onclick="togglePatientNavMore()" aria-expanded="false" class="w-full flex items-center justify-center gap-2 py-1.5 mt-1 rounded-lg font-tech text-sm font-bold" style="color:#1769e0 !important;background:#f0f7ff !important;">
-<i id="patientNavToggleIcon" class="fa-solid fa-chevron-up"></i><span id="patientNavToggleText">More options</span>
+<i id="patientNavToggleIcon" class="fa-solid fa-chevron-down"></i><span id="patientNavToggleText">See more</span>
 </button>
 </nav>
 
 <script>
 function togglePatientNavMore() {
   const moreIds = ['nav-appointments', 'nav-medical-records', 'nav-qr', 'nav-help'];
-  const baseIds = ['nav-dashboard', 'nav-hospital-map', 'nav-medicines', 'nav-doctors'];
   const expanded = document.getElementById('patientNavToggle')?.getAttribute('aria-expanded') === 'true';
   moreIds.forEach(id => {
     const item = document.getElementById(id);
     if (item) item.classList.toggle('hidden', expanded);
   });
-  baseIds.forEach(id => {
-    const item = document.getElementById(id);
-    if (item) item.classList.toggle('hidden', !expanded);
-  });
   const toggle = document.getElementById('patientNavToggle');
   const label = document.getElementById('patientNavToggleText');
   const icon = document.getElementById('patientNavToggleIcon');
   if (toggle) toggle.setAttribute('aria-expanded', String(!expanded));
-  if (label) label.textContent = expanded ? 'Main options' : 'Show main options';
-  if (icon) icon.className = expanded ? 'fa-solid fa-chevron-down' : 'fa-solid fa-chevron-up';
+  if (label) label.textContent = expanded ? 'See more' : 'See less';
+  if (icon) icon.className = expanded ? 'fa-solid fa-chevron-up' : 'fa-solid fa-chevron-down';
 }</script>
 
 <!-- 7. STAFF APPLICATION VIEW -->

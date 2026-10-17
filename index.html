@@ -4477,9 +4477,18 @@ try {
 
 document.getElementById('adminTotalPatients').innerText = patients.length;
 
-document.getElementById('adminPendingCount').innerText = patients.filter(p => p.status === 'Yellow').length;
+// Pending Results includes patients explicitly marked Yellow and patients
+// who do not yet have any lab result saved. High Risk remains clinician/admin
+// assigned (Red); do not diagnose risk by guessing from unstructured lab text.
+document.getElementById('adminPendingCount').innerText = patients.filter(p =>
+  String(p.status || '').toLowerCase() === 'yellow' ||
+  !Array.isArray(p.labResults || p.lab_results) ||
+  (p.labResults || p.lab_results).length === 0
+).length;
 
-document.getElementById('adminHighRiskCount').innerText = patients.filter(p => p.status === 'Red').length;
+document.getElementById('adminHighRiskCount').innerText = patients.filter(p =>
+  String(p.status || '').toLowerCase() === 'red'
+).length;
 
 renderAdminPatients();
 
@@ -4788,9 +4797,25 @@ epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
 
 const client = window.erecpassSupabase;
 if (client && p.id) {
-  const cloudUpdate = await client.from('patients').update({birth_date: birthDate || null, age_category: birthCategory || null}).eq('id', p.id).select('id,birth_date,age_category').maybeSingle();
+  // Save the patient's health status and records to the shared database.
+  // Previously only birthday fields were saved, so Yellow/Red and new lab
+  // results could disappear on refresh and the dashboard counts stayed at zero.
+  const cloudUpdate = await client.from('patients').update({
+    status: status,
+    lab_results: Array.isArray(p.labResults) ? p.labResults : [],
+    prescriptions: Array.isArray(p.prescriptions) ? p.prescriptions : [],
+    doctor_notes: docNote || '',
+    guardian_num: guardianNum || '',
+    birth_date: birthDate || null,
+    age_category: birthCategory || null
+  }).eq('id', p.id).select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age_category').maybeSingle();
   if (cloudUpdate.error) throw cloudUpdate.error;
-  if (!cloudUpdate.data) throw new Error('Supabase did not confirm the birthday update.');
+  if (!cloudUpdate.data) throw new Error('Supabase did not confirm the patient record update.');
+  p.status = cloudUpdate.data.status || status;
+  p.labResults = Array.isArray(cloudUpdate.data.lab_results) ? cloudUpdate.data.lab_results : [];
+  p.prescriptions = Array.isArray(cloudUpdate.data.prescriptions) ? cloudUpdate.data.prescriptions : [];
+  p.doctorNotes = cloudUpdate.data.doctor_notes || '';
+  p.guardianNum = cloudUpdate.data.guardian_num || '';
   p.birthDate = cloudUpdate.data.birth_date || '';
   p.birth_date = cloudUpdate.data.birth_date || '';
   p.ageCategory = cloudUpdate.data.age_category || '';

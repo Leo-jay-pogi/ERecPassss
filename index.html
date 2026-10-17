@@ -1099,6 +1099,15 @@ body::before {
 }
 </style>
 <!-- END WHITE BACKGROUND THEME OVERRIDE -->
+<style id="erecpass-transparent-patient-nav">
+/* Remove only the patient navigation bar background; preserve buttons and handlers */
+#patientApp .bottom-nav {
+  background: transparent !important;
+  background-color: transparent !important;
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+}
+</style>
 <style id="erecpass-help-chat-reply-visibility-fix">
 .erecpass-chat-message-wrap .bot-message,.erecpass-chat-message-wrap .bot-message.text-slate-200,.erecpass-chat-message-wrap .bg-cyan-500{opacity:1!important;visibility:visible!important;text-shadow:none!important}
 .erecpass-chat-message-wrap .bot-message{color:#16324f!important;background:#e8f7f5!important;border:1px solid rgba(23,105,224,.18)!important;-webkit-text-fill-color:#16324f!important}
@@ -2017,7 +2026,7 @@ Already have an account?
 </main>
 <!-- PATIENT BOTTOM NAVIGATION -->
 
-<nav class="bottom-nav fixed bottom-0 left-0 right-0 h-[122px] border-t z-30 grid grid-cols-4 grid-rows-2 items-center justify-items-center px-2 py-2 gap-x-1 gap-y-0" style="background:#ffffff !important;">
+<nav class="bottom-nav fixed bottom-0 left-0 right-0 h-[122px] border-t z-30 grid grid-cols-4 grid-rows-2 items-center justify-items-center px-2 py-2 gap-x-1 gap-y-0" style="background:transparent !important; background-color:transparent !important; backdrop-filter:none !important;">
 
 <button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
 <i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><spanclass="text-blue-600" style="color:#1769e0 !important">Dashboard</span>

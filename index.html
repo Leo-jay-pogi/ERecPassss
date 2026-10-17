@@ -1114,19 +1114,26 @@ body::before {
 #patientBottomNav .patient-nav-see-more {
   color: #ffffff !important;
   position: absolute;
-  top: 8px;
+  top: 6px;
   left: 50%;
   transform: translateX(-50%);
   border: 0;
   border-radius: 999px;
-  padding: 7px 30px;
+  padding: 4px 16px;
   background: #205b9b;
   color: #fff;
   font-weight: 700;
   font-family: Inter, sans-serif;
-  font-size: 15px;
-  line-height: 1.3;
+  font-size: 12px;
+  line-height: 1.2;
   z-index: 2;
+}
+/* Keep the patient logout action above the fixed bottom navigation. */
+#profile.page {
+  padding-bottom: 250px !important;
+}
+#profile .profile-card {
+  margin-bottom: 12px !important;
 }
 #patientBottomNav.patient-nav-expanded .patient-nav-see-more { display: block !important; }
 #patientBottomNav.patient-nav-collapsed .patient-nav-extra { display: none !important; }

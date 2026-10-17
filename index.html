@@ -3978,7 +3978,7 @@ async function savePatientCloudFields(fields) {
 
   // Verify the value that was just written so the Save action is truly permanent.
   const verify = await client.from('patients')
-    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category')
+    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender')
     .eq('id', updated.data.id)
     .maybeSingle();
 

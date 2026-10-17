@@ -4653,15 +4653,25 @@ if (tabName === 'settings') document.getElementById('adminTabSettings').classLis
 
 function renderAdminPatients() {
 
-const search = document.getElementById('adminSearchPatient').value.toLowerCase();
+const search = (document.getElementById('adminSearchPatient')?.value || '').toLowerCase();
 
-const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
+const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]') || [];
 
 const container = document.getElementById('adminPatientsTableList');
+if (!container) return;
 
 container.innerHTML = "";
 
-patients.filter(p => p.fullName.toLowerCase().includes(search) || p.id.toLowerCase().includes(search) || p.status.toLowerCase().includes(search)).forEach(p => {
+patients.filter(p => {
+  const name = String(p.fullName || p.full_name || p.name || '');
+  const id = String(p.id || '');
+  const status = String(p.status || 'Green');
+  return name.toLowerCase().includes(search) || id.toLowerCase().includes(search) || status.toLowerCase().includes(search);
+}).forEach(p => {
+  p.fullName = String(p.fullName || p.full_name || p.name || 'Unnamed Patient');
+  p.id = String(p.id || '');
+  p.status = String(p.status || 'Green');
+  p.prescriptions = Array.isArray(p.prescriptions) ? p.prescriptions : [];
 
 container.innerHTML += `
 

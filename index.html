@@ -2299,17 +2299,21 @@ Already have an account?
 
 <div class="text-[10px] text-cyan-300 font-bold uppercase tracking-wider">Patient Profile</div>
 
-<div class="grid grid-cols-2 gap-2 text-xs text-slate-300">
+<div class="grid grid-cols-1 sm:grid-cols-2 gap-3 text-base text-white">
 
-<div><span class="text-slate-500">ID Number:</span> <strong id="scannedId">--</strong></div>
+<div><span>ID Number:</span> <strong id="scannedId">--</strong></div>
 
-<div><span class="text-slate-500">Classification:</span> <strong id="scannedAge">--</strong></div>
+<div><span>Classification:</span> <strong id="scannedAge">--</strong></div>
 
-<div><span class="text-slate-500">Guardian Contact:</span> <strong id="scannedGuardian">--</strong></div>
+<div><span>Gender:</span> <strong id="scannedGender">--</strong></div>
 
-<div><span class="text-slate-500">Email:</span> <strong id="scannedEmail">--</strong></div>
+<div><span>Birthday / Date of Birth:</span> <strong id="scannedBirthDate">--</strong></div>
 
-<div><span class="text-slate-500">SIM / Phone:</span> <strong id="scannedSim">--</strong></div>
+<div><span>Guardian Contact:</span> <strong id="scannedGuardian">--</strong></div>
+
+<div class="min-w-0 break-words"><span>Email:</span> <strong id="scannedEmail" class="break-all">--</strong></div>
+
+<div><span>SIM / Phone:</span> <strong id="scannedSim">--</strong></div>
 
 </div>
 
@@ -4549,6 +4553,7 @@ try {
         photo: c.photo || '',
         ageCategory: c.age_category || '',
         birthDate: c.birth_date || '', birth_date: c.birth_date || '',
+        gender: c.gender || '',
         guardianNum: c.guardian_num || '',
         status: c.status || 'Green',
         labResults: c.lab_results || [],
@@ -4598,6 +4603,19 @@ const scannedBirthDate = p.birthDate || p.birth_date || '';
 const scannedAgeValue = getPatientAgeFromBirthDate(scannedBirthDate);
 const scannedCategory = scannedAgeValue === null ? 'Birthday not set' : (scannedAgeValue <= 17 ? 'Minor' : 'Adult');
 document.getElementById('scannedAge').innerText = scannedAgeValue === null ? scannedCategory : scannedCategory + ' · ' + scannedAgeValue + ' years old';
+
+const genderEl = document.getElementById('scannedGender');
+if (genderEl) genderEl.innerText = p.gender || '--';
+const birthDateEl = document.getElementById('scannedBirthDate');
+if (birthDateEl) {
+  const rawBirthDate = String(scannedBirthDate || '').slice(0, 10);
+  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(rawBirthDate)) {
+    const parts = rawBirthDate.split('-');
+    birthDateEl.innerText = parts[1] + '/' + parts[2] + '/' + parts[0];
+  } else {
+    birthDateEl.innerText = '--';
+  }
+}
 
 document.getElementById('scannedGuardian').innerText = p.guardianNum || p.guardian_num || "None";
 
@@ -6471,6 +6489,26 @@ margin-right: auto;
   function addLabPhotoButtonToScannedCard() {
     var card = document.getElementById("scannedPatientCard");
     if (!card) return;
+
+    // Make the scanned patient record easier to read without changing its behavior.
+    card.style.fontSize = "18px";
+    card.style.color = "#ffffff";
+    card.querySelectorAll("span, strong, h3, p, div").forEach(function (el) {
+      if (el.id !== "scannedStatusBadge") {
+        el.style.color = "#ffffff";
+        if (el.matches("span, strong, h3, p")) el.style.fontSize = "inherit";
+      }
+    });
+    var scannedName = document.getElementById("scannedName");
+    if (scannedName) scannedName.style.fontSize = "24px";
+    var scannedPhoto = document.getElementById("scannedPatientPhoto");
+    if (scannedPhoto) { scannedPhoto.style.width = "72px"; scannedPhoto.style.height = "72px"; }
+    var scannedCardGrid = card.querySelector(".grid");
+    if (scannedCardGrid) scannedCardGrid.style.fontSize = "18px";
+    var labTitle = card.querySelector("#scannedLabResults")?.previousElementSibling;
+    if (labTitle) labTitle.style.fontSize = "18px";
+    var noteTitle = card.querySelector("#scannedDoctorNote")?.previousElementSibling;
+    if (noteTitle) noteTitle.style.fontSize = "18px";
 
     var existing = document.getElementById("scannedLabPhotoButton");
     if (existing) existing.remove();

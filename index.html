@@ -8419,6 +8419,8 @@ setTimeout(installAddedUI,2500);
     if(!body) return;
     const button=input?.parentElement?.querySelector('button');
     try {
+      if(currentSession?.role!=='patient') throw new Error('Mag-login muna gamit ang Patient account.');
+      if(!S()) throw new Error('Hindi pa nakakonekta sa Supabase. Pakisubukan ulit.');
       if(button) button.disabled=true;
       const uid=await ensureAuthUserId();
       const c=await getConversation(uid);
@@ -8442,6 +8444,20 @@ setTimeout(installAddedUI,2500);
       if(button) button.disabled=false;
     }
   };
+
+  // Allow Enter-to-send for the existing Patient and Admin chat inputs.
+  // Preserve Shift+Enter for multiline-capable keyboards and avoid duplicate sends.
+  document.addEventListener('keydown',function(ev){
+    if(ev.key!=='Enter' || ev.shiftKey || ev.isComposing) return;
+    const target=ev.target;
+    if(target?.id==='patientChatInput'){
+      ev.preventDefault();
+      window.sendPatientMessage();
+    } else if(target?.id==='adminChatInput'){
+      ev.preventDefault();
+      window.sendAdminChatMessage();
+    }
+  });
   window.sendPatientChatFile=()=>alert('Text messaging is ready.');
 
   async function renderStaffAdminChat(){

@@ -3818,9 +3818,9 @@ try {
   container.innerHTML = myAppts.map(a => {
     const appointmentStatus = a.status || 'Pending Approval';
     const statusClass = appointmentStatus === 'Approved'
-      ? 'bg-emerald-200 border-emerald-500 text-emerald-900'
+      ? 'erecpass-status-approved'
       : appointmentStatus === 'Cancelled'
-        ? 'bg-rose-200 border-rose-500 text-rose-900'
+        ? 'erecpass-status-cancelled'
         : 'bg-cyan-950/80 border-cyan-400/40 text-cyan-300';
     return `
     <div class="list-card p-3.5 rounded-xl flex items-center justify-between gap-3">
@@ -3832,7 +3832,7 @@ try {
       <div class="flex flex-col items-end gap-1.5 shrink-0">
         <span class="px-2.5 py-1 ${statusClass} rounded-full text-[10px] font-tech font-bold">${appointmentStatus}</span>
         <button type="button"
-          class="px-2.5 py-1 bg-rose-950/80 border border-rose-400/40 text-rose-300 rounded-lg font-tech text-[10px] font-bold hover:bg-rose-900/80"
+          class="erecpass-action-delete px-2.5 py-1 rounded-lg font-tech text-[10px] font-bold"
           onclick="deletePatientAppointment('${a.id}')">
           <i class="fa-solid fa-trash-can mr-1"></i> Delete
         </button>
@@ -4550,7 +4550,7 @@ function renderStaffApprovedAppointments() {
         '<p class="text-xs text-slate-300 mt-1">' + reason + '</p>' +
         '<p class="text-[11px] text-slate-400 mt-1"><i class="fa-solid fa-user-doctor mr-1"></i>' + doctor + '</p>' +
         '<p class="text-[11px] text-cyan-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i>' + date + '</p>' +
-        '</div><span class="px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 text-[10px] font-bold shrink-0">Approved</span></div></div>';
+        '</div><span class="erecpass-status-approved px-2 py-1 rounded-full text-[10px] font-bold shrink-0">Approved</span></div></div>';
     }).join('');
   } catch (error) {
     console.error('[ERecPass] Staff approved appointments:', error);
@@ -5454,12 +5454,12 @@ try {
         <div>
           <strong class="text-white block">${a.patient_name || 'Patient'} - ${a.reason || 'Appointment'}</strong>
           <p class="text-slate-400">Doctor: ${a.doctor || '—'} · Date: ${a.appointment_date || '—'}</p>
-          <span class="inline-block mt-1 px-2 py-0.5 rounded-full bg-slate-900/70 text-cyan-300 text-[9px] font-tech">${status}</span>
+          <span class="erecpass-appointment-status inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-tech" data-appointment-status="${status}">${status}</span>
         </div>
         <div class="flex gap-1 flex-wrap justify-end">
-          ${status !== 'Approved' && status !== 'Cancelled' ? '<button onclick="updateApptStatus(\''+a.id+'\',\'Approved\')" class="px-2 py-1 bg-emerald-950 text-emerald-300 rounded font-tech text-[10px]">Approve</button>' : ''}
-          ${status !== 'Cancelled' ? '<button onclick="updateApptStatus(\''+a.id+'\',\'Cancelled\')" class="px-2 py-1 bg-rose-950 text-rose-300 rounded font-tech text-[10px]">Cancel</button>' : ''}
-          <button onclick="deleteAppt(\''+a.id+'\')" class="px-2 py-1 bg-slate-800 text-slate-300 rounded font-tech text-[10px]">Delete</button>
+          ${status !== 'Approved' && status !== 'Cancelled' ? '<button onclick="updateApptStatus(\''+a.id+'\',\'Approved\')" class="erecpass-action-approved px-2 py-1 rounded font-tech text-[10px]">Approve</button>' : ''}
+          ${status !== 'Cancelled' ? '<button onclick="updateApptStatus(\''+a.id+'\',\'Cancelled\')" class="erecpass-action-cancel px-2 py-1 rounded font-tech text-[10px]">Cancel</button>' : ''}
+          <button onclick="deleteAppt(\''+a.id+'\')" class="erecpass-action-delete px-2 py-1 rounded font-tech text-[10px]">Delete</button>
         </div>
       </div>`;
   }).join('');
@@ -8879,6 +8879,17 @@ function togglePatientMoreNav() {
   toggle.textContent = expanded ? 'See More' : '← Show Less';
 }
 </script>
+
+
+<!-- ERECPASS APPOINTMENT STATUS COLORS: visual-only, shared by Patient/Staff/Admin -->
+<style id="erecpass-appointment-status-colors">
+.erecpass-status-approved,.erecpass-action-approved{background:#16a34a!important;color:#fff!important;border:1px solid #15803d!important}
+.erecpass-status-cancelled,.erecpass-action-cancel{background:#eab308!important;color:#fff!important;border:1px solid #ca8a04!important}
+.erecpass-action-delete{background:#dc2626!important;color:#fff!important;border:1px solid #b91c1c!important}
+.erecpass-appointment-status[data-appointment-status="Approved"]{background:#16a34a!important;color:#fff!important;border:1px solid #15803d!important}
+.erecpass-appointment-status[data-appointment-status="Cancelled"]{background:#eab308!important;color:#fff!important;border:1px solid #ca8a04!important}
+</style>
+<!-- END ERECPASS APPOINTMENT STATUS COLORS -->
 
 </body>
 </html>

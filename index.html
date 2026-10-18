@@ -3863,7 +3863,7 @@ function renderPatientLabResults() {
   const gender = String(patient.gender || patient.sex || '').trim();
   const birthday = String(patient.birthDate || patient.birth_date || '').slice(0, 10);
   let formattedBirthday = '--';
-  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(birthday)) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(birthday)) {
     const [year, month, day] = birthday.split('-');
     formattedBirthday = month + '/' + day + '/' + year;
   }
@@ -4634,7 +4634,7 @@ if (genderEl) genderEl.innerText = p.gender || p.sex || '--';
 const birthDateEl = document.getElementById('scannedBirthDate');
 if (birthDateEl) {
   const rawBirthDate = String(scannedBirthDate || '').slice(0, 10);
-  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(rawBirthDate)) {
+  if (/^\d{4}-\d{2}-\d{2}$/.test(rawBirthDate)) {
     const parts = rawBirthDate.split('-');
     birthDateEl.innerText = parts[1] + '/' + parts[2] + '/' + parts[0];
   } else {
@@ -4660,7 +4660,7 @@ const labs = Array.isArray(p.labResults || p.lab_results) ? (p.labResults || p.l
 const scannedGenderValue = String(p.gender || p.sex || '').trim() || '--';
 const scannedBirthRaw = String(p.birthDate || p.birth_date || p.date_of_birth || p.dob || '').slice(0, 10);
 let scannedBirthFormatted = '--';
-if (/^\\d{4}-\\d{2}-\\d{2}$/.test(scannedBirthRaw)) {
+if (/^\d{4}-\d{2}-\d{2}$/.test(scannedBirthRaw)) {
   const birthParts = scannedBirthRaw.split('-');
   scannedBirthFormatted = birthParts[1] + '/' + birthParts[2] + '/' + birthParts[0];
 }

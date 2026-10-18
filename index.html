@@ -2285,11 +2285,11 @@ Already have an account?
 
 <div class="flex justify-between items-center gap-3">
 
-<div class="flex items-center gap-3 min-w-0">
+<div class="flex flex-col items-start gap-1 min-w-0">
 
 <img id="scannedPatientPhoto" src="" alt="Patient Profile" class="w-12 h-12 rounded-full object-cover border-2 border-cyan-400/50 bg-slate-900 shrink-0" style="display:none;">
 
-<h3 id="scannedName" class="font-bold text-white text-2xl whitespace-normal break-words leading-tight min-w-0 flex-1">Patient Name</h3>
+<h3 id="scannedName" class="font-bold text-white text-sm whitespace-normal break-words leading-tight min-w-0">Patient Name</h3>
 
 </div>
 
@@ -6505,12 +6505,12 @@ margin-right: auto;
     });
     var scannedName = document.getElementById("scannedName");
     if (scannedName) {
-      scannedName.style.fontSize = "24px";
+      scannedName.style.fontSize = "14px";
       scannedName.style.whiteSpace = "normal";
       scannedName.style.overflow = "visible";
       scannedName.style.textOverflow = "clip";
       scannedName.style.overflowWrap = "anywhere";
-      scannedName.style.flex = "1 1 auto";
+      scannedName.style.flex = "0 1 auto";
       scannedName.style.minWidth = "0";
     }
     var scannedPhoto = document.getElementById("scannedPatientPhoto");

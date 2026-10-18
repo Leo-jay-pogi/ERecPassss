@@ -2289,7 +2289,7 @@ Already have an account?
 
 <img id="scannedPatientPhoto" src="" alt="Patient Profile" class="w-12 h-12 rounded-full object-cover border-2 border-cyan-400/50 bg-slate-900 shrink-0" style="display:none;">
 
-<h3 id="scannedName" class="font-bold text-white text-base truncate">Patient Name</h3>
+<h3 id="scannedName" class="font-bold text-white text-2xl whitespace-normal break-words leading-tight min-w-0 flex-1">Patient Name</h3>
 
 </div>
 
@@ -4605,7 +4605,7 @@ const scannedCategory = scannedAgeValue === null ? 'Birthday not set' : (scanned
 document.getElementById('scannedAge').innerText = scannedAgeValue === null ? scannedCategory : scannedCategory + ' · ' + scannedAgeValue + ' years old';
 
 const genderEl = document.getElementById('scannedGender');
-if (genderEl) genderEl.innerText = p.gender || '--';
+if (genderEl) genderEl.innerText = p.gender || p.sex || '--';
 const birthDateEl = document.getElementById('scannedBirthDate');
 if (birthDateEl) {
   const rawBirthDate = String(scannedBirthDate || '').slice(0, 10);
@@ -4627,7 +4627,9 @@ if (simEl) simEl.innerText = p.sim || '--';
 
 document.getElementById('scannedStatusBadge').innerText = p.status || 'Green';
 
-document.getElementById('scannedStatusBadge').className = (p.status || 'Green') === 'Green' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-950 text-emerald-300 border border-emerald-500" : ((p.status || 'Green') === 'Yellow' ? "px-2 py-0.5 rounded text-[10px] font-bold bg-amber-950 text-amber-300 border border-amber-500" : "px-2 py-0.5 rounded text-[10px] font-bold bg-rose-950 text-rose-300 border border-rose-500");
+const scannedStatus = String(p.status || 'Green').trim();
+document.getElementById('scannedStatusBadge').className = "px-3 py-2 rounded-lg text-sm font-bold text-white border shrink-0 " + (scannedStatus.toLowerCase() === 'green' ? "bg-green-600 border-green-700" : (scannedStatus.toLowerCase() === 'yellow' ? "bg-yellow-500 border-yellow-600" : "bg-red-600 border-red-700"));
+document.getElementById('scannedStatusBadge').style.color = "#ffffff";
 
 const labs = p.labResults || p.lab_results || [];
 
@@ -6502,7 +6504,15 @@ margin-right: auto;
       }
     });
     var scannedName = document.getElementById("scannedName");
-    if (scannedName) scannedName.style.fontSize = "24px";
+    if (scannedName) {
+      scannedName.style.fontSize = "24px";
+      scannedName.style.whiteSpace = "normal";
+      scannedName.style.overflow = "visible";
+      scannedName.style.textOverflow = "clip";
+      scannedName.style.overflowWrap = "anywhere";
+      scannedName.style.flex = "1 1 auto";
+      scannedName.style.minWidth = "0";
+    }
     var scannedPhoto = document.getElementById("scannedPatientPhoto");
     if (scannedPhoto) { scannedPhoto.style.width = "72px"; scannedPhoto.style.height = "72px"; }
     var scannedCardGrid = card.querySelector(".grid");

@@ -3855,45 +3855,70 @@ async function deletePatientAppointment(appointmentId) {
 window.deletePatientAppointment = deletePatientAppointment;
 
 function renderPatientLabResults() {
+  const container = document.getElementById('patientLabResultsList');
+  if (!container) return;
 
-const container = document.getElementById('patientLabResultsList');
+  const patient = currentSession?.data || {};
+  const labs = patient.labResults || patient.lab_results || [];
+  const gender = String(patient.gender || patient.sex || '').trim();
+  const birthday = String(patient.birthDate || patient.birth_date || '').slice(0, 10);
+  let formattedBirthday = '--';
+  if (/^\\d{4}-\\d{2}-\\d{2}$/.test(birthday)) {
+    const [year, month, day] = birthday.split('-');
+    formattedBirthday = month + '/' + day + '/' + year;
+  }
 
-const labs = currentSession.data.labResults || [];
+  // Show the same saved demographics as Patient Profile, sourced from the
+  // active patient record restored from Supabase by refreshPatientPortal().
+  container.innerHTML = '';
+  const details = document.createElement('div');
+  details.className = 'record-card p-3.5 rounded-xl space-y-1 mb-3';
+  const heading = document.createElement('strong');
+  heading.className = 'text-white text-xs font-tech block';
+  heading.textContent = 'Patient Information';
+  const genderLine = document.createElement('p');
+  genderLine.className = 'text-xs text-slate-300';
+  genderLine.textContent = 'Gender: ' + (gender || '--');
+  const birthdayLine = document.createElement('p');
+  birthdayLine.className = 'text-xs text-slate-300';
+  birthdayLine.textContent = 'Birthday: ' + formattedBirthday;
+  details.append(heading, genderLine, birthdayLine);
+  container.appendChild(details);
 
-container.innerHTML = "";
+  if (!Array.isArray(labs) || labs.length === 0) {
+    const empty = document.createElement('p');
+    empty.className = 'text-xs text-slate-400';
+    empty.textContent = 'No lab results on file.';
+    container.appendChild(empty);
+    return;
+  }
 
-if (labs.length === 0) {
-
-container.innerHTML = `<p class="text-xs text-slate-400">No lab results on file.</p>`;
-
-return;
-
-}
-
-labs.forEach(l => {
-
-container.innerHTML += `
-
-<div class="record-card p-3.5 rounded-xl space-y-1">
-
-<div class="flex justify-between items-center">
-
-<strong class="text-white text-xs font-tech">${l.type}</strong>
-
-<span class="text-[10px] text-slate-400">${l.date}</span>
-
-</div>
-
-<p class="text-xs text-slate-300">${l.result}</p>
-
-${l.photo ? `<img src="${l.photo}" class="w-full max-h-32 object-cover rounded-lg border border-cyan-500/30 mt-2">` : ''}
-
-</div>
-
-`;
-
-});
-
+  labs.forEach(l => {
+    const card = document.createElement('div');
+    card.className = 'record-card p-3.5 rounded-xl space-y-1';
+    const top = document.createElement('div');
+    top.className = 'flex justify-between items-center';
+    const type = document.createElement('strong');
+    type.className = 'text-white text-xs font-tech';
+    type.textContent = l.type || 'Laboratory Result';
+    const date = document.createElement('span');
+    date.className = 'text-[10px] text-slate-400';
+    date.textContent = l.date || '';
+    top.append(type, date);
+    const result = document.createElement('p');
+    result.className = 'text-xs text-slate-300';
+    result.textContent = l.result || l.text || '';
+    card.appendChild(top);
+    card.appendChild(result);
+    if (l.photo) {
+      const img = document.createElement('img');
+      img.src = l.photo;
+      img.className = 'w-full max-h-32 object-cover rounded-lg border border-cyan-500/30 mt-2';
+      img.alt = 'Laboratory result attachment';
+      card.appendChild(img);
+    }
+    container.appendChild(card);
+  });
 }
 
 function renderPatientPrescriptions() {

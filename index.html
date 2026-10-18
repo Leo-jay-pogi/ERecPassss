@@ -8360,7 +8360,7 @@ setTimeout(installAddedUI,2500);
   }
 
   async function renderAdmin(){
-    if(!selectedPatientId||!['admin','staff'].includes(currentSession?.role)||!S()) return;
+    if(!selectedPatientId||currentSession?.role!=='admin'||!S()) return;
     const token=++renderToken;
     try {
       const x=await getMessages(selectedPatientId);
@@ -8379,7 +8379,7 @@ setTimeout(installAddedUI,2500);
         filter:'conversation_id=eq.'+conversationId
       },()=>{
         if(currentSession?.role==='patient') renderPatient();
-        else if(['admin','staff'].includes(currentSession?.role)) renderAdmin();
+        else if(currentSession?.role==='admin') renderAdmin();
       })
       .subscribe();
   }
@@ -8397,7 +8397,7 @@ setTimeout(installAddedUI,2500);
       const wrap=button?.closest('.erecpass-chat-message-wrap');
       if(wrap) wrap.remove();
       if(currentSession?.role==='patient') await renderPatient();
-      else if(['admin','staff'].includes(currentSession?.role)) await renderAdmin();
+      else if(currentSession?.role==='admin') await renderAdmin();
     } catch(e) {
       console.error('[ERecPass] Delete message failed:',e);
       alert('Hindi ma-delete ang message. Pakisubukan ulit.');
@@ -8551,7 +8551,7 @@ setTimeout(installAddedUI,2500);
 
   window.renderAdminPatientChatList=async function(){
   const box=document.getElementById('adminPatientChatList');
-  if(!box||!window.erecpassSupabase||!['admin','staff'].includes(currentSession?.role)) return;
+  if(!box||!window.erecpassSupabase||currentSession?.role!=='admin') return;
 
   const client=window.erecpassSupabase;
   try{
@@ -8657,6 +8657,7 @@ setTimeout(installAddedUI,2500);
 };
 
 window.selectAdminChatPatient=async function(targetId){
+  if(currentSession?.role!=='admin') { alert('Admin lang ang maaaring magbukas at sumagot sa Patient/Staff chats.'); return; }
   try{ window.sessionStorage?.setItem('erecpassSelectedChatPatient',targetId); }catch(e){}
   const header=document.getElementById('adminSelectedChatHeader');
   const client=window.erecpassSupabase;
@@ -8700,7 +8701,7 @@ window.sendAdminChatMessage=async function(){
   if(!body) return;
   const button=input?.parentElement?.querySelector('button');
   try{
-    if(!['admin','staff'].includes(currentSession?.role)) throw new Error('Only Admin or authorized Staff can reply.');
+    if(currentSession?.role!=='admin') throw new Error('Admin account lang ang maaaring mag-reply sa Patient/Staff messages.');
     if(button) button.disabled=true;
     const uid=await ensureAuthUserId();
     const c=await getConversation(selectedPatientId);

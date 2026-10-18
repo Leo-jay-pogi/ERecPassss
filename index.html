@@ -8270,12 +8270,14 @@ setTimeout(installAddedUI,2500);
   let authUserIdCache = null;
   const currentUserId = () => authUserIdCache || null;
   const ensureAuthUserId = async () => {
-    if(authUserIdCache) return authUserIdCache;
     const client=S();
     if(!client) throw new Error('Supabase is not ready.');
+    // Always read the current Supabase session instead of trusting a cached
+    // user ID. This prevents messages being sent under a previous account
+    // after logging out and switching between Patient, Staff, and Admin.
     const {data,error}=await client.auth.getUser();
     if(error) throw error;
-    if(!data?.user?.id) throw new Error('Your Supabase login session is missing. Please log in again.');
+    if(!data?.user?.id) { authUserIdCache=null; throw new Error('Your Supabase login session is missing. Please log in again.'); }
     authUserIdCache=data.user.id;
     return authUserIdCache;
   };
@@ -8518,6 +8520,15 @@ setTimeout(installAddedUI,2500);
       if(button) button.disabled=false;
     }
   };
+
+  // Enter-to-send for the Staff -> Admin chat, matching Patient/Admin chat behavior.
+  document.addEventListener('keydown',function(ev){
+    if(ev.key!=='Enter' || ev.shiftKey || ev.isComposing) return;
+    if(ev.target?.id==='staffAdminChatInput'){
+      ev.preventDefault();
+      window.sendStaffAdminMessage();
+    }
+  });
 
   // Staff-only long press: hold a message for about 1 second to reveal
   // Delete. This is scoped to the Staff -> Admin chat only.

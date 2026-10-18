@@ -2626,14 +2626,20 @@ Already have an account?
 
 <div id="adminTabChat" class="admin-tab-content hidden grid grid-cols-1 md:grid-cols-3 gap-4">
 
-<div class="glass-card p-3 rounded-2xl h-96 overflow-y-auto space-y-2">
+<div class="glass-card p-3 rounded-2xl h-96 overflow-y-auto space-y-3">
 
-<h3 class="text-xs font-tech text-cyan-300 font-bold mb-2">Patients List</h3>
-
+<div>
+<h3 class="text-xs font-tech text-cyan-300 font-bold mb-2">Patient Chats</h3>
 <div id="adminPatientChatList" class="space-y-1">
+<!-- Patient chat accounts are loaded from Supabase -->
+</div>
+</div>
 
-<!-- Patient items to select -->
-
+<div class="border-t border-cyan-500/20 pt-3">
+<h3 class="text-xs font-tech text-rose-300 font-bold mb-2">Staff Chats</h3>
+<div id="adminStaffChatList" class="space-y-1">
+<!-- Staff chat accounts are loaded from Supabase -->
+</div>
 </div>
 
 </div>
@@ -8550,64 +8556,46 @@ setTimeout(installAddedUI,2500);
   },true);
 
   window.renderAdminPatientChatList=async function(){
-  const box=document.getElementById('adminPatientChatList');
-  if(!box||!window.erecpassSupabase||currentSession?.role!=='admin') return;
+  const patientBox=document.getElementById('adminPatientChatList');
+  const staffBox=document.getElementById('adminStaffChatList');
+  if((!patientBox&&!staffBox)||!window.erecpassSupabase||currentSession?.role!=='admin') return;
 
   const client=window.erecpassSupabase;
   try{
-    // Load Patient and Staff records directly so inactive accounts are still
-    // visible. This avoids depending on the profiles SELECT policy.
-    let accounts=[];
+    // Keep the Patient and Staff inboxes separate while reusing existing
+    // Supabase tables and message conversations.
     const [patients,staff]=await Promise.all([
       client.from('patients').select('user_id,full_name,email,active').order('full_name',{ascending:true}),
       client.from('staff').select('user_id,name,email,active').order('name',{ascending:true})
     ]);
-
-    if(!patients.error){
-      (patients.data||[]).forEach(p=>accounts.push({
-        user_id:p.user_id,
-        full_name:p.full_name||p.email||'Patient',
-        email:p.email||'',
-        role:'patient',
-        active:p.active!==false
-      }));
-    }
-    if(!staff.error){
-      (staff.data||[]).forEach(s=>accounts.push({
-        user_id:s.user_id,
-        full_name:s.name||s.email||'Staff',
-        email:s.email||'',
-        role:'staff',
-        active:s.active!==false
-      }));
-    }
-
-    // If older records are not present in the two role tables, supplement
-    // from profiles without allowing a profiles error to break the list.
-    if(!accounts.length){
+    let patientAccounts=!patients.error?(patients.data||[]).map(p=>({
+      user_id:p.user_id,full_name:p.full_name||p.email||'Patient',
+      email:p.email||'',role:'patient',active:p.active!==false
+    })):[];
+    let staffAccounts=!staff.error?(staff.data||[]).map(s=>({
+      user_id:s.user_id,full_name:s.name||s.email||'Staff',
+      email:s.email||'',role:'staff',active:s.active!==false
+    })):[];
+    
+    // Older accounts may only be represented in profiles; use that as a
+    // fallback only when both role-specific queries return no accounts.
+    if(!patientAccounts.length&&!staffAccounts.length){
       const pr=await client.from('profiles')
         .select('id,full_name,role,active')
         .in('role',['patient','staff'])
-        .order('role',{ascending:true})
         .order('full_name',{ascending:true});
-      if(!pr.error && Array.isArray(pr.data)){
-        accounts=pr.data.map(p=>({
-          user_id:p.id,
-          full_name:p.full_name||'Account',
-          email:'',
-          role:p.role,
-          active:p.active!==false
-        }));
+      if(!pr.error&&Array.isArray(pr.data)){
+        for(const p of pr.data){
+          const a={user_id:p.id,full_name:p.full_name||p.role||'Account',
+            email:'',role:p.role,active:p.active!==false};
+          (a.role==='staff'?staffAccounts:patientAccounts).push(a);
+        }
       }
     }
-    accounts=accounts.filter(a=>a && a.user_id);
-    accounts.sort((a,b)=>{
-      const roleA=a.role==='patient'?0:1, roleB=b.role==='patient'?0:1;
-      if(roleA!==roleB) return roleA-roleB;
-      return String(a.full_name||'').localeCompare(String(b.full_name||''));
-    });
-
-    const ids=accounts.map(a=>a.user_id);
+    patientAccounts=patientAccounts.filter(a=>a.user_id);
+    staffAccounts=staffAccounts.filter(a=>a.user_id);
+    const all=[...patientAccounts,...staffAccounts];
+    const ids=all.map(a=>a.user_id);
     let conversations=[];
     if(ids.length){
       const cr=await client.from('message_conversations')
@@ -8616,10 +8604,9 @@ setTimeout(installAddedUI,2500);
         .order('updated_at',{ascending:false});
       if(!cr.error) conversations=cr.data||[];
     }
-
     const latest={};
     for(const conv of conversations){
-      if(latest[conv.patient_id]) continue;
+      if(Object.prototype.hasOwnProperty.call(latest,conv.patient_id)) continue;
       try{
         const mr=await client.from('message_messages')
           .select('body,created_at')
@@ -8627,32 +8614,30 @@ setTimeout(installAddedUI,2500);
           .order('created_at',{ascending:false})
           .limit(1);
         latest[conv.patient_id]=mr.error?null:(mr.data?.[0]||null);
-      }catch(e){
-        latest[conv.patient_id]=null;
-      }
+      }catch(e){latest[conv.patient_id]=null;}
     }
-
-    box.innerHTML=accounts.map(a=>{
-      const name=String(a.full_name||'Account').trim();
-      const role=a.role==='staff'?'Staff':'Patient';
-      const isActive=a.active!==false;
-      const statusLabel=isActive?'Active':'Inactive';
-      const statusClass=isActive?'text-emerald-600':'text-rose-600';
-      const dotClass=isActive?'bg-emerald-500':'bg-rose-500';
-      const last=latest[a.user_id];
-      return '<button type="button" data-chat-patient="'+esc(a.user_id)+'" onclick="selectAdminChatPatient(\''+esc(a.user_id)+'\')" class="w-full text-left p-3 bg-slate-900 rounded-xl hover:bg-cyan-950 cursor-pointer text-xs mb-1">'+
-        '<span class="text-white font-tech flex items-center justify-between gap-2">'+
-          '<span class="truncate">'+esc(name)+'</span>'+
-          '<span class="'+statusClass+' text-[9px] font-bold inline-flex items-center gap-1 shrink-0"><span class="'+dotClass+' inline-block w-2 h-2 rounded-full"></span>'+statusLabel+'</span>'+
-        '</span>'+
-        '<span class="text-[9px] text-cyan-300 block">'+role+'</span>'+
-        '<span class="text-[10px] text-slate-300 block truncate">'+esc(last?.body||'No messages yet')+'</span>'+
-        '<span class="text-[8px] text-slate-500">'+(last?.created_at?new Date(last.created_at).toLocaleString():'')+'</span>'+
-        '</button>';
-    }).join('') || '<div class="text-xs text-slate-500 p-2">No Patient or Staff accounts found.</div>';
+    const renderList=(box,accounts,roleLabel)=>{
+      if(!box)return;
+      box.innerHTML=accounts.map(a=>{
+        const name=String(a.full_name||roleLabel).trim();
+        const active=a.active!==false;
+        const last=latest[a.user_id];
+        return '<button type="button" data-chat-account="'+esc(a.user_id)+'" onclick="selectAdminChatPatient(\''+esc(a.user_id)+'\')" class="w-full text-left p-3 bg-slate-900 rounded-xl hover:bg-cyan-950 cursor-pointer text-xs mb-1">'+
+          '<span class="text-white font-tech flex items-center justify-between gap-2">'+
+            '<span class="truncate">'+esc(name)+'</span>'+
+            '<span class="'+(active?'text-emerald-600':'text-rose-600')+' text-[9px] font-bold inline-flex items-center gap-1 shrink-0"><span class="'+(active?'bg-emerald-500':'bg-rose-500')+' inline-block w-2 h-2 rounded-full"></span>'+(active?'Active':'Inactive')+'</span>'+
+          '</span>'+
+          '<span class="text-[10px] text-slate-300 block truncate">'+esc(last?.body||(active?'No messages yet':'Inactive account'))+'</span>'+
+          '<span class="text-[8px] text-slate-500">'+(last?.created_at?new Date(last.created_at).toLocaleString():'')+'</span>'+
+          '</button>';
+      }).join('')||'<div class="text-xs text-slate-500 p-2">No '+roleLabel+' accounts found.</div>';
+    };
+    renderList(patientBox,patientAccounts,'Patient');
+    renderList(staffBox,staffAccounts,'Staff');
   }catch(e){
-    console.error('[ERecPass] Admin account chat list failed:',e);
-    box.innerHTML='<div class="text-xs text-rose-400 p-2">Unable to load Patient/Staff accounts. Please refresh.</div>';
+    console.error('[ERecPass] Admin Patient/Staff chat lists failed:',e);
+    if(patientBox)patientBox.innerHTML='<div class="text-xs text-rose-400 p-2">Unable to load Patient chats. Please refresh.</div>';
+    if(staffBox)staffBox.innerHTML='<div class="text-xs text-rose-400 p-2">Unable to load Staff chats. Please refresh.</div>';
   }
 };
 

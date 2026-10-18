@@ -4099,14 +4099,16 @@ async function getCurrentPatientCloudRow() {
   const user = auth?.data?.user;
   if (!user?.id) throw new Error("Patient session is not available.");
 
+  // Read the full existing row so profile fields (including gender and birth_date)
+  // are preserved while saving only the requested columns.
   let q = await client.from('patients')
-    .select('id,user_id,full_name,email,sim,photo,age_category,guardian_num,status,lab_results,prescriptions,doctor_notes,online,active')
+    .select('*')
     .eq('user_id', user.id)
     .maybeSingle();
 
   if ((q.error || !q.data) && user.email) {
     q = await client.from('patients')
-      .select('id,user_id,full_name,email,sim,photo,age_category,guardian_num,status,lab_results,prescriptions,doctor_notes,online,active')
+      .select('*')
       .eq('email', user.email)
       .maybeSingle();
   }
@@ -4149,6 +4151,7 @@ async function savePatientCloudFields(fields) {
   const verify = await client.from('patients')
     .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender')
     .eq('id', updated.data.id)
+    .eq('user_id', user.id)
     .maybeSingle();
 
   if (verify.error) throw verify.error;
@@ -4192,8 +4195,13 @@ async function savePatientGender() {
   try {
     const saved = await savePatientCloudFields({gender});
     const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
-    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
+    const p = patients.find(i =>
+      String(i.id) === String(saved.id) ||
+      String(i.user_id || '') === String(saved.user_id) ||
+      String(i.email || '').trim().toLowerCase() === String(currentSession.data.email || '').trim().toLowerCase()
+    );
     if (p) p.gender = saved.gender;
+    else patients.push(Object.assign({}, currentSession.data, {id:saved.id, user_id:saved.user_id, gender:saved.gender}));
     epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
     Object.assign(currentSession.data, {gender:saved.gender, id:saved.id, user_id:saved.user_id});
     epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
@@ -4215,8 +4223,23 @@ async function savePatientBirthDate() {
   try {
     const saved = await savePatientCloudFields({birth_date: birthDate});
     const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
-    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
-    if (p) { p.birthDate = saved.birth_date; p.ageCategory = saved.age_category || category; }
+    const p = patients.find(i =>
+      String(i.id) === String(saved.id) ||
+      String(i.user_id || '') === String(saved.user_id) ||
+      String(i.email || '').trim().toLowerCase() === String(currentSession.data.email || '').trim().toLowerCase()
+    );
+    if (p) {
+      p.birthDate = saved.birth_date;
+      p.birth_date = saved.birth_date;
+      p.ageCategory = saved.age_category || category;
+      p.age_category = saved.age_category || category;
+    } else {
+      patients.push(Object.assign({}, currentSession.data, {
+        id:saved.id, user_id:saved.user_id, birthDate:saved.birth_date,
+        birth_date:saved.birth_date, ageCategory:saved.age_category || category,
+        age_category:saved.age_category || category
+      }));
+    }
     epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
     Object.assign(currentSession.data, {birthDate:saved.birth_date, birth_date:saved.birth_date, ageCategory:saved.age_category || category, age_category:saved.age_category || category, id:saved.id, user_id:saved.user_id});
     epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));

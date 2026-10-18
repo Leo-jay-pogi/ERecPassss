@@ -4577,8 +4577,8 @@ try {
         sim: c.sim || '',
         photo: c.photo || '',
         ageCategory: c.age_category || '',
-        birthDate: c.birth_date || '', birth_date: c.birth_date || '',
-        gender: c.gender || '',
+        birthDate: c.birth_date || c.birthDate || c.date_of_birth || c.dob || '', birth_date: c.birth_date || c.birthDate || c.date_of_birth || c.dob || '',
+        gender: c.gender || c.sex || '',
         guardianNum: c.guardian_num || '',
         status: c.status || 'Green',
         labResults: c.lab_results || [],
@@ -4656,9 +4656,22 @@ const scannedStatus = String(p.status || 'Green').trim();
 document.getElementById('scannedStatusBadge').className = "px-3 py-2 rounded-lg text-sm font-bold text-white border shrink-0 " + (scannedStatus.toLowerCase() === 'green' ? "bg-green-600 border-green-700" : (scannedStatus.toLowerCase() === 'yellow' ? "bg-yellow-500 border-yellow-600" : "bg-red-600 border-red-700"));
 document.getElementById('scannedStatusBadge').style.color = "#ffffff";
 
-const labs = p.labResults || p.lab_results || [];
-
-document.getElementById('scannedLabResults').innerText = labs.length ? (labs[labs.length-1].result || labs[labs.length-1].text || 'Laboratory result available.') : "No lab results on record.";
+const labs = Array.isArray(p.labResults || p.lab_results) ? (p.labResults || p.lab_results) : [];
+const scannedGenderValue = String(p.gender || p.sex || '').trim() || '--';
+const scannedBirthRaw = String(p.birthDate || p.birth_date || p.date_of_birth || p.dob || '').slice(0, 10);
+let scannedBirthFormatted = '--';
+if (/^\\d{4}-\\d{2}-\\d{2}$/.test(scannedBirthRaw)) {
+  const birthParts = scannedBirthRaw.split('-');
+  scannedBirthFormatted = birthParts[1] + '/' + birthParts[2] + '/' + birthParts[0];
+}
+const latestLabText = labs.length
+  ? (labs[labs.length - 1].result || labs[labs.length - 1].text || 'Laboratory result available.')
+  : 'No lab results on record.';
+const scannedLabResultsEl = document.getElementById('scannedLabResults');
+if (scannedLabResultsEl) {
+  scannedLabResultsEl.classList.add('whitespace-pre-line');
+  scannedLabResultsEl.innerText = 'Gender: ' + scannedGenderValue + '\\nBirthday: ' + scannedBirthFormatted + '\\n\\n' + latestLabText;
+}
 
 document.getElementById('scannedDoctorNote').innerText = p.doctorNotes || p.doctor_notes || "No active doctor notes.";
 

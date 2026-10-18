@@ -8644,23 +8644,70 @@ window.selectAdminChatPatient=async function(targetId){
   try{ window.sessionStorage?.setItem('erecpassSelectedChatPatient',targetId); }catch(e){}
   const header=document.getElementById('adminSelectedChatHeader');
   const client=window.erecpassSupabase;
-  if(!client) return;
+  if(!client || !targetId) return;
 
-  const r=await client.from('profiles')
-    .select('id,full_name,role,active')
-    .eq('id',targetId)
-    .maybeSingle();
-
-  if(r.error || !r.data || r.data.active===false){
-    if(header) header.innerText='Account not found';
-    return;
+  // Resolve the selected account from its role table first; some older
+  // Staff accounts may not have a matching profiles row.
+  let account=null;
+  const [staffResult,patientResult]=await Promise.all([
+    client.from('staff').select('user_id,name,email,active').eq('user_id',targetId).maybeSingle(),
+    client.from('patients').select('user_id,full_name,email,active').eq('user_id',targetId).maybeSingle()
+  ]);
+  if(!staffResult.error && staffResult.data){
+    account={id:staffResult.data.user_id,full_name:staffResult.data.name||staffResult.data.email,role:'staff',active:staffResult.data.active};
+  } else if(!patientResult.error && patientResult.data){
+    account={id:patientResult.data.user_id,full_name:patientResult.data.full_name||patientResult.data.email,role:'patient',active:patientResult.data.active};
+  } else {
+    const r=await client.from('profiles').select('id,full_name,role,active').eq('id',targetId).maybeSingle();
+    if(!r.error && r.data) account=r.data;
   }
 
-  const label=r.data.role==='staff'?'Staff':'Patient';
-  if(header) header.innerText='Chatting with: '+(r.data.full_name||label)+' · '+label;
-
-  selectedPatientId=r.data.id;
+  if(!account || account.active===false){
+    if(header) header.innerText='Account not found or inactive';
+    return;
+  }
+  const label=account.role==='staff'?'Staff':'Patient';
+  if(header) header.innerText='Chatting with: '+(account.full_name||label)+' · '+label;
+  selectedPatientId=account.id;
   await renderAdmin();
+};
+
+// Use the same Supabase conversation for replies to either Patients or Staff.
+// This replaces the older localStorage-only handler without changing the UI.
+window.sendAdminChatMessage=async function(){
+  const input=document.getElementById('adminChatInput');
+  const body=(input?.value||'').trim();
+  if(!selectedPatientId){
+    alert('Please select a Patient or Staff account first.');
+    return;
+  }
+  if(!body) return;
+  const button=input?.parentElement?.querySelector('button');
+  try{
+    if(!['admin','staff'].includes(currentSession?.role)) throw new Error('Only Admin or authorized Staff can reply.');
+    if(button) button.disabled=true;
+    const uid=await ensureAuthUserId();
+    const c=await getConversation(selectedPatientId);
+    const r=await S().from('message_messages').insert({
+      conversation_id:c.id,
+      sender_id:uid,
+      body:body
+    }).select('id,conversation_id,sender_id,body,created_at,read_at').single();
+    if(r.error) throw r.error;
+    const cr=await S().from('message_conversations').update({
+      status:'Open',
+      updated_at:new Date().toISOString()
+    }).eq('id',c.id);
+    if(cr.error) throw cr.error;
+    if(input) input.value='';
+    await renderAdmin();
+    if(typeof window.renderAdminPatientChatList==='function') await window.renderAdminPatientChatList();
+  }catch(e){
+    console.error('[ERecPass] Admin/Staff reply failed:',e);
+    alert('Hindi naipadala ang reply. '+(e?.message||'Pakisubukan ulit.'));
+  }finally{
+    if(button) button.disabled=false;
+  }
 };
 
 

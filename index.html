@@ -2261,6 +2261,29 @@ Already have an account?
 
 </div>
 
+<!-- STAFF DASHBOARD: Approved Patient Appointments -->
+<div class="glass-card p-5 rounded-2xl" id="staffApprovedAppointmentsCard">
+  <div class="flex items-center justify-between gap-3 mb-3">
+    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-calendar-check mr-1"></i> Patient Appointments</h2>
+    <span id="staffApprovedAppointmentsCount" class="px-2 py-1 rounded-full bg-emerald-950 border border-emerald-400/40 text-emerald-300 text-[10px] font-bold">0 Approved</span>
+  </div>
+  <p class="text-xs text-slate-400 mb-3">All patient appointments approved by the hospital admin.</p>
+  <div id="staffApprovedAppointmentsList" class="space-y-3">
+    <p class="text-xs text-slate-400">Loading approved appointments...</p>
+  </div>
+</div>
+
+<!-- STAFF DASHBOARD: Hospital Announcements -->
+<div class="glass-card p-5 rounded-2xl" id="staffHospitalAnnouncementsCard">
+  <div class="flex items-center justify-between gap-3 mb-3">
+    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-bullhorn mr-1"></i> Hospital Announcements</h2>
+  </div>
+  <p class="text-xs text-slate-400 mb-3">Hospital announcements and attached images.</p>
+  <div id="staffHospitalAnnouncementsList" class="space-y-3">
+    <p class="text-xs text-slate-400">Loading hospital announcements...</p>
+  </div>
+</div>
+
 <!-- QR Scanner Module for Staff -->
 
 <div class="glass-card p-5 rounded-2xl">
@@ -4489,6 +4512,86 @@ document.getElementById('staffPortalNameDisplay').innerText = currentSession.dat
 
 document.getElementById('staffAssignedTaskDisplay').innerText = currentSession.data.task || "General Triage";
 
+renderStaffApprovedAppointments();
+renderStaffHospitalAnnouncements();
+
+}
+
+function escapeStaffDashboardText(value) {
+  return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
+    return ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'})[ch];
+  });
+}
+
+function renderStaffApprovedAppointments() {
+  const container = document.getElementById('staffApprovedAppointmentsList');
+  const count = document.getElementById('staffApprovedAppointmentsCount');
+  if (!container || !count) return;
+  try {
+    const appointments = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS) || '[]') || [];
+    const approved = appointments.filter(function(a) {
+      return String(a.status || '').trim().toLowerCase() === 'approved';
+    }).sort(function(a, b) {
+      return String(a.date || a.appointment_date || '').localeCompare(String(b.date || b.appointment_date || ''));
+    });
+    count.textContent = approved.length + (approved.length === 1 ? ' Approved' : ' Approved');
+    if (!approved.length) {
+      container.innerHTML = '<p class="text-xs text-slate-400 p-2">No approved patient appointments yet.</p>';
+      return;
+    }
+    container.innerHTML = approved.map(function(a) {
+      const patientName = escapeStaffDashboardText(a.patientName || a.patient_name || 'Patient');
+      const doctor = escapeStaffDashboardText(a.doctor || a.doctor_name || 'Not specified');
+      const date = escapeStaffDashboardText(a.date || a.appointment_date || 'Date not specified');
+      const reason = escapeStaffDashboardText(a.reason || 'Appointment');
+      return '<div class="appointment-card p-3 rounded-xl border border-emerald-400/25 bg-emerald-950/20">' +
+        '<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1">' +
+        '<strong class="text-white text-xs block break-words">' + patientName + '</strong>' +
+        '<p class="text-xs text-slate-300 mt-1">' + reason + '</p>' +
+        '<p class="text-[11px] text-slate-400 mt-1"><i class="fa-solid fa-user-doctor mr-1"></i>' + doctor + '</p>' +
+        '<p class="text-[11px] text-cyan-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i>' + date + '</p>' +
+        '</div><span class="px-2 py-1 rounded-full bg-emerald-200 text-emerald-900 text-[10px] font-bold shrink-0">Approved</span></div></div>';
+    }).join('');
+  } catch (error) {
+    console.error('[ERecPass] Staff approved appointments:', error);
+    container.innerHTML = '<p class="text-xs text-rose-300 p-2">Unable to load approved appointments. Please refresh.</p>';
+  }
+}
+
+function renderStaffHospitalAnnouncements() {
+  const container = document.getElementById('staffHospitalAnnouncementsList');
+  if (!container) return;
+  try {
+    const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+    if (!announcements.length) {
+      container.innerHTML = '<p class="text-xs text-slate-400 p-2">No hospital announcements posted yet.</p>';
+      return;
+    }
+    container.innerHTML = announcements.map(function(a) {
+      const text = escapeStaffDashboardText(a.text || a.body || '');
+      const date = escapeStaffDashboardText(a.date || a.published_on || '');
+      const photo = String(a.photo || a.image_url || '').trim();
+      const photoHtml = photo ? '<div class="mt-3 overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-950/40"><img src="' + escapeStaffDashboardText(photo) + '" alt="Hospital announcement image" class="photo-viewable w-full max-h-80 object-contain rounded-xl" loading="lazy" title="Tap to view, zoom in, and zoom out" onerror="this.parentElement.style.display=\'none\';"></div>' : '';
+      return '<article class="glass-card p-3 rounded-xl border border-cyan-500/20">' +
+        '<div class="flex items-start gap-2"><i class="fa-solid fa-bullhorn text-cyan-400 mt-0.5"></i><div class="min-w-0 flex-1">' +
+        '<p class="text-[11px] text-slate-400">' + date + '</p>' +
+        (text ? '<p class="text-xs text-slate-200 mt-1 whitespace-pre-wrap break-words">' + text + '</p>' : '') +
+        photoHtml + '</div></div></article>';
+    }).join('');
+  } catch (error) {
+    console.error('[ERecPass] Staff hospital announcements:', error);
+    container.innerHTML = '<p class="text-xs text-rose-300 p-2">Unable to load hospital announcements. Please refresh.</p>';
+  }
+}
+
+// Refresh the two read-only staff dashboard lists while the staff portal is open.
+if (!window.erecpassStaffDashboardRefreshTimer) {
+  window.erecpassStaffDashboardRefreshTimer = window.setInterval(function() {
+    if (currentSession && currentSession.role === 'staff') {
+      renderStaffApprovedAppointments();
+      renderStaffHospitalAnnouncements();
+    }
+  }, 10000);
 }
 
 function startStaffQrScanner() {

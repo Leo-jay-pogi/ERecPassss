@@ -14,6 +14,11 @@ on:
       - "*.svg"
       - "*.webp"
       - "assets/**"
+      - "google-services.json"
+      - "push-notifications-bridge.js"
+      - "push-notifications-runtime.js"
+      - "supabase/migrations/**"
+      - "supabase/functions/erecpass-push-notification/**"
       - ".github/workflows/build-android-apk.yml"
       - ".github/workflows/build-android-release.yml"
 
@@ -50,9 +55,9 @@ jobs:
         run: |
           set -euo pipefail
           mkdir -p www
-          rsync -av ./ www/ --exclude '.git/' --exclude '.github/' --exclude 'www/' --exclude 'android/' --exclude 'node_modules/' --exclude 'package-lock.json' --exclude 'package.json'
+          rsync -av ./ www/ --exclude '.git/' --exclude '.github/' --exclude 'www/' --exclude 'android/' --exclude 'node_modules/' --exclude 'package-lock.json' --exclude 'package.json' --exclude 'google-services.json'
           npm init -y
-          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode @capacitor/local-notifications@^6
+          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode @capacitor/local-notifications@^6 @capacitor/push-notifications@^6
           npm install --save-dev @capacitor/cli@^6 esbuild
           # Bundle Supabase locally for Android WebView so Admin login does not
           # depend on loading the Supabase SDK from a third-party CDN at runtime.
@@ -61,16 +66,23 @@ jobs:
           # Explicitly bundle the Capacitor Local Notifications JavaScript proxy.
           # Installing the native package alone does not expose its JS API to plain HTML scripts.
           npx esbuild local-notifications-bridge.js --bundle --format=iife --outfile=www/vendor/local-notifications.js
+          # Bundle Capacitor Push Notifications as a native-only enhancement. Web behavior remains unchanged.
+          npx esbuild push-notifications-bridge.js --bundle --format=iife --outfile=www/vendor/push-notifications.js
           python3 - <<'PY'
           from pathlib import Path
           p = Path("www/index.html")
           s = p.read_text()
-          tag = '<script src="./vendor/local-notifications.js"></script>\n'
           target = '<script src="./medication-reminders.js"></script>'
+          tags = [
+              '<script src="./vendor/local-notifications.js"></script>',
+              '<script src="./vendor/push-notifications.js"></script>',
+              '<script src="./push-notifications-runtime.js"></script>'
+          ]
           if s.count(target) != 1:
               raise SystemExit("Could not locate the medication reminders script tag exactly once")
-          if tag.strip() not in s:
-              s = s.replace(target, tag + target, 1)
+          for tag in tags:
+              if tag not in s:
+                  s = s.replace(target, tag + chr(10) + target, 1)
           p.write_text(s)
           PY
           # Package QR generation and camera-scanner libraries locally so the APK
@@ -121,6 +133,38 @@ jobs:
           }
           EOF
           npx cap add android
+          # Firebase config must match the existing APK applicationId; fail closed if it does not.
+          python3 - <<'PY'
+          import json
+          from pathlib import Path
+          import re
+          cfg = Path("google-services.json")
+          if not cfg.is_file():
+              raise SystemExit("Missing root google-services.json; download the Firebase config for com.erecpass.hospital")
+          data = json.loads(cfg.read_text())
+          clients = data.get("client", [])
+          if not any(c.get("client_info", {}).get("android_client_info", {}).get("package_name") == "com.erecpass.hospital" for c in clients):
+              raise SystemExit("Firebase google-services.json package_name must be com.erecpass.hospital")
+          Path("android/app/google-services.json").write_text(cfg.read_text())
+          root = Path("android/build.gradle")
+          gradle = root.read_text()
+          plugin = "classpath 'com.google.gms:google-services:4.4.2'"
+          if plugin not in gradle:
+              needle = "dependencies {"
+              pos = gradle.find(needle)
+              if pos < 0 or "buildscript {" not in gradle[:pos]:
+                  raise SystemExit("Could not locate buildscript dependencies in android/build.gradle")
+              insert_at = pos + len(needle)
+              gradle = gradle[:insert_at] + chr(10) + "        " + plugin + gradle[insert_at:]
+              root.write_text(gradle)
+              root.write_text(gradle)
+          app = Path("android/app/build.gradle")
+          app_gradle = app.read_text()
+          app_plugin = "apply plugin: 'com.google.gms.google-services'"
+          if app_plugin not in app_gradle:
+              app.write_text(app_gradle.rstrip() + chr(10) + chr(10) + app_plugin + chr(10))
+          print("Firebase Android config verified and Google Services Gradle plugin configured.")
+          PY
           # Ensure Android declares camera access for the in-app QR scanner.
           python3 - <<'PY'
           from pathlib import Path

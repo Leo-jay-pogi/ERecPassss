@@ -201,6 +201,37 @@ jobs:
           }
           JAVA
           npx cap sync android
+          # Create a short, gentle reminder tone for Android notification channels.
+          python3 - <<'PY'
+          from pathlib import Path
+          import math
+          import struct
+          import wave
+
+          out = Path("android/app/src/main/res/raw/erecpass_reminder.wav")
+          out.parent.mkdir(parents=True, exist_ok=True)
+          rate = 44100
+          samples = []
+          duration = 0.95
+          for i in range(int(rate * duration)):
+              t = i / rate
+              active = (0.04 <= t < 0.30) or (0.42 <= t < 0.72)
+              if active:
+                  local = (t - 0.04) if t < 0.30 else (t - 0.42)
+                  fade = min(1.0, local / 0.015, (0.26 - local) / 0.04)
+                  value = int(9000 * max(0.0, fade) * math.sin(2 * math.pi * 880 * t))
+              else:
+                  value = 0
+              samples.append(struct.pack("<h", value))
+          with wave.open(str(out), "wb") as wav:
+              wav.setnchannels(1)
+              wav.setsampwidth(2)
+              wav.setframerate(rate)
+              wav.writeframes(b"".join(samples))
+          if not out.is_file() or out.stat().st_size < 1000:
+              raise SystemExit("Could not create the ERecPass reminder sound")
+          print(f"Created notification sound: {out} ({out.stat().st_size} bytes)")
+          PY
 
       - name: Configure release signing
         shell: bash

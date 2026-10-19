@@ -49,6 +49,21 @@ jobs:
           # depend on loading the Supabase SDK from a third-party CDN at runtime.
           mkdir -p www/vendor
           npx esbuild node_modules/@supabase/supabase-js/dist/module/index.js --bundle --format=iife --global-name=supabase --outfile=www/vendor/supabase.js
+          # Explicitly bundle the Capacitor Local Notifications JavaScript proxy.
+          # Installing the native package alone does not expose its JS API to plain HTML scripts.
+          npx esbuild local-notifications-bridge.js --bundle --format=iife --outfile=www/vendor/local-notifications.js
+          python3 - <<'PY'
+          from pathlib import Path
+          p = Path("www/index.html")
+          s = p.read_text()
+          tag = '<script src="./vendor/local-notifications.js"></script>\\n'
+          target = '<script src="./medication-reminders.js"></script>'
+          if s.count(target) != 1:
+              raise SystemExit("Could not locate the medication reminders script tag exactly once")
+          if tag.strip() not in s:
+              s = s.replace(target, tag + target, 1)
+          p.write_text(s)
+          PY
           # Package QR generation and camera-scanner libraries locally so the APK
           # does not rely on public CDNs for these core patient/staff functions.
           python3 - <<'PY'
@@ -94,12 +109,18 @@ jobs:
           import re
           p = Path("android/app/src/main/AndroidManifest.xml")
           s = p.read_text()
-          permission = '<uses-permission android:name="android.permission.CAMERA" />'
-          if permission not in s:
-              match = re.search(r'<manifest\b[^>]*>', s)
+          permissions = [
+              '<uses-permission android:name="android.permission.CAMERA" />',
+              '<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />',
+              '<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />',
+              '<uses-permission android:name="android.permission.VIBRATE" />',
+          ]
+          missing = [permission for permission in permissions if permission not in s]
+          if missing:
+              match = re.search(r'<manifest\\b[^>]*>', s)
               if not match:
-                  raise SystemExit("Could not locate manifest root to add camera permission")
-              s = s[:match.end()] + "\n    " + permission + s[match.end():]
+                  raise SystemExit("Could not locate manifest root to add Android permissions")
+              s = s[:match.end()] + "\\n    " + "\\n    ".join(missing) + s[match.end():]
               p.write_text(s)
           PY
           cat > capacitor.config.json <<'EOF'

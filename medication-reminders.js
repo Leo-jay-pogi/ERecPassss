@@ -16,10 +16,10 @@
     if (p.display !== 'granted') throw new Error('Notifications are blocked. Allow notifications for ERecPass in Android Settings.');
     if (typeof n.checkExactNotificationSetting === 'function' && typeof n.changeExactNotificationSetting === 'function') {
       var exact = await n.checkExactNotificationSetting();
-      if (exact && exact.exact_alarm === false) {
+      if (exact && exact.exact_alarm !== 'granted') {
         await n.changeExactNotificationSetting();
         exact = await n.checkExactNotificationSetting();
-        if (exact && exact.exact_alarm === false) throw new Error('Allow ERecPass to set alarms and reminders in Android Settings, then return to ERecPass and tap Enable Alerts again.');
+        if (exact && exact.exact_alarm !== 'granted') throw new Error('Allow ERecPass to set alarms and reminders in Android Settings, then return to ERecPass and tap Enable Alerts again.');
       }
     }
     if (typeof n.createChannel === 'function') {

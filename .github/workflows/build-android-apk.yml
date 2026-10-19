@@ -52,7 +52,7 @@ jobs:
           mkdir -p www
           rsync -av ./ www/ --exclude '.git/' --exclude '.github/' --exclude 'www/' --exclude 'android/' --exclude 'node_modules/' --exclude 'package-lock.json' --exclude 'package.json'
           npm init -y
-          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode
+          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode @capacitor/local-notifications@^6
           npm install --save-dev @capacitor/cli@^6 esbuild
           # Bundle Supabase locally for Android WebView so Admin login does not
           # depend on loading the Supabase SDK from a third-party CDN at runtime.

@@ -8,7 +8,25 @@
   var dateString = function (d) { return d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0')+'-'+String(d.getDate()).padStart(2,'0'); };
   var makeDate = function (date, time) { var a=String(date).split('-').map(Number), b=String(time).slice(0,5).split(':').map(Number); return new Date(a[0],a[1]-1,a[2],b[0],b[1],0,0); };
   var hash = function (s) { var h=2166136261; for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);} return (h>>>0)%2147483646+1; };
-  var plugin = function () { return window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications || null; };
+  var plugin = function () { return window.ERecPassLocalNotifications || (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) || null; };
+  var notificationChannelId = 'erecpass-medication-reminders';
+  async function ensureNativeNotificationAccess(n) {
+    var p = await n.checkPermissions();
+    if (p.display !== 'granted') p = await n.requestPermissions();
+    if (p.display !== 'granted') throw new Error('Notifications are blocked. Allow notifications for ERecPass in Android Settings.');
+    if (typeof n.checkExactNotificationSetting === 'function' && typeof n.changeExactNotificationSetting === 'function') {
+      var exact = await n.checkExactNotificationSetting();
+      if (exact && exact.exact_alarm === false) {
+        await n.changeExactNotificationSetting();
+        exact = await n.checkExactNotificationSetting();
+        if (exact && exact.exact_alarm === false) throw new Error('Allow ERecPass to set alarms and reminders in Android Settings, then return to ERecPass and tap Enable Alerts again.');
+      }
+    }
+    if (typeof n.createChannel === 'function') {
+      await n.createChannel({ id: notificationChannelId, name: 'Medication Reminders', description: 'Scheduled reminders to take prescribed medicine', importance: 5, visibility: 1, vibration: true });
+    }
+    return true;
+  }
 
   function installUI() {
     var list=$('patientPrescriptionsList');
@@ -55,11 +73,9 @@
       await identity();
       var n=plugin();
       if(n) {
-        var p=await n.checkPermissions();
-        if(p.display!=='granted') p=await n.requestPermissions();
-        if(p.display!=='granted') { alert('Allow notifications for ERecPass in Android Settings.'); return; }
+        await ensureNativeNotificationAccess(n);
         await refresh();
-        alert('Medication notifications are enabled on this device.');
+        alert('Medication notifications are enabled. If Android opened Settings, allow notifications and alarms, return to ERecPass, and tap Enable Alerts again.');
       } else if('Notification' in window) {
         var permission=await Notification.requestPermission();
         if(permission!=='granted') { alert('Notification permission was not granted.'); return; }
@@ -138,6 +154,7 @@
     var n=plugin(); if(!n) return false;
     var perm=await n.checkPermissions(); if(perm.display!=='granted') return false;
     try {
+      if (typeof n.createChannel === 'function') await n.createChannel({ id: notificationChannelId, name: 'Medication Reminders', description: 'Scheduled reminders to take prescribed medicine', importance: 5, visibility: 1, vibration: true });
       var pending=await n.getPending();
       var old=(pending.notifications||[]).filter(function(x){return x.extra&&x.extra.erecpassMedicationReminder===true;}).map(function(x){return {id:x.id};});
       if(old.length) await n.cancel({notifications:old});
@@ -153,6 +170,7 @@
         jobs.push({id:hash(r.id+'|'+date+'|'+String(r.reminder_time).slice(0,5)),
           title:'ERecPass Medication Reminder',
           body:r.medication_name+(r.dosage?' · '+r.dosage:'')+(r.instructions?' — '+r.instructions:''),
+          channelId:notificationChannelId,
           schedule:{at:at,allowWhileIdle:true},
           extra:{erecpassMedicationReminder:true,reminderId:r.id,scheduledDate:date}});
       }

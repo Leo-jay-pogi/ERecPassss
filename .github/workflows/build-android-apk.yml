@@ -65,7 +65,7 @@ jobs:
           from pathlib import Path
           p = Path("www/index.html")
           s = p.read_text()
-          tag = '<script src="./vendor/local-notifications.js"></script>\\n'
+          tag = '<script src="./vendor/local-notifications.js"></script>\n'
           target = '<script src="./medication-reminders.js"></script>'
           if s.count(target) != 1:
               raise SystemExit("Could not locate the medication reminders script tag exactly once")
@@ -135,10 +135,10 @@ jobs:
           ]
           missing = [permission for permission in permissions if permission not in s]
           if missing:
-              match = re.search(r'<manifest\\b[^>]*>', s)
+              match = re.search(r'<manifest\b[^>]*>', s)
               if not match:
                   raise SystemExit("Could not locate manifest root to add Android permissions")
-              s = s[:match.end()] + "\\n    " + "\\n    ".join(missing) + s[match.end():]
+              s = s[:match.end()] + "\n    " + "\n    ".join(missing) + s[match.end():]
               p.write_text(s)
           PY
           # Add a small native bridge so the installed APK can save patient QR PNGs

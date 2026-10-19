@@ -9,7 +9,7 @@
   var makeDate = function (date, time) { var a=String(date).split('-').map(Number), b=String(time).slice(0,5).split(':').map(Number); return new Date(a[0],a[1]-1,a[2],b[0],b[1],0,0); };
   var hash = function (s) { var h=2166136261; for(var i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);} return (h>>>0)%2147483646+1; };
   var plugin = function () { return window.ERecPassLocalNotifications || (window.Capacitor && window.Capacitor.Plugins && window.Capacitor.Plugins.LocalNotifications) || null; };
-  var notificationChannelId = 'erecpass-medication-reminders';
+  var notificationChannelId = 'erecpass-medication-reminders-v2';
   async function ensureNativeNotificationAccess(n) {
     var p = await n.checkPermissions();
     if (p.display !== 'granted') p = await n.requestPermissions();
@@ -23,7 +23,7 @@
       }
     }
     if (typeof n.createChannel === 'function') {
-      await n.createChannel({ id: notificationChannelId, name: 'Medication Reminders', description: 'Scheduled reminders to take prescribed medicine', importance: 5, visibility: 1, vibration: true });
+      await n.createChannel({ id: notificationChannelId, name: 'Medication Reminders', description: 'Scheduled reminders to take prescribed medicine', importance: 5, visibility: 1, vibration: true, sound: 'erecpass_reminder.wav' });
     }
     return true;
   }
@@ -154,7 +154,7 @@
     var n=plugin(); if(!n) return false;
     var perm=await n.checkPermissions(); if(perm.display!=='granted') return false;
     try {
-      if (typeof n.createChannel === 'function') await n.createChannel({ id: notificationChannelId, name: 'Medication Reminders', description: 'Scheduled reminders to take prescribed medicine', importance: 5, visibility: 1, vibration: true });
+      if (typeof n.createChannel === 'function') await n.createChannel({ id: notificationChannelId, name: 'Medication Reminders', description: 'Scheduled reminders to take prescribed medicine', importance: 5, visibility: 1, vibration: true, sound: 'erecpass_reminder.wav' });
       var pending=await n.getPending();
       var old=(pending.notifications||[]).filter(function(x){return x.extra&&x.extra.erecpassMedicationReminder===true;}).map(function(x){return {id:x.id};});
       if(old.length) await n.cancel({notifications:old});

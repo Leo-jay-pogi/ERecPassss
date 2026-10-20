@@ -3888,18 +3888,17 @@ function renderPatientLabResults() {
   if (!container) return;
 
   const patient = currentSession?.data || {};
-  const labs = patient.labResults || patient.lab_results || [];
+  const sourceLabs = patient.labResults ?? patient.lab_results ?? [];
+  const labs = Array.isArray(sourceLabs) ? sourceLabs : (sourceLabs && typeof sourceLabs === 'object' ? [sourceLabs] : []);
   const gender = String(patient.gender || patient.sex || '').trim();
-  const birthday = String(patient.birthDate || patient.birth_date || '').slice(0, 10);
+  const birthday = String(patient.birthDate || patient.birth_date || patient.date_of_birth || patient.dob || '').slice(0, 10);
   let formattedBirthday = '--';
   if (/^\d{4}-\d{2}-\d{2}$/.test(birthday)) {
     const [year, month, day] = birthday.split('-');
     formattedBirthday = month + '/' + day + '/' + year;
   }
 
-  // Show the same saved demographics as Patient Profile, sourced from the
-  // active patient record restored from Supabase by refreshPatientPortal().
-  container.innerHTML = '';
+  container.replaceChildren();
   const details = document.createElement('div');
   details.className = 'record-card p-3.5 rounded-xl space-y-1 mb-3';
   const heading = document.createElement('strong');
@@ -3914,7 +3913,7 @@ function renderPatientLabResults() {
   details.append(heading, genderLine, birthdayLine);
   container.appendChild(details);
 
-  if (!Array.isArray(labs) || labs.length === 0) {
+  if (!labs.length) {
     const empty = document.createElement('p');
     empty.className = 'text-xs text-slate-400';
     empty.textContent = 'No lab results on file.';
@@ -3922,72 +3921,152 @@ function renderPatientLabResults() {
     return;
   }
 
-  labs.forEach(l => {
-    const card = document.createElement('div');
-    card.className = 'record-card p-3.5 rounded-xl space-y-1';
+  const textValue = value => {
+    if (value == null) return '';
+    if (typeof value === 'string' || typeof value === 'number' || typeof value === 'boolean') return String(value);
+    try { return JSON.stringify(value, null, 2); } catch (_) { return String(value); }
+  };
+  const firstValue = (obj, keys) => {
+    for (const key of keys) {
+      const value = obj && obj[key];
+      if (value != null && String(value).trim() !== '') return value;
+    }
+    return '';
+  };
+
+  labs.forEach((lab, index) => {
+    const l = lab && typeof lab === 'object' ? lab : { result: lab };
+    const card = document.createElement('article');
+    card.className = 'record-card p-3.5 rounded-xl space-y-2 min-w-0';
     const top = document.createElement('div');
-    top.className = 'flex justify-between items-center';
+    top.className = 'flex flex-wrap justify-between items-start gap-2';
     const type = document.createElement('strong');
-    type.className = 'text-white text-xs font-tech';
-    type.textContent = l.type || 'Laboratory Result';
+    type.className = 'text-white text-sm font-tech break-words min-w-0';
+    type.textContent = textValue(firstValue(l, ['type', 'test_name', 'testName', 'name', 'title'])) || ('Laboratory Result ' + (index + 1));
     const date = document.createElement('span');
-    date.className = 'text-[10px] text-slate-400';
-    date.textContent = l.date || '';
+    date.className = 'text-[10px] text-slate-400 shrink-0';
+    date.textContent = textValue(firstValue(l, ['date', 'test_date', 'created_at', 'createdAt']));
     top.append(type, date);
-    const result = document.createElement('p');
-    result.className = 'text-xs text-slate-300';
-    result.textContent = l.result || l.text || '';
     card.appendChild(top);
-    card.appendChild(result);
-    if (l.photo) {
+
+    const resultText = firstValue(l, ['result', 'text', 'result_text', 'resultText', 'value', 'details', 'description', 'findings', 'interpretation', 'notes']);
+    if (resultText !== '') {
+      const result = document.createElement('p');
+      result.className = 'text-sm text-slate-200 whitespace-pre-wrap break-words [overflow-wrap:anywhere]';
+      result.textContent = textValue(resultText);
+      card.appendChild(result);
+    }
+
+    const extraKeys = [
+      ['Dosage / Unit', ['unit', 'units']],
+      ['Reference Range', ['reference_range', 'referenceRange', 'normal_range', 'normalRange']],
+      ['Status', ['status', 'flag']],
+      ['Doctor Notes', ['doctor_notes', 'doctorNotes']]
+    ];
+    extraKeys.forEach(([label, keys]) => {
+      const value = firstValue(l, keys);
+      if (value === '') return;
+      const line = document.createElement('p');
+      line.className = 'text-xs text-slate-300 whitespace-pre-wrap break-words [overflow-wrap:anywhere]';
+      const strong = document.createElement('strong');
+      strong.className = 'text-slate-100';
+      strong.textContent = label + ': ';
+      line.append(strong, document.createTextNode(textValue(value)));
+      card.appendChild(line);
+    });
+
+    const photo = firstValue(l, ['photo', 'image', 'attachment', 'image_url', 'imageUrl', 'photo_url', 'photoUrl']);
+    if (photo) {
       const img = document.createElement('img');
-      img.src = l.photo;
-      img.className = 'w-full max-h-32 object-cover rounded-lg border border-cyan-500/30 mt-2';
-      img.alt = 'Laboratory result attachment';
+      img.src = textValue(photo);
+      img.className = 'photo-viewable w-full max-h-[70vh] object-contain object-left rounded-lg border border-cyan-500/30 mt-2 cursor-zoom-in bg-slate-950/30';
+      img.alt = 'Laboratory result attachment ' + (index + 1);
+      img.loading = 'lazy';
+      img.title = 'Tap to view full image and zoom';
+      img.onerror = function () { this.style.display = 'none'; };
       card.appendChild(img);
+    }
+
+    const hasResult = resultText !== '' || photo || extraKeys.some(([_, keys]) => firstValue(l, keys) !== '');
+    if (!hasResult) {
+      const fallback = document.createElement('p');
+      fallback.className = 'text-xs text-slate-400 whitespace-pre-wrap break-words';
+      fallback.textContent = textValue(l);
+      card.appendChild(fallback);
     }
     container.appendChild(card);
   });
 }
 
 function renderPatientPrescriptions() {
+  const container = document.getElementById('patientPrescriptionsList');
+  if (!container) return;
 
-const container = document.getElementById('patientPrescriptionsList');
+  const patient = currentSession?.data || {};
+  const source = patient.prescriptions ?? patient.prescriptions_list ?? [];
+  const rxList = Array.isArray(source) ? source : (source && typeof source === 'object' ? [source] : []);
+  container.replaceChildren();
 
-const rxList = currentSession.data.prescriptions || [];
+  if (!rxList.length) {
+    const empty = document.createElement('p');
+    empty.className = 'text-xs text-slate-400';
+    empty.textContent = 'No active prescriptions.';
+    container.appendChild(empty);
+    return;
+  }
 
-container.innerHTML = "";
+  rxList.forEach((rx, index) => {
+    const item = rx && typeof rx === 'object' ? rx : { medicine: rx };
+    const medicine = String(item.medicine || item.medication_name || item.medicationName || item.name || item.drug_name || item.drugName || '').trim();
+    if (!medicine) return;
+    const dosage = String(item.dosage || item.dose || item.strength || '').trim();
+    const duration = String(item.days || item.duration || item.frequency || item.instructions || '').trim();
+    const active = item.active !== false && String(item.status || '').toLowerCase() !== 'inactive';
+    const card = document.createElement('article');
+    card.className = 'medicine-card p-3.5 rounded-xl flex flex-col sm:flex-row sm:items-start justify-between gap-3 min-w-0';
+    const info = document.createElement('div');
+    info.className = 'min-w-0 flex-1';
+    const title = document.createElement('strong');
+    title.className = 'text-white text-sm block break-words';
+    title.textContent = medicine;
+    const detail = document.createElement('p');
+    detail.className = 'text-xs text-slate-300 mt-1 whitespace-pre-wrap break-words';
+    detail.textContent = [dosage, duration].filter(Boolean).join(' · ') || 'Follow the instructions provided by your clinician.';
+    const badge = document.createElement('span');
+    badge.className = 'inline-block mt-2 px-2 py-1 rounded text-[10px] font-tech ' + (active ? 'bg-emerald-950 text-emerald-200 border border-emerald-500/30' : 'bg-slate-800 text-slate-300 border border-slate-600/30');
+    badge.textContent = active ? 'Active prescription' : 'Inactive prescription';
+    info.append(title, detail, badge);
 
-if (rxList.length === 0) {
+    const reminder = document.createElement('button');
+    reminder.type = 'button';
+    reminder.className = 'shrink-0 self-start px-3 py-2 rounded-lg text-xs font-bold border border-cyan-400/40 text-cyan-200';
+    reminder.textContent = 'Set Reminder';
+    reminder.disabled = !active;
+    reminder.dataset.prescriptionIndex = String(index);
+    reminder.dataset.medicine = medicine;
+    reminder.dataset.dosage = dosage;
+    reminder.dataset.instructions = String(item.instructions || '');
+    card.append(info, reminder);
+    container.appendChild(card);
+  });
 
-container.innerHTML = `<p class="text-xs text-slate-400">No active prescriptions.</p>`;
-
-return;
-
-}
-
-rxList.forEach(rx => {
-
-container.innerHTML += `
-
-<div class="medicine-card p-3.5 rounded-xl flex items-center justify-between">
-
-<div>
-
-<strong class="text-white text-xs block">${rx.medicine}</strong>
-
-<p class="text-[11px] text-slate-400">${rx.dosage} · ${rx.days}</p>
-
-</div>
-
-<span class="px-2 py-1 bg-emerald-950 text-emerald-300 border border-emerald-500/30 rounded text-[10px] font-tech">Active</span>
-
-</div>
-
-`;
-
-});
-
+  if (!container.dataset.reminderHandlerBound) {
+    container.dataset.reminderHandlerBound = 'true';
+    container.addEventListener('click', function (event) {
+      const button = event.target.closest('button[data-prescription-index]');
+      if (!button) return;
+      const detail = {
+        medicine: button.dataset.medicine || '',
+        dosage: button.dataset.dosage || '',
+        instructions: button.dataset.instructions || ''
+      };
+      if (typeof window.patientDashboardNavigate === 'function') window.patientDashboardNavigate('medicines');
+      else if (typeof window.showPage === 'function') window.showPage('medicines');
+      setTimeout(function () {
+        window.dispatchEvent(new CustomEvent('erecpass:prefill-medication-reminder', { detail: detail }));
+      }, 350);
+    });
+  }
 }
 
 function renderPatientDoctors() {

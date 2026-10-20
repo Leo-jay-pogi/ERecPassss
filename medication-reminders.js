@@ -48,11 +48,13 @@
       '<label class="block text-xs text-slate-300">Extra note (optional)<input id="epReminderNote" maxlength="500" class="w-full mt-1 rounded-lg p-2.5 text-sm border border-cyan-500/30 bg-slate-950 text-white" placeholder="Optional note"></label>'+
       '<button id="epReminderSave" type="submit" class="primary-btn w-full rounded-xl py-3 text-xs">Save Medication Reminder</button>'+
       '<p class="text-[10px] text-slate-400">Follow your clinician’s instructions. Reminders are not medical advice.</p></form>'+
+      '<div><h3 class="font-tech text-xs text-white mb-2">Prescribed medicines</h3><p class="text-[11px] text-slate-400 mb-2">Medicines saved by the hospital appear here. Tap Set Reminder, then choose the time and repeat schedule prescribed by your clinician.</p><div id="epPrescribedMedicineList" class="space-y-2"><p class="text-xs text-slate-400">Loading prescriptions…</p></div></div>' +
       '<div><h3 class="font-tech text-xs text-white mb-2">Your saved reminders</h3><div id="epMedicationReminderList" class="space-y-2"><p class="text-xs text-slate-400">Loading…</p></div></div></section>');
     $('epReminderStart').value=dateString(new Date());
     $('epReminderForm').addEventListener('submit',saveReminder);
     $('epReminderPermission').addEventListener('click',enableAlerts);
     $('epMedicationReminderList').addEventListener('click',listAction);
+    $('epPrescribedMedicineList').addEventListener('click',prescribedMedicineAction);
   }
 
   async function identity() {
@@ -118,7 +120,47 @@
     return r.data||[];
   }
 
+  function renderPrescribedMedicines() {
+    var list=$('epPrescribedMedicineList'); if(!list) return;
+    var prescriptions=patient && Array.isArray(patient.prescriptions) ? patient.prescriptions : [];
+    var visible=prescriptions.map(function(rx){
+      if(typeof rx==='string') return {medicine:rx};
+      return rx && typeof rx==='object' ? rx : {};
+    }).filter(function(rx){return String(rx.medicine||rx.medication_name||rx.medicationName||rx.name||rx.drug_name||rx.drugName||'').trim();});
+    if(!visible.length) {
+      list.innerHTML='<p class="text-xs text-slate-400">No prescribed medicines have been saved to your patient record yet.</p>';
+      return;
+    }
+    list.innerHTML=visible.map(function(rx){
+      var medicine=String(rx.medicine||rx.medication_name||rx.medicationName||rx.name||rx.drug_name||rx.drugName||'').trim();
+      var dosage=String(rx.dosage||rx.dose||rx.strength||'').trim();
+      var duration=String(rx.days||rx.duration||rx.frequency||rx.instructions||'').trim();
+      var active=rx.active!==false && String(rx.status||'').toLowerCase()!=='inactive';
+      return '<article class="medicine-card rounded-xl p-3 flex items-start justify-between gap-3"><div class="min-w-0 flex-1"><strong class="block text-sm text-white break-words">'+esc(medicine)+'</strong><p class="text-xs text-slate-300 mt-1 break-words">'+esc([dosage,duration].filter(Boolean).join(' · ')||'Follow clinician instructions')+'</p><span class="inline-block mt-2 px-2 py-1 rounded text-[10px] '+(active?'bg-emerald-950 text-emerald-200':'bg-slate-800 text-slate-300')+'">'+(active?'Active prescription':'Inactive prescription')+'</span></div><button type="button" data-action="prefill-prescription" data-medicine="'+esc(medicine)+'" data-dosage="'+esc(dosage)+'" data-instructions="'+esc(String(rx.instructions||''))+'" '+(active?'':'disabled')+' class="rounded-lg px-2 py-2 text-[10px] border border-cyan-400/40 text-cyan-200 shrink-0">Set Reminder</button></article>';
+    }).join('');
+  }
+
+  function fillReminderFromPrescription(detail) {
+    if(!detail || !$('epReminderMedicine')) return;
+    $('epReminderMedicine').value=String(detail.medicine||'');
+    $('epReminderDosage').value=String(detail.dosage||'');
+    if($('epReminderNote') && detail.instructions) $('epReminderNote').value=String(detail.instructions);
+    if(!$('epReminderStart').value) $('epReminderStart').value=dateString(new Date());
+    if(!$('epReminderTime').value) $('epReminderTime').focus();
+    if($('epReminderForm')) $('epReminderForm').scrollIntoView({behavior:'smooth',block:'center'});
+  }
+
+  function prescribedMedicineAction(e) {
+    var b=e.target.closest('button[data-action="prefill-prescription"]'); if(!b) return;
+    fillReminderFromPrescription({medicine:b.dataset.medicine,dosage:b.dataset.dosage,instructions:b.dataset.instructions});
+  }
+
+  window.addEventListener('erecpass:prefill-medication-reminder',function(e){
+    fillReminderFromPrescription(e.detail||{});
+  });
+
   function render(rows) {
+    renderPrescribedMedicines();
     var list=$('epMedicationReminderList'); if(!list) return;
     if(!rows.length){list.innerHTML='<p class="text-xs text-slate-400">No reminders yet. Add one above.</p>';return;}
     list.innerHTML=rows.map(function(r){

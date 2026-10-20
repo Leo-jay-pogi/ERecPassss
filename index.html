@@ -8263,14 +8263,17 @@ window.epInitPasswordRecoveryListener=function(){
       const hasRecoveryMarker=/(^|[&#?&])type=recovery(&|$|#)/i.test(recoveryUrl);
       const hasRecoveryTokens=/(^|[&#?&])access_token=/.test(recoveryUrl) &&
         /(access_token|refresh_token)/.test(recoveryUrl);
+      // Supabase PKCE links can arrive as ?code=... instead of hash tokens.
+      // Keep checking while Supabase exchanges that code for a recovery session.
+      const hasRecoveryCode=/(^|[?&])code=[^&#\s]+/i.test(location.search||'');
       const r=await auth.getSession();
-      if(r.data?.session && (hasRecoveryMarker || hasRecoveryTokens || window.epPasswordRecoveryReady)){
+      if(r.data?.session && (hasRecoveryMarker || hasRecoveryTokens || hasRecoveryCode || window.epPasswordRecoveryReady)){
         window.epPasswordRecoveryReady=true;
         epShowPasswordRecoveryForm();
         return;
       }
       recoveryChecks++;
-      if(recoveryChecks<8 && (hasRecoveryMarker || hasRecoveryTokens)){
+      if(recoveryChecks<12 && (hasRecoveryMarker || hasRecoveryTokens || hasRecoveryCode)){
         setTimeout(checkRecoverySession,500);
       }
     }catch(e){ console.warn('Password recovery session check:',e); }

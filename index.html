@@ -2104,6 +2104,25 @@ Already have an account?
 </div>
 <p id="profileAgePreview" class="text-xs text-slate-400 mt-1">Enter your birthday to calculate your age and category.</p>
 
+<label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Blood Type</label>
+<div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
+<select id="editProfileBloodTypeInput" class="w-full bg-transparent outline-none text-xs" aria-label="Select blood type">
+<option value="">Select blood type</option>
+<option value="A+">A+</option><option value="A-">A-</option>
+<option value="B+">B+</option><option value="B-">B-</option>
+<option value="AB+">AB+</option><option value="AB-">AB-</option>
+<option value="O+">O+</option><option value="O-">O-</option>
+<option value="Unknown">Unknown / Not sure</option>
+</select>
+<button onclick="savePatientBloodType()" class="text-xs font-tech text-cyan-400 font-bold px-2 py-1 bg-cyan-950 rounded border border-cyan-400/40">Save</button>
+</div>
+
+<label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Address</label>
+<div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
+<input type="text" id="editProfileAddressInput" autocomplete="street-address" placeholder="Enter your complete address" class="w-full bg-transparent outline-none text-xs">
+<button onclick="savePatientAddress()" class="text-xs font-tech text-cyan-400 font-bold px-2 py-1 bg-cyan-950 rounded border border-cyan-400/40">Save</button>
+</div>
+
 <label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Guardian Emergency Contact Number</label>
 
 <div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
@@ -3655,6 +3674,8 @@ async function refreshPatientPortal() {
   const guardianInput = document.getElementById('editGuardianContactInput');
   const birthDateInput = document.getElementById('editProfileBirthDateInput');
   const genderInput = document.getElementById('editProfileGenderInput');
+  const bloodTypeInput = document.getElementById('editProfileBloodTypeInput');
+  const addressInput = document.getElementById('editProfileAddressInput');
   const profileAgeCategory = document.getElementById('profileAgeCategory');
   const profileAgePreview = document.getElementById('profileAgePreview');
   const profilePhoto = document.getElementById('profilePhotoDisplay');
@@ -3667,6 +3688,8 @@ async function refreshPatientPortal() {
   if (guardianInput) guardianInput.value = p.guardianNum || '';
   if (birthDateInput) { birthDateInput.max = getPatientLocalDateString(); birthDateInput.value = p.birthDate || p.birth_date || ''; }
   if (genderInput) genderInput.value = p.gender || '';
+  if (bloodTypeInput) bloodTypeInput.value = p.blood_type || p.bloodType || '';
+  if (addressInput) addressInput.value = p.address || '';
   const patientAge = getPatientAgeFromBirthDate(p.birthDate || p.birth_date || '');
   const patientCategory = patientAge === null ? '' : (patientAge <= 17 ? 'Minor' : 'Adult');
   p.birthDate = p.birthDate || p.birth_date || '';
@@ -4274,6 +4297,8 @@ async function savePatientCloudFields(fields) {
     payload.age_category = fields.birth_date ? getPatientCategoryFromBirthDate(fields.birth_date) : null;
   }
   if (Object.prototype.hasOwnProperty.call(fields, 'gender')) payload.gender = fields.gender || null;
+  if (Object.prototype.hasOwnProperty.call(fields, 'blood_type')) payload.blood_type = fields.blood_type || null;
+  if (Object.prototype.hasOwnProperty.call(fields, 'address')) payload.address = fields.address || null;
 
   // Restrict the update to the exact patient row owned by the authenticated user.
   // Using both the row ID and auth user ID avoids accidentally targeting a different row.
@@ -4285,7 +4310,7 @@ async function savePatientCloudFields(fields) {
     .update(payload)
     .eq('id', row.id)
     .eq('user_id', user.id)
-    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender')
+    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender,blood_type,address')
     .maybeSingle();
 
   if (updated.error) throw updated.error;
@@ -4293,7 +4318,7 @@ async function savePatientCloudFields(fields) {
 
   // Verify the value that was just written so the Save action is truly permanent.
   const verify = await client.from('patients')
-    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender')
+    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender,blood_type,address')
     .eq('id', updated.data.id)
     .eq('user_id', user.id)
     .maybeSingle();
@@ -4330,6 +4355,47 @@ async function saveProfileName() {
   } catch (error) {
     console.error("ERecPass: Permanent name save failed", error);
     alert("Name was not saved to the cloud. Please try again.");
+  }
+}
+
+async function savePatientBloodType() {
+  const bloodType = document.getElementById('editProfileBloodTypeInput')?.value || '';
+  const allowed = ['', 'A+', 'A-', 'B+', 'B-', 'AB+', 'AB-', 'O+', 'O-', 'Unknown'];
+  if (!allowed.includes(bloodType)) { alert('Please select a valid blood type.'); return; }
+  try {
+    const saved = await savePatientCloudFields({blood_type:bloodType});
+    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
+    if (p) { p.blood_type = saved.blood_type || ''; p.bloodType = saved.blood_type || ''; }
+    else patients.push(Object.assign({}, currentSession.data, {id:saved.id, user_id:saved.user_id, blood_type:saved.blood_type || '', bloodType:saved.blood_type || ''}));
+    epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+    Object.assign(currentSession.data, {blood_type:saved.blood_type || '', bloodType:saved.blood_type || '', id:saved.id, user_id:saved.user_id});
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    await refreshPatientPortal();
+    alert('Blood type saved permanently to your patient profile.');
+  } catch (error) {
+    console.error('ERecPass: Blood type save failed', error);
+    alert('Blood type was not saved to the cloud. ' + (error?.message || 'Please try again.'));
+  }
+}
+
+async function savePatientAddress() {
+  const address = document.getElementById('editProfileAddressInput')?.value.trim() || '';
+  if (address.length > 500) { alert('Address must be 500 characters or fewer.'); return; }
+  try {
+    const saved = await savePatientCloudFields({address});
+    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
+    if (p) p.address = saved.address || '';
+    else patients.push(Object.assign({}, currentSession.data, {id:saved.id, user_id:saved.user_id, address:saved.address || ''}));
+    epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+    Object.assign(currentSession.data, {address:saved.address || '', id:saved.id, user_id:saved.user_id});
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    await refreshPatientPortal();
+    alert('Address saved permanently to your patient profile.');
+  } catch (error) {
+    console.error('ERecPass: Address save failed', error);
+    alert('Address was not saved to the cloud. ' + (error?.message || 'Please try again.'));
   }
 }
 

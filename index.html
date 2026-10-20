@@ -7182,46 +7182,87 @@ Never place a service_role/secret key in browser code. -->
     }
   };
 
-  window.confirmErecpassLabDelete = function () {
+  window.confirmErecpassLabDelete = async function () {
     if (!erecpassPendingLabDelete) return;
 
-    const patientId = erecpassPendingLabDelete.patientId;
-    const index = erecpassPendingLabDelete.index;
+    const patientId = String(erecpassPendingLabDelete.patientId);
+    const index = Number(erecpassPendingLabDelete.index);
+    const deleteButton = document.querySelector('#erecpassLabConfirmModal button[onclick="confirmErecpassLabDelete()"]');
+    if (deleteButton) {
+      deleteButton.disabled = true;
+      deleteButton.textContent = 'Deleting…';
+    }
 
-    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
-    const patient = patients.find(p => p.id === patientId);
+    try {
+      const client = window.erecpassSupabase;
+      if (!client) throw new Error('Supabase connection is not ready. Please refresh and try again.');
 
-    if (!patient || !Array.isArray(patient.labResults) || !patient.labResults[index]) {
+      // Read the latest shared record first so the delete uses current cloud data,
+      // not a possibly stale localStorage/cache snapshot.
+      const readResult = await client.from('patients')
+        .select('id,lab_results')
+        .eq('id', patientId)
+        .maybeSingle();
+      if (readResult.error) throw readResult.error;
+      if (!readResult.data) throw new Error('Patient record was not found in Supabase.');
+
+      const cloudLabs = Array.isArray(readResult.data.lab_results) ? readResult.data.lab_results.slice() : [];
+      if (!Number.isInteger(index) || index < 0 || index >= cloudLabs.length) {
+        throw new Error('This lab result list has changed. Close the edit window, reopen the patient, and try again.');
+      }
+
+      cloudLabs.splice(index, 1);
+      const updateResult = await client.from('patients')
+        .update({ lab_results: cloudLabs })
+        .eq('id', patientId)
+        .select('id,lab_results')
+        .maybeSingle();
+      if (updateResult.error) throw updateResult.error;
+      if (!updateResult.data) throw new Error('Supabase did not confirm the lab result deletion.');
+
+      const savedLabs = Array.isArray(updateResult.data.lab_results) ? updateResult.data.lab_results : cloudLabs;
+
+      // Refresh from Supabase so the admin and patient views use the same saved data.
+      try {
+        if (typeof window.erecpassCloudHydrate === 'function') {
+          await window.erecpassCloudHydrate();
+        } else {
+          throw new Error('Cloud refresh is unavailable.');
+        }
+      } catch (refreshError) {
+        console.warn('[ERecPass] Lab result was deleted in Supabase, but refresh failed:', refreshError);
+        // Keep the current UI accurate without queuing a second full patient upsert.
+        const cachedPatients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+        const cachedPatient = cachedPatients.find(p => String(p.id) === patientId);
+        if (cachedPatient) cachedPatient.labResults = savedLabs;
+        if (typeof epStore._put === 'function') {
+          epStore._put(DB_KEYS.PATIENTS, JSON.stringify(cachedPatients));
+        }
+        if (typeof currentSession !== 'undefined' && String(currentSession?.data?.id) === patientId) {
+          currentSession.data.labResults = savedLabs;
+          currentSession.data.lab_results = savedLabs;
+        }
+      }
+
+      if (typeof addLog === 'function') {
+        addLog('Deleted Lab Result: ' + (getPatientForLabActions(patientId)?.fullName || patientId));
+      }
+
       window.closeErecpassLabDeleteConfirm();
-      return;
-    }
-
-    patient.labResults.splice(index, 1);
-
-    epStore.setItem(
-      DB_KEYS.PATIENTS,
-      JSON.stringify(patients)
-    );
-
-    if (typeof addLog === 'function') {
-      addLog('Deleted Lab Result: ' + patient.fullName);
-    }
-
-    window.closeErecpassLabDeleteConfirm();
-    renderErecpassLabActions();
-
-    if (typeof refreshAdminPortal === 'function') {
-      refreshAdminPortal();
-    }
-
-    if (
-      typeof currentSession !== 'undefined' &&
-      currentSession?.data?.id === patientId
-    ) {
-      currentSession.data = patient;
-
-      if (typeof renderPatientLabResults === 'function') {
+      renderErecpassLabActions();
+      if (typeof refreshAdminPortal === 'function') refreshAdminPortal();
+      if (typeof currentSession !== 'undefined' && String(currentSession?.data?.id) === patientId &&
+          typeof renderPatientLabResults === 'function') {
         renderPatientLabResults();
+      }
+      alert('Lab result deleted successfully.');
+    } catch (error) {
+      console.error('[ERecPass] Delete lab result failed:', error);
+      alert('Could not delete the lab result from the shared database. ' + (error?.message || 'Please try again.'));
+    } finally {
+      if (deleteButton) {
+        deleteButton.disabled = false;
+        deleteButton.textContent = 'Delete';
       }
     }
   };

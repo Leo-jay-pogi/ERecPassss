@@ -5176,118 +5176,143 @@ document.getElementById('adminEditPatientModal').classList.add('hidden');
 
 }
 
-function saveAdminPatientEdit() {
+async function saveAdminPatientEdit() {
+  const pid = String(document.getElementById('editPatientId')?.value || '');
+  const status = document.getElementById('editPatientStatus')?.value || 'Green';
+  const labText = String(document.getElementById('editPatientLabText')?.value || '').trim();
+  const labPhotoInput = document.getElementById('editPatientLabPhoto');
+  const rxText = String(document.getElementById('editPatientPrescription')?.value || '').trim();
+  const docNote = String(document.getElementById('editPatientDoctorNote')?.value || '').trim();
+  const guardianNum = String(document.getElementById('editPatientGuardianNum')?.value || '').trim();
+  const birthDate = document.getElementById('editPatientBirthDate')?.value || '';
+  const birthAge = birthDate ? getPatientAgeFromBirthDate(birthDate) : null;
 
-const pid = document.getElementById('editPatientId').value;
+  if (!pid) { alert('Patient ID is missing. Please close and reopen the patient record.'); return; }
+  if (birthDate && birthAge === null) { alert('Please enter a valid birthday that is not in the future.'); return; }
+  const birthCategory = birthAge === null ? '' : (birthAge <= 17 ? 'Minor' : 'Adult');
+  const client = window.erecpassSupabase;
+  if (!client) { alert('Supabase is not ready. Please refresh and try again.'); return; }
 
-const status = document.getElementById('editPatientStatus').value;
+  const saveButton = document.querySelector('#adminEditPatientModal button[onclick="saveAdminPatientEdit()"]');
+  if (saveButton) { saveButton.disabled = true; saveButton.textContent = 'SAVING…'; }
 
-const labText = document.getElementById('editPatientLabText').value;
+  try {
+    let photoData = '';
+    const photoFile = labPhotoInput?.files?.[0];
+    if (photoFile) {
+      if (!photoFile.type || !photoFile.type.startsWith('image/')) throw new Error('Please choose a valid lab result image.');
+      photoData = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = event => resolve(event.target?.result || '');
+        reader.onerror = () => reject(new Error('Could not read the lab result photo.'));
+        reader.readAsDataURL(photoFile);
+      });
+    }
 
-const labPhotoInput = document.getElementById('editPatientLabPhoto');
+    // Always start from the latest cloud row so saving a lab result cannot
+    // accidentally replace records added by another staff/admin device.
+    const latest = await client.from('patients').select('*').eq('id', pid).maybeSingle();
+    if (latest.error) throw latest.error;
+    if (!latest.data) throw new Error('Patient record was not found in Supabase. Refresh the patient list and try again.');
 
-const rxText = document.getElementById('editPatientPrescription').value;
+    const cloudPatient = latest.data;
+    const labs = Array.isArray(cloudPatient.lab_results) ? cloudPatient.lab_results.slice() : [];
+    const prescriptions = Array.isArray(cloudPatient.prescriptions) ? cloudPatient.prescriptions.slice() : [];
 
-const docNote = document.getElementById('editPatientDoctorNote').value;
+    if (labText || photoData) {
+      labs.push({
+        date: new Date().toISOString().split('T')[0],
+        type: 'Laboratory Result',
+        result: labText || 'Result Attachment',
+        photo: photoData || ''
+      });
+    }
 
-const guardianNum = document.getElementById('editPatientGuardianNum').value;
-const birthDate = document.getElementById('editPatientBirthDate')?.value || '';
-const birthAge = birthDate ? getPatientAgeFromBirthDate(birthDate) : null;
-if (birthDate && birthAge === null) { alert('Please enter a valid birthday that is not in the future.'); return; }
-const birthCategory = birthAge === null ? '' : (birthAge <= 17 ? 'Minor' : 'Adult');
+    // Keep the prescribed medicine in the shared patient record; the patient
+    // Medication Reminders screen reads this same prescriptions array.
+    if (rxText) {
+      prescriptions.splice(0, prescriptions.length, {
+        medicine: rxText,
+        dosage: 'As prescribed',
+        days: 'Active',
+        active: true
+      });
+    }
 
-const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS));
+    const payload = {
+      status,
+      lab_results: labs,
+      prescriptions,
+      doctor_notes: docNote,
+      guardian_num: guardianNum,
+      birth_date: birthDate || null,
+      age_category: birthCategory || null
+    };
+    const saved = await client.from('patients')
+      .update(payload)
+      .eq('id', pid)
+      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age_category')
+      .maybeSingle();
+    if (saved.error) throw saved.error;
+    if (!saved.data) throw new Error('Supabase did not confirm the patient record save.');
 
-const p = patients.find(i => i.id === pid);
+    // Verify both records and prescription values before showing success.
+    const verified = await client.from('patients')
+      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age_category')
+      .eq('id', pid)
+      .maybeSingle();
+    if (verified.error) throw verified.error;
+    if (!verified.data) throw new Error('The saved patient record could not be verified.');
+    if (JSON.stringify(verified.data.lab_results || []) !== JSON.stringify(labs) ||
+        JSON.stringify(verified.data.prescriptions || []) !== JSON.stringify(prescriptions)) {
+      throw new Error('Lab results or prescription save verification failed. Please try again.');
+    }
 
-p.status = status;
-p.birthDate = birthDate;
-p.birth_date = birthDate;
-p.ageCategory = birthCategory;
-p.age_category = birthCategory;
+    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]') || [];
+    let p = patients.find(item => String(item.id) === pid);
+    if (!p) {
+      p = {
+        id: cloudPatient.id,
+        user_id: cloudPatient.user_id,
+        fullName: cloudPatient.full_name || cloudPatient.name || 'Patient',
+        email: cloudPatient.email || '',
+        sim: cloudPatient.sim || '',
+        photo: cloudPatient.photo || '',
+        gender: cloudPatient.gender || '',
+        birthDate: cloudPatient.birth_date || '',
+        birth_date: cloudPatient.birth_date || '',
+        labResults: [],
+        prescriptions: []
+      };
+      patients.push(p);
+    }
+    p.status = verified.data.status || status;
+    p.labResults = Array.isArray(verified.data.lab_results) ? verified.data.lab_results : [];
+    p.lab_results = p.labResults;
+    p.prescriptions = Array.isArray(verified.data.prescriptions) ? verified.data.prescriptions : [];
+    p.doctorNotes = verified.data.doctor_notes || '';
+    p.guardianNum = verified.data.guardian_num || '';
+    p.birthDate = verified.data.birth_date || '';
+    p.birth_date = verified.data.birth_date || '';
+    p.ageCategory = verified.data.age_category || '';
+    p.age_category = verified.data.age_category || '';
+    epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
 
-p.doctorNotes = docNote;
+    addLog('Updated Patient Record: ' + (p.fullName || cloudPatient.full_name || pid));
+    closeAdminEditPatientModal();
+    await refreshAdminPortal();
+    try { await window.erecpassCloudFlush?.(); }
+    catch (flushError) { console.warn('[ERecPass] Patient cache sync warning after verified cloud save:', flushError); }
 
-p.guardianNum = guardianNum;
-
-if (rxText) {
-
-p.prescriptions = [{ medicine: rxText, dosage: "As prescribed", days: "Active", active: true }];
-
-}
-
-const saveFileAndFinish = async (photoData) => {
-
-if (labText || photoData) {
-
-p.labResults.push({
-
-date: new Date().toISOString().split('T')[0],
-
-type: "Laboratory Result",
-
-result: labText || "Result Attachment",
-
-photo: photoData || ""
-
-});
-
-}
-
-epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
-
-const client = window.erecpassSupabase;
-if (client && p.id) {
-  // Save the patient's health status and records to the shared database.
-  // Previously only birthday fields were saved, so Yellow/Red and new lab
-  // results could disappear on refresh and the dashboard counts stayed at zero.
-  const cloudUpdate = await client.from('patients').update({
-    status: status,
-    lab_results: Array.isArray(p.labResults) ? p.labResults : [],
-    prescriptions: Array.isArray(p.prescriptions) ? p.prescriptions : [],
-    doctor_notes: docNote || '',
-    guardian_num: guardianNum || '',
-    birth_date: birthDate || null,
-    age_category: birthCategory || null
-  }).eq('id', p.id).select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age_category').maybeSingle();
-  if (cloudUpdate.error) throw cloudUpdate.error;
-  if (!cloudUpdate.data) throw new Error('Supabase did not confirm the patient record update.');
-  p.status = cloudUpdate.data.status || status;
-  p.labResults = Array.isArray(cloudUpdate.data.lab_results) ? cloudUpdate.data.lab_results : [];
-  p.prescriptions = Array.isArray(cloudUpdate.data.prescriptions) ? cloudUpdate.data.prescriptions : [];
-  p.doctorNotes = cloudUpdate.data.doctor_notes || '';
-  p.guardianNum = cloudUpdate.data.guardian_num || '';
-  p.birthDate = cloudUpdate.data.birth_date || '';
-  p.birth_date = cloudUpdate.data.birth_date || '';
-  p.ageCategory = cloudUpdate.data.age_category || '';
-  p.age_category = cloudUpdate.data.age_category || '';
-  epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
-}
-
-addLog("Updated Patient Record: " + p.fullName);
-
-closeAdminEditPatientModal();
-
-refreshAdminPortal();
-
-try { await window.erecpassCloudFlush?.(); alert("Patient record updated successfully and saved to Supabase."); } catch (cloudError) { console.error(cloudError); alert("Patient record was changed on screen, but Supabase save failed. Please try again."); }
-
-};
-
-if (labPhotoInput.files && labPhotoInput.files[0]) {
-
-const reader = new FileReader();
-
-reader.onload = function(evt) { saveFileAndFinish(evt.target.result); };
-
-reader.readAsDataURL(labPhotoInput.files[0]);
-
-} else {
-
-saveFileAndFinish("");
-
-}
-
+    if (labPhotoInput) labPhotoInput.value = '';
+    document.getElementById('editPatientLabText').value = '';
+    alert('Patient record saved and verified in Supabase. New lab results will appear in Records, and the saved medicine will appear under Prescriptions & Medication Reminders.');
+  } catch (error) {
+    console.error('[ERecPass] Patient lab/prescription save failed:', error);
+    alert('Could not save the patient record to Supabase: ' + (error.message || 'Please try again.'));
+  } finally {
+    if (saveButton) { saveButton.disabled = false; saveButton.textContent = 'Save Changes'; }
+  }
 }
 
 async function adminCreateStaffAccount() {

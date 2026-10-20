@@ -2149,6 +2149,62 @@ Already have an account?
 
 </div>
 
+<div id="patientDigitalIDSection" class="mt-5 pt-4 border-t border-cyan-500/20">
+  <div class="mb-3">
+    <h3 class="text-sm font-tech font-bold text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-id-card mr-2"></i>Digital ID</h3>
+    <p class="text-[11px] text-slate-400 mt-1">Your saved patient profile details and unique QR code.</p>
+  </div>
+  <div class="patient-digital-id-scene">
+    <div id="patientDigitalIDWrapper" class="patient-digital-id-wrapper">
+      <div class="patient-digital-id-face patient-digital-id-front">
+        <div class="patient-digital-id-header">
+          <div class="flex items-center gap-2">
+            <div class="w-8 h-8 rounded-full bg-white text-green-800 flex items-center justify-center"><i class="fa-solid fa-hospital"></i></div>
+            <div><div class="text-[11px] font-extrabold uppercase leading-tight">Angono General Hospital</div><div class="text-[9px] text-green-100 font-bold">ERecPass · Patient Digital ID</div></div>
+          </div>
+          <span class="text-[9px] bg-white text-green-800 rounded px-2 py-1 font-extrabold">PATIENT</span>
+        </div>
+        <div class="patient-digital-id-content">
+          <div class="flex gap-3 items-start mb-3">
+            <img id="digitalIDPhoto" src="https://via.placeholder.com/100" alt="Patient profile photo" class="w-[76px] h-[88px] object-cover rounded-md border-2 border-green-700 bg-slate-100 shrink-0">
+            <div class="min-w-0 flex-1">
+              <span class="patient-digital-id-label">Full Name</span>
+              <strong id="digitalIDFullName" class="block text-sm leading-tight font-extrabold text-slate-900 break-words">Patient Name</strong>
+              <div class="mt-2"><span class="patient-digital-id-label">Patient ID</span><strong id="digitalIDPatientId" class="block text-xs font-extrabold text-green-800 break-all">--</strong></div>
+            </div>
+          </div>
+          <div class="grid grid-cols-2 gap-x-3 gap-y-2">
+            <div class="patient-digital-id-field"><span class="patient-digital-id-label">Gender</span><span id="digitalIDGender" class="patient-digital-id-value">Not set</span></div>
+            <div class="patient-digital-id-field"><span class="patient-digital-id-label">Birthday / Date of Birth</span><span id="digitalIDBirthDate" class="patient-digital-id-value">Not set</span></div>
+            <div class="patient-digital-id-field"><span class="patient-digital-id-label">Age</span><span id="digitalIDAge" class="patient-digital-id-value">Not set</span></div>
+            <div class="patient-digital-id-field"><span class="patient-digital-id-label">Blood Type</span><span id="digitalIDBloodType" class="patient-digital-id-value">Not set</span></div>
+            <div class="patient-digital-id-field col-span-2"><span class="patient-digital-id-label">Address</span><span id="digitalIDAddress" class="patient-digital-id-value">Not set</span></div>
+          </div>
+        </div>
+        <div class="px-3 py-2 bg-green-50 border-t border-green-100 text-[9px] text-green-800 font-bold">Keep your patient ID available for hospital identification.</div>
+      </div>
+      <div class="patient-digital-id-face patient-digital-id-back">
+        <div class="patient-digital-id-header">
+          <div><div class="text-xs font-extrabold uppercase">Emergency Information</div><div class="text-[9px] text-green-100">ERecPass Digital ID · Back</div></div>
+          <i class="fa-solid fa-shield-heart text-xl"></i>
+        </div>
+        <div class="patient-digital-id-content flex flex-col justify-between gap-4">
+          <div>
+            <div class="mb-4"><span class="patient-digital-id-label">Guardian Name</span><span id="digitalIDGuardianName" class="patient-digital-id-value">Not set</span></div>
+            <div><span class="patient-digital-id-label">Guardian Emergency Contact Number</span><span id="digitalIDGuardianContact" class="patient-digital-id-value">Not set</span></div>
+          </div>
+          <div class="flex items-center justify-between gap-3">
+            <div class="min-w-0 flex-1"><span class="patient-digital-id-label">Patient ID</span><strong id="digitalIDPatientIdBack" class="block text-xs font-extrabold text-green-800 break-all">--</strong><p class="text-[10px] text-slate-500 mt-2">Scan the QR code to identify this patient in ERecPass.</p></div>
+            <div class="patient-digital-id-qr shrink-0" id="patientDigitalIDQR" aria-label="Patient QR code"><span class="text-[10px] text-slate-400 text-center">QR loading…</span></div>
+          </div>
+        </div>
+        <div class="px-3 py-2 bg-green-50 border-t border-green-100 text-[9px] text-green-800 font-bold">If found, please return this ID to the hospital.</div>
+      </div>
+    </div>
+  </div>
+  <button type="button" onclick="flipPatientDigitalID()" class="w-full mt-3 py-2.5 rounded-xl border border-cyan-400/40 bg-cyan-950 text-cyan-300 font-tech text-xs font-bold"><i class="fa-solid fa-arrows-rotate mr-1"></i> Flip Digital ID (Front / Back)</button>
+</div>
+
 <button onclick="logout()" class="w-full py-3 bg-rose-950/60 border border-rose-500/40 text-rose-400 rounded-xl font-tech font-bold text-xs tracking-wider hover:bg-rose-900/40 transition-all mt-4">
 
 <i class="fa-solid fa-right-from-bracket mr-1"></i> Log Out
@@ -3711,6 +3767,7 @@ async function refreshPatientPortal() {
   if (profileAgePreview) profileAgePreview.textContent = patientAge === null ? 'Enter your birthday to calculate your age and category.' : 'Age: ' + patientAge + ' · Category: ' + patientCategory;
   if (profilePhoto) profilePhoto.src = p.photo || "https://via.placeholder.com/100";
   if (qrId) qrId.innerText = "ID: " + p.id;
+  renderPatientDigitalID(p);
 
   // Status Badge
   const statusBadge = document.getElementById('patientDashboardStatusBadge');
@@ -4140,6 +4197,69 @@ ${avail}
 
 });
 
+}
+
+function flipPatientDigitalID() {
+  const wrapper = document.getElementById('patientDigitalIDWrapper');
+  if (wrapper) wrapper.classList.toggle('is-flipped');
+}
+
+function renderPatientDigitalID(patient) {
+  const p = patient || currentSession?.data || {};
+  const text = (id, value) => {
+    const el = document.getElementById(id);
+    if (el) el.textContent = value == null || String(value).trim() === '' ? 'Not set' : String(value);
+  };
+  const patientId = p.id || p.patient_id || p.patientId || '--';
+  const birthDate = p.birthDate || p.birth_date || '';
+  let formattedBirthDate = 'Not set';
+  let age = 'Not set';
+  if (birthDate) {
+    const parts = String(birthDate).split('-').map(Number);
+    if (parts.length === 3 && parts.every(Number.isFinite)) {
+      const date = new Date(parts[0], parts[1] - 1, parts[2]);
+      if (!Number.isNaN(date.getTime())) formattedBirthDate = date.toLocaleDateString(undefined, {year:'numeric', month:'long', day:'numeric'});
+    }
+    const calculatedAge = getPatientAgeFromBirthDate(birthDate);
+    if (calculatedAge !== null) age = String(calculatedAge) + ' years';
+  }
+  const photo = document.getElementById('digitalIDPhoto');
+  if (photo) {
+    photo.src = p.photo || 'https://via.placeholder.com/100';
+    photo.alt = 'Profile photo of ' + (p.fullName || p.full_name || 'patient');
+  }
+  text('digitalIDFullName', p.fullName || p.full_name || p.name || '');
+  text('digitalIDPatientId', patientId);
+  text('digitalIDPatientIdBack', patientId);
+  text('digitalIDGender', p.gender || '');
+  text('digitalIDBirthDate', formattedBirthDate);
+  text('digitalIDAge', age);
+  text('digitalIDBloodType', p.blood_type || p.bloodType || '');
+  text('digitalIDAddress', p.address || '');
+  text('digitalIDGuardianName', p.guardianName || p.guardian_name || '');
+  text('digitalIDGuardianContact', p.guardianNum || p.guardian_num || '');
+  const qr = document.getElementById('patientDigitalIDQR');
+  if (qr) {
+    qr.innerHTML = '';
+    const qrText = 'ERECPASS:' + (p.id || p.patient_id || p.patientId || '');
+    if ((p.id || p.patient_id || p.patientId) && typeof QRCode !== 'undefined') {
+      new QRCode(qr, {text:qrText, width:112, height:112, colorDark:'#000000', colorLight:'#ffffff', correctLevel:QRCode.CorrectLevel.M});
+      const canvas = qr.querySelector('canvas');
+      if (canvas) canvas.setAttribute('aria-label', 'Patient Digital ID QR code');
+      const image = qr.querySelector('img');
+      if (image) image.alt = 'Patient Digital ID QR code';
+    } else if (p.id || p.patient_id || p.patientId) {
+      const img = document.createElement('img');
+      img.alt = 'Patient Digital ID QR code';
+      img.src = 'https://api.qrserver.com/v1/create-qr-code/?size=112x112&data=' + encodeURIComponent(qrText);
+      qr.appendChild(img);
+    } else {
+      const empty = document.createElement('span');
+      empty.className = 'text-[10px] text-slate-400 text-center';
+      empty.textContent = 'Patient ID unavailable';
+      qr.appendChild(empty);
+    }
+  }
 }
 
 function generatePatientQR() {
@@ -9201,6 +9321,20 @@ function togglePatientMoreNav() {
 .erecpass-action-delete{background:#dc2626!important;color:#fff!important;border:1px solid #b91c1c!important}
 .erecpass-appointment-status[data-appointment-status="Approved"]{background:#16a34a!important;color:#fff!important;border:1px solid #15803d!important}
 .erecpass-appointment-status[data-appointment-status="Cancelled"]{background:#eab308!important;color:#fff!important;border:1px solid #ca8a04!important}
+/* Patient Digital ID — contained styles so existing app screens are unchanged */
+.patient-digital-id-scene { perspective: 1000px; width: 100%; max-width: 420px; margin: 0 auto; }
+.patient-digital-id-wrapper { position: relative; width: 100%; min-height: 355px; transform-style: preserve-3d; transition: transform .7s cubic-bezier(.2,.75,.3,1); }
+.patient-digital-id-wrapper.is-flipped { transform: rotateY(180deg); }
+.patient-digital-id-face { position: absolute; inset: 0; min-height: 355px; backface-visibility: hidden; -webkit-backface-visibility: hidden; border-radius: 16px; overflow: hidden; border: 1px solid #b7d8c5; background: #fff; color: #0f172a; box-shadow: 0 10px 25px rgba(0,0,0,.22); display: flex; flex-direction: column; }
+.patient-digital-id-back { transform: rotateY(180deg); }
+.patient-digital-id-header { background: #126b38; color: #fff; padding: 10px 13px; display:flex; align-items:center; justify-content:space-between; gap:8px; }
+.patient-digital-id-content { padding: 12px; flex: 1; }
+.patient-digital-id-label { display:block; font-size:9px; line-height:1.2; color:#64748b; text-transform:uppercase; font-weight:800; margin-bottom:3px; }
+.patient-digital-id-value { display:block; font-size:12px; line-height:1.3; color:#0f172a; font-weight:700; overflow-wrap:anywhere; }
+.patient-digital-id-field { min-width:0; }
+.patient-digital-id-qr { width:120px; height:120px; padding:4px; background:#fff; border:1px solid #cbd5e1; border-radius:8px; display:flex; align-items:center; justify-content:center; }
+.patient-digital-id-qr canvas,.patient-digital-id-qr img { display:block; width:100% !important; height:100% !important; object-fit:contain; }
+@media (max-width:360px) { .patient-digital-id-wrapper,.patient-digital-id-face { min-height:390px; } .patient-digital-id-content { padding:9px; } .patient-digital-id-value { font-size:11px; } }
 </style>
 <!-- END ERECPASS APPOINTMENT STATUS COLORS -->
 

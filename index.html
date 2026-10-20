@@ -2420,7 +2420,15 @@ Already have an account?
 
 <div><span>Birthday / Date of Birth:</span> <strong id="scannedBirthDate">--</strong></div>
 
-<div><span>Guardian Contact:</span> <strong id="scannedGuardian">--</strong></div>
+<div><span>Age:</span> <strong id="scannedAgeYears">--</strong></div>
+
+<div><span>Blood Type:</span> <strong id="scannedBloodType">--</strong></div>
+
+<div class="min-w-0 break-words"><span>Address:</span> <strong id="scannedAddress">--</strong></div>
+
+<div><span>Guardian Name:</span> <strong id="scannedGuardianName">--</strong></div>
+
+<div><span>Guardian Emergency Contact Number:</span> <strong id="scannedGuardian">--</strong></div>
 
 <div class="min-w-0 break-words"><span>Email:</span> <strong id="scannedEmail" class="break-all">--</strong></div>
 
@@ -4995,7 +5003,10 @@ try {
         ageCategory: c.age_category || '',
         birthDate: c.birth_date || c.birthDate || c.date_of_birth || c.dob || '', birth_date: c.birth_date || c.birthDate || c.date_of_birth || c.dob || '',
         gender: c.gender || c.sex || '',
-        guardianNum: c.guardian_num || '',
+        bloodType: c.blood_type || c.bloodType || '',
+        address: c.address || '',
+        guardianName: c.guardian_name || c.guardianName || '',
+        guardianNum: c.guardian_num || c.guardianNum || '',
         status: c.status || 'Green',
         labResults: c.lab_results || [],
         prescriptions: c.prescriptions || [],
@@ -5043,7 +5054,9 @@ document.getElementById('scannedId').innerText = p.id || '--';
 const scannedBirthDate = p.birthDate || p.birth_date || '';
 const scannedAgeValue = getPatientAgeFromBirthDate(scannedBirthDate);
 const scannedCategory = scannedAgeValue === null ? 'Birthday not set' : (scannedAgeValue <= 17 ? 'Minor' : 'Adult');
-document.getElementById('scannedAge').innerText = scannedAgeValue === null ? scannedCategory : scannedCategory + ' · ' + scannedAgeValue + ' years old';
+document.getElementById('scannedAge').innerText = scannedCategory;
+const scannedAgeYearsEl = document.getElementById('scannedAgeYears');
+if (scannedAgeYearsEl) scannedAgeYearsEl.innerText = scannedAgeValue === null ? '--' : scannedAgeValue + ' years old';
 
 const genderEl = document.getElementById('scannedGender');
 if (genderEl) genderEl.innerText = p.gender || p.sex || '--';
@@ -5059,6 +5072,12 @@ if (birthDateEl) {
 }
 
 document.getElementById('scannedGuardian').innerText = p.guardianNum || p.guardian_num || "None";
+const guardianNameEl = document.getElementById('scannedGuardianName');
+if (guardianNameEl) guardianNameEl.innerText = p.guardianName || p.guardian_name || '--';
+const bloodTypeEl = document.getElementById('scannedBloodType');
+if (bloodTypeEl) bloodTypeEl.innerText = p.bloodType || p.blood_type || '--';
+const addressEl = document.getElementById('scannedAddress');
+if (addressEl) addressEl.innerText = p.address || '--';
 
 const emailEl = document.getElementById('scannedEmail');
 if (emailEl) emailEl.innerText = p.email || '--';
@@ -5081,7 +5100,12 @@ if (/^\d{4}-\d{2}-\d{2}$/.test(scannedBirthRaw)) {
   scannedBirthFormatted = birthParts[1] + '/' + birthParts[2] + '/' + birthParts[0];
 }
 const latestLabText = labs.length
-  ? (labs[labs.length - 1].result || labs[labs.length - 1].text || 'Laboratory result available.')
+  ? labs.map(function (lab, index) {
+      if (!lab) return '';
+      const heading = (lab.type || ('Laboratory Result ' + (index + 1))) + (lab.date ? ' · ' + lab.date : '');
+      const resultText = lab.result || lab.text || (lab.photo ? 'Laboratory photo attached.' : 'Laboratory result available.');
+      return heading + '\\n' + resultText;
+    }).filter(Boolean).join('\\n\\n')
   : 'No lab results on record.';
 const scannedLabResultsEl = document.getElementById('scannedLabResults');
 if (scannedLabResultsEl) {
@@ -7022,13 +7046,15 @@ margin-right: auto;
   var originalHandleScannedQrText = window.handleScannedQrText;
 
   if (typeof originalHandleScannedQrText === "function") {
-    window.handleScannedQrText = function (text) {
-      originalHandleScannedQrText.apply(this, arguments);
+    window.handleScannedQrText = async function (text) {
+      // Wait for the existing handler to finish its Supabase lookup/cache refresh
+      // before attaching the lab-photo action, so it targets the patient just scanned.
+      await Promise.resolve(originalHandleScannedQrText.apply(this, arguments));
 
       var patientId = String(text || "").replace("ERECPASS:", "").trim();
       var patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
       var patient = patients.find(function (item) {
-        return item.id === patientId || item.id === text;
+        return String(item.id) === patientId || String(item.id) === String(text || "");
       });
 
       if (patient) {

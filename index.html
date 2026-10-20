@@ -1140,6 +1140,13 @@ body::before {
 #patientBottomNav.patient-nav-expanded .patient-nav-extra { display: flex !important; }
 #patientBottomNav > button:not(.patient-nav-see-more) { min-height: 0; }
 </style>
+<style id="erecpass-patient-records-nav-clearance">
+/* Keep the end of the Records list scrollable above the fixed patient navigation.
+   Scoped only to Records; navigation actions and other pages remain unchanged. */
+#medical-records.page {
+  padding-bottom: calc(250px + env(safe-area-inset-bottom, 0px)) !important;
+}
+</style>
 <style id="erecpass-staff-admin-visibility-fix">
 /* Fix staff/admin dashboard readability on the white page without changing behavior */
 #staffApp, #adminApp {

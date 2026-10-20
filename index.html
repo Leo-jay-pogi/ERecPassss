@@ -5104,13 +5104,13 @@ const latestLabText = labs.length
       if (!lab) return '';
       const heading = (lab.type || ('Laboratory Result ' + (index + 1))) + (lab.date ? ' · ' + lab.date : '');
       const resultText = lab.result || lab.text || (lab.photo ? 'Laboratory photo attached.' : 'Laboratory result available.');
-      return heading + '\\n' + resultText;
-    }).filter(Boolean).join('\\n\\n')
+      return heading + '\n' + resultText;
+    }).filter(Boolean).join('\n\n')
   : 'No lab results on record.';
 const scannedLabResultsEl = document.getElementById('scannedLabResults');
 if (scannedLabResultsEl) {
   scannedLabResultsEl.classList.add('whitespace-pre-line');
-  scannedLabResultsEl.innerText = 'Gender: ' + scannedGenderValue + '\\nBirthday: ' + scannedBirthFormatted + '\\n\\n' + latestLabText;
+  scannedLabResultsEl.innerText = 'Gender: ' + scannedGenderValue + '\nBirthday: ' + scannedBirthFormatted + '\n\n' + latestLabText;
 }
 
 document.getElementById('scannedDoctorNote').innerText = p.doctorNotes || p.doctor_notes || "No active doctor notes.";
@@ -6877,24 +6877,57 @@ margin-right: auto;
     if (modal) modal.remove();
   }
 
-  window.viewScannedPatientLabPhotos = function () {
+  window.viewScannedPatientLabPhotos = async function () {
     var patientId = window.__erecpassScannedPatientId;
     if (!patientId) {
       alert("No scanned patient selected.");
       return;
     }
 
-    var patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
+    var patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]') || [];
     var patient = patients.find(function (item) {
       return String(item.id) === String(patientId);
-    });
+    }) || null;
+
+    // Refresh the scanned record from Supabase so the photo viewer reflects
+    // what is currently saved in the shared database, not an older local cache.
+    try {
+      var client = window.erecpassSupabase;
+      if (client) {
+        var cloud = await client.from('patients').select('*').eq('id', patientId).maybeSingle();
+        if (!cloud.error && cloud.data) {
+          var c = cloud.data;
+          patient = Object.assign({}, patient || {}, {
+            id: c.id,
+            fullName: c.full_name || c.name || (patient && patient.fullName) || 'Patient',
+            photo: c.photo || '',
+            gender: c.gender || '',
+            birthDate: c.birth_date || '',
+            bloodType: c.blood_type || '',
+            address: c.address || '',
+            guardianName: c.guardian_name || '',
+            guardianNum: c.guardian_num || '',
+            labResults: Array.isArray(c.lab_results) ? c.lab_results : [],
+            lab_results: Array.isArray(c.lab_results) ? c.lab_results : [],
+            doctorNotes: c.doctor_notes || ''
+          });
+          var cacheIndex = patients.findIndex(function (item) { return String(item.id) === String(c.id); });
+          if (cacheIndex >= 0) patients[cacheIndex] = Object.assign({}, patients[cacheIndex], patient);
+          else patients.push(patient);
+          epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+        }
+      }
+    } catch (error) {
+      console.warn('[ERecPass] Could not refresh laboratory photos from Supabase; using saved local cache.', error);
+    }
 
     if (!patient) {
       alert("Patient record not found.");
       return;
     }
 
-    var labs = Array.isArray(patient.labResults) ? patient.labResults : [];
+    var labs = Array.isArray(patient.labResults) ? patient.labResults :
+      (Array.isArray(patient.lab_results) ? patient.lab_results : []);
     var photoLabs = labs.filter(function (lab) {
       return lab && lab.photo;
     });

@@ -2123,6 +2123,12 @@ Already have an account?
 <button onclick="savePatientAddress()" class="text-xs font-tech text-cyan-400 font-bold px-2 py-1 bg-cyan-950 rounded border border-cyan-400/40">Save</button>
 </div>
 
+<label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Guardian Name</label>
+<div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl mb-3">
+<input type="text" id="editGuardianNameInput" autocomplete="name" maxlength="150" placeholder="Enter guardian's full name" class="w-full bg-transparent outline-none text-xs">
+<button onclick="saveGuardianName()" class="text-xs font-tech text-cyan-400 font-bold px-2 py-1 bg-cyan-950 rounded border border-cyan-400/40">Save</button>
+</div>
+
 <label class="block text-xs font-tech text-cyan-300 uppercase mb-1">Guardian Emergency Contact Number</label>
 
 <div class="input-box flex items-center gap-2 px-3 py-2 rounded-xl">
@@ -3638,6 +3644,7 @@ async function refreshPatientPortal() {
           email: user.email || cloud.email || p.email,
           fullName: cloud.full_name || p.fullName || cloud.name || p.name || 'Patient',
           guardianNum: cloud.guardian_num || p.guardianNum || '',
+          guardianName: cloud.guardian_name || p.guardianName || '',
           photo: cloud.photo || p.photo || ''
         });
 
@@ -3672,6 +3679,7 @@ async function refreshPatientPortal() {
   const profileEmail = document.getElementById('profileEmailDisplay');
   const editName = document.getElementById('editProfileNameInput');
   const guardianInput = document.getElementById('editGuardianContactInput');
+  const guardianNameInput = document.getElementById('editGuardianNameInput');
   const birthDateInput = document.getElementById('editProfileBirthDateInput');
   const genderInput = document.getElementById('editProfileGenderInput');
   const bloodTypeInput = document.getElementById('editProfileBloodTypeInput');
@@ -3686,6 +3694,7 @@ async function refreshPatientPortal() {
   if (profileEmail) profileEmail.innerText = p.email || '';
   if (editName) editName.value = p.fullName || '';
   if (guardianInput) guardianInput.value = p.guardianNum || '';
+  if (guardianNameInput) guardianNameInput.value = p.guardianName || p.guardian_name || '';
   if (birthDateInput) { birthDateInput.max = getPatientLocalDateString(); birthDateInput.value = p.birthDate || p.birth_date || ''; }
   if (genderInput) genderInput.value = p.gender || '';
   if (bloodTypeInput) bloodTypeInput.value = p.blood_type || p.bloodType || '';
@@ -4291,6 +4300,7 @@ async function savePatientCloudFields(fields) {
   const payload = {};
   if (Object.prototype.hasOwnProperty.call(fields, 'full_name')) payload.full_name = fields.full_name;
   if (Object.prototype.hasOwnProperty.call(fields, 'guardian_num')) payload.guardian_num = fields.guardian_num;
+  if (Object.prototype.hasOwnProperty.call(fields, 'guardian_name')) payload.guardian_name = fields.guardian_name || null;
   if (Object.prototype.hasOwnProperty.call(fields, 'photo')) payload.photo = fields.photo;
   if (Object.prototype.hasOwnProperty.call(fields, 'birth_date')) {
     payload.birth_date = fields.birth_date || null;
@@ -4310,7 +4320,7 @@ async function savePatientCloudFields(fields) {
     .update(payload)
     .eq('id', row.id)
     .eq('user_id', user.id)
-    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender,blood_type,address')
+    .select('id,user_id,full_name,guardian_num,guardian_name,photo,birth_date,age_category,gender,blood_type,address')
     .maybeSingle();
 
   if (updated.error) throw updated.error;
@@ -4318,7 +4328,7 @@ async function savePatientCloudFields(fields) {
 
   // Verify the value that was just written so the Save action is truly permanent.
   const verify = await client.from('patients')
-    .select('id,user_id,full_name,guardian_num,photo,birth_date,age_category,gender,blood_type,address')
+    .select('id,user_id,full_name,guardian_num,guardian_name,photo,birth_date,age_category,gender,blood_type,address')
     .eq('id', updated.data.id)
     .eq('user_id', user.id)
     .maybeSingle();
@@ -4458,6 +4468,31 @@ async function savePatientBirthDate() {
   } catch (error) {
     console.error('ERecPass: Birthday save failed', error);
     alert('Birthday was not saved to the cloud. Please try again.');
+  }
+}
+
+async function saveGuardianName() {
+  const name = document.getElementById('editGuardianNameInput')?.value.trim() || '';
+  if (name.length > 150) {
+    alert("Guardian name must be 150 characters or fewer.");
+    return;
+  }
+
+  try {
+    const saved = await savePatientCloudFields({guardian_name:name});
+    const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || "[]");
+    const p = patients.find(i => String(i.id) === String(saved.id) || String(i.user_id || '') === String(saved.user_id));
+    if (p) p.guardianName = saved.guardian_name || '';
+    epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+    currentSession.data.guardianName = saved.guardian_name || '';
+    currentSession.data.id = saved.id;
+    currentSession.data.user_id = saved.user_id;
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    await refreshPatientPortal();
+    alert("Guardian name updated and saved permanently.");
+  } catch (error) {
+    console.error("ERecPass: Permanent guardian name save failed", error);
+    alert("Guardian name was not saved to the cloud. Please try again.");
   }
 }
 

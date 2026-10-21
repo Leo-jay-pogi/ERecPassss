@@ -8167,11 +8167,11 @@ window.openErecpassForgotPassword=async function(){
   if(recovery){ epShowPasswordRecoveryForm(); return; }
 
   epModal('erecpassForgotModal','Forgot Password',
-    '<p style="color:#8fb9b5;font-size:11px">Enter your registered email. We will send a secure password-reset link.</p>'+
-    '<label>Email</label><input id="epResetEmail" type="email" autocomplete="email" placeholder="patient@example.com">'+
-    '<div class="erecpass-added-actions"><button type="button" onclick="sendErecpassPasswordReset()">Send to Email</button></div>'+
-    '<div id="epResetStep" style="margin-top:12px"></div>'+
-    '<p style="color:#8fb9b5;font-size:11px;margin-top:12px">After you open the reset link in your email, the New Password form will appear automatically.</p>');
+    '<p style="color:#8fb9b5;font-size:12px;line-height:1.5;text-align:center;margin-bottom:16px">Enter the email address registered to your ERecPass account. We will send a secure password-reset link.</p>'+
+    '<label for="epResetEmail">Account Email</label><input id="epResetEmail" type="email" autocomplete="email" inputmode="email" placeholder="example@email.com" required>'+
+    '<div class="erecpass-added-actions"><button id="epResetSendBtn" type="button" onclick="sendErecpassPasswordReset()">Send Confirmation to Email</button></div>'+
+    '<div id="epResetStep" style="margin-top:14px"></div>'+
+    '<p style="color:#8fb9b5;font-size:11px;line-height:1.5;margin-top:12px;text-align:center">After receiving the email, open its secure reset link. The new-password form will appear here automatically. For your security, password changes cannot be confirmed by a button inside the app alone.</p>');
 };
 
 window.sendErecpassPasswordReset=async function(){
@@ -8198,7 +8198,8 @@ window.sendErecpassPasswordReset=async function(){
     if(result.error) throw result.error;
     try{ localStorage.setItem(cooldownKey,String(Date.now())); }catch(_){}
     const step=document.getElementById('epResetStep');
-    if(step) step.innerHTML='<p style="color:#8fb9b5;font-size:11px">Reset link requested. Check your inbox and Spam/Junk folder. If it does not arrive, wait before trying again.</p>';
+    if(step) step.innerHTML='<div role="status" style="padding:14px;border:1px dashed rgba(0,240,255,.45);border-radius:12px;background:rgba(0,240,255,.07);text-align:center;color:#cbd5e1;font-size:12px;line-height:1.6"><strong style="display:block;color:#00f0ff;font-size:14px;margin-bottom:6px">Confirmation Email Requested</strong>Check your inbox and Spam/Junk folder for the secure password-reset link. Open the link from your email to continue. If it does not arrive, wait before requesting another link.</div>';
+
   }catch(e){
     console.error('Password reset request failed:',e);
     const message=String(e.message||'');

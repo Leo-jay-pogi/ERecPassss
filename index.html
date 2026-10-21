@@ -5797,7 +5797,7 @@ try {
   if (!client) throw new Error('Supabase is not ready.');
 
   const { data, error } = await client.from('appointments')
-    .select('id,patient_id,patient_name,doctor,appointment_date,reason,status,updated_at')
+    .select('id,legacy_id,patient_id,patient_name,doctor,appointment_date,reason,status,updated_at')
     .order('appointment_date', { ascending: true });
 
   if (error) throw error;
@@ -5812,7 +5812,7 @@ try {
     const status = a.status || 'Pending Approval';
     const isFinal = status === 'Cancelled' || status === 'Approved';
     return `
-      <div class="glass-card p-3 rounded-xl flex justify-between items-center text-xs">
+      <div class="glass-card p-3 rounded-xl flex justify-between items-center text-xs" data-appointment-id="${a.legacy_id || a.id}">
         <div>
           <strong class="text-white block">${a.patient_name || 'Patient'} - ${a.reason || 'Appointment'}</strong>
           <p class="text-slate-400">Doctor: ${a.doctor || '—'} · Date: ${a.appointment_date || '—'}</p>
@@ -7996,28 +7996,13 @@ Never place a service_role/secret key in browser code. -->
     const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS)) || [];
 
     container.querySelectorAll('.glass-card').forEach(function(card) {
-      const buttons = card.querySelectorAll('button[onclick*="updateApptStatus"]');
-      if (!buttons.length) return;
+      // Use the exact Supabase appointment key attached by the renderer.
+      // Do not depend on status buttons or fuzzy text matching: cancelled appointments
+      // have no status buttons, and repeated patient/date details can collide.
+      const appointmentId = card.getAttribute('data-appointment-id');
+      if (!appointmentId) return;
 
-      const match = card.textContent.match(/Doctor:\s*[^·]+·\s*Date:\s*([^\n]+)/);
-      let appointment = null;
-
-      // Match the rendered card to the appointment by its visible patient/date/doctor/reason data.
-      for (let i = 0; i < appts.length; i++) {
-        const a = appts[i];
-        const visible = card.textContent || '';
-        if ((visible.indexOf(a.patientName || 'Unknown Patient') !== -1) &&
-            (visible.indexOf(a.doctor || 'N/A') !== -1) &&
-            (visible.indexOf(a.date || 'N/A') !== -1) &&
-            (visible.indexOf(a.reason || 'Consultation') !== -1)) {
-          appointment = a;
-          break;
-        }
-      }
-
-      if (!appointment) return;
-
-      const actionArea = buttons[0].parentElement;
+      const actionArea = card.querySelector('.flex.gap-1.flex-wrap.justify-end') || card.lastElementChild;
       if (!actionArea) return;
 
       const deleteBtn = document.createElement('button');
@@ -8025,7 +8010,7 @@ Never place a service_role/secret key in browser code. -->
       deleteBtn.className = 'erecpass-delete-appointment-btn';
       deleteBtn.innerHTML = '<i class="fa-solid fa-trash"></i> Delete';
       deleteBtn.onclick = function() {
-        openDeleteConfirmation(appointment.id);
+        openDeleteConfirmation(appointmentId);
       };
 
       actionArea.appendChild(deleteBtn);

@@ -36,15 +36,6 @@
       const tables=['patients','staff','appointments','announcements','help_center_messages','activity_logs'];
       const rs=await Promise.all(tables.map(t=>sb().from(t).select('*')));
       rs.forEach((r,i)=>{if(r.error)err('read '+tables[i],r.error)});
-      const settingsRes=await sb().from('app_settings').select('setting_key,setting_value').in('setting_key',['system_branding','system_agreement','emergency_numbers']);
-      if(settingsRes.error) err('read app_settings',settingsRes.error);
-      const settingsRows=settingsRes.data||[];
-      const settingsMap=Object.fromEntries(settingsRows.map(x=>[x.setting_key,x.setting_value||{}]));
-      const branding=settingsMap.system_branding||{};
-      putSettings(branding);
-      put(K.G,settingsMap.system_agreement||{text:'Welcome to ERecPass. Please keep your account secure and use this portal only for authorized hospital services.',photo:''});
-      put(K.E,settingsMap.emergency_numbers||{barangay:'0917-123-4567',national:'911'});
-      if(window.applySystemLogo) window.applySystemLogo(branding.logo_url||branding.logo||'');
       const ps=(rs[0].error?[]:rs[0].data||[]).map(patient),ss=(rs[1].error?[]:rs[1].data||[]).map(staff);
       put(K.P,ps);put(K.S,ss);put(K.B,(rs[2].error?[]:rs[2].data||[]).map(appt));put(K.N,(rs[3].error?[]:rs[3].data||[]).map(ann));put(K.C,(rs[4].error?[]:rs[4].data||[]).map(msg));put(K.L,(rs[5].error?[]:rs[5].data||[]).map(x=>({id:x.id,timestamp:x.created_at,text:x.event_text})));put(K.A,[]);
       const data=role==='patient'?(ps.find(p=>p.user_id===u.id)||{id:u.id,user_id:u.id,email:u.email,fullName:pr.data.full_name}):role==='staff'?(ss.find(s=>s.user_id===u.id)||{id:u.id,user_id:u.id,email:u.email,name:pr.data.full_name}):{id:u.id,user_id:u.id,email:u.email,name:pr.data.full_name,fullName:pr.data.full_name};

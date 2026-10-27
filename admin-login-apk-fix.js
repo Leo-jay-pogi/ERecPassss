@@ -18,12 +18,18 @@
     // Always authenticate against the configured ERecPass Supabase project.
     // Android WebView may retain a client initialized by an older cached script;
     // replace it only when its URL/key do not match, keeping the UI unchanged.
-    const expectedUrl = 'https://bfboehvgrivanmrfqquw.supabase.co';
-    const expectedKey = 'sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_';
+    const config = window.ERECPASS_SUPABASE_CONFIG || {};
+    const expectedUrl = String(config.url || '').replace(/\/$/, '');
+    const expectedKey = String(config.publishableKey || '');
     let client = window.erecpassSupabase;
     const clientMatches = () =>
       String(client?.supabaseUrl || '').replace(/\/+$/, '') === expectedUrl &&
       String(client?.supabaseKey || '') === expectedKey;
+
+    if (!expectedUrl || !expectedKey) {
+      alert('Supabase URL and publishable key are not configured.');
+      return;
+    }
 
     if ((!client?.auth || !clientMatches()) &&
         window.supabase && typeof window.supabase.createClient === 'function') {

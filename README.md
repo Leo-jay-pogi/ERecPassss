@@ -4,7 +4,7 @@ ERecPass is a hospital portal with a Supabase-backed data layer. The existing UI
 
 ## Backend
 - Supabase project: `ERECPASS`
-- Supabase URL: `https://bfboehvgrivanmrfqquw.supabase.co`
+- Active Supabase project URL: `https://bfboehvgrivanmrfqquw.supabase.co`
 - Browser client uses the Supabase **publishable** key only.
 - Tables: `profiles`, `patients`, `staff`, `appointments`, `announcements`, `help_center_messages`, `activity_logs`, `app_settings`
 - RLS is enabled on all exposed public tables.

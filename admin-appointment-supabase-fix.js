@@ -12,7 +12,7 @@ async function getAdminClient(){
 }
 window.updateApptStatus=async function(id,status){
  if(!id||!['Approved','Cancelled'].includes(status)) return;
- if(status==='Cancelled'&&!window.confirm('Cancel this appointment?\\nYou can’t undo this action.')) return;
+ if(status==='Cancelled'&&!await window.erecpassConfirm('Cancel this appointment?\\nYou can’t undo this action.')) return;
  try{
   const client=await getAdminClient();
   const raw=String(id).trim();

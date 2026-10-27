@@ -1102,32 +1102,35 @@ body::before {
 <style id="erecpass-patient-see-more-nav">
 /* Patient navigation display-only enhancement. Existing button handlers remain unchanged. */
 #patientBottomNav.patient-nav-collapsed {
-  height: 150px !important;
+  height: 96px !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   grid-template-rows: 1fr !important;
-  padding-top: 46px !important;
+  padding-top: 8px !important;
+  transition: height .28s ease, padding .28s ease;
 }
 #patientBottomNav.patient-nav-expanded {
-  height: 214px !important;
+  height: 184px !important;
+  grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
   grid-template-rows: repeat(2, minmax(0, 1fr)) !important;
   padding-top: 8px !important;
+  transition: height .28s ease, padding .28s ease;
 }
 #patientBottomNav .patient-nav-see-more {
-  color: #ffffff !important;
-  position: absolute;
-  top: 6px;
-  left: 50%;
-  transform: translateX(-50%);
-  border: 0;
-  border-radius: 999px;
-  padding: 4px 16px;
-  background: #205b9b;
-  color: #fff;
-  font-weight: 700;
-  font-family: Inter, sans-serif;
-  font-size: 12px;
-  line-height: 1.2;
-  z-index: 2;
+  width: 42px;
+  height: 42px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 1px solid #cbd8e4;
+  border-radius: 14px;
+  background: #f1f6fb;
+  color: #1769e0 !important;
+  font-size: 20px;
+  line-height: 1;
+  cursor: pointer;
+  transition: background .18s ease, color .18s ease, transform .18s ease;
 }
+#patientBottomNav .patient-nav-see-more:hover { background: #e2efff; transform: scale(1.05); }
 /* Keep the patient logout action above the fixed bottom navigation. */
 #profile.page {
   padding-bottom: 250px !important;
@@ -1135,10 +1138,83 @@ body::before {
 #profile .profile-card {
   margin-bottom: 12px !important;
 }
-#patientBottomNav.patient-nav-expanded .patient-nav-see-more { display: block !important; }
+#patientBottomNav.patient-nav-expanded .patient-nav-see-more { display: flex !important; }
 #patientBottomNav.patient-nav-collapsed .patient-nav-extra { display: none !important; }
 #patientBottomNav.patient-nav-expanded .patient-nav-extra { display: flex !important; }
+#patientBottomNav.patient-nav-expanded .patient-nav-extra { animation: patientNavItemEnter .24s ease both; }
+#patientBottomNav.patient-nav-expanded #patientNavSeeMore i { animation: patientNavIconOpen .24s ease both; }
+@keyframes patientNavItemEnter {
+  from { opacity: 0; transform: translateY(10px) scale(.96); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes patientNavIconOpen {
+  from { transform: rotate(-90deg) scale(.75); }
+  to { transform: rotate(0) scale(1); }
+}
 #patientBottomNav > button:not(.patient-nav-see-more) { min-height: 0; }
+#patientBottomNav > button:not(.patient-nav-see-more) {
+  border-radius: 14px;
+  transition: transform .18s ease, background-color .18s ease, box-shadow .18s ease;
+}
+#patientBottomNav > button:not(.patient-nav-see-more) i {
+  transition: transform .18s ease, filter .18s ease;
+}
+@media (hover: hover) and (pointer: fine) {
+  #patientBottomNav > button:not(.patient-nav-see-more):hover {
+    background: rgba(23,105,224,.08) !important;
+    box-shadow: 0 3px 10px rgba(23,105,224,.1);
+    transform: translateY(-3px);
+  }
+  #patientBottomNav > button:not(.patient-nav-see-more):hover i {
+    transform: scale(1.12);
+    filter: drop-shadow(0 2px 4px rgba(23,105,224,.24));
+  }
+}
+#patientBottomNav > button:not(.patient-nav-see-more).active {
+  background: rgba(23,105,224,.09) !important;
+  box-shadow: inset 0 2px 0 rgba(23,105,224,.28);
+}
+#patientBottomNav > button:not(.patient-nav-see-more).active i {
+  transform: scale(1.08);
+}
+#patientBottomNav > button:not(.patient-nav-see-more):active { transform: scale(.96); }
+#patientBottomNav > button:not(.patient-nav-see-more):focus-visible,
+#patientBottomNav > button.patient-nav-see-more:focus-visible {
+  outline: 3px solid rgba(23,105,224,.45);
+  outline-offset: 2px;
+}
+#patientApp .header-actions { position: relative; }
+#patientProfileDropdown {
+  position: absolute;
+  top: calc(100% + 8px);
+  right: 0;
+  z-index: 40;
+  width: 176px;
+  padding: 6px;
+  border: 1px solid #d8e2ec;
+  border-radius: 14px;
+  background: #fff;
+  color: #18324b;
+  box-shadow: 0 12px 28px rgba(24,50,75,.18);
+}
+#patientProfileDropdown button {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  gap: 9px;
+  padding: 10px;
+  border: 0;
+  border-radius: 9px;
+  background: transparent;
+  color: #18324b;
+  text-align: left;
+  font-size: 13px;
+  cursor: pointer;
+}
+#patientProfileDropdown button:hover { background: #eef5fb; }
+html.ep-dark #patientProfileDropdown { background: #203243; color: #edf4fb; border-color: #40566a; }
+html.ep-dark #patientProfileDropdown button { color: #edf4fb; }
+html.ep-dark #patientProfileDropdown button:hover { background: #2b4358; }
 </style>
 <style id="erecpass-patient-records-nav-clearance">
 /* Keep the end of the Records list scrollable above the fixed patient navigation.
@@ -1642,13 +1718,46 @@ Don't have an account?
 
 <div>
 
-<label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Full Name (with M.I.)</label>
+<label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">First Name</label>
 
 <div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
 
 <i class="fa-solid fa-user text-cyan-400 text-xs"></i>
 
-<input type="text" id="regFullName" placeholder="Juan A. Dela Cruz" required class="w-full bg-transparent outline-none text-xs">
+<input type="text" id="regFirstName" autocomplete="given-name" placeholder="Juan" required class="w-full bg-transparent outline-none text-xs">
+
+</div>
+
+</div>
+
+<div>
+
+<label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Middle Name</label>
+
+<div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
+
+<i class="fa-solid fa-user text-cyan-400 text-xs"></i>
+
+<input type="text" id="regMiddleName" autocomplete="additional-name" placeholder="Santos" required class="w-full bg-transparent outline-none text-xs">
+
+</div>
+
+<label class="mt-2 flex items-center gap-2 text-xs text-slate-500 cursor-pointer">
+<input type="checkbox" id="regNoMiddleName" class="accent-cyan-500" onchange="toggleRegisterMiddleName()">
+<span>Middle name N/A (I do not have a middle name)</span>
+</label>
+
+</div>
+
+<div>
+
+<label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Last Name</label>
+
+<div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
+
+<i class="fa-solid fa-user text-cyan-400 text-xs"></i>
+
+<input type="text" id="regLastName" autocomplete="family-name" placeholder="Dela Cruz" required class="w-full bg-transparent outline-none text-xs">
 
 </div>
 
@@ -1672,9 +1781,7 @@ Don't have an account?
 
 <label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">SIM Mobile Number</label>
 
-<div class="flex gap-2">
-
-<div class="input-box flex items-center gap-2 px-3 py-2.5 rounded-xl flex-1">
+<div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
 
 <i class="fa-solid fa-phone text-cyan-400 text-xs"></i>
 
@@ -1682,25 +1789,9 @@ Don't have an account?
 
 </div>
 
-<button type="button" onclick="sendSimCode()" class="px-3 py-2 bg-cyan-950 border border-cyan-400/50 text-cyan-300 rounded-xl font-tech text-[11px] font-bold hover:bg-cyan-900">Send Code</button>
-
 </div>
 
-</div>
 
-<div>
-
-<label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Verification Code</label>
-
-<div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
-
-<i class="fa-solid fa-shield-cat text-cyan-400 text-xs"></i>
-
-<input type="text" id="regVerifyCode" placeholder="EMAIL Verification Confirmed" class="w-full bg-transparent outline-none text-xs">
-
-</div>
-
-</div>
 
 <div>
 
@@ -1754,29 +1845,34 @@ Already have an account?
 
 <div class="brand flex items-center gap-2">
 
-<div class="w-8 h-8 rounded-xl bg-cyan-950 border border-cyan-400/60 flex items-center justify-center text-cyan-400">
+<div class="w-9 h-9 rounded-xl bg-teal-50 border border-teal-100 flex items-center justify-center text-teal-700">
 
 <i class="fa-solid fa-hospital-user text-base"></i>
 
 </div>
 
-<strong class="font-tech text-cyan-300 text-base">ERecPass</strong>
+<strong class="text-teal-800 text-base font-bold tracking-tight">ERecPass</strong>
 
 </div>
 
 <div class="header-actions flex items-center gap-2">
 
-<button class="px-2.5 py-1.5 rounded-xl bg-rose-950/60 border border-rose-500/50 text-rose-400 text-[11px] font-tech font-bold flex items-center gap-1 animate-pulse-red" onclick="openEmergencyModal()">
+<button class="px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-1.5 hover:bg-rose-100 transition-colors" onclick="openEmergencyModal()">
 
 <i class="fa-solid fa-triangle-exclamation"></i> Emergency
 
 </button>
 
-<button class="w-8 h-8 rounded-full bg-cyan-950 border border-cyan-400/50 text-cyan-300 flex items-center justify-center" onclick="showPage('profile')">
+<button class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition-colors" aria-label="Open profile menu" aria-haspopup="menu" aria-expanded="false" onclick="togglePatientProfileMenu(event)">
 
 <i class="fa-solid fa-user text-xs"></i>
 
 </button>
+
+<div id="patientProfileDropdown" class="hidden" role="menu" aria-label="Profile options">
+  <button type="button" role="menuitem" onclick="closePatientProfileMenu(); showPage('profile')"><i class="fa-solid fa-user"></i> View profile</button>
+  <button type="button" role="menuitem" onclick="closePatientProfileMenu(); logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
+</div>
 
 </div>
 
@@ -1788,39 +1884,234 @@ Already have an account?
 
 <section id="dashboard" class="page">
 
-<div class="welcome flex justify-between items-center mb-4">
+<style id="patient-welcome-health-card-styles">
+  #patientApp {
+    min-height: 100vh;
+    background: #f4f7fb !important;
+    color: #18324b !important;
+    font-family: Inter, Arial, sans-serif !important;
+  }
+  #patientApp .top-header {
+    background: rgba(255,255,255,.97) !important;
+    border-color: #e1e8ef !important;
+    box-shadow: 0 2px 12px rgba(24,50,75,.07) !important;
+    backdrop-filter: blur(12px) !important;
+    -webkit-backdrop-filter: blur(12px) !important;
+  }
+  #patientApp .main-content { color: #18324b !important; }
+  #patientApp #dashboard .glass-card {
+    background: #fff !important;
+    color: #18324b !important;
+    border: 1px solid #e1e8ef !important;
+    box-shadow: 0 3px 14px rgba(24,50,75,.06) !important;
+    backdrop-filter: none !important;
+    -webkit-backdrop-filter: none !important;
+  }
+  #patientApp #dashboard .glass-card:hover {
+    border-color: #cbd8e4 !important;
+    box-shadow: 0 5px 18px rgba(24,50,75,.09) !important;
+  }
+  #patientApp #dashboard .text-white { color: #18324b !important; -webkit-text-fill-color: #18324b !important; }
+  #patientApp #dashboard .text-slate-300,
+  #patientApp #dashboard .text-slate-400 { color: #62758a !important; -webkit-text-fill-color: #62758a !important; }
+  #patientApp #dashboard .font-tech { font-family: Inter, Arial, sans-serif !important; text-shadow: none !important; }
+  #patientApp .bottom-nav {
+    background: rgba(255,255,255,.98) !important;
+    border-color: #e1e8ef !important;
+    box-shadow: 0 -3px 14px rgba(24,50,75,.07) !important;
+  }
+  #patientWelcomeCard {
+    --patient-health-rgb: 16,185,129;
+    border: 1px solid rgba(var(--patient-health-rgb), .45);
+    background: linear-gradient(125deg, #ffffff, #f5f9fc);
+    box-shadow: 0 4px 16px rgba(24,50,75,.07);
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease;
+  }
+  #patientWelcomeCard[data-health-status="yellow"] { --patient-health-rgb: 245,158,11; }
+  #patientWelcomeCard[data-health-status="red"] { --patient-health-rgb: 244,63,94; }
+  #patientWelcomeCard:hover, #patientWelcomeCard:focus-within {
+    transform: translateY(-2px);
+    border-color: rgba(var(--patient-health-rgb), .9);
+    box-shadow: 0 0 0 1px rgba(var(--patient-health-rgb), .2), 0 12px 32px rgba(var(--patient-health-rgb), .22);
+  }
+  #patientDashboardHealthIcon {
+    color: rgb(var(--patient-health-rgb));
+    background: rgba(var(--patient-health-rgb), .12);
+    box-shadow: inset 0 0 0 1px rgba(var(--patient-health-rgb), .3);
+  }
+  #patientDashboardStatusBadge {
+    color: #087b5b !important;
+    background: #e8f7f1 !important;
+    border: 1px solid #b6e6d3 !important;
+  }
+  #patientWelcomeCard[data-health-status="yellow"] #patientDashboardStatusBadge {
+    color: #986400 !important;
+    background: #fff6df !important;
+    border-color: #f2d48b !important;
+  }
+  #patientWelcomeCard[data-health-status="red"] #patientDashboardStatusBadge {
+    color: #ad3445 !important;
+    background: #fff0f1 !important;
+    border-color: #f0bec4 !important;
+  }
+  #patientApp #patientHoldEmergencyBtn {
+    color: #b33d4b !important;
+    background: #fff1f2 !important;
+    border-color: #eaa5ad !important;
+    box-shadow: 0 4px 12px rgba(179,61,75,.12) !important;
+  }
+  #patientApp #patientHoldEmergencyBtn .fa-phone { color: #b33d4b !important; }
+  #patientApp #patientProgressRing { color: #c96873 !important; }
+  #patientEmergencyCard {
+    transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease;
+    touch-action: none;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    #patientEmergencyCard:hover {
+      border-color: #e05262 !important;
+      box-shadow: 0 0 0 2px rgba(214,55,75,.16), 0 8px 24px rgba(190,18,60,.2) !important;
+      transform: translateY(-2px);
+    }
+    #patientHoldEmergencyBtn:hover {
+      background: #ffe3e6 !important;
+      border-color: #d63b50 !important;
+      box-shadow: 0 0 0 3px rgba(214,55,75,.14), 0 0 20px rgba(220,38,60,.32) !important;
+      transform: scale(1.04);
+    }
+  }
+  #patientHoldEmergencyBtn { touch-action: none; }
+  #patientApp #patientHoldEmergencyBtn {
+    color: #fff !important;
+    background: #d62839 !important;
+    border-color: #a7192a !important;
+    box-shadow: 0 4px 14px rgba(190,18,60,.4) !important;
+    transition: background .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease !important;
+  }
+  #patientApp #patientHoldEmergencyBtn .fa-phone,
+  #patientApp #patientHoldEmergencyBtn span { color: #fff !important; }
+  #patientApp #patientHoldEmergencyBtn.is-pressing {
+    background: #a90f26 !important;
+    border-color: #750d1e !important;
+    box-shadow: 0 0 0 4px rgba(220,38,60,.34), 0 0 30px rgba(220,38,60,.9), 0 0 52px rgba(244,63,94,.62) !important;
+    transform: scale(1.07);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    #patientApp #patientHoldEmergencyBtn:hover {
+      background: #b5122a !important;
+      border-color: #7f1020 !important;
+      box-shadow: 0 0 0 4px rgba(220,38,60,.28), 0 0 28px rgba(220,38,60,.76) !important;
+      transform: scale(1.06);
+    }
+  }
+  #patientApp #patientEmergencyCard.is-processing {
+    border-color: #dc263c !important;
+    outline: 3px solid rgba(220,38,60,.82) !important;
+    outline-offset: 2px;
+    box-shadow: 0 0 0 3px rgba(220,38,60,.28), 0 0 30px rgba(220,38,60,.48), 0 0 48px rgba(244,63,94,.25) !important;
+    animation: patientEmergencyRedGlow .8s ease-in-out infinite alternate, patientEmergencyBoxHalo .8s ease-in-out infinite alternate;
+  }
+  #patientApp #patientEmergencyCard.is-arming {
+    border-color: #dc263c !important;
+    outline: 2px solid rgba(220,38,60,.58) !important;
+    outline-offset: 2px;
+    animation: patientEmergencyArmGlow 1.1s ease-in-out infinite alternate, patientEmergencyBoxArmHalo 1.1s ease-in-out infinite alternate;
+  }
+  @keyframes patientEmergencyRedGlow {
+    from { box-shadow: 0 0 0 2px rgba(220,38,60,.2), 0 0 18px rgba(220,38,60,.34), 0 0 30px rgba(244,63,94,.18); }
+    to { box-shadow: 0 0 0 4px rgba(220,38,60,.36), 0 0 36px rgba(220,38,60,.62), 0 0 58px rgba(244,63,94,.36); }
+  }
+  @keyframes patientEmergencyArmGlow {
+    from { box-shadow: 0 0 0 1px rgba(220,38,60,.14), 0 0 12px rgba(220,38,60,.2); }
+    to { box-shadow: 0 0 0 3px rgba(220,38,60,.3), 0 0 26px rgba(220,38,60,.44), 0 0 38px rgba(244,63,94,.24); }
+  }
+  @keyframes patientEmergencyBoxHalo {
+    from { filter: drop-shadow(0 0 5px rgba(220,38,60,.35)); }
+    to { filter: drop-shadow(0 0 18px rgba(220,38,60,.9)); }
+  }
+  @keyframes patientEmergencyBoxArmHalo {
+    from { filter: drop-shadow(0 0 3px rgba(220,38,60,.2)); }
+    to { filter: drop-shadow(0 0 12px rgba(220,38,60,.62)); }
+  }
+  #patientApp #dashboard > .glass-card {
+    border-left: 4px solid #e6a3a3 !important;
+    background: linear-gradient(110deg, #fff, #fffafa) !important;
+  }
+  #patientApp #patientAnnouncementsArea .glass-card {
+    border-left: 4px solid #3a8b82 !important;
+    background: linear-gradient(110deg, #fff, #f8fcfb) !important;
+  }
+  #patientApp #patientAnnouncementsArea strong { color: #18324b !important; }
+  #patientApp #patientAnnouncementsArea p { color: #62758a !important; }
+  html.ep-dark #patientApp {
+    background: #101820 !important;
+    color: #edf4fb !important;
+  }
+  html.ep-dark #patientApp .top-header,
+  html.ep-dark #patientApp .bottom-nav {
+    background: rgba(24,37,50,.98) !important;
+    border-color: #334b60 !important;
+    color: #edf4fb !important;
+  }
+  html.ep-dark #patientApp .main-content { color: #edf4fb !important; }
+  html.ep-dark #patientApp .top-header .brand strong { color: #edf4fb !important; -webkit-text-fill-color: #edf4fb !important; }
+  html.ep-dark #patientApp #dashboard .glass-card {
+    background: #182532 !important;
+    color: #edf4fb !important;
+    border-color: #334b60 !important;
+  }
+  html.ep-dark #patientApp #dashboard .text-white { color: #edf4fb !important; -webkit-text-fill-color: #edf4fb !important; }
+  html.ep-dark #patientApp #dashboard .text-slate-300,
+  html.ep-dark #patientApp #dashboard .text-slate-400,
+  html.ep-dark #patientApp #dashboard .text-slate-500,
+  html.ep-dark #patientApp #dashboard .text-slate-600 { color: #b7c7d6 !important; -webkit-text-fill-color: #b7c7d6 !important; }
+  html.ep-dark #patientApp #patientWelcomeCard {
+    background: linear-gradient(125deg, #182532, #1d3040) !important;
+    color: #edf4fb !important;
+  }
+  html.ep-dark #patientApp #patientWelcomeCard #patientDashboardName { color: #f4f8fc !important; -webkit-text-fill-color: #f4f8fc !important; }
+  html.ep-dark #patientApp #dashboard > #patientEmergencyCard {
+    background: linear-gradient(110deg, #211f29, #271c25) !important;
+  }
+  html.ep-dark #patientApp #patientAnnouncementsArea .glass-card {
+    background: linear-gradient(110deg, #182532, #1b302f) !important;
+  }
+  html.ep-dark #patientApp #patientAnnouncementsArea strong { color: #edf4fb !important; }
+  html.ep-dark #patientApp #patientAnnouncementsArea p { color: #b7c7d6 !important; }
+  html.ep-dark #patientApp .header-actions > button[aria-haspopup="menu"] {
+    background: #263849 !important;
+    color: #edf4fb !important;
+    border-color: #40566a !important;
+  }
+  html.ep-dark #patientApp .header-actions #epSettingsToggle,
+  html.ep-dark #patientApp .header-actions #epSettingsPanel,
+  html.ep-dark #patientApp .header-actions #epSettingsPanel button {
+    background: #203243 !important;
+    color: #edf4fb !important;
+    border-color: #40566a !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #patientWelcomeCard { transition: none; }
+    #patientWelcomeCard:hover, #patientWelcomeCard:focus-within { transform: none; }
+  }
+</style>
 
-<div>
-
-<p class="text-xs text-slate-400">Welcome back,</p>
-
-<h1 id="patientDashboardName" class="text-xl font-bold font-tech text-white">Patient</h1>
-
-</div>
-
-<div id="patientDashboardStatusBadge" class="health-status px-3 py-1 rounded-full text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 flex items-center gap-1">
-
-<i class="fa-solid fa-circle text-[8px]"></i> Healthy
-
-</div>
-
-</div>
-
-<!-- Color Guide Info Box -->
-
-<div class="glass-card p-3 rounded-xl mb-4 border-cyan-500/30 text-xs flex justify-around text-center">
-
-<div><span class="text-emerald-400 font-bold">● Green</span><p class="text-[10px] text-slate-400">Healthy</p></div>
-
-<div><span class="text-amber-400 font-bold">● Yellow</span><p class="text-[10px] text-slate-400">Pending Results</p></div>
-
-<div><span class="text-rose-400 font-bold">● Red</span><p class="text-[10px] text-slate-400">High Risk</p></div>
-
+<div id="patientWelcomeCard" class="patient-welcome-card rounded-2xl mb-4 p-4 sm:p-5 flex items-center justify-between gap-4" data-health-status="green">
+  <div class="min-w-0">
+    <p class="text-xs font-semibold text-slate-600">Welcome back,</p>
+    <h1 id="patientDashboardName" class="text-lg sm:text-xl font-bold text-slate-900 truncate">Patient</h1>
+    <p class="mt-1 text-[11px] text-slate-600">Your health status at a glance</p>
+  </div>
+  <div class="flex shrink-0 flex-col items-center gap-2">
+    <div id="patientDashboardHealthIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" aria-hidden="true">
+      <i class="fa-solid fa-heart-pulse"></i>
+    </div>
+    <div id="patientDashboardStatusBadge" class="health-status rounded-full px-3 py-1 text-[11px] font-bold text-emerald-300 bg-emerald-950/70 border border-emerald-500/40" aria-live="polite">Healthy</div>
+  </div>
 </div>
 
 <!-- Emergency Hold Button Card -->
 
-<div class="glass-card p-5 rounded-2xl flex justify-between items-center mb-5 border-rose-500/30">
+<div id="patientEmergencyCard" class="glass-card p-5 rounded-2xl flex justify-between items-center mb-5 border-rose-500/30">
 
 <div>
 
@@ -1828,11 +2119,11 @@ Already have an account?
 
 <h2 class="text-base font-bold text-white mt-1">Angono Barangay Dispatch</h2>
 
-<p class="text-[11px] text-slate-400">Hold button for 3s to call emergency ambulance.</p>
+  <p class="text-[11px] text-slate-400">Hold the circle for 3 seconds, or hold elsewhere for 1 second to start a 3-second countdown. Double-tap the box to cancel.</p>
 
 </div>
 
-<button id="patientHoldEmergencyBtn" class="hold-button relative w-16 h-16 rounded-full bg-rose-950 border-2 border-rose-500 text-rose-400 flex flex-col items-center justify-center text-lg font-bold shadow-lg shadow-rose-900/50 active:scale-95 transition-all">
+<button id="patientHoldEmergencyBtn" type="button" class="hold-button relative w-16 h-16 rounded-full bg-rose-950 border-2 border-rose-500 text-rose-400 flex flex-col items-center justify-center text-lg font-bold shadow-lg shadow-rose-900/50 active:scale-95 transition-all" aria-label="Press and hold for 3 seconds for emergency options">
 
 <i class="fa-solid fa-phone text-rose-400"></i>
 
@@ -1851,13 +2142,9 @@ Already have an account?
 </div>
 
 <!-- Announcements Banner -->
-
-<div id="patientAnnouncementsArea" class="mb-5 space-y-2">
-
-<!-- Dynamically populated announcements -->
-
+<div id="patientAnnouncementsArea" class="mt-5 mb-5 space-y-2">
+  <!-- Dynamically populated announcements -->
 </div>
-
 
 </section>
 <!-- PATIENT HOSPITAL MAP -->
@@ -2265,9 +2552,7 @@ Already have an account?
 </main>
 <!-- PATIENT BOTTOM NAVIGATION -->
 
-<nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-4 items-center justify-items-center px-2 gap-x-1 gap-y-0" style="background:#ffffff !important;">
-
-<button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-expanded="false">See More</button>
+<nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-4 items-center justify-items-center px-2 gap-x-1 gap-y-0">
 
 <button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
 <i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><spanclass="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
@@ -2284,6 +2569,8 @@ Already have an account?
 <button id="nav-doctors" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
 <i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Staff</span>
 </button>
+
+<button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-label="Show more navigation items" title="Show more navigation items" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
 
 <button id="nav-appointments" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('appointments')" type="button">
 <i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Appts</span>
@@ -2989,6 +3276,8 @@ Already have an account?
 <!-- SYSTEM INITIALIZATION & DATABASE SCRIPT -->
 
 <script>
+window.epStore = window.epStore || window.localStorage;
+var epStore = window.epStore;
 
 /* ==========================================================================
 
@@ -3167,7 +3456,7 @@ document.getElementById('display911Num').innerText = nums.national;
 }
 
 function openEmergencyModal() {
-
+try { loadEmergencyNums(); } catch (error) { console.warn('[ERecPass] Could not refresh emergency numbers:', error); }
 document.getElementById('emergencyModal').classList.remove('hidden');
 
 }
@@ -3241,21 +3530,47 @@ document.querySelectorAll('.auth-page').forEach(p => p.classList.add('hidden'));
 
 let tempSimCode = "";
 
+function toggleRegisterMiddleName() {
+  const noMiddle = document.getElementById('regNoMiddleName');
+  const middle = document.getElementById('regMiddleName');
+  if (!noMiddle || !middle) return;
+  if (noMiddle.checked) {
+    middle.value = 'N/A';
+    middle.disabled = true;
+    middle.removeAttribute('required');
+  } else {
+    if (/^n\/?a$/i.test(String(middle.value || '').trim())) middle.value = '';
+    middle.disabled = false;
+    middle.setAttribute('required', 'required');
+  }
+}
+
+function getRegisterFullName() {
+  const first = (document.getElementById('regFirstName')?.value || '').trim();
+  const last = (document.getElementById('regLastName')?.value || '').trim();
+  const noMiddle = !!document.getElementById('regNoMiddleName')?.checked;
+  const middleRaw = (document.getElementById('regMiddleName')?.value || '').trim();
+  const middle = (noMiddle || /^n\/?a$/i.test(middleRaw)) ? '' : middleRaw;
+  if (!first || !last) return { error: 'Please enter your First Name and Last Name.' };
+  if (!noMiddle && !middle) return { error: 'Please enter your Middle Name, or check N/A if you do not have one.' };
+  return { fullName: [first, middle, last].filter(Boolean).join(' ') };
+}
+
 function sendSimCode() {
-
-const sim = document.getElementById('regSim').value.trim();
-
-if (!sim) { alert("Please enter SIM mobile number."); return; }
-
-alert("SMS verification is not connected yet. You can continue registration and verify your account through the email confirmation link.");
-
+  const email = document.getElementById('regEmail')?.value.trim();
+  alert("Firebase Email Confirmation is active.\n\nWhen you click 'CREATE ACCOUNT', Firebase will automatically send a confirmation link to your email (" + (email || 'your registered email') + "). Open the link in your inbox to verify your account before logging in.");
 }
 
 async function handleRegister(e) {
 
 e.preventDefault();
 
-const fullName = document.getElementById('regFullName').value;
+const nameResult = getRegisterFullName();
+if (nameResult.error) {
+  alert(nameResult.error);
+  return;
+}
+const fullName = nameResult.fullName;
 
 const email = document.getElementById('regEmail').value;
 
@@ -3779,21 +4094,29 @@ async function refreshPatientPortal() {
 
   // Status Badge
   const statusBadge = document.getElementById('patientDashboardStatusBadge');
+  const welcomeCard = document.getElementById('patientWelcomeCard');
+  const healthIcon = document.getElementById('patientDashboardHealthIcon');
   const statusProf = document.getElementById('profileHealthStatusDisplay');
 
   if (p.status === 'Green') {
-    statusBadge.className = "health-status px-3 py-1 rounded-full text-xs font-bold text-emerald-400 bg-emerald-950/60 border border-emerald-500/40 flex items-center gap-1";
-    statusBadge.innerHTML = `<i class="fa-solid fa-circle text-[8px]"></i> Healthy`;
+    if (welcomeCard) welcomeCard.dataset.healthStatus = 'green';
+    if (healthIcon) healthIcon.innerHTML = '<i class="fa-solid fa-heart-pulse"></i>';
+    statusBadge.className = "health-status rounded-full px-3 py-1 text-[11px] font-bold text-emerald-300 bg-emerald-950/70 border border-emerald-500/40";
+    statusBadge.textContent = 'Healthy';
     statusProf.innerText = "Green (Healthy)";
     statusProf.className = "text-xs font-bold text-emerald-400";
   } else if (p.status === 'Yellow') {
-    statusBadge.className = "health-status px-3 py-1 rounded-full text-xs font-bold text-amber-400 bg-amber-950/60 border border-amber-500/40 flex items-center gap-1";
-    statusBadge.innerHTML = `<i class="fa-solid fa-circle text-[8px]"></i> Pending Results`;
+    if (welcomeCard) welcomeCard.dataset.healthStatus = 'yellow';
+    if (healthIcon) healthIcon.innerHTML = '<i class="fa-solid fa-clipboard-question"></i>';
+    statusBadge.className = "health-status rounded-full px-3 py-1 text-[11px] font-bold text-amber-300 bg-amber-950/70 border border-amber-500/40";
+    statusBadge.textContent = 'Pending Results';
     statusProf.innerText = "Yellow (Pending Results)";
     statusProf.className = "text-xs font-bold text-amber-400";
   } else {
-    statusBadge.className = "health-status px-3 py-1 rounded-full text-xs font-bold text-rose-400 bg-rose-950/60 border border-rose-500/40 flex items-center gap-1";
-    statusBadge.innerHTML = `<i class="fa-solid fa-circle text-[8px]"></i> High Risk`;
+    if (welcomeCard) welcomeCard.dataset.healthStatus = 'red';
+    if (healthIcon) healthIcon.innerHTML = '<i class="fa-solid fa-heart-crack"></i>';
+    statusBadge.className = "health-status rounded-full px-3 py-1 text-[11px] font-bold text-rose-300 bg-rose-950/70 border border-rose-500/40";
+    statusBadge.textContent = 'High Risk';
     statusProf.innerText = "Red (High Risk)";
     statusProf.className = "text-xs font-bold text-rose-400";
   }
@@ -3960,7 +4283,7 @@ try {
 async function deletePatientAppointment(appointmentId) {
   if (!appointmentId) return;
 
-  const confirmed = window.confirm(
+  const confirmed = await window.erecpassConfirm(
     'Delete this appointment?\nThis will permanently remove your booking.'
   );
   if (!confirmed) return;
@@ -4432,7 +4755,9 @@ async function savePatientCloudFields(fields) {
   if (Object.prototype.hasOwnProperty.call(fields, 'photo')) payload.photo = fields.photo;
   if (Object.prototype.hasOwnProperty.call(fields, 'birth_date')) {
     payload.birth_date = fields.birth_date || null;
-    payload.age_category = fields.birth_date ? getPatientCategoryFromBirthDate(fields.birth_date) : null;
+    payload.age_category = fields.birth_date
+      ? getPatientCategoryFromBirthDate(fields.birth_date)
+      : (row.age_category || 'Adult');
   }
   if (Object.prototype.hasOwnProperty.call(fields, 'gender')) payload.gender = fields.gender || null;
   if (Object.prototype.hasOwnProperty.call(fields, 'blood_type')) payload.blood_type = fields.blood_type || null;
@@ -4759,65 +5084,186 @@ alert("Appointment submitted to admin for approval.");
 }
 /* Patient Chat is Supabase-only. The messaging implementation is loaded below. */
 
-/* Emergency Hold Button 3s behavior */
+/* Circle: hold 3s. Box: hold 1s to start a separate 3s countdown. */
 
 function setupHoldEmergencyButtons() {
 
 const btn = document.getElementById('patientHoldEmergencyBtn');
+const card = document.getElementById('patientEmergencyCard');
 
 const ring = document.getElementById('patientProgressRing');
 
-let holdTimer = null;
+if (!btn || !card || !ring || card.dataset.holdSetup === 'true') return;
+card.dataset.holdSetup = 'true';
 
-let progress = 100;
+let activePointerId = null;
+let activeHoldSource = null;
+let holdFrame = 0;
+let boxCountdownFrame = 0;
+let emergencySequenceRunning = false;
+let lastBoxCancelTapAt = 0;
 
-btn.addEventListener('mousedown', startHold);
-
-btn.addEventListener('touchstart', startHold);
-
-btn.addEventListener('mouseup', endHold);
-
-btn.addEventListener('mouseleave', endHold);
-
-btn.addEventListener('touchend', endHold);
-
-function startHold() {
-
-progress = 100;
-
-holdTimer = setInterval(() => {
-
-progress -= 3.33;
-
-if (progress <= 0) {
-
-progress = 0;
-
-clearInterval(holdTimer);
-
-ring.style.strokeDashoffset = "0";
-
-openEmergencyModal();
-
-} else {
-
-ring.style.strokeDashoffset = progress.toString();
-
+function finishEmergencySequence() {
+  emergencySequenceRunning = false;
+  activePointerId = null;
+  activeHoldSource = null;
+  card.classList.remove('is-processing', 'is-arming');
+  btn.classList.remove('is-pressing');
+  ring.style.strokeDashoffset = '100';
+  openEmergencyModal();
 }
 
-}, 100);
-
+function cancelActiveHold() {
+  if (holdFrame) cancelAnimationFrame(holdFrame);
+  holdFrame = 0;
+  activePointerId = null;
+  activeHoldSource = null;
+  card.classList.remove('is-processing', 'is-arming');
+  btn.classList.remove('is-pressing');
+  ring.style.strokeDashoffset = '100';
 }
 
-function endHold() {
+// Circle control: keep pressing for 3 seconds. Releasing early cancels it.
+btn.addEventListener('pointerdown', event => {
+  if (event.pointerType && event.button !== 0) return;
+  if (emergencySequenceRunning || activePointerId !== null) return;
+  event.preventDefault();
+  activePointerId = event.pointerId;
+  activeHoldSource = 'circle';
+  const startedAt = performance.now();
+  card.classList.add('is-processing');
+  btn.classList.add('is-pressing');
+  try { btn.setPointerCapture(event.pointerId); } catch (_) {}
+  const update = () => {
+    if (activeHoldSource !== 'circle') return;
+    const fraction = Math.min(1, (performance.now() - startedAt) / 3000);
+    ring.style.strokeDashoffset = String(100 * (1 - fraction));
+    if (fraction >= 1) {
+      holdFrame = 0;
+      finishEmergencySequence();
+      return;
+    }
+    holdFrame = requestAnimationFrame(update);
+  };
+  holdFrame = requestAnimationFrame(update);
+});
 
-clearInterval(holdTimer);
-
-progress = 100;
-
-ring.style.strokeDashoffset = "100";
-
+function endCircleHold(event) {
+  if (activeHoldSource !== 'circle') return;
+  if (event.pointerId !== undefined && activePointerId !== event.pointerId) return;
+  cancelActiveHold();
 }
+btn.addEventListener('pointerup', endCircleHold);
+btn.addEventListener('pointercancel', endCircleHold);
+btn.addEventListener('lostpointercapture', endCircleHold);
+
+// Box add-on: hold outside the circle for 1 second to arm its own 3-second countdown.
+card.addEventListener('pointerdown', event => {
+  if (event.pointerType && event.button !== 0) return;
+  if (activeHoldSource === 'box-countdown' && emergencySequenceRunning) {
+    event.preventDefault();
+    const tapAt = performance.now();
+    if (lastBoxCancelTapAt && tapAt - lastBoxCancelTapAt <= 500) {
+      if (boxCountdownFrame) cancelAnimationFrame(boxCountdownFrame);
+      boxCountdownFrame = 0;
+      emergencySequenceRunning = false;
+      activeHoldSource = null;
+      lastBoxCancelTapAt = 0;
+      card.classList.remove('is-processing', 'is-arming');
+      btn.classList.remove('is-pressing');
+      ring.style.strokeDashoffset = '100';
+    } else {
+      lastBoxCancelTapAt = tapAt;
+    }
+    return;
+  }
+  if (btn.contains(event.target)) return;
+  if (emergencySequenceRunning || activePointerId !== null) return;
+  event.preventDefault();
+  activePointerId = event.pointerId;
+  activeHoldSource = 'box-arm';
+  const armedAt = performance.now();
+  card.classList.add('is-arming');
+  btn.classList.add('is-pressing');
+  try { card.setPointerCapture(event.pointerId); } catch (_) {}
+
+  const arm = () => {
+    if (activeHoldSource !== 'box-arm') return;
+    const fraction = Math.min(1, (performance.now() - armedAt) / 1000);
+    if (fraction >= 1) {
+      holdFrame = 0;
+      activePointerId = null;
+      activeHoldSource = 'box-countdown';
+      emergencySequenceRunning = true;
+      card.classList.remove('is-arming');
+      card.classList.add('is-processing');
+      btn.classList.add('is-pressing');
+      const countdownAt = performance.now();
+      ring.style.strokeDashoffset = '100';
+      const countdown = () => {
+        if (activeHoldSource !== 'box-countdown') return;
+        const countdownFraction = Math.min(1, (performance.now() - countdownAt) / 3000);
+        ring.style.strokeDashoffset = String(100 * (1 - countdownFraction));
+        if (countdownFraction >= 1) {
+          boxCountdownFrame = 0;
+          finishEmergencySequence();
+          return;
+        }
+        boxCountdownFrame = requestAnimationFrame(countdown);
+      };
+      boxCountdownFrame = requestAnimationFrame(countdown);
+      return;
+    }
+    holdFrame = requestAnimationFrame(arm);
+  };
+  holdFrame = requestAnimationFrame(arm);
+});
+
+function endBoxHold(event) {
+  if (activeHoldSource !== 'box-arm') return;
+  if (event.pointerId !== undefined && activePointerId !== event.pointerId) return;
+  cancelActiveHold();
+}
+card.addEventListener('pointerup', endBoxHold);
+card.addEventListener('pointercancel', endBoxHold);
+card.addEventListener('lostpointercapture', endBoxHold);
+
+// Keep keyboard users able to activate the circular control by holding Space/Enter.
+let keyboardStartedAt = null;
+let keyboardFrame = 0;
+btn.addEventListener('keydown', event => {
+  if (event.key !== ' ' && event.key !== 'Enter') return;
+  event.preventDefault();
+  if (event.repeat || keyboardStartedAt !== null || emergencySequenceRunning || activePointerId !== null) return;
+  keyboardStartedAt = performance.now();
+  card.classList.add('is-processing');
+  btn.classList.add('is-pressing');
+  const updateKeyboardHold = () => {
+    const fraction = Math.min(1, (performance.now() - keyboardStartedAt) / 3000);
+    ring.style.strokeDashoffset = String(100 * (1 - fraction));
+    if (fraction >= 1) {
+      keyboardStartedAt = null;
+      keyboardFrame = 0;
+      emergencySequenceRunning = true;
+      finishEmergencySequence();
+      return;
+    }
+    keyboardFrame = requestAnimationFrame(updateKeyboardHold);
+  };
+  keyboardFrame = requestAnimationFrame(updateKeyboardHold);
+});
+function stopKeyboardHold() {
+  if (keyboardFrame) cancelAnimationFrame(keyboardFrame);
+  keyboardFrame = 0;
+  keyboardStartedAt = null;
+  card.classList.remove('is-processing', 'is-arming');
+  btn.classList.remove('is-pressing');
+  ring.style.strokeDashoffset = '100';
+}
+btn.addEventListener('keyup', event => {
+  if (event.key === ' ' || event.key === 'Enter') stopKeyboardHold();
+});
+btn.addEventListener('blur', stopKeyboardHold);
 
 }
 
@@ -5276,7 +5722,7 @@ async function handleAdminLogoUpload(event) {
 }
 async function resetSystemLogo() {
   if (typeof role !== 'undefined' && role !== 'admin') { alert('Admin access required.'); return; }
-  if(!confirm('Reset the system logo to the default logo?')) return;
+  if(!await window.erecpassConfirm('Reset the system logo to the default logo?')) return;
   const client=window.erecpassSupabase;
   if(!client?.storage?.from) { alert('Supabase Storage is not ready. Please refresh and try again.'); return; }
 
@@ -5498,7 +5944,7 @@ async function saveAdminPatientEdit() {
       doctor_notes: docNote,
       guardian_num: guardianNum,
       birth_date: birthDate || null,
-      age_category: birthCategory || null
+      age_category: birthCategory || cloudPatient.age_category || 'Adult'
     };
     const saved = await client.from('patients')
       .update(payload)
@@ -5693,7 +6139,7 @@ async function deleteAdminAnnouncement(announcementId) {
     return;
   }
 
-  const confirmed = window.confirm('Delete this announcement?\\n\\nThis action cannot be undone.');
+  const confirmed = await window.erecpassConfirm('Delete this announcement?\\n\\nThis action cannot be undone.');
   if (!confirmed) return;
 
   const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS)) || [];
@@ -5886,7 +6332,7 @@ try {
 }
 
 async function deleteAppt(id) {
-if (!confirm('Delete Appointment?\\nThis will permanently remove the patient\'s booking.')) return;
+if (!await window.erecpassConfirm('Delete Appointment?\\nThis will permanently remove the patient\'s booking.')) return;
 try {
   const client = window.erecpassSupabase;
   if (!client) throw new Error('Supabase is not ready.');
@@ -6233,19 +6679,10 @@ seed();
 The existing epStore database remains untouched.
 Replace the placeholders with the project's Supabase URL and anon key
 when connecting this front end to a Supabase project. -->
-<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script>
-const SUPABASE_URL = window.ERECPASS_SUPABASE_URL || 'https://bfboehvgrivanmrfqquw.supabase.co';
-const SUPABASE_ANON_KEY = window.ERECPASS_SUPABASE_ANON_KEY || 'sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_';
-let erecpassSupabase = null;
-
-if (SUPABASE_URL && SUPABASE_ANON_KEY && window.supabase) {
-erecpassSupabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY, { auth: { persistSession: true, autoRefreshToken: true, detectSessionInUrl: true } });
-window.erecpassSupabase = erecpassSupabase;
-console.log('ERecPass Supabase client initialized.');
-} else {
-console.log('ERecPass is using the existing epStore database. Add Supabase URL/key to enable the backend connection.');
-}
+// Supabase decoupled: ERecPass runs standalone using Firebase Authentication & epStore database.
+window.erecpassSupabase = null;
+console.log('ERecPass is running standalone with Firebase Auth & epStore database.');
 </script>
 
 <!-- UIPAQUIBS requirements already present in the original file:
@@ -6389,8 +6826,7 @@ else setup();
 <script>
 (function enableLoginEmergencyHold3s() {
 function setupLoginEmergencyHold() {
-const buttons = Array.from(document.querySelectorAll('button[onclick="openEmergencyModal()"]'))
-.filter(btn => btn.id !== 'patientHoldEmergencyBtn');
+const buttons = Array.from(document.querySelectorAll('#loginPage button[onclick="openEmergencyModal()"]'));
 
 buttons.forEach(function(btn) {
 if (btn.dataset.loginHold3sReady === '1') return;
@@ -7132,6 +7568,9 @@ html.ep-dark .quick-grid button,html.ep-dark .date-box,html.ep-dark button[class
 html.ep-dark .text-slate-900,html.ep-dark .text-gray-900,html.ep-dark .text-black{color:#edf4fb!important}
 html:not(.ep-dark){color-scheme:light}
 @media(max-width:640px){#epSettings{top:56px;right:8px}#epSettingsToggle{width:36px;height:36px;font-size:16px}#epSettingsPanel{flex-direction:column;align-items:stretch}#epSettingsPanel button{padding:7px;font-size:11px}}
+#patientApp .header-actions #epSettings{position:relative;top:auto;right:auto;z-index:30;flex:0 0 auto;font:600 12px Arial,sans-serif}
+#patientApp .header-actions #epSettingsToggle{width:36px;height:36px;font-size:16px}
+#patientApp .header-actions #epSettingsPanel{position:absolute;top:calc(100% + 8px);right:0;margin:0;min-width:128px;flex-direction:column;align-items:stretch}
 </style>
 <div id="epSettings" aria-label="Appearance settings">
 <button type="button" id="epSettingsToggle" aria-label="Open appearance settings" aria-expanded="false">⚙️</button>
@@ -7142,6 +7581,9 @@ html:not(.ep-dark){color-scheme:light}
 <script>
 (function(){
 const root=document.documentElement,settings=document.getElementById('epSettings'),settingsToggle=document.getElementById('epSettingsToggle'),themeBtn=document.getElementById('epThemeBtn');
+const patientHeaderActions=document.querySelector('#patientApp .header-actions');
+const patientProfileButton=patientHeaderActions?.querySelector('button[aria-haspopup="menu"]');
+if(patientHeaderActions && settings && patientProfileButton) patientProfileButton.insertAdjacentElement('beforebegin',settings);
 settingsToggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();const open=settings.classList.toggle('ep-open');settingsToggle.setAttribute('aria-expanded',String(open));});
 document.addEventListener('click',function(e){if(!settings.contains(e.target)){settings.classList.remove('ep-open');settingsToggle.setAttribute('aria-expanded','false');}});
 function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore.getItem(key);if(v!==null)return v}}catch(e){}return fallback}
@@ -8506,7 +8948,7 @@ window.toggleErecpassAdminAccount=async function(type,id){
   }catch(e){alert('Could not update account status: '+(e.message||'Please try again.'))}
 };
 window.deleteErecpassAdminAccount=async function(type,id){
-  if(!confirm('Delete Account?\nThis will permanently remove the account and its linked login record. This action cannot be undone.')) return;
+  if(!await window.erecpassConfirm('Delete Account?\nThis will permanently remove the account and its linked login record. This action cannot be undone.')) return;
   const arr=type==='patient'?epPatients():epStaff();
   const target=arr.find(x=>String(x.id)===String(id)); if(!target)return;
   try{
@@ -8542,7 +8984,7 @@ window.erecpassSupabaseSyncPatient=async function(patient){
     email:patient.email||null,
     sim:patient.sim||null,
     photo:patient.photo||null,
-    age_category:patient.birthDate ? getPatientCategoryFromBirthDate(patient.birthDate) : (patient.ageCategory||null),
+    age_category:patient.birthDate ? getPatientCategoryFromBirthDate(patient.birthDate) : (patient.ageCategory||patient.age_category||'Adult'),
     birth_date:patient.birthDate||patient.birth_date||null,
     guardian_num:patient.guardianNum||null,
     status:patient.status||'Green',
@@ -8643,8 +9085,13 @@ setTimeout(installAddedUI,2500);
 })();
 </script>
 
-<script src="./supabase-client.js?v=20261007"></script>
-<script src="./supabase-runtime.js?v=20261007"></script>
+<!-- Firebase App and Auth SDKs for Email Confirmation & Verification -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script src="./supabase-client.js?v=20261028c"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
+<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
+<script src="./firebase-auth-client.js?v=20261028b"></script>
+<script src="./firebase-auth-runtime.js?v=20261028b"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
 (function(){
@@ -8816,7 +9263,7 @@ setTimeout(installAddedUI,2500);
   window.deleteErecpassMessage=async function(id,button){
     const uid=currentUserId();
     if(!id||!uid||!S()) return;
-    if(!confirm('Delete this message?')) return;
+    if(!await window.erecpassConfirm('Delete this message?')) return;
     try {
       let delQuery=S().from('message_messages').delete().eq('id',id);
       if(currentSession?.role==='patient') delQuery=delQuery.eq('sender_id',uid);
@@ -8974,7 +9421,7 @@ setTimeout(installAddedUI,2500);
     ev.preventDefault();
     ev.stopPropagation();
     const id=btn.getAttribute('data-delete-staff-message');
-    if(!window.confirm('Delete this message?')) return;
+    if(!await window.erecpassConfirm('Delete this message?')) return;
     try{
       const uid=await ensureAuthUserId();
       const r=await S().from('message_messages').delete().eq('id',id).eq('sender_id',uid).select('id');
@@ -9311,12 +9758,8 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 })();
 </script>
 <!-- END ERECPASS PATIENT PROFILE FINAL RESTORE -->
-<!-- ERECPASS SUPABASE ADMIN APPOINTMENT ACTIONS -->
-<script src="./admin-appointment-supabase-fix.js?v=20261016-deletefix"></script>
-<!-- ERECPASS SUPABASE ADMIN CHAT REPLY OVERRIDE -->
-<script src="./admin-chat-supabase-fix.js?v=1026179"></script>
-<!-- ERecPass Admin login compatibility fix; load inside body and refresh cached script -->
-<script src="./admin-login-apk-fix.js?v=20261016-admin2-apk-fix"></script>
+<!-- ERECPASS FIREBASE AUTH & LOCAL RUNTIME OVERRIDE -->
+<script src="./firebase-auth-runtime.js?v=20261028b"></script>
 
 <!-- ERECPASS FINAL LIVE GUARD: remove any stale Change Language control; keep theme toggle -->
 <script>
@@ -9349,6 +9792,32 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 </script>
 <script id="erecpass-patient-see-more-nav-script">
 /* Toggles visibility only; each existing navigation button keeps its original action. */
+function togglePatientProfileMenu(event) {
+  event?.stopPropagation();
+  const menu = document.getElementById('patientProfileDropdown');
+  const button = document.querySelector('#patientApp .header-actions button[aria-haspopup="menu"]');
+  if (!menu || !button) return;
+  const opening = menu.classList.contains('hidden');
+  menu.classList.toggle('hidden', !opening);
+  button.setAttribute('aria-expanded', String(opening));
+}
+
+function closePatientProfileMenu() {
+  const menu = document.getElementById('patientProfileDropdown');
+  const button = document.querySelector('#patientApp .header-actions button[aria-haspopup="menu"]');
+  menu?.classList.add('hidden');
+  button?.setAttribute('aria-expanded', 'false');
+}
+
+document.addEventListener('click', event => {
+  if (!event.target.closest('#patientProfileDropdown, #patientApp .header-actions button[aria-haspopup="menu"]')) {
+    closePatientProfileMenu();
+  }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape') closePatientProfileMenu();
+});
+
 function togglePatientMoreNav() {
   const nav = document.getElementById('patientBottomNav');
   const toggle = document.getElementById('patientNavSeeMore');
@@ -9357,7 +9826,11 @@ function togglePatientMoreNav() {
   nav.classList.toggle('patient-nav-expanded', !expanded);
   nav.classList.toggle('patient-nav-collapsed', expanded);
   toggle.setAttribute('aria-expanded', String(!expanded));
-  toggle.textContent = expanded ? 'See More' : '← Show Less';
+  toggle.setAttribute('aria-label', expanded ? 'Show more navigation items' : 'Show fewer navigation items');
+  toggle.setAttribute('title', expanded ? 'Show more navigation items' : 'Show fewer navigation items');
+  toggle.innerHTML = expanded
+    ? '<i class="fa-solid fa-bars" aria-hidden="true"></i>'
+    : '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
 }
 </script>
 
@@ -9385,6 +9858,178 @@ function togglePatientMoreNav() {
 @media (max-width:360px) { .patient-digital-id-wrapper,.patient-digital-id-face { min-height:390px; } .patient-digital-id-content { padding:9px; } .patient-digital-id-value { font-size:11px; } }
 </style>
 <!-- END ERECPASS APPOINTMENT STATUS COLORS -->
+
+<!-- ===== FIREBASE EMAIL CONFIRMATION MODAL ===== -->
+<div id="firebaseConfirmModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(3,10,22,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;" class="flex">
+  <div style="background:rgba(6,20,43,0.98);border:1px solid rgba(0,240,255,0.35);border-radius:24px;padding:32px 28px;max-width:340px;width:90%;box-shadow:0 0 40px rgba(0,240,255,0.18);text-align:center;">
+    <div style="width:64px;height:64px;background:rgba(0,240,255,0.1);border:2px solid rgba(0,240,255,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
+      <i class="fa-solid fa-envelope-circle-check" style="font-size:28px;color:#00f0ff;"></i>
+    </div>
+    <h2 style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:1px;">CHECK YOUR GMAIL</h2>
+    <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin-bottom:6px;">A confirmation link has been sent to</p>
+    <p id="firebaseConfirmEmail" style="color:#00f0ff;font-size:12px;font-weight:700;margin-bottom:16px;word-break:break-all;"></p>
+    <p style="color:#94a3b8;font-size:11px;line-height:1.6;margin-bottom:24px;">Open your Gmail inbox (or Spam folder) and click the confirmation link to activate your account.</p>
+    <button onclick="window.showWaitingConfirmation()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;border-radius:12px;padding:12px 32px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">OK</button>
+  </div>
+</div>
+
+<!-- ===== WAITING FOR CONFIRMATION SCREEN ===== -->
+<div id="waitingConfirmPage" class="auth-page hidden min-h-screen flex items-center justify-center p-4 relative z-10">
+  <div class="auth-card w-full max-w-md rounded-3xl p-8" style="text-align:center;">
+    <div style="width:80px;height:80px;background:rgba(0,240,255,0.08);border:2px solid rgba(0,240,255,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pulseGlow 2.5s infinite ease-in-out;">
+      <i class="fa-solid fa-hourglass-half" style="font-size:32px;color:#00f0ff;"></i>
+    </div>
+    <h2 style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:1px;">WAITING FOR CONFIRMATION</h2>
+    <p style="color:#94a3b8;font-size:12px;line-height:1.8;margin-bottom:6px;">We sent a confirmation link to</p>
+    <p id="waitingConfirmEmail" style="color:#00f0ff;font-size:13px;font-weight:700;margin-bottom:20px;word-break:break-all;"></p>
+    <p style="color:#64748b;font-size:11px;line-height:1.8;margin-bottom:28px;">Please open your Gmail, click the confirmation link, and come back here to log in.</p>
+    <div style="display:flex;gap:10px;flex-direction:column;">
+      <button onclick="window.showLogin()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
+        <i class="fa-solid fa-right-to-bracket" style="margin-right:6px;"></i> GO TO LOGIN
+      </button>
+      <button onclick="window.resendConfirmEmailFromWaiting()" style="background:transparent;color:#00f0ff;border:1px solid rgba(0,240,255,0.35);border-radius:12px;padding:11px;font-family:'Orbitron',sans-serif;font-size:10px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;" onmouseover="this.style.borderColor='rgba(0,240,255,0.7)'" onmouseout="this.style.borderColor='rgba(0,240,255,0.35)'">
+        <i class="fa-solid fa-paper-plane" style="margin-right:6px;"></i> RESEND EMAIL
+      </button>
+    </div>
+  </div>
+</div>
+
+<script>
+(function() {
+  // Store email for both screens
+  window._erecpassPendingEmail = '';
+  window._erecpassPendingPass = '';
+
+  window.showFirebaseConfirmModal = function(email, pass) {
+    window._erecpassPendingEmail = email || '';
+    window._erecpassPendingPass = pass || '';
+    var modal = document.getElementById('firebaseConfirmModal');
+    var emailEl = document.getElementById('firebaseConfirmEmail');
+    if (emailEl) emailEl.textContent = email || '';
+    if (modal) modal.style.display = 'flex';
+  };
+
+  window.showWaitingConfirmation = function() {
+    // Hide modal
+    var modal = document.getElementById('firebaseConfirmModal');
+    if (modal) modal.style.display = 'none';
+
+    // Hide all auth pages and show waiting screen
+    document.querySelectorAll('.auth-page').forEach(function(p) { p.classList.add('hidden'); });
+    var waiting = document.getElementById('waitingConfirmPage');
+    var emailEl = document.getElementById('waitingConfirmEmail');
+    if (emailEl) emailEl.textContent = window._erecpassPendingEmail || '';
+    if (waiting) {
+      waiting.classList.remove('hidden');
+      waiting.style.display = 'flex';
+    }
+  };
+
+  window.resendConfirmEmailFromWaiting = function() {
+    var email = window._erecpassPendingEmail;
+    var pass = window._erecpassPendingPass;
+    if (!email || !pass) { alert('No pending account found. Please register again.'); return; }
+    if (window.ERecPassFirebase && window.ERecPassFirebase.isConfigured()) {
+      window.ERecPassFirebase.resendVerificationEmail(email, pass)
+        .then(function() { alert('Confirmation email resent to ' + email + '.
+Please check your inbox and Spam folder.'); })
+        .catch(function(e) { alert('Could not resend: ' + (e.message || e)); });
+    } else {
+      alert('Firebase is not available. Please check your internet connection.');
+    }
+  };
+})();
+</script>
+
+<!-- Replace browser alert/confirm dialogs (which display localhost) with ERecPass dialogs. -->
+<script>
+(function () {
+  'use strict';
+  const queue = [];
+  let active = null;
+  let overlay, panel, title, message, icon, cancelButton, acceptButton;
+
+  function buildDialog() {
+    if (overlay) return;
+    const style = document.createElement('style');
+    style.textContent = `
+      #erecpassDialogOverlay{position:fixed;inset:0;z-index:1000000;display:none;align-items:center;justify-content:center;padding:18px;background:rgba(15,23,42,.42);backdrop-filter:blur(5px);-webkit-backdrop-filter:blur(5px)}
+      #erecpassDialogOverlay.is-open{display:flex}
+      #erecpassDialog{width:min(440px,100%);border:1px solid #cfe1ff;border-radius:20px;background:#fff;color:#17324f;box-shadow:0 24px 70px rgba(15,43,77,.28);overflow:hidden;font-family:Inter,Arial,sans-serif;animation:erecpassDialogIn .18s ease-out}
+      #erecpassDialog .epd-top{height:5px;background:linear-gradient(90deg,#1671e8,#10a9ad)}
+      #erecpassDialog .epd-head{display:flex;align-items:center;gap:12px;padding:20px 22px 10px}
+      #erecpassDialog .epd-icon{width:38px;height:38px;flex:0 0 38px;display:grid;place-items:center;border-radius:12px;background:#eaf3ff;color:#1671e8;font-size:20px;font-weight:800}
+      #erecpassDialog[data-kind="error"] .epd-icon{background:#fff0f0;color:#d92d3a}
+      #erecpassDialog[data-kind="success"] .epd-icon{background:#e9fbf4;color:#09835b}
+      #erecpassDialog .epd-title{margin:0;color:#17324f;font-size:16px;font-weight:750}
+      #erecpassDialog .epd-message{padding:4px 22px 20px;margin:0;color:#52677f;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+      #erecpassDialog .epd-actions{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px 18px;border-top:1px solid #edf2f8;background:#fbfdff}
+      #erecpassDialog button{min-width:86px;border:0;border-radius:10px;padding:10px 17px;font-size:13px;font-weight:700;cursor:pointer}
+      #erecpassDialog .epd-cancel{background:#eef3f9;color:#52677f}
+      #erecpassDialog .epd-accept{background:linear-gradient(120deg,#176fe5,#11a6ad);color:#fff;box-shadow:0 5px 12px rgba(23,111,229,.18)}
+      #erecpassDialog button:focus-visible{outline:3px solid #7cb8ff;outline-offset:2px}
+      @keyframes erecpassDialogIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
+      @media(prefers-reduced-motion:reduce){#erecpassDialog{animation:none}}
+    `;
+    document.head.appendChild(style);
+    overlay = document.createElement('div');
+    overlay.id = 'erecpassDialogOverlay';
+    overlay.innerHTML = '<section id="erecpassDialog" role="alertdialog" aria-modal="true" aria-labelledby="erecpassDialogTitle" aria-describedby="erecpassDialogMessage"><div class="epd-top"></div><div class="epd-head"><div class="epd-icon" aria-hidden="true"></div><h2 class="epd-title" id="erecpassDialogTitle">ERecPass</h2></div><p class="epd-message" id="erecpassDialogMessage"></p><div class="epd-actions"><button type="button" class="epd-cancel">Cancel</button><button type="button" class="epd-accept">OK</button></div></section>';
+    document.body.appendChild(overlay);
+    panel = overlay.querySelector('#erecpassDialog');
+    title = overlay.querySelector('.epd-title');
+    message = overlay.querySelector('.epd-message');
+    icon = overlay.querySelector('.epd-icon');
+    cancelButton = overlay.querySelector('.epd-cancel');
+    acceptButton = overlay.querySelector('.epd-accept');
+    acceptButton.addEventListener('click', () => finish(active?.kind === 'confirm'));
+    cancelButton.addEventListener('click', () => finish(false));
+    overlay.addEventListener('click', event => { if (event.target === overlay) finish(false); });
+    document.addEventListener('keydown', event => {
+      if (!active || !overlay.classList.contains('is-open')) return;
+      if (event.key === 'Escape') { event.preventDefault(); finish(false); }
+      if (event.key === 'Enter' && active.kind === 'alert') { event.preventDefault(); finish(true); }
+    });
+  }
+
+  function finish(result) {
+    if (!active) return;
+    const current = active;
+    active = null;
+    overlay.classList.remove('is-open');
+    panel.removeAttribute('data-kind');
+    current.resolve(current.kind === 'confirm' ? !!result : undefined);
+    setTimeout(showNext, 0);
+  }
+
+  function showNext() {
+    if (active || !queue.length) return;
+    buildDialog();
+    active = queue.shift();
+    const text = String(active.message ?? '');
+    const isError = /\b(failed|error|invalid|unable|could not|not saved|not available|cannot)\b/i.test(text);
+    const isSuccess = /\b(saved|success|created|updated|deleted|sent|verified|submitted)\b/i.test(text);
+    panel.dataset.kind = isError ? 'error' : isSuccess ? 'success' : 'info';
+    title.textContent = active.kind === 'confirm' ? 'Please confirm' : (isError ? 'Something needs attention' : isSuccess ? 'Done' : 'ERecPass');
+    icon.textContent = isError ? '!' : isSuccess ? '✓' : active.kind === 'confirm' ? '?' : 'i';
+    message.textContent = text;
+    cancelButton.hidden = active.kind !== 'confirm';
+    acceptButton.textContent = active.kind === 'confirm' ? 'Confirm' : 'OK';
+    overlay.classList.add('is-open');
+    acceptButton.focus();
+  }
+
+  function enqueue(kind, text) {
+    return new Promise(resolve => {
+      queue.push({ kind, message: text, resolve });
+      showNext();
+    });
+  }
+
+  window.alert = function (text) { enqueue('alert', text); };
+  window.erecpassConfirm = function (text) { return enqueue('confirm', text); };
+})();
+</script>
 
 <script src="./medication-reminders.js"></script>
 

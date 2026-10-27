@@ -3,8 +3,18 @@
  * NEVER put a service_role/secret key in browser code.
  */
 (function () {
-  const SUPABASE_URL = "https://bfboehvgrivanmrfqquw.supabase.co";
-  const SUPABASE_PUBLISHABLE_KEY = "sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_";
+  // Update these two values when switching this app to another Supabase project.
+  const projectConfig = window.ERECPASS_SUPABASE_CONFIG || {
+    url: "https://bfboehvgrivanmrfqquw.supabase.co",
+    publishableKey: "sb_publishable_BKQ_gEGu54VUztykzIIfEQ_2IMIoMb_"
+  };
+  const SUPABASE_URL = String(projectConfig.url || '').trim().replace(/\/$/, '');
+  const SUPABASE_PUBLISHABLE_KEY = String(projectConfig.publishableKey || '').trim();
+
+  window.ERECPASS_SUPABASE_CONFIG = {
+    url: SUPABASE_URL,
+    publishableKey: SUPABASE_PUBLISHABLE_KEY
+  };
 
   if (!window.supabase || typeof window.supabase.createClient !== "function") {
     console.error("ERecPass: Supabase JS v2 was not loaded before supabase-client.js.");

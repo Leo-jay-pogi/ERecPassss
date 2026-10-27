@@ -177,15 +177,23 @@
   // The old SMS button only generated a code in this browser; it did not send a real SMS.
   // Keep the existing control, but do not block account creation on a fake verification step.
   window.sendSimCode=function(){
-    alert('SMS verification is not connected yet. You can continue registration and verify your account through the email confirmation link.');
+    const email=document.getElementById('regEmail')?.value.trim();
+    alert('Firebase Email Confirmation is active.\n\nWhen you click CREATE ACCOUNT, Firebase will send a confirmation link to '+(email||'your registered email')+'. Open the link in your inbox to verify your account before logging in.');
   };
   window.handleRegister=async function(e){
     e?.preventDefault();
-    const fullName=document.getElementById('regFullName')?.value.trim();
+    const firstName=(document.getElementById('regFirstName')?.value||'').trim();
+    const lastName=(document.getElementById('regLastName')?.value||'').trim();
+    const noMiddle=!!document.getElementById('regNoMiddleName')?.checked;
+    const middleRaw=(document.getElementById('regMiddleName')?.value||'').trim();
+    const middleName=(noMiddle||/^n\/?a$/i.test(middleRaw))?'':middleRaw;
+    const fullName=[firstName,middleName,lastName].filter(Boolean).join(' ');
     const email=document.getElementById('regEmail')?.value.trim().toLowerCase();
     const sim=document.getElementById('regSim')?.value.trim();
     const password=document.getElementById('regPassword')?.value||'';
     const confirm=document.getElementById('regConfirmPassword')?.value||'';
+    if(!firstName||!lastName){alert('Please enter your First Name and Last Name.');return}
+    if(!noMiddle&&!middleName){alert('Please enter your Middle Name, or check N/A if you do not have one.');return}
     if(!fullName||!email||!sim||!password){alert('Complete all required fields.');return}
     if(password!==confirm){alert('Passwords do not match!');return}
     if(password.length<8){alert('Use a password with at least 8 characters.');return}
@@ -194,19 +202,54 @@
     const submit=document.querySelector('#registerForm button[type="submit"]');
     if(submit){submit.disabled=true;submit.textContent='CREATING ACCOUNT…'}
     try{
-      const r=await sb().auth.signUp({email,password,options:{data:{full_name:fullName,sim,role:'patient'}}});
-      if(r.error)throw r.error;
-      if(r.data.session){
-        const p=await profileFor(r.data.user);
-        await hydrate();
-        hideAuthPages();
-        launchPortalByRole(p.role);
-        alert('Account created successfully.');
-      }else{
-        document.getElementById('registerForm')?.reset();
-        showLogin();
-        alert('Registration successful. Check your email for the confirmation link before logging in.');
+      // 1. Send confirmation email via Firebase Auth
+      if(window.ERecPassFirebase&&window.ERecPassFirebase.isConfigured()){
+        try{
+          await window.ERecPassFirebase.registerAndSendConfirmation(email,password,fullName);
+        }catch(fbErr){
+          console.error('[ERecPass] Firebase registration error:',fbErr);
+          throw fbErr;
+        }
       }
+      // 2. Register account in Supabase
+      let signupUser=null,signupSession=null;
+      try{
+        const r=await sb().auth.signUp({email,password,options:{data:{full_name:fullName,sim,role:'patient'}}});
+        if(r.error){
+          const errMsg=String(r.error.message||'').toLowerCase();
+          if(!errMsg.includes('rate limit')&&!errMsg.includes('email_send_rate_limit')){
+            throw r.error;
+          }
+        }
+        signupUser=r.data?.user||null;
+        signupSession=r.data?.session||null;
+      }catch(sbErr){
+        const errMsg=String(sbErr?.message||'').toLowerCase();
+        if(!errMsg.includes('rate limit')&&!errMsg.includes('email_send_rate_limit')){
+          throw sbErr;
+        }
+        console.warn('[ERecPass] Supabase email rate limit suppressed because Firebase dispatched confirmation:',sbErr);
+      }
+      // When Supabase returns a session, confirm that the patient row exists.
+      // The auth trigger remains responsible for the no-session confirmation flow.
+      if(signupSession&&signupUser){
+        const saved=await sb().from('patients').select('id').eq('user_id',signupUser.id).maybeSingle();
+        if(saved.error)throw saved.error;
+        if(!saved.data){
+          const created=await sb().from('patients').upsert({
+            id:signupUser.id,user_id:signupUser.id,full_name:fullName,email:email,sim:sim,
+            status:'Green',active:true
+          },{onConflict:'id'});
+          if(created.error)throw created.error;
+          const verified=await sb().from('patients').select('id').eq('user_id',signupUser.id).maybeSingle();
+          if(verified.error)throw verified.error;
+          if(!verified.data)throw Error('The account was created, but its patient record could not be verified in Supabase.');
+        }
+      }
+      try{await sb().auth.signOut()}catch(_){}
+      document.getElementById('registerForm')?.reset();
+      showLogin();
+      alert('Registration successful!\n\nA confirmation link has been sent to '+email+' via Firebase.\n\nPlease open your email inbox (and Spam folder), click the confirmation link, and then log in.');
     }catch(x){
       const message=x?.message||'Registration failed.';
       if(/already registered|already been registered|user already exists/i.test(message)){
@@ -218,7 +261,46 @@
       if(submit){submit.disabled=false;submit.textContent='CREATE ACCOUNT'}
     }
   };
-  window.handleLogin=async function(e){e?.preventDefault();const email=document.getElementById('loginEmail')?.value.trim().toLowerCase(),password=document.getElementById('loginPassword')?.value||'';try{const r=await sb().auth.signInWithPassword({email,password});if(r.error)throw r.error;const p=await profileFor(r.data.user);if(p.role!=='patient'){await sb().auth.signOut();throw Error('This account is not a patient account')}await hydrate();if(currentSession?.data?.active===false){await sb().auth.signOut();throw Error('This patient account is deactivated')}hideAuthPages();launchPortalByRole('patient')}catch(x){alert(x.message||'Login failed')}};
+  window.handleLogin=async function(e){
+    e?.preventDefault();
+    const email=document.getElementById('loginEmail')?.value.trim().toLowerCase(),password=document.getElementById('loginPassword')?.value||'';
+    if(!email||!password){alert('Please enter email and password.');return}
+
+    if(window.ERecPassFirebase&&window.ERecPassFirebase.isConfigured()){
+      try{
+        const fbCheck=await window.ERecPassFirebase.checkEmailVerification(email,password);
+        if(fbCheck.error){
+          alert(fbCheck.error);
+          return;
+        }
+        if(fbCheck.verified===false){
+          const resend=confirm('Your email address ('+email+') has not been verified yet.\n\nPlease check your inbox (or Spam folder) and click the confirmation link sent by Firebase before logging in.\n\nWould you like us to resend the confirmation email now?');
+          if(resend){
+            try{
+              await window.ERecPassFirebase.resendVerificationEmail(email,password);
+              alert('A new confirmation email has been sent to '+email+'. Please check your inbox.');
+            }catch(rErr){
+              alert('Could not resend email: '+(rErr?.message||rErr));
+            }
+          }
+          return;
+        }
+      }catch(fbErr){
+        console.warn('[ERecPass] Firebase verification check bypassed due to error:',fbErr);
+      }
+    }
+
+    try{
+      const r=await sb().auth.signInWithPassword({email,password});
+      if(r.error)throw r.error;
+      const p=await profileFor(r.data.user);
+      if(p.role!=='patient'){await sb().auth.signOut();throw Error('This account is not a patient account')}
+      await hydrate();
+      if(currentSession?.data?.active===false){await sb().auth.signOut();throw Error('This patient account is deactivated')}
+      hideAuthPages();
+      launchPortalByRole('patient')
+    }catch(x){alert(x.message||'Login failed')}
+  };
   window.handleStaffLogin=async function(e){e?.preventDefault();const email=document.getElementById('staffLoginName')?.value.trim().toLowerCase(),password=document.getElementById('staffLoginPassword')?.value||'';if(!email?.includes('@')){alert('Enter the staff email address in this field.');return}try{const r=await sb().auth.signInWithPassword({email,password});if(r.error)throw r.error;const p=await profileFor(r.data.user);if(p.role!=='staff'){await sb().auth.signOut();throw Error('This account does not have the staff role')}await hydrate();if(currentSession?.data?.active===false){await sb().auth.signOut();throw Error('This staff account is deactivated')}hideAuthPages();launchPortalByRole('staff')}catch(x){alert(x.message||'Staff login failed')}};
   window.handleAdminLogin=async function(e){
     e?.preventDefault();

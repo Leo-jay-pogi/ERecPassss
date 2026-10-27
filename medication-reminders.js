@@ -180,7 +180,7 @@
     try {
       await identity();
       if(b.dataset.action==='delete') {
-        if(!confirm('Delete this medication reminder?')) return;
+        if(!await window.erecpassConfirm('Delete this medication reminder?')) return;
         var d=await sb().from('medication_reminders').delete().eq('id',b.dataset.id).eq('patient_user_id',user.id);
         if(d.error) throw d.error;
       } else {

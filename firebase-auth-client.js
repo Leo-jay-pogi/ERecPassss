@@ -88,10 +88,9 @@
         } catch (_) {}
       }
 
-      // Send verification link to user's email
+      // Do not attach a continue URL. Firebase will show its own
+      // "email verified" confirmation page instead of returning to ERecPass.
       try {
-        // Do not attach a continue URL. Firebase will show its own
-        // "email verified" confirmation page instead of returning to ERecPass.
         await user.sendEmailVerification();
       } catch (verifyErr) {
         console.error('[ERecPass Firebase] sendEmailVerification error:', verifyErr);

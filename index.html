@@ -1434,7 +1434,7 @@ Loading system terms and health data agreement...
 
 </div>
 
-<div class="flex items-center gap-2 mb-3">
+<div id="splashAgreementConsent" class="flex items-center gap-2 mb-3">
 
 <input type="checkbox" id="splashAgreeCheckbox" class="w-4 h-4 accent-cyan-400 rounded cursor-pointer">
 
@@ -1765,6 +1765,22 @@ Don't have an account?
 
 <div>
 
+<label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1" for="regBirthDate">Date of Birth</label>
+
+<div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
+
+<i class="fa-solid fa-calendar-days text-cyan-400 text-xs"></i>
+
+<input type="date" id="regBirthDate" autocomplete="bday" required onchange="previewRegisterBirthDate()" class="w-full bg-transparent outline-none text-xs">
+
+</div>
+
+<p id="regBirthDatePreview" class="mt-1 text-[10px] text-slate-400">Your age will be calculated from your date of birth.</p>
+
+</div>
+
+<div>
+
 <label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Email</label>
 
 <div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
@@ -1968,9 +1984,10 @@ Already have an account?
   }
   @media (hover: hover) and (pointer: fine) {
     #patientEmergencyCard:hover {
-      border-color: #e05262 !important;
-      box-shadow: 0 0 0 2px rgba(214,55,75,.16), 0 8px 24px rgba(190,18,60,.2) !important;
+      border-color: #f04455 !important;
+      box-shadow: 0 0 0 3px rgba(214,55,75,.3), 0 0 24px rgba(220,38,60,.62), 0 0 42px rgba(244,63,94,.38) !important;
       transform: translateY(-2px);
+      animation: patientEmergencyBoxHoverBloom .85s ease-in-out infinite alternate;
     }
     #patientHoldEmergencyBtn:hover {
       background: #ffe3e6 !important;
@@ -1999,9 +2016,28 @@ Already have an account?
     #patientApp #patientHoldEmergencyBtn:hover {
       background: #b5122a !important;
       border-color: #7f1020 !important;
-      box-shadow: 0 0 0 4px rgba(220,38,60,.28), 0 0 28px rgba(220,38,60,.76) !important;
+      box-shadow: 0 0 0 4px rgba(220,38,60,.42), 0 0 24px rgba(220,38,60,.9), 0 0 42px rgba(244,63,94,.72) !important;
       transform: scale(1.06);
+      filter: brightness(1.08) saturate(1.18);
+      animation: patientEmergencyHoverBloom .8s ease-in-out infinite alternate;
     }
+    #patientApp #patientEmergencyCard:hover #patientHoldEmergencyBtn {
+      box-shadow: 0 0 0 4px rgba(220,38,60,.34), 0 0 22px rgba(220,38,60,.78), 0 0 38px rgba(244,63,94,.58) !important;
+      filter: brightness(1.06) saturate(1.14);
+    }
+  }
+  #patientApp #patientHoldEmergencyBtn:focus-visible {
+    outline: 3px solid #ff9aa7 !important;
+    outline-offset: 4px;
+    box-shadow: 0 0 0 4px rgba(220,38,60,.4), 0 0 24px rgba(220,38,60,.85), 0 0 40px rgba(244,63,94,.62) !important;
+  }
+  @keyframes patientEmergencyHoverBloom {
+    from { filter: brightness(1.04) saturate(1.1) drop-shadow(0 0 5px rgba(220,38,60,.48)); }
+    to { filter: brightness(1.14) saturate(1.28) drop-shadow(0 0 15px rgba(244,63,94,.9)); }
+  }
+  @keyframes patientEmergencyBoxHoverBloom {
+    from { filter: drop-shadow(0 0 4px rgba(220,38,60,.32)); }
+    to { filter: drop-shadow(0 0 15px rgba(244,63,94,.78)); }
   }
   #patientApp #patientEmergencyCard.is-processing {
     border-color: #dc263c !important;
@@ -2042,6 +2078,19 @@ Already have an account?
   }
   #patientApp #patientAnnouncementsArea strong { color: #18324b !important; }
   #patientApp #patientAnnouncementsArea p { color: #62758a !important; }
+  #patientApp #patientAnnouncementsArea .announcement-toggle {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 9px;
+    border: 1px solid #b7d9e2;
+    border-radius: 9px;
+    background: #eef8fa;
+    color: #246b78;
+    font: 600 10px Arial, sans-serif;
+    white-space: nowrap;
+  }
+  #patientApp #patientAnnouncementsArea .announcement-toggle:hover { background: #dff2f5; }
   html.ep-dark #patientApp {
     background: #101820 !important;
     color: #edf4fb !important;
@@ -2077,6 +2126,17 @@ Already have an account?
   }
   html.ep-dark #patientApp #patientAnnouncementsArea strong { color: #edf4fb !important; }
   html.ep-dark #patientApp #patientAnnouncementsArea p { color: #b7c7d6 !important; }
+  html.ep-dark #patientApp #patientAnnouncementsArea .announcement-toggle {
+    background: #203a46 !important;
+    border-color: #3a7883 !important;
+    color: #a9e5eb !important;
+  }
+  html.ep-dark #patientApp #patientAnnouncementsArea .announcement-toggle:hover,
+  html.ep-dark #patientApp #patientAnnouncementsArea .announcement-toggle:active {
+    background: #285562 !important;
+    color: #d7fbff !important;
+    box-shadow: 0 0 12px rgba(52,211,225,.28);
+  }
   html.ep-dark #patientApp .header-actions > button[aria-haspopup="menu"] {
     background: #263849 !important;
     color: #edf4fb !important;
@@ -2781,8 +2841,6 @@ Already have an account?
 
 </div>
 
-<button onclick="logout()" class="px-3 py-1.5 bg-rose-950/60 border border-rose-500/40 text-rose-400 text-xs font-tech font-bold rounded-xl">Logout</button>
-
 </header>
 
 <main class="max-w-6xl mx-auto px-4 pt-20 pb-20 space-y-6">
@@ -2821,7 +2879,7 @@ Already have an account?
 
 <div class="flex flex-wrap gap-2 border-b border-cyan-500/20 pb-3 font-tech text-xs">
 
-<button onclick="switchAdminTab('patients')" class="px-3 py-2 bg-cyan-950 text-cyan-300 rounded-xl border border-cyan-400/40 font-bold">Patient Management</button>
+<button onclick="switchAdminTab('patients')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-400/40 font-bold admin-function-active" aria-pressed="true">Patient Management</button>
 
 <button onclick="switchAdminTab('staff')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Staff Accounts & Tasks</button>
 
@@ -3118,6 +3176,42 @@ Already have an account?
 </div>
 
 <!-- 2. Agreement Modal -->
+
+<style id="agreement-dark-mode-readable">
+  #splashAgreementConsent {
+    padding: 9px 10px !important;
+    border: 1px solid #d4dfeb !important;
+    border-radius: 10px !important;
+    background: #f3f7fb !important;
+  }
+  #splashAgreementConsent label {
+    color: #18324b !important;
+    font-size: 13px !important;
+    font-weight: 700 !important;
+    line-height: 1.45 !important;
+  }
+  #splashAgreeCheckbox { width: 18px !important; height: 18px !important; flex: 0 0 18px !important; }
+  html.ep-dark #splashAgreementConsent {
+    background: #203243 !important;
+    border-color: #40566a !important;
+  }
+  html.ep-dark #splashAgreementConsent label { color: #f4f8fc !important; }
+  html.ep-dark #agreementModal > .glass-card {
+    background: #182532 !important;
+    color: #edf4fb !important;
+    border-color: #40566a !important;
+  }
+  html.ep-dark #agreementModal #fullAgreementTextDisplay {
+    background: #f7f9fc !important;
+    color: #18324b !important;
+    border: 1px solid #d4dfeb !important;
+    line-height: 1.7 !important;
+  }
+  html.ep-dark #agreementModal #fullAgreementTextDisplay * {
+    background-color: transparent !important;
+    color: #18324b !important;
+  }
+</style>
 
 <div id="agreementModal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
 
@@ -4010,27 +4104,44 @@ async function refreshPatientPortal() {
     if (client && user?.id) {
       let cloudResult = await client.from('patients').select('*').eq('user_id', user.id).maybeSingle();
 
-      if ((cloudResult.error || !cloudResult.data) && user.email) {
+      if (cloudResult.error) throw cloudResult.error;
+      if (!cloudResult.data && user.email) {
         cloudResult = await client.from('patients').select('*').eq('email', user.email).maybeSingle();
       }
+      if (cloudResult.error) throw cloudResult.error;
 
-      if (!cloudResult.error && cloudResult.data) {
+      if (cloudResult.data) {
         const cloud = cloudResult.data;
-
+        const cloudBirthDate = cloud.birth_date || cloud.birthDate || cloud.date_of_birth || cloud.dob || '';
+        const cloudAge = cloud.age ?? getPatientAgeFromBirthDate(cloudBirthDate);
         p = Object.assign({}, p, cloud, {
           id: cloud.id || p.id,
           user_id: cloud.user_id || user.id,
           email: user.email || cloud.email || p.email,
-          fullName: cloud.full_name || p.fullName || cloud.name || p.name || 'Patient',
-          guardianNum: cloud.guardian_num || p.guardianNum || '',
-          guardianName: cloud.guardian_name || p.guardianName || '',
-          photo: cloud.photo || p.photo || ''
+          fullName: cloud.full_name || cloud.name || p.fullName || p.name || 'Patient',
+          name: cloud.full_name || cloud.name || p.fullName || p.name || 'Patient',
+          sim: cloud.sim || '',
+          photo: cloud.photo || '',
+          birthDate: cloudBirthDate,
+          birth_date: cloudBirthDate,
+          age: cloudAge,
+          ageCategory: cloud.age_category || (cloudAge === null ? '' : cloudAge <= 17 ? 'Minor' : 'Adult'),
+          age_category: cloud.age_category || (cloudAge === null ? '' : cloudAge <= 17 ? 'Minor' : 'Adult'),
+          gender: cloud.gender || cloud.sex || '',
+          blood_type: cloud.blood_type || cloud.bloodType || '',
+          bloodType: cloud.blood_type || cloud.bloodType || '',
+          address: cloud.address || '',
+          guardianNum: cloud.guardian_num || cloud.guardianNum || '',
+          guardian_num: cloud.guardian_num || cloud.guardianNum || '',
+          guardianName: cloud.guardian_name || cloud.guardianName || '',
+          guardian_name: cloud.guardian_name || cloud.guardianName || '',
+          status: cloud.status || 'Green',
+          labResults: Array.isArray(cloud.lab_results) ? cloud.lab_results : (cloud.labResults || []),
+          lab_results: Array.isArray(cloud.lab_results) ? cloud.lab_results : (cloud.labResults || []),
+          prescriptions: Array.isArray(cloud.prescriptions) ? cloud.prescriptions : [],
+          doctorNotes: cloud.doctor_notes || cloud.doctorNotes || '',
+          doctor_notes: cloud.doctor_notes || cloud.doctorNotes || ''
         });
-
-        // Restore the exact saved name for the existing JOMAR account.
-        if (String(user.email || '').trim().toLowerCase() === 'jomarpaquibo@gmail.com') {
-          p.fullName = 'JOMAR JOHN PAQUIBO';
-        }
 
         currentSession.data = p;
         epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
@@ -4081,6 +4192,7 @@ async function refreshPatientPortal() {
   const patientAge = getPatientAgeFromBirthDate(p.birthDate || p.birth_date || '');
   const patientCategory = patientAge === null ? '' : (patientAge <= 17 ? 'Minor' : 'Adult');
   p.birthDate = p.birthDate || p.birth_date || '';
+  p.age = patientAge;
   p.ageCategory = patientCategory;
   if (profileAgeCategory) {
     profileAgeCategory.textContent = patientCategory || 'Birthday not set';
@@ -4148,6 +4260,13 @@ const navBtn = document.getElementById('nav-' + pageId);
 
 if (navBtn) navBtn.classList.add('active');
 
+// Refresh Supabase-backed patient sections when opened so recent profile,
+// appointment, lab, prescription, and staff changes are reflected immediately.
+if (pageId === 'appointments') renderPatientAppointments();
+else if (pageId === 'doctors') renderPatientDoctors();
+else if (pageId === 'dashboard') renderPatientAnnouncements();
+else if (['profile', 'medical-records', 'medicines'].includes(pageId)) refreshPatientPortal();
+
 try {
   window.scrollTo({ top: 0, behavior: 'smooth' });
 } catch (_) {
@@ -4166,64 +4285,92 @@ window.patientDashboardNavigate = function(pageId) {
   return showPage(pageId);
 };
 
-function renderPatientAnnouncements() {
+async function loadHospitalAnnouncementsFromSupabase() {
+  const client = window.erecpassSupabase;
+  if (!client?.from || !client?.auth) return null;
+  const session = await client.auth.getSession();
+  if (session.error) throw session.error;
+  if (!session.data?.session) return null;
+  const result = await client.from('announcements')
+    .select('legacy_id,body,photo,published_on')
+    .order('published_on', { ascending: false });
+  if (result.error) throw result.error;
+  const list = (result.data || []).map(row => ({
+    id: row.legacy_id || row.id,
+    text: row.body || '',
+    photo: row.photo || '',
+    date: row.published_on || ''
+  }));
+  epStore.setItem(DB_KEYS.ANNOUNCEMENTS, JSON.stringify(list));
+  return list;
+}
 
-const list = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS)) || [];
-
-const container = document.getElementById('patientAnnouncementsArea');
-
-if (!container) return;
-
-container.innerHTML = "";
-
-if (list.length === 0) {
+async function renderPatientAnnouncements() {
+  const container = document.getElementById('patientAnnouncementsArea');
+  if (!container) return;
+  let list = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+  let cloudLoadFailed = false;
+  try {
+    const cloudList = await loadHospitalAnnouncementsFromSupabase();
+    if (cloudList) list = cloudList;
+  } catch (error) {
+    cloudLoadFailed = true;
+    console.error('[ERecPass] Could not load announcements from Supabase:', error);
+  }
+  container.innerHTML = '';
+  if (list.length === 0) {
   container.innerHTML = `
     <div class="glass-card p-3 rounded-xl border-cyan-500/30 text-xs flex gap-3 items-center">
       <i class="fa-solid fa-bullhorn text-cyan-400 text-base"></i>
       <div>
         <strong class="text-white block font-tech">Announcements</strong>
-        <p class="text-slate-400 text-[11px]">No announcements yet.</p>
+        <p class="text-slate-400 text-[11px]">${cloudLoadFailed ? 'Could not load announcements. Please try again later.' : 'No announcements yet.'}</p>
       </div>
     </div>
   `;
   return;
 }
 
-list.forEach(a => {
-
-const photoHtml = a.photo
-  ? `
-    <div class="mt-2 w-full overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-950/50">
-      <img
-        src="${a.photo}"
-        alt="Announcement photo"
-        class="photo-viewable w-full max-h-80 object-contain rounded-xl"
-        loading="lazy"
-        title="Tap to view, zoom in, and zoom out"
-        onerror="this.parentElement.style.display='none';"
-      >
-    </div>
-  `
-  : "";
-
-container.innerHTML += `
-
-<div class="glass-card p-3 rounded-xl border-cyan-500/30 text-xs">
-  <div class="flex gap-3 items-start">
-    <i class="fa-solid fa-bullhorn text-cyan-400 text-base mt-0.5"></i>
-    <div class="min-w-0 flex-1">
-      <strong class="text-white block font-tech">Announcement (${a.date || ''})</strong>
-      ${a.text ? `<p class="text-slate-300 text-[11px] mt-1">${a.text}</p>` : ""}
-      ${photoHtml}
-    </div>
-  </div>
-</div>
-
-`;
-
-});
-
+  container.innerHTML = list.map(a => {
+    const photo = String(a.photo || '');
+    const photoHtml = photo ? `
+      <div class="mt-2 w-full overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-950/50">
+        <img src="${escapeStaffDashboardText(photo)}" alt="Announcement photo" class="photo-viewable w-full max-h-80 object-contain rounded-xl" loading="lazy" title="Tap to view, zoom in, and zoom out" onerror="this.parentElement.style.display='none';">
+      </div>` : '';
+    return `
+      <div class="glass-card p-3 rounded-xl border-cyan-500/30 text-xs">
+        <div class="flex justify-between items-start gap-3">
+          <div class="flex gap-3 items-start min-w-0 flex-1">
+            <i class="fa-solid fa-bullhorn text-cyan-400 text-base mt-0.5"></i>
+            <div class="min-w-0 flex-1">
+              <strong class="text-white block font-tech">Announcement (${escapeStaffDashboardText(a.date || '')})</strong>
+            </div>
+          </div>
+          <button type="button" class="announcement-toggle shrink-0" onclick="togglePatientAnnouncement(this)" aria-expanded="true" aria-label="Minimize announcement" title="Minimize announcement">
+            <i class="fa-solid fa-minus" aria-hidden="true"></i><span>Minimize</span>
+          </button>
+        </div>
+        <div class="announcement-body mt-2">
+          ${a.text ? `<p class="text-slate-300 text-[11px] whitespace-pre-wrap">${escapeStaffDashboardText(a.text)}</p>` : ''}
+          ${photoHtml}
+        </div>
+      </div>`;
+  }).join('');
 }
+
+window.togglePatientAnnouncement = function(button) {
+  const card = button?.closest('#patientAnnouncementsArea .glass-card');
+  const body = card?.querySelector('.announcement-body');
+  if (!button || !body) return;
+  const expanded = button.getAttribute('aria-expanded') === 'true';
+  body.hidden = expanded;
+  button.setAttribute('aria-expanded', String(!expanded));
+  button.setAttribute('aria-label', expanded ? 'Expand announcement' : 'Minimize announcement');
+  button.title = expanded ? 'Expand announcement' : 'Minimize announcement';
+  button.innerHTML = expanded
+    ? '<i class="fa-solid fa-plus" aria-hidden="true"></i><span>Show</span>'
+    : '<i class="fa-solid fa-minus" aria-hidden="true"></i><span>Minimize</span>';
+};
 
 
 async function renderPatientAppointments() {
@@ -4250,6 +4397,7 @@ try {
 
   container.innerHTML = myAppts.map(a => {
     const appointmentStatus = a.status || 'Pending Approval';
+    const appointmentId = escapeStaffDashboardText(a.id || '');
     const statusClass = appointmentStatus === 'Approved'
       ? 'erecpass-status-approved'
       : appointmentStatus === 'Cancelled'
@@ -4258,15 +4406,15 @@ try {
     return `
     <div class="list-card p-3.5 rounded-xl flex items-center justify-between gap-3">
       <div class="min-w-0 flex-1">
-        <strong class="text-white text-xs block">${a.reason || 'Appointment'}</strong>
-        <p class="text-[11px] text-slate-400"><i class="fa-solid fa-user-doctor mr-1"></i>${a.doctor || 'Doctor'}</p>
-        <p class="text-[11px] text-cyan-400 mt-0.5"><i class="fa-regular fa-clock mr-1"></i>${a.appointment_date || ''}</p>
+        <strong class="text-white text-xs block">${escapeStaffDashboardText(a.reason || 'Appointment')}</strong>
+        <p class="text-[11px] text-slate-400"><i class="fa-solid fa-user-doctor mr-1"></i>${escapeStaffDashboardText(a.doctor || 'Doctor')}</p>
+        <p class="text-[11px] text-cyan-400 mt-0.5"><i class="fa-regular fa-clock mr-1"></i>${escapeStaffDashboardText(a.appointment_date || '')}</p>
       </div>
       <div class="flex flex-col items-end gap-1.5 shrink-0">
-        <span class="px-2.5 py-1 ${statusClass} rounded-full text-[10px] font-tech font-bold">${appointmentStatus}</span>
-        <button type="button"
+        <span class="px-2.5 py-1 ${statusClass} rounded-full text-[10px] font-tech font-bold">${escapeStaffDashboardText(appointmentStatus)}</span>
+        <button type="button" data-appointment-id="${appointmentId}"
           class="erecpass-action-delete px-2.5 py-1 rounded-lg font-tech text-[10px] font-bold"
-          onclick="deletePatientAppointment('${a.id}')">
+          onclick="deletePatientAppointment(this.dataset.appointmentId)">
           <i class="fa-solid fa-trash-can mr-1"></i> Delete
         </button>
       </div>
@@ -4496,38 +4644,63 @@ function renderPatientPrescriptions() {
   }
 }
 
-function renderPatientDoctors() {
+async function renderPatientDoctors() {
+  const container = document.getElementById('patientDoctorsList');
+  if (!container) return;
+  let staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF) || '[]') || [];
 
-const staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF)) || [];
+  try {
+    const client = window.erecpassSupabase;
+    const session = client?.auth ? await client.auth.getSession() : null;
+    if (session?.error) throw session.error;
+    if (client?.from && session?.data?.session) {
+      const result = await client.from('staff')
+        .select('user_id,name,email,role_title,task,available,schedule,active')
+        .eq('active', true)
+        .order('name', { ascending: true });
+      if (result.error) throw result.error;
+      staffList = (result.data || []).map(row => ({
+        id: row.user_id || row.email,
+        user_id: row.user_id,
+        name: row.name || row.email || 'Hospital Staff',
+        email: row.email || '',
+        role: row.role_title || 'Staff',
+        task: row.task || '',
+        available: row.available !== false,
+        schedule: row.schedule || 'Mon-Fri',
+        active: row.active !== false
+      }));
+      epStore.setItem(DB_KEYS.STAFF, JSON.stringify(staffList));
+    }
+  } catch (error) {
+    console.error('[ERecPass] Patient staff directory Supabase load:', error);
+  }
 
-const container = document.getElementById('patientDoctorsList');
-
-container.innerHTML = "";
-
-staffList.forEach(s => {
-
-const avail = s.available ? '<span class="text-[10px] text-emerald-400 font-bold">● Green (Available)</span>' : '<span class="text-[10px] text-rose-400 font-bold">● Red (Not Available)</span>';
-
-container.innerHTML += `
-
-<div class="doctor-card p-3.5 rounded-xl flex items-center justify-between">
-
-<div>
-
-<strong class="text-white text-xs block">${s.name}</strong>
-
-<p class="text-[11px] text-slate-400">${s.role} · ${s.schedule || 'Mon-Fri'}</p>
-
-${avail}
-
-</div>
-
-</div>
-
-`;
-
-});
-
+  container.replaceChildren();
+  if (!staffList.length) {
+    const empty = document.createElement('p');
+    empty.className = 'text-xs text-slate-400';
+    empty.textContent = 'No staff members are currently listed.';
+    container.appendChild(empty);
+    return;
+  }
+  staffList.filter(staff => staff.active !== false).forEach(staff => {
+    const card = document.createElement('div');
+    card.className = 'doctor-card p-3.5 rounded-xl flex items-center justify-between';
+    const info = document.createElement('div');
+    const name = document.createElement('strong');
+    name.className = 'text-white text-xs block';
+    name.textContent = staff.name || 'Hospital Staff';
+    const role = document.createElement('p');
+    role.className = 'text-[11px] text-slate-400';
+    role.textContent = (staff.role || 'Staff') + ' · ' + (staff.schedule || 'Mon-Fri');
+    const availability = document.createElement('span');
+    availability.className = 'patient-staff-availability text-[10px] font-bold ' + (staff.available === false ? 'is-unavailable' : 'is-available');
+    availability.textContent = staff.available === false ? '● Red (Not Available)' : '● Green (Available)';
+    info.append(name, role, availability);
+    card.appendChild(info);
+    container.appendChild(card);
+  });
 }
 
 function flipPatientDigitalID() {
@@ -4733,7 +4906,8 @@ async function getCurrentPatientCloudRow() {
     .eq('user_id', user.id)
     .maybeSingle();
 
-  if ((q.error || !q.data) && user.email) {
+  if (q.error) throw q.error;
+  if (!q.data && user.email) {
     q = await client.from('patients')
       .select('*')
       .eq('email', user.email)
@@ -4755,6 +4929,7 @@ async function savePatientCloudFields(fields) {
   if (Object.prototype.hasOwnProperty.call(fields, 'photo')) payload.photo = fields.photo;
   if (Object.prototype.hasOwnProperty.call(fields, 'birth_date')) {
     payload.birth_date = fields.birth_date || null;
+    payload.age = fields.birth_date ? getPatientAgeFromBirthDate(fields.birth_date) : null;
     payload.age_category = fields.birth_date
       ? getPatientCategoryFromBirthDate(fields.birth_date)
       : (row.age_category || 'Adult');
@@ -4773,7 +4948,7 @@ async function savePatientCloudFields(fields) {
     .update(payload)
     .eq('id', row.id)
     .eq('user_id', user.id)
-    .select('id,user_id,full_name,guardian_num,guardian_name,photo,birth_date,age_category,gender,blood_type,address')
+    .select('id,user_id,full_name,guardian_num,guardian_name,photo,birth_date,age,age_category,gender,blood_type,address')
     .maybeSingle();
 
   if (updated.error) throw updated.error;
@@ -4781,7 +4956,7 @@ async function savePatientCloudFields(fields) {
 
   // Verify the value that was just written so the Save action is truly permanent.
   const verify = await client.from('patients')
-    .select('id,user_id,full_name,guardian_num,guardian_name,photo,birth_date,age_category,gender,blood_type,address')
+    .select('id,user_id,full_name,guardian_num,guardian_name,photo,birth_date,age,age_category,gender,blood_type,address')
     .eq('id', updated.data.id)
     .eq('user_id', user.id)
     .maybeSingle();
@@ -4904,17 +5079,18 @@ async function savePatientBirthDate() {
     if (p) {
       p.birthDate = saved.birth_date;
       p.birth_date = saved.birth_date;
+      p.age = saved.age ?? age;
       p.ageCategory = saved.age_category || category;
       p.age_category = saved.age_category || category;
     } else {
       patients.push(Object.assign({}, currentSession.data, {
         id:saved.id, user_id:saved.user_id, birthDate:saved.birth_date,
-        birth_date:saved.birth_date, ageCategory:saved.age_category || category,
+        birth_date:saved.birth_date, age:saved.age ?? age, ageCategory:saved.age_category || category,
         age_category:saved.age_category || category
       }));
     }
     epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
-    Object.assign(currentSession.data, {birthDate:saved.birth_date, birth_date:saved.birth_date, ageCategory:saved.age_category || category, age_category:saved.age_category || category, id:saved.id, user_id:saved.user_id});
+    Object.assign(currentSession.data, {birthDate:saved.birth_date, birth_date:saved.birth_date, age:saved.age ?? age, ageCategory:saved.age_category || category, age_category:saved.age_category || category, id:saved.id, user_id:saved.user_id});
     epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
     await refreshPatientPortal();
     alert('Birthday saved. Age: ' + age + '. Category: ' + category + '.');
@@ -5043,44 +5219,62 @@ document.getElementById('bookAppointmentModal').classList.add('hidden');
 
 }
 
-function submitBookAppointment() {
+async function submitBookAppointment() {
+  const date = document.getElementById('bookApptDate')?.value || '';
+  const doc = document.getElementById('bookApptDoctor')?.value || '';
+  const reason = document.getElementById('bookApptReason')?.value.trim() || '';
+  if (!date || !reason) { alert('Please complete the appointment date and purpose.'); return; }
 
-const date = document.getElementById('bookApptDate').value;
+  const button = document.querySelector('#bookAppointmentModal button[onclick="submitBookAppointment()"]');
+  if (button) { button.disabled = true; button.textContent = 'SAVING…'; }
+  try {
+    const client = window.erecpassSupabase;
+    if (!client?.auth || !client?.from) throw new Error('Supabase is not connected. Please sign in again.');
+    const auth = await client.auth.getUser();
+    if (auth.error) throw auth.error;
+    const user = auth.data?.user;
+    if (!user?.id) throw new Error('Your patient login session has expired. Please sign in again.');
+    const patientResult = await client.from('patients')
+      .select('id,full_name,user_id')
+      .eq('user_id', user.id)
+      .maybeSingle();
+    if (patientResult.error) throw patientResult.error;
+    if (!patientResult.data) throw new Error('Your Supabase patient profile could not be found.');
 
-const doc = document.getElementById('bookApptDoctor').value;
+    const legacyId = String(Date.now());
+    const result = await client.from('appointments').insert({
+      legacy_id: legacyId,
+      patient_id: patientResult.data.id,
+      patient_name: patientResult.data.full_name || currentSession?.data?.fullName || user.email || 'Patient',
+      doctor: doc,
+      appointment_date: date,
+      reason,
+      status: 'Pending Approval',
+      created_by: user.id
+    }).select('id,legacy_id,patient_id,patient_name,doctor,appointment_date,reason,status').single();
+    if (result.error) throw result.error;
 
-const reason = document.getElementById('bookApptReason').value;
-
-if (!date || !reason) { alert("Please complete form fields."); return; }
-
-const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS)) || [];
-
-appts.push({
-
-id: Date.now(),
-
-patientId: currentSession.data.id,
-
-patientName: currentSession.data.fullName,
-
-doctor: doc,
-
-date: date,
-
-reason: reason,
-
-status: "Pending Approval"
-
-});
-
-epStore.setItem(DB_KEYS.APPOINTMENTS, JSON.stringify(appts));
-
-closeBookAppointmentModal();
-
-refreshPatientPortal();
-
-alert("Appointment submitted to admin for approval.");
-
+    const appts = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS) || '[]') || [];
+    appts.unshift({
+      id: result.data.id,
+      legacy_id: result.data.legacy_id || legacyId,
+      patientId: result.data.patient_id,
+      patientName: result.data.patient_name,
+      doctor: result.data.doctor || '',
+      date: result.data.appointment_date,
+      reason: result.data.reason,
+      status: result.data.status || 'Pending Approval'
+    });
+    epStore.setItem(DB_KEYS.APPOINTMENTS, JSON.stringify(appts));
+    closeBookAppointmentModal();
+    await renderPatientAppointments();
+    alert('Appointment saved to Supabase and submitted for admin approval.');
+  } catch (error) {
+    console.error('[ERecPass] Appointment booking failed:', error);
+    alert('Could not save the appointment to Supabase: ' + (error.message || 'Please try again.'));
+  } finally {
+    if (button) { button.disabled = false; button.textContent = 'Confirm Booking'; }
+  }
 }
 /* Patient Chat is Supabase-only. The messaging implementation is loaded below. */
 
@@ -5290,12 +5484,35 @@ function escapeStaffDashboardText(value) {
   });
 }
 
-function renderStaffApprovedAppointments() {
+async function renderStaffApprovedAppointments() {
   const container = document.getElementById('staffApprovedAppointmentsList');
   const count = document.getElementById('staffApprovedAppointmentsCount');
   if (!container || !count) return;
   try {
-    const appointments = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS) || '[]') || [];
+    let appointments = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS) || '[]') || [];
+    const client = window.erecpassSupabase;
+    if (client?.auth && client?.from) {
+      const auth = await client.auth.getUser();
+      if (auth.error) throw auth.error;
+      if (auth.data?.user) {
+        const cloud = await client.from('appointments')
+          .select('id,legacy_id,patient_id,patient_name,doctor,appointment_date,reason,status')
+          .eq('status', 'Approved')
+          .order('appointment_date', { ascending: true });
+        if (cloud.error) throw cloud.error;
+        appointments = (cloud.data || []).map(row => ({
+          id: row.id,
+          legacy_id: row.legacy_id,
+          patientId: row.patient_id,
+          patientName: row.patient_name,
+          doctor: row.doctor,
+          date: row.appointment_date,
+          appointment_date: row.appointment_date,
+          reason: row.reason,
+          status: row.status
+        }));
+      }
+    }
     const approved = appointments.filter(function(a) {
       return String(a.status || '').trim().toLowerCase() === 'approved';
     }).sort(function(a, b) {
@@ -5325,11 +5542,13 @@ function renderStaffApprovedAppointments() {
   }
 }
 
-function renderStaffHospitalAnnouncements() {
+async function renderStaffHospitalAnnouncements() {
   const container = document.getElementById('staffHospitalAnnouncementsList');
   if (!container) return;
   try {
-    const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+    let announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+    const cloudList = await loadHospitalAnnouncementsFromSupabase();
+    if (cloudList) announcements = cloudList;
     if (!announcements.length) {
       container.innerHTML = '<p class="text-xs text-slate-400 p-2">No hospital announcements posted yet.</p>';
       return;
@@ -5590,9 +5809,15 @@ try {
       patients = cloud.data.map(p => ({
         id: p.id, user_id: p.user_id, fullName: p.full_name || p.name || '',
         email: p.email || '', sim: p.sim || '', photo: p.photo || '',
-        ageCategory: p.age_category || '', birthDate: p.birth_date || '', birth_date: p.birth_date || '', guardianNum: p.guardian_num || '',
+        age: p.age ?? (p.birth_date ? getPatientAgeFromBirthDate(p.birth_date) : null),
+        ageCategory: p.age_category || '', age_category: p.age_category || '',
+        birthDate: p.birth_date || '', birth_date: p.birth_date || '',
+        gender: p.gender || '', bloodType: p.blood_type || '', blood_type: p.blood_type || '', address: p.address || '',
+        guardianName: p.guardian_name || '', guardian_name: p.guardian_name || '', guardianNum: p.guardian_num || '', guardian_num: p.guardian_num || '',
         status: p.status || 'Green', labResults: p.lab_results || [],
+        lab_results: p.lab_results || [],
         prescriptions: p.prescriptions || [], doctorNotes: p.doctor_notes || '',
+        doctor_notes: p.doctor_notes || '',
         online: !!p.online, active: p.active !== false
       }));
       epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
@@ -5944,19 +6169,20 @@ async function saveAdminPatientEdit() {
       doctor_notes: docNote,
       guardian_num: guardianNum,
       birth_date: birthDate || null,
+      age: birthDate ? birthAge : null,
       age_category: birthCategory || cloudPatient.age_category || 'Adult'
     };
     const saved = await client.from('patients')
       .update(payload)
       .eq('id', pid)
-      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age_category')
+      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age,age_category')
       .maybeSingle();
     if (saved.error) throw saved.error;
     if (!saved.data) throw new Error('Supabase did not confirm the patient record save.');
 
     // Verify both records and prescription values before showing success.
     const verified = await client.from('patients')
-      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age_category')
+      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age,age_category')
       .eq('id', pid)
       .maybeSingle();
     if (verified.error) throw verified.error;
@@ -5992,6 +6218,7 @@ async function saveAdminPatientEdit() {
     p.guardianNum = verified.data.guardian_num || '';
     p.birthDate = verified.data.birth_date || '';
     p.birth_date = verified.data.birth_date || '';
+    p.age = verified.data.age ?? (verified.data.birth_date ? getPatientAgeFromBirthDate(verified.data.birth_date) : null);
     p.ageCategory = verified.data.age_category || '';
     p.age_category = verified.data.age_category || '';
     epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
@@ -6070,7 +6297,7 @@ staffList.forEach(s => {
 
 container.innerHTML += `
 
-<div class="glass-card p-3 rounded-xl flex justify-between items-center text-xs">
+<div class="glass-card admin-staff-card p-3 rounded-xl flex justify-between items-center text-xs">
 
 <div>
 
@@ -6080,7 +6307,7 @@ container.innerHTML += `
 
 </div>
 
-<button onclick="toggleStaffAvailability('${s.id}')" class="px-2.5 py-1 rounded text-[10px] font-tech font-bold ${s.available ? 'bg-emerald-950 text-emerald-300 border border-emerald-500' : 'bg-rose-950 text-rose-300 border border-rose-500'}">${s.available ? 'Available (Green)' : 'Unavailable (Red)'}</button>
+<button onclick="toggleStaffAvailability('${s.id}')" class="staff-availability-toggle px-2.5 py-1 rounded text-[10px] font-tech font-bold ${s.available ? 'is-available' : 'is-unavailable'}">${s.available ? 'Available (Green)' : 'Unavailable (Red)'}</button>
 
 </div>
 
@@ -6105,29 +6332,40 @@ renderAdminStaffList();
 
 }
 
-function renderAdminAnnouncementList() {
+async function renderAdminAnnouncementList() {
   const container = document.getElementById('adminAnnouncementList');
   if (!container) return;
-  const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS)) || [];
+  let announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+  try {
+    const cloudList = await loadHospitalAnnouncementsFromSupabase();
+    if (cloudList) announcements = cloudList;
+  } catch (error) {
+    console.error('[ERecPass] Could not load admin announcements from Supabase:', error);
+  }
 
   if (!announcements.length) {
     container.innerHTML = '<p class="text-xs text-slate-400">No announcements posted yet.</p>';
     return;
   }
 
-  container.innerHTML = announcements.map(a => `
-    <div class="list-card p-3 rounded-xl">
-      <div class="flex items-start justify-between gap-3">
-        <div class="min-w-0 flex-1">
-          <strong class="text-white text-xs block">Announcement</strong>
-          <p class="text-[11px] text-slate-400 mt-0.5">${a.date || ''}</p>
-          ${a.text ? `<p class="text-xs text-slate-300 mt-1">${a.text}</p>` : ''}
-          ${a.photo ? `<img src="${a.photo}" alt="Announcement photo" class="w-full max-h-48 object-contain rounded-lg mt-2 bg-slate-950/50" onerror="this.style.display='none'">` : ''}
+  container.innerHTML = announcements.map(a => {
+    const id = escapeStaffDashboardText(a.id || '');
+    const date = escapeStaffDashboardText(a.date || '');
+    const text = escapeStaffDashboardText(a.text || '');
+    const photo = escapeStaffDashboardText(a.photo || '');
+    return `
+      <div class="list-card p-3 rounded-xl">
+        <div class="flex items-start justify-between gap-3">
+          <div class="min-w-0 flex-1">
+            <strong class="text-white text-xs block">Announcement</strong>
+            <p class="text-[11px] text-slate-400 mt-0.5">${date}</p>
+            ${text ? `<p class="text-xs text-slate-300 mt-1 whitespace-pre-wrap">${text}</p>` : ''}
+            ${photo ? `<img src="${photo}" alt="Announcement photo" class="w-full max-h-48 object-contain rounded-lg mt-2 bg-slate-950/50" onerror="this.style.display='none'">` : ''}
+          </div>
+          <button onclick="deleteAdminAnnouncement('${id.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded text-[10px] font-tech font-bold bg-rose-950 text-rose-300 border border-rose-500 shrink-0">Delete</button>
         </div>
-        <button onclick="deleteAdminAnnouncement('${String(a.id).replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded text-[10px] font-tech font-bold bg-rose-950 text-rose-300 border border-rose-500 shrink-0">Delete</button>
-      </div>
-    </div>
-  `).join('');
+      </div>`;
+  }).join('');
 }
 
 async function deleteAdminAnnouncement(announcementId) {
@@ -6142,18 +6380,38 @@ async function deleteAdminAnnouncement(announcementId) {
   const confirmed = await window.erecpassConfirm('Delete this announcement?\\n\\nThis action cannot be undone.');
   if (!confirmed) return;
 
-  const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS)) || [];
-  const updated = announcements.filter(a => String(a.id) !== String(announcementId));
-  if (updated.length === announcements.length) {
-    alert('Announcement was not found.');
+  const client = window.erecpassSupabase;
+  if (!client?.auth || !client?.from) {
+    alert('Supabase is not connected. Please refresh and sign in again.');
     return;
   }
+  const auth = await client.auth.getUser();
+  if (auth.error || !auth.data?.user) {
+    alert('Sign in with the authorized Supabase Admin account to manage announcements.');
+    return;
+  }
+  const profile = await client.from('profiles').select('role,active').eq('id', auth.data.user.id).maybeSingle();
+  if (profile.error || profile.data?.role !== 'admin' || profile.data?.active === false) {
+    alert('Only an active Supabase Admin account can delete announcements.');
+    return;
+  }
+  const removed = await client.from('announcements').delete().eq('legacy_id', String(announcementId)).select('legacy_id');
+  if (removed.error) {
+    alert('Could not delete the announcement from Supabase: ' + removed.error.message);
+    return;
+  }
+  if (!(removed.data || []).length) {
+    alert('Supabase did not confirm that the announcement was deleted. Check the Admin permissions and try again.');
+    return;
+  }
+  const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+  const updated = announcements.filter(a => String(a.id) !== String(announcementId));
 
   try {
     epStore.setItem(DB_KEYS.ANNOUNCEMENTS, JSON.stringify(updated));
     addLog('Deleted Announcement: ' + String(announcementId));
     renderAdminAnnouncementList();
-    await window.erecpassCloudFlush?.();
+    renderPatientAnnouncements();
     alert('Announcement deleted successfully.');
   } catch (error) {
     alert('Could not delete the announcement: ' + (error.message || error));
@@ -6177,13 +6435,35 @@ async function adminPostAnnouncement() {
         reader.readAsDataURL(file);
       });
     }
-    const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS)) || [];
-    announcements.unshift({ id: Date.now(), text, photo, date: new Date().toISOString().split('T')[0] });
+    const client = window.erecpassSupabase;
+    if (!client?.auth || !client?.from) throw new Error('Supabase is not connected. Please refresh and sign in again.');
+    const auth = await client.auth.getUser();
+    if (auth.error || !auth.data?.user) throw new Error('Sign in with the authorized Supabase Admin account to post announcements.');
+    const profile = await client.from('profiles').select('role,active').eq('id', auth.data.user.id).maybeSingle();
+    if (profile.error) throw profile.error;
+    if (profile.data?.role !== 'admin' || profile.data?.active === false) throw new Error('Only an active Supabase Admin account can post announcements.');
+    const id = String(Date.now());
+    const date = new Date().toISOString().split('T')[0];
+    const saved = await client.from('announcements').insert({
+      legacy_id: id,
+      body: text,
+      photo,
+      published_on: date,
+      created_by: auth.data.user.id
+    }).select('legacy_id,body,photo,published_on').single();
+    if (saved.error) throw saved.error;
+    const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+    announcements.unshift({
+      id: saved.data.legacy_id || id,
+      text: saved.data.body || '',
+      photo: saved.data.photo || '',
+      date: saved.data.published_on || date
+    });
     epStore.setItem(DB_KEYS.ANNOUNCEMENTS, JSON.stringify(announcements));
     addLog("Posted Announcement: " + (text || 'Photo announcement'));
     if (photoInput) photoInput.value = '';
-    await window.erecpassCloudFlush?.();
     renderAdminAnnouncementList();
+    renderPatientAnnouncements();
     alert("Announcement posted and saved to Supabase.");
   } catch (error) {
     alert('Could not save the announcement: ' + (error.message || error));
@@ -6361,12 +6641,25 @@ try {
         email: p.email || '',
         sim: p.sim || '',
         photo: p.photo || '',
+        age: p.age ?? (p.birth_date ? getPatientAgeFromBirthDate(p.birth_date) : null),
+        birthDate: p.birth_date || '',
+        birth_date: p.birth_date || '',
         ageCategory: p.age_category || '',
+        age_category: p.age_category || '',
+        gender: p.gender || '',
+        bloodType: p.blood_type || '',
+        blood_type: p.blood_type || '',
+        address: p.address || '',
+        guardianName: p.guardian_name || '',
+        guardian_name: p.guardian_name || '',
         guardianNum: p.guardian_num || '',
+        guardian_num: p.guardian_num || '',
         status: p.status || 'Green',
         labResults: p.lab_results || [],
+        lab_results: p.lab_results || [],
         prescriptions: p.prescriptions || [],
         doctorNotes: p.doctor_notes || '',
+        doctor_notes: p.doctor_notes || '',
         online: !!p.online,
         active: p.active !== false
       }));
@@ -7271,6 +7564,11 @@ margin-right: auto;
   const oldSwitch=window.switchAdminTab;
   window.switchAdminTab=function(tabName){
     if(typeof oldSwitch==='function') oldSwitch(tabName);
+    document.querySelectorAll('#adminApp .flex.flex-wrap.gap-2.border-b button').forEach(button=>{
+      const isSelected=(button.getAttribute('onclick')||'').includes(`'${tabName}'`);
+      button.classList.toggle('admin-function-active',isSelected);
+      button.setAttribute('aria-pressed',isSelected?'true':'false');
+    });
     if(tabName==='helpcenter'){
       document.querySelectorAll('#adminApp .admin-tab-content').forEach(el=>el.classList.add('hidden'));
       const sec=document.getElementById('adminTabHelpCenter');
@@ -7556,9 +7854,12 @@ window.requestErecPassCameraPermission = function () {
 <style>
 #epSettings{position:fixed;top:64px;right:10px;z-index:100000;font:600 12px Arial,sans-serif}
 #epSettingsToggle{pointer-events:auto;border:1px solid #1769e0;border-radius:999px;width:38px;height:38px;background:#fff;color:#16324f;box-shadow:0 2px 8px #16324f18;cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:17px}
-#epSettingsPanel{display:none;margin-top:6px;padding:6px;border:1px solid #1769e0;border-radius:12px;background:#fff;color:#16324f;box-shadow:0 4px 14px #16324f22;gap:6px;align-items:center}
+#epSettingsPanel{position:absolute;top:calc(100% + 6px);right:0;display:none;margin-top:0;padding:6px;border:1px solid #1769e0;border-radius:12px;background:#fff;color:#16324f;box-shadow:0 4px 14px #16324f22;gap:6px;align-items:center}
 #epSettings.ep-open #epSettingsPanel{display:flex}
 #epSettingsPanel button{pointer-events:auto;border:1px solid #1769e0;border-radius:9px;padding:7px 9px;background:#fff;color:#16324f;box-shadow:none;cursor:pointer}
+#epSettingsPanel{min-width:148px;flex-direction:column;align-items:stretch}
+#epSettingsPanel button{display:flex;width:100%;align-items:center;justify-content:flex-start;gap:8px}
+#adminSettingsLogout{background:#fff1f2!important;color:#a7192a!important;border-color:#f0c0c6!important;font-weight:700!important}
 html.ep-dark,html.ep-dark body,html.ep-dark #splashScreen{background:#101820!important;background-color:#101820!important;color:#edf4fb!important;color-scheme:dark}
 html.ep-dark body{background-image:none!important}
 html.ep-dark .auth-card,html.ep-dark .glass-card,html.ep-dark .health-card,html.ep-dark .appointment-card,html.ep-dark .list-card,html.ep-dark .record-card,html.ep-dark .medicine-card,html.ep-dark .doctor-card,html.ep-dark .large-card,html.ep-dark .hospital-card,html.ep-dark .qr-card,html.ep-dark .profile-card,html.ep-dark .help-card,html.ep-dark .modal-card,html.ep-dark .chat-card,html.ep-dark .staff-health,html.ep-dark .staff-grid button,html.ep-dark .top-header,html.ep-dark .bottom-nav,html.ep-dark .staff-header,html.ep-dark .glass,html.ep-dark .bg-white,html.ep-dark [class*="bg-white"],html.ep-dark [class*="bg-slate-50"],html.ep-dark [class*="bg-gray-50"],html.ep-dark [class*="bg-blue-50"],html.ep-dark .erecpass-added-card{background:#182532!important;color:#edf4fb!important;border-color:#334b60!important}
@@ -7568,6 +7869,11 @@ html.ep-dark .quick-grid button,html.ep-dark .date-box,html.ep-dark button[class
 html.ep-dark .text-slate-900,html.ep-dark .text-gray-900,html.ep-dark .text-black{color:#edf4fb!important}
 html:not(.ep-dark){color-scheme:light}
 @media(max-width:640px){#epSettings{top:56px;right:8px}#epSettingsToggle{width:36px;height:36px;font-size:16px}#epSettingsPanel{flex-direction:column;align-items:stretch}#epSettingsPanel button{padding:7px;font-size:11px}}
+#epSettings.ep-global-settings{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:100000}
+html.ep-dark #epSettings.ep-global-settings #epSettingsToggle,
+html.ep-dark #epSettingsPanel,
+html.ep-dark #epSettingsPanel button{background:#203243!important;color:#edf4fb!important;border-color:#40566a!important}
+html.ep-dark #epSettingsPanel #adminSettingsLogout{background:#48232b!important;color:#ffd8dd!important;border-color:#87414d!important}
 #patientApp .header-actions #epSettings{position:relative;top:auto;right:auto;z-index:30;flex:0 0 auto;font:600 12px Arial,sans-serif}
 #patientApp .header-actions #epSettingsToggle{width:36px;height:36px;font-size:16px}
 #patientApp .header-actions #epSettingsPanel{position:absolute;top:calc(100% + 8px);right:0;margin:0;min-width:128px;flex-direction:column;align-items:stretch}
@@ -7576,6 +7882,7 @@ html:not(.ep-dark){color-scheme:light}
 <button type="button" id="epSettingsToggle" aria-label="Open appearance settings" aria-expanded="false">⚙️</button>
 <div id="epSettingsPanel">
 <button type="button" id="epThemeBtn">🌙 Dark</button>
+<button type="button" id="adminSettingsLogout" class="hidden" onclick="logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
 </div>
 </div>
 <script>
@@ -7583,7 +7890,32 @@ html:not(.ep-dark){color-scheme:light}
 const root=document.documentElement,settings=document.getElementById('epSettings'),settingsToggle=document.getElementById('epSettingsToggle'),themeBtn=document.getElementById('epThemeBtn');
 const patientHeaderActions=document.querySelector('#patientApp .header-actions');
 const patientProfileButton=patientHeaderActions?.querySelector('button[aria-haspopup="menu"]');
-if(patientHeaderActions && settings && patientProfileButton) patientProfileButton.insertAdjacentElement('beforebegin',settings);
+const patientRoot=document.getElementById('patientApp');
+const adminRoot=document.getElementById('adminApp');
+const adminSettingsLogout=document.getElementById('adminSettingsLogout');
+function updateAdminSettingsAction(){
+  const adminVisible=adminRoot && !adminRoot.classList.contains('hidden') && getComputedStyle(adminRoot).display!=='none';
+  adminSettingsLogout?.classList.toggle('hidden',!adminVisible);
+}
+function placeAppearanceControl(){
+  if(!settings)return;
+  const patientVisible=patientRoot && !patientRoot.classList.contains('hidden') && getComputedStyle(patientRoot).display!=='none';
+  if(patientVisible && patientProfileButton){
+    settings.classList.remove('ep-global-settings');
+    if(settings.nextElementSibling!==patientProfileButton) patientProfileButton.insertAdjacentElement('beforebegin',settings);
+  }else{
+    settings.classList.add('ep-global-settings');
+    if(settings.parentElement!==document.body) document.body.appendChild(settings);
+  }
+  updateAdminSettingsAction();
+}
+placeAppearanceControl();
+if(patientRoot){
+  new MutationObserver(placeAppearanceControl).observe(patientRoot,{attributes:true,attributeFilter:['class','style']});
+}
+if(adminRoot){
+  new MutationObserver(updateAdminSettingsAction).observe(adminRoot,{attributes:true,attributeFilter:['class','style']});
+}
 settingsToggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();const open=settings.classList.toggle('ep-open');settingsToggle.setAttribute('aria-expanded',String(open));});
 document.addEventListener('click',function(e){if(!settings.contains(e.target)){settings.classList.remove('ep-open');settingsToggle.setAttribute('aria-expanded','false');}});
 function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore.getItem(key);if(v!==null)return v}}catch(e){}return fallback}
@@ -9091,7 +9423,7 @@ setTimeout(installAddedUI,2500);
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="./firebase-auth-client.js?v=20261028b"></script>
-<script src="./firebase-auth-runtime.js?v=20261028b"></script>
+<script src="./firebase-auth-runtime.js?v=20261028d"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
 (function(){
@@ -9261,22 +9593,26 @@ setTimeout(installAddedUI,2500);
   }
 
   window.deleteErecpassMessage=async function(id,button){
-    const uid=currentUserId();
-    if(!id||!uid||!S()) return;
+    if(!id||!S()) return;
+    const role=currentSession?.role;
+    if(!['patient','staff','admin'].includes(role)) return;
     if(!await window.erecpassConfirm('Delete this message?')) return;
     try {
+      // Resolve the active session at click time. The in-memory sender cache
+      // can be empty after a page refresh even though the Admin is signed in.
+      const uid=await ensureAuthUserId();
       let delQuery=S().from('message_messages').delete().eq('id',id);
-      if(currentSession?.role==='patient') delQuery=delQuery.eq('sender_id',uid);
+      if(role==='patient') delQuery=delQuery.eq('sender_id',uid);
       const r=await delQuery.select('id');
       if(r.error) throw r.error;
       if(!r.data?.length) throw new Error('Message was not deleted.');
       const wrap=button?.closest('.erecpass-chat-message-wrap');
       if(wrap) wrap.remove();
-      if(currentSession?.role==='patient') await renderPatient();
-      else if(currentSession?.role==='admin') await renderAdmin();
+      if(role==='patient') await renderPatient();
+      else if(role==='admin') await renderAdmin();
     } catch(e) {
       console.error('[ERecPass] Delete message failed:',e);
-      alert('Hindi ma-delete ang message. Pakisubukan ulit.');
+      alert('Could not delete the message: '+(e?.message||'Please check your Supabase permissions and try again.'));
     }
   };
 
@@ -9759,7 +10095,7 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 </script>
 <!-- END ERECPASS PATIENT PROFILE FINAL RESTORE -->
 <!-- ERECPASS FIREBASE AUTH & LOCAL RUNTIME OVERRIDE -->
-<script src="./firebase-auth-runtime.js?v=20261028b"></script>
+<script src="./firebase-auth-runtime.js?v=20261028d"></script>
 
 <!-- ERECPASS FINAL LIVE GUARD: remove any stale Change Language control; keep theme toggle -->
 <script>
@@ -9882,7 +10218,7 @@ function togglePatientMoreNav() {
     <h2 style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:1px;">WAITING FOR CONFIRMATION</h2>
     <p style="color:#94a3b8;font-size:12px;line-height:1.8;margin-bottom:6px;">We sent a confirmation link to</p>
     <p id="waitingConfirmEmail" style="color:#00f0ff;font-size:13px;font-weight:700;margin-bottom:20px;word-break:break-all;"></p>
-    <p style="color:#64748b;font-size:11px;line-height:1.8;margin-bottom:28px;">Please open your Gmail, click the confirmation link, and come back here to log in.</p>
+    <p style="color:#64748b;font-size:11px;line-height:1.8;margin-bottom:28px;">Please open your Gmail, click the verification link, and come back here to log in.</p>
     <div style="display:flex;gap:10px;flex-direction:column;">
       <button onclick="window.showLogin()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
         <i class="fa-solid fa-right-to-bracket" style="margin-right:6px;"></i> GO TO LOGIN
@@ -9938,6 +10274,7 @@ Please check your inbox and Spam folder.'); })
       alert('Firebase is not available. Please check your internet connection.');
     }
   };
+
 })();
 </script>
 
@@ -10031,7 +10368,445 @@ Please check your inbox and Spam folder.'); })
 })();
 </script>
 
+<style id="erecpass-mobile-tablet-layout">
+  html, body { width: 100%; max-width: 100%; overflow-x: hidden; }
+  #loginPage, #patientApp, #staffApp, #adminApp { width: 100%; max-width: 100%; min-width: 0; }
+  #patientApp main, #staffApp main, #adminApp main { width: 100%; max-width: 100%; min-width: 0; }
+  img, video, canvas, svg { max-width: 100%; }
+  .glass-card, .auth-card, .modal-card { min-width: 0; }
+  #adminApp .admin-tab-content, #patientApp .page, #staffApp main > * { min-width: 0; }
+  #adminApp table { display: block; width: 100%; max-width: 100%; overflow-x: auto; white-space: nowrap; }
+  #adminApp input, #adminApp select, #adminApp textarea,
+  #patientApp input, #patientApp select, #patientApp textarea,
+  #staffApp input, #staffApp select, #staffApp textarea { max-width: 100%; }
+
+  html.ep-dark #adminApp, html.ep-dark #adminApp main {
+    background: #101820 !important;
+    color: #edf4fb !important;
+  }
+  html.ep-dark #adminApp .glass-card,
+  html.ep-dark #adminApp .health-card,
+  html.ep-dark #adminApp .appointment-card,
+  html.ep-dark #adminApp .list-card,
+  html.ep-dark #adminApp .record-card,
+  html.ep-dark #adminApp .medicine-card,
+  html.ep-dark #adminApp .hospital-card,
+  html.ep-dark #adminApp .profile-card,
+  html.ep-dark #adminApp .help-card,
+  html.ep-dark #adminApp .chat-card {
+    background: #182532 !important;
+    color: #edf4fb !important;
+    border-color: #334b60 !important;
+  }
+  html.ep-dark #adminApp :is(h1,h2,h3,h4,p,span,label,li,td,th,strong,small,a) {
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+  }
+  html.ep-dark #adminApp [class*="text-cyan-"], html.ep-dark #adminApp [class*="text-teal-"] { color: #67e8f9 !important; -webkit-text-fill-color: #67e8f9 !important; }
+  html.ep-dark #adminApp [class*="text-rose-"], html.ep-dark #adminApp [class*="text-red-"] { color: #fda4af !important; -webkit-text-fill-color: #fda4af !important; }
+  html.ep-dark #adminApp [class*="text-amber-"], html.ep-dark #adminApp [class*="text-yellow-"] { color: #fcd34d !important; -webkit-text-fill-color: #fcd34d !important; }
+  html.ep-dark #adminApp [class*="text-emerald-"], html.ep-dark #adminApp [class*="text-green-"] { color: #6ee7b7 !important; -webkit-text-fill-color: #6ee7b7 !important; }
+  html.ep-dark #adminApp input, html.ep-dark #adminApp select, html.ep-dark #adminApp textarea {
+    background: #101820 !important;
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+    border-color: #40566a !important;
+  }
+  html.ep-dark #adminApp input::placeholder, html.ep-dark #adminApp textarea::placeholder { color: #a9bac9 !important; opacity: 1; }
+  html.ep-dark #adminApp .top-header { background: #182532 !important; color: #edf4fb !important; border-color: #334b60 !important; }
+  #adminEditPatientModal > .glass-card {
+    background: #fff !important;
+    color: #18324b !important;
+    border-color: #d4dfeb !important;
+  }
+  #adminEditPatientModal h2 { color: #1457b8 !important; -webkit-text-fill-color: #1457b8 !important; }
+  #adminEditPatientModal :is(p,label,span) { color: #334155 !important; -webkit-text-fill-color: #334155 !important; }
+  #adminEditPatientModal input:not([type="file"]),
+  #adminEditPatientModal select,
+  #adminEditPatientModal textarea {
+    background: #fff !important;
+    color: #18324b !important;
+    -webkit-text-fill-color: #18324b !important;
+    border-color: #bdcddd !important;
+  }
+  #adminEditPatientModal input::placeholder,
+  #adminEditPatientModal textarea::placeholder { color: #64748b !important; opacity: 1; }
+  #adminEditPatientModal input[type="file"] { color: #334155 !important; }
+  #adminEditPatientModal button:not(.primary-btn):active {
+    background: #fff !important;
+    color: #18324b !important;
+    border-color: #9fb2c5 !important;
+  }
+  #adminApp button, #adminEditPatientModal button { transition: transform .16s ease, filter .16s ease, box-shadow .16s ease; }
+  @media (hover: hover) and (pointer: fine) {
+    #adminApp button:not(:disabled):hover,
+    #adminEditPatientModal button:not(:disabled):hover {
+      filter: brightness(.96);
+      transform: translateY(-1px);
+      box-shadow: 0 4px 12px rgba(22,50,79,.14);
+    }
+  }
+  #adminApp button:not(:disabled):active,
+  #adminEditPatientModal button:not(:disabled):active {
+    filter: brightness(.9);
+    transform: scale(.97);
+  }
+  html.ep-dark #adminEditPatientModal > .glass-card {
+    background: #fff !important;
+    color: #18324b !important;
+    border-color: #d4dfeb !important;
+  }
+  html.ep-dark #adminEditPatientModal :is(h1,h2,h3,p,label,span) {
+    color: #334155 !important;
+    -webkit-text-fill-color: #334155 !important;
+  }
+  html.ep-dark #adminEditPatientModal h2 { color: #1457b8 !important; -webkit-text-fill-color: #1457b8 !important; }
+  html.ep-dark #adminEditPatientModal input:not([type="file"]),
+  html.ep-dark #adminEditPatientModal select,
+  html.ep-dark #adminEditPatientModal textarea {
+    background: #fff !important;
+    color: #18324b !important;
+    -webkit-text-fill-color: #18324b !important;
+    border-color: #bdcddd !important;
+  }
+  html.ep-dark #adminEditPatientModal input[type="file"] {
+    background: #fff !important;
+    color: #334155 !important;
+    border: 1px solid #bdcddd !important;
+    border-radius: 9px;
+    padding: 7px;
+  }
+  html.ep-dark #adminEditPatientModal input[type="file"]::file-selector-button {
+    background: #eef3f8;
+    color: #18324b;
+    border: 1px solid #bdcddd;
+    border-radius: 6px;
+    padding: 6px 9px;
+    margin-right: 8px;
+    cursor: pointer;
+  }
+  html.ep-dark #adminEditPatientModal button:not(.primary-btn):hover,
+  html.ep-dark #adminEditPatientModal button:not(.primary-btn):active {
+    background: #fff !important;
+    color: #18324b !important;
+    border-color: #9fb2c5 !important;
+  }
+  html.ep-dark #adminApp .admin-tab-content button:not(.primary-btn):not([class*="bg-rose"]):not([class*="bg-red"]):not([class*="bg-green"]):not([class*="bg-emerald"]):active {
+    background: #fff !important;
+    color: #18324b !important;
+    border-color: #bdcddd !important;
+  }
+
+  @media (max-width: 768px) {
+    #patientApp .top-header, #staffApp .staff-header, #adminApp .top-header {
+      padding-left: max(12px, env(safe-area-inset-left));
+      padding-right: max(12px, env(safe-area-inset-right));
+    }
+    #patientApp .top-header .brand strong,
+    #staffApp .staff-header .brand strong,
+    #adminApp .top-header .brand strong { font-size: 13px !important; }
+    #patientApp .header-actions { gap: 5px; }
+    #patientApp .header-actions > button:first-child {
+      width: 38px;
+      height: 38px;
+      padding: 0 !important;
+      justify-content: center;
+      font-size: 0 !important;
+    }
+    #patientApp .header-actions > button:first-child i { font-size: 14px !important; }
+    #patientApp .main-content, #staffApp main, #adminApp main {
+      padding-left: 12px;
+      padding-right: 12px;
+    }
+    #adminApp main { padding-top: 76px; }
+    #patientApp .main-content { padding-top: 76px; padding-bottom: 112px; }
+    #staffApp main { padding-top: 76px; padding-bottom: 20px; }
+    #loginPage .auth-card {
+      padding: clamp(16px, 5vw, 28px) !important;
+      justify-content: flex-start !important;
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    #loginPage .auth-card > * { max-width: 100%; }
+    #adminApp .admin-tab-content { overflow-x: auto; }
+    #adminApp .admin-tab-content > .flex { flex-wrap: wrap; }
+    #emergencyModal > div, #agreementModal > div,
+    #adminEditPatientModal > div, #bookAppointmentModal > div,
+    #uipaquibsAdminSettingsModal > div {
+      width: min(100%, 560px) !important;
+      max-height: calc(100dvh - 24px);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+    }
+    #patientBottomNav {
+      padding-left: max(6px, env(safe-area-inset-left));
+      padding-right: max(6px, env(safe-area-inset-right));
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+    #patientBottomNav > button:not(.patient-nav-see-more) { min-width: 0; min-height: 48px; }
+    #patientBottomNav > button:not(.patient-nav-see-more) i { font-size: 22px !important; }
+    #patientBottomNav .patient-nav-see-more { width: 40px; height: 40px; }
+    #patientApp:has(#patientBottomNav.patient-nav-expanded) .main-content { padding-bottom: 200px; }
+  }
+
+  @media (max-width: 390px) {
+    #patientApp .top-header, #staffApp .staff-header, #adminApp .top-header { padding-left: 9px; padding-right: 9px; }
+    #patientApp .top-header .brand { gap: 5px; }
+    #patientApp .top-header .brand strong { font-size: 12px !important; }
+    #patientApp .header-actions { gap: 4px; }
+    #patientApp .header-actions > button[aria-haspopup="menu"],
+    #patientApp .header-actions #epSettingsToggle { width: 34px; height: 34px; }
+    #patientBottomNav.patient-nav-collapsed { height: 90px !important; }
+    #patientBottomNav.patient-nav-expanded { height: 172px !important; }
+    #patientBottomNav > button:not(.patient-nav-see-more) { gap: 2px; font-size: 9px; }
+    #patientBottomNav > button:not(.patient-nav-see-more) i { font-size: 20px !important; }
+    #patientBottomNav .patient-nav-see-more { width: 36px; height: 36px; font-size: 18px; }
+    #patientWelcomeCard { gap: 8px; padding: 12px; }
+    #patientWelcomeCard #patientDashboardHealthIcon { width: 42px; height: 42px; font-size: 20px; }
+    #patientEmergencyCard { gap: 8px; padding: 12px; }
+    #patientEmergencyCard p { font-size: 10px; line-height: 1.35; }
+    #patientEmergencyCard #patientHoldEmergencyBtn { flex: 0 0 56px; width: 56px; height: 56px; }
+  }
+
+  @media (min-width: 641px) and (max-width: 1024px) {
+    #patientApp .main-content { max-width: 900px; }
+    #staffApp main { max-width: 900px; }
+    #adminApp main { max-width: 1100px; }
+  }
+
+  /* Muted dark-mode text for the Admin dashboard and Help Center. */
+  html.ep-dark #adminApp :is(h1,h2,h3,h4,p,span,label,li,td,th,strong,small,a) {
+    color: #d4dde6 !important;
+    -webkit-text-fill-color: #d4dde6 !important;
+  }
+  html.ep-dark #adminApp [class*="text-cyan-"],
+  html.ep-dark #adminApp [class*="text-teal-"] {
+    color: #65c0c9 !important;
+    -webkit-text-fill-color: #65c0c9 !important;
+  }
+  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button {
+    background-color: #1c2a36 !important;
+    color: #bdcbd8 !important;
+    -webkit-text-fill-color: #bdcbd8 !important;
+    border-color: #344b5e !important;
+  }
+  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button.admin-function-active {
+    background: linear-gradient(135deg, #185d68, #174653) !important;
+    color: #a4f4fa !important;
+    -webkit-text-fill-color: #a4f4fa !important;
+    border-color: #53d4df !important;
+    box-shadow: 0 0 0 1px rgba(83,212,223,.3), 0 0 18px rgba(52,211,225,.35) !important;
+    transform: translateY(-1px);
+  }
+  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button {
+    transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button:active {
+    box-shadow: 0 0 22px rgba(52,211,225,.58) !important;
+    transform: scale(.97);
+  }
+  html.ep-dark #adminApp button[onclick^="openAdminEditPatientModal"] {
+    background: #174653 !important;
+    color: #a4f4fa !important;
+    -webkit-text-fill-color: #a4f4fa !important;
+    border-color: #53b9c5 !important;
+    transition: box-shadow .18s ease, background-color .18s ease, transform .18s ease;
+  }
+  html.ep-dark #adminApp button[onclick^="openAdminEditPatientModal"]:is(:hover,:focus-visible,:active) {
+    background: #17616c !important;
+    color: #d3fbff !important;
+    -webkit-text-fill-color: #d3fbff !important;
+    border-color: #78e5ef !important;
+    box-shadow: 0 0 0 1px rgba(120,229,239,.35), 0 0 20px rgba(52,211,225,.52) !important;
+  }
+  html.ep-dark #adminTabHelpCenter #adminHelpSelectedHeader,
+  html.ep-dark #adminTabHelpCenter .text-slate-400 { color: #aebdca !important; }
+  html.ep-dark #adminTabHelpCenter .grid.grid-cols-2 > div {
+    background: #203243 !important;
+    color: #c7d2dc !important;
+    border: 1px solid #344b5e !important;
+  }
+  html.ep-dark #adminTabHelpCenter .grid.grid-cols-2 > div b {
+    color: #72c1ca !important;
+    -webkit-text-fill-color: #72c1ca !important;
+  }
+  html.ep-dark #adminTabHelpCenter .help-msg.help-admin {
+    background: #243744 !important;
+    color: #d0dbe2 !important;
+  }
+  html.ep-dark #adminTabHelpCenter .help-msg.help-user {
+    background: #175b60 !important;
+    color: #d7eeee !important;
+  }
+  html.ep-dark #guestHelpCenterModal .glass-card {
+    background: #182532 !important;
+    border-color: #334b60 !important;
+  }
+  html.ep-dark #guestHelpCenterModal :is(h2,p,button) {
+    color: #d4dde6 !important;
+    -webkit-text-fill-color: #d4dde6 !important;
+  }
+  html.ep-dark #guestHelpCenterModal h2 { color: #65c0c9 !important; -webkit-text-fill-color: #65c0c9 !important; }
+  html.ep-dark #guestHelpCenterModal .help-user { background: #175b60 !important; color: #d7eeee !important; }
+  html.ep-dark #guestHelpCenterModal .help-admin { background: #243744 !important; color: #d0dbe2 !important; }
+  html.ep-dark #guestHelpCenterModal .help-meta { color: #9aadb9 !important; }
+
+  /* Keep staff availability colors visible above broad dark-mode text rules. */
+  #patientApp #patientDoctorsList .patient-staff-availability.is-available {
+    color: #087c55 !important;
+    -webkit-text-fill-color: #087c55 !important;
+  }
+  #patientApp #patientDoctorsList .patient-staff-availability.is-unavailable {
+    color: #c52f43 !important;
+    -webkit-text-fill-color: #c52f43 !important;
+  }
+  html.ep-dark #patientApp #patientDoctorsList .patient-staff-availability.is-available {
+    color: #6ee7b7 !important;
+    -webkit-text-fill-color: #6ee7b7 !important;
+  }
+  html.ep-dark #patientApp #patientDoctorsList .patient-staff-availability.is-unavailable {
+    color: #fda4af !important;
+    -webkit-text-fill-color: #fda4af !important;
+  }
+  #patientApp #patientDoctorsList .doctor-card,
+  #adminApp #adminStaffList .admin-staff-card {
+    transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    #patientApp #patientDoctorsList .doctor-card:hover,
+    #adminApp #adminStaffList .admin-staff-card:hover {
+      transform: translateY(-2px);
+      border-color: #37c6d2 !important;
+      box-shadow: 0 0 0 1px rgba(55,198,210,.2), 0 8px 22px rgba(21,153,171,.2) !important;
+    }
+    #patientApp #patientDoctorsList .doctor-card:has(.patient-staff-availability.is-unavailable):hover,
+    #adminApp #adminStaffList .admin-staff-card:has(.staff-availability-toggle.is-unavailable):hover {
+      border-color: #ef4356 !important;
+      box-shadow: 0 0 0 1px rgba(239,67,86,.3), 0 0 22px rgba(220,38,60,.45), 0 8px 24px rgba(190,24,45,.28) !important;
+    }
+    #adminApp #adminStaffList .staff-availability-toggle:hover {
+      filter: brightness(1.06);
+      box-shadow: 0 0 12px currentColor;
+      transform: translateY(-1px);
+    }
+    #adminApp #adminStaffList .staff-availability-toggle.is-unavailable:hover {
+      box-shadow: 0 0 14px rgba(220,38,60,.72) !important;
+      filter: brightness(1.08);
+    }
+    #patientApp #patientEmergencyCard:hover {
+      border-color: #f04455 !important;
+      box-shadow: 0 0 0 3px rgba(214,55,75,.34), 0 0 28px rgba(220,38,60,.72), 0 0 48px rgba(244,63,94,.48) !important;
+    }
+  }
+  #adminApp #adminStaffList .staff-availability-toggle.is-available {
+    background: #e8f7f1 !important;
+    color: #087c55 !important;
+    -webkit-text-fill-color: #087c55 !important;
+    border: 1px solid #9bd6be !important;
+  }
+  #adminApp #adminStaffList .staff-availability-toggle.is-unavailable {
+    background: #fff0f1 !important;
+    color: #c52f43 !important;
+    -webkit-text-fill-color: #c52f43 !important;
+    border: 1px solid #e6a2aa !important;
+  }
+  html.ep-dark #adminApp #adminStaffList .staff-availability-toggle.is-available {
+    background: #153d34 !important;
+    color: #6ee7b7 !important;
+    -webkit-text-fill-color: #6ee7b7 !important;
+    border-color: #2b8b6b !important;
+  }
+  html.ep-dark #adminApp #adminStaffList .staff-availability-toggle.is-unavailable {
+    background: #48232b !important;
+    color: #fda4af !important;
+    -webkit-text-fill-color: #fda4af !important;
+    border-color: #a44756 !important;
+  }
+  #patientApp #patientEmergencyCard { transition: border-color .2s ease, box-shadow .2s ease, transform .2s ease, filter .2s ease; }
+  #patientApp #patientEmergencyCard:active,
+  #patientApp #patientDoctorsList .doctor-card:active,
+  #adminApp #adminStaffList .admin-staff-card:active { transform: scale(.99); }
+
+  /* Improve readability in dark-mode patient, staff, and Admin chats. */
+  html.ep-dark #adminTabChat .glass-card {
+    background: #182532 !important;
+    color: #edf4fb !important;
+    border-color: #40566a !important;
+  }
+  html.ep-dark #adminTabChat :is(h3,#adminSelectedChatHeader,[data-chat-account],#adminChatMessagesBox) {
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+  }
+  html.ep-dark #adminTabChat [data-chat-account] {
+    background: #203243 !important;
+    border: 1px solid #3c566d !important;
+  }
+  html.ep-dark #adminTabChat [data-chat-account]:hover,
+  html.ep-dark #adminTabChat [data-chat-account]:focus-visible {
+    background: #254252 !important;
+    border-color: #4a9eae !important;
+  }
+  html.ep-dark #adminTabChat [data-chat-account] > span:first-child > span:first-child { color: #f1f5f9 !important; -webkit-text-fill-color: #f1f5f9 !important; }
+  html.ep-dark #adminTabChat [data-chat-account] > span:first-child > span.text-emerald-600 { color: #6ee7b7 !important; -webkit-text-fill-color: #6ee7b7 !important; }
+  html.ep-dark #adminTabChat [data-chat-account] > span:first-child > span.text-rose-600 { color: #fda4af !important; -webkit-text-fill-color: #fda4af !important; }
+  html.ep-dark #adminTabChat [data-chat-account] > span:nth-child(2) { color: #c3cfdb !important; -webkit-text-fill-color: #c3cfdb !important; }
+  html.ep-dark #adminTabChat [data-chat-account] > span:nth-child(3) { color: #9eafbe !important; -webkit-text-fill-color: #9eafbe !important; }
+  html.ep-dark #adminTabChat #adminChatInput {
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+  }
+  html.ep-dark #adminTabChat #adminChatInput::placeholder { color: #aebdca !important; opacity: 1; }
+  html.ep-dark #adminTabChat .erecpass-chat-message-wrap .text-slate-500 { color: #adbdca !important; -webkit-text-fill-color: #adbdca !important; }
+  html.ep-dark #adminApp #adminTabChat .erecpass-chat-message-wrap .bot-message,
+  html.ep-dark #patientApp .erecpass-chat-message-wrap .bot-message,
+  html.ep-dark #staffApp .staff-chat-bubble.bot-message {
+    background: #263a4b !important;
+    color: #f1f5f9 !important;
+    -webkit-text-fill-color: #f1f5f9 !important;
+    border: 1px solid #496176 !important;
+  }
+  html.ep-dark #adminApp #adminTabChat .erecpass-chat-message-wrap .bg-cyan-500,
+  html.ep-dark #patientApp .erecpass-chat-message-wrap .bg-cyan-500,
+  html.ep-dark #staffApp .staff-chat-bubble.bg-cyan-500 {
+    background: #145c59 !important;
+    color: #ecfeff !important;
+    -webkit-text-fill-color: #ecfeff !important;
+    border: 1px solid #26847c !important;
+  }
+  html.ep-dark #adminTabChat .erecpass-chat-message-wrap > div > span:first-child,
+  html.ep-dark #adminTabChat .erecpass-chat-message-wrap > div > span:last-child,
+  html.ep-dark #patientApp .erecpass-chat-message-wrap > div > span:first-child,
+  html.ep-dark #patientApp .erecpass-chat-message-wrap > div > span:last-child,
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-bubble + span,
+  html.ep-dark #staffApp #staffAdminChatBox div > span:first-child {
+    color: #a9c0cf !important;
+    -webkit-text-fill-color: #a9c0cf !important;
+  }
+  html.ep-dark #adminTabChat .erecpass-delete-btn,
+  html.ep-dark #patientApp .erecpass-delete-btn,
+  html.ep-dark #staffApp .erecpass-delete-btn {
+    background: #48232b !important;
+    color: #ff9aa7 !important;
+    border-color: #a44756 !important;
+  }
+  html.ep-dark #adminTabChat .erecpass-delete-btn:hover,
+  html.ep-dark #patientApp .erecpass-delete-btn:hover,
+  html.ep-dark #staffApp .erecpass-delete-btn:hover { background: #642a35 !important; box-shadow: 0 0 12px rgba(239,68,86,.42) !important; }
+
+  /* The shared delete confirmation is created outside the app panels. */
+  html.ep-dark #erecpassDialog {
+    background: #182532 !important;
+    color: #edf4fb !important;
+    border-color: #40566a !important;
+  }
+  html.ep-dark #erecpassDialog .epd-title { color: #f1f5f9 !important; }
+  html.ep-dark #erecpassDialog .epd-message { color: #c5d1dc !important; }
+  html.ep-dark #erecpassDialog .epd-actions { background: #14202b !important; border-color: #34495b !important; }
+  html.ep-dark #erecpassDialog .epd-cancel { background: #293a49 !important; color: #e2eaf1 !important; }
+</style>
+
 <script src="./medication-reminders.js"></script>
 
 </body>
 </html>
+

@@ -37,6 +37,40 @@ var epStore = window.epStore;
     } catch (e) { console.warn('[ERecPass] Store write warning:', e); }
   }
 
+  function calculateAge(birthDate) {
+    const match = String(birthDate || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
+    if (!match) return null;
+    const year = Number(match[1]), month = Number(match[2]), day = Number(match[3]);
+    const birth = new Date(year, month - 1, day);
+    const today = new Date();
+    const now = new Date(today.getFullYear(), today.getMonth(), today.getDate());
+    if (birth.getFullYear() !== year || birth.getMonth() !== month - 1 || birth.getDate() !== day || birth > now) return null;
+    let age = now.getFullYear() - year;
+    if (now.getMonth() < month - 1 || (now.getMonth() === month - 1 && now.getDate() < day)) age--;
+    return age;
+  }
+
+  function todayString() {
+    const d = new Date();
+    return d.getFullYear() + '-' + String(d.getMonth() + 1).padStart(2, '0') + '-' + String(d.getDate()).padStart(2, '0');
+  }
+
+  window.previewRegisterBirthDate = function () {
+    const input = document.getElementById('regBirthDate');
+    const preview = document.getElementById('regBirthDatePreview');
+    if (!input || !preview) return;
+    if (!input.value) { preview.textContent = 'Your age will be calculated from your date of birth.'; return; }
+    const age = calculateAge(input.value);
+    preview.textContent = age === null ? 'Please enter a valid date that is not in the future.' : `Calculated age: ${age} · ${age <= 17 ? 'Minor' : 'Adult'}`;
+  };
+
+  function limitBirthDateInput() {
+    const input = document.getElementById('regBirthDate');
+    if (input) input.max = todayString();
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', limitBirthDateInput);
+  else limitBirthDateInput();
+
   function seedDefaults() {
     const admins = getLocal(KEYS.ADMIN_ACCOUNTS, []);
     if (!admins.some(a => String(a.email || a.username || '').toLowerCase() === 'admin2@gmail.com')) {
@@ -76,12 +110,15 @@ var epStore = window.epStore;
     const fullName = [firstName, middleName, lastName].filter(Boolean).join(' ');
     const email    = (document.getElementById('regEmail')?.value || '').trim().toLowerCase();
     const sim      = (document.getElementById('regSim')?.value || '').trim();
+    const birthDate = (document.getElementById('regBirthDate')?.value || '').trim();
+    const age = calculateAge(birthDate);
     const pass     = document.getElementById('regPassword')?.value || '';
     const confirm  = document.getElementById('regConfirmPassword')?.value || '';
 
     if (!firstName || !lastName) { alert('Please enter your First Name and Last Name.'); return; }
     if (!noMiddle && !middleName) { alert('Please enter your Middle Name, or check N/A if you do not have one.'); return; }
-    if (!fullName || !email || !sim || !pass) { alert('Please complete all required fields.'); return; }
+    if (!fullName || !email || !sim || !birthDate || !pass) { alert('Please complete all required fields, including your date of birth.'); return; }
+    if (age === null) { alert('Please enter a valid date of birth that is not in the future.'); return; }
     if (pass !== confirm)  { alert('Passwords do not match!'); return; }
     if (pass.length < 8)   { alert('Password must contain at least 8 characters.'); return; }
     if (!/[#!?]/.test(pass)) { alert('Password must contain at least one symbol: # ! ?'); return; }
@@ -102,7 +139,8 @@ var epStore = window.epStore;
         patient = {
           id: 'P-' + Date.now(),
           fullName, name: fullName, email, sim,
-          guardianNum: sim, ageCategory: 'Adult', status: 'Green',
+          guardianNum: sim, birthDate, birth_date: birthDate, age,
+          ageCategory: age <= 17 ? 'Minor' : 'Adult', status: 'Green',
           active: true, online: false, labResults: [], prescriptions: [], doctorNotes: ''
         };
         patients.push(patient);
@@ -110,6 +148,10 @@ var epStore = window.epStore;
         patient.fullName = fullName;
         patient.name = fullName;
         patient.sim = sim;
+        patient.birthDate = birthDate;
+        patient.birth_date = birthDate;
+        patient.age = age;
+        patient.ageCategory = age <= 17 ? 'Minor' : 'Adult';
       }
       setLocal(KEYS.PATIENTS, patients);
 
@@ -135,7 +177,7 @@ var epStore = window.epStore;
   // ==========================================
   // 2. FIRST VERIFIED LOGIN: create Supabase account and patient row
   // ==========================================
-  async function createOrLoadSupabasePatient(email, password, fullName, sim, allowCreate) {
+  async function createOrLoadSupabasePatient(email, password, fullName, sim, birthDate, allowCreate) {
     const client = window.erecpassSupabase;
     if (!client?.auth) throw new Error('Supabase is not connected. Refresh the app and try again.');
 
@@ -196,7 +238,9 @@ var epStore = window.epStore;
       full_name: fullName,
       email: user.email || email,
       sim: sim || existing.data?.sim || null,
-      age_category: existing.data?.age_category || 'Adult',
+      birth_date: existing.data?.birth_date || birthDate || null,
+      age: existing.data?.age ?? calculateAge(existing.data?.birth_date || birthDate),
+      age_category: existing.data?.age_category || (calculateAge(existing.data?.birth_date || birthDate) === null ? 'Adult' : (calculateAge(existing.data?.birth_date || birthDate) <= 17 ? 'Minor' : 'Adult')),
       status: existing.data?.status || 'Green',
       active: existing.data?.active !== false
     };
@@ -206,6 +250,15 @@ var epStore = window.epStore;
       const saved = await client.from('patients').insert(values).select('*').single();
       if (saved.error) throw saved.error;
       patient = saved.data;
+    } else if (birthDate && !existing.data.birth_date) {
+      const age = calculateAge(birthDate);
+      const updated = await client.from('patients').update({
+        birth_date: birthDate,
+        age,
+        age_category: age <= 17 ? 'Minor' : 'Adult'
+      }).eq('user_id', user.id).select('*').single();
+      if (updated.error) throw updated.error;
+      patient = updated.data;
     }
     if (!patient?.id || patient.user_id !== user.id) throw new Error('Supabase did not confirm the patient record.');
     return { user, patient };
@@ -236,13 +289,16 @@ var epStore = window.epStore;
       const local = patients.find(p => String(p.email || '').toLowerCase() === email);
       const fullName = String(local?.fullName || local?.name || check.displayName || email.split('@')[0])
         .trim().split(/\s+/).filter(Boolean).join(' ');
-      const result = await createOrLoadSupabasePatient(email, pass, fullName, local?.sim || local?.guardianNum || '', !check.legacy);
+      const result = await createOrLoadSupabasePatient(email, pass, fullName, local?.sim || local?.guardianNum || '', local?.birthDate || local?.birth_date || '', !check.legacy);
       const patient = Object.assign({}, local || {}, result.patient, {
         id: result.patient.id,
         user_id: result.user.id,
         fullName: result.patient.full_name || fullName,
         name: result.patient.full_name || fullName,
         email: result.user.email || email,
+        birthDate: result.patient.birth_date || local?.birthDate || local?.birth_date || '',
+        birth_date: result.patient.birth_date || local?.birthDate || local?.birth_date || '',
+        age: result.patient.age ?? calculateAge(result.patient.birth_date || local?.birthDate || local?.birth_date),
         online: true
       });
       if (patient.active === false) {
@@ -252,8 +308,10 @@ var epStore = window.epStore;
       const index = patients.findIndex(p => String(p.user_id || '') === result.user.id || String(p.email || '').toLowerCase() === email);
       if (index >= 0) patients[index] = patient; else patients.push(patient);
       setLocal(KEYS.PATIENTS, patients);
-      window.currentSession = { role: 'patient', data: patient };
-      setLocal(KEYS.SESSION, window.currentSession);
+      const patientSession = { role: 'patient', data: patient };
+      window.currentSession = patientSession;
+      try { currentSession = patientSession; } catch (_) {}
+      setLocal(KEYS.SESSION, patientSession);
       if (typeof window.addLog === 'function') window.addLog('Patient logged in: ' + fullName);
       if (typeof window.hideAuthPages === 'function') window.hideAuthPages();
       if (typeof window.launchPortalByRole === 'function') window.launchPortalByRole('patient');
@@ -283,8 +341,10 @@ var epStore = window.epStore;
     if (!staff) { alert('Invalid Staff email or password.'); return; }
     if (staff.active === false) { alert('This staff account is deactivated.'); return; }
 
-    window.currentSession = { role: 'staff', data: staff };
-    setLocal(KEYS.SESSION, window.currentSession);
+    const staffSession = { role: 'staff', data: staff };
+    window.currentSession = staffSession;
+    try { currentSession = staffSession; } catch (_) {}
+    setLocal(KEYS.SESSION, staffSession);
 
     if (typeof window.addLog === 'function') window.addLog('Staff logged in: ' + (staff.name || email));
     if (typeof window.hideAuthPages === 'function') window.hideAuthPages();
@@ -297,27 +357,43 @@ var epStore = window.epStore;
   window.handleAdminLogin = async function (e) {
     if (e) e.preventDefault();
 
-    const user = (document.getElementById('adminLoginUser')?.value || '').trim().toLowerCase();
+    const email = (document.getElementById('adminLoginUser')?.value || '').trim().toLowerCase();
     const pass = document.getElementById('adminLoginPassword')?.value || '';
 
-    if (!user || !pass) { alert('Please enter admin email and password.'); return; }
+    if (!email || !pass) { alert('Please enter admin email and password.'); return; }
+    const client = window.erecpassSupabase;
+    if (!client?.auth) { alert('Supabase is not connected. Refresh the app and try again.'); return; }
 
-    const adminAccounts = getLocal(KEYS.ADMIN_ACCOUNTS, []);
-    const admin = adminAccounts.find(a =>
-      (String(a.username || '').toLowerCase() === user || String(a.email || '').toLowerCase() === user) &&
-      (a.password ? a.password === pass : true)
-    );
+    try {
+      const signedIn = await client.auth.signInWithPassword({ email, password: pass });
+      if (signedIn.error) throw signedIn.error;
+      const user = signedIn.data?.user;
+      if (!user?.id) throw new Error('Supabase did not return an Admin account.');
+      const profileResult = await client.from('profiles')
+        .select('id,full_name,role,active').eq('id', user.id).maybeSingle();
+      if (profileResult.error) throw profileResult.error;
+      const profile = profileResult.data;
+      if (!profile || String(profile.role || '').toLowerCase() !== 'admin' || profile.active === false) {
+        await client.auth.signOut();
+        throw new Error(profile?.active === false ? 'This Admin account is deactivated.' : 'This account is not enabled for Admin Login.');
+      }
 
-    if (admin || user === 'admin2@gmail.com') {
-      const adminData = { id: admin?.id || 'A-1', name: admin?.name || 'Administrator', username: user, email: user };
-      window.currentSession = { role: 'admin', data: adminData };
-      setLocal(KEYS.SESSION, window.currentSession);
-
-      if (typeof window.addLog === 'function') window.addLog('Admin logged in: ' + user);
+      const adminSession = { role: 'admin', data: {
+        id: user.id,
+        name: profile.full_name || email,
+        username: email,
+        email: user.email || email
+      } };
+      window.currentSession = adminSession;
+      try { currentSession = adminSession; } catch (_) {}
+      setLocal(KEYS.SESSION, adminSession);
+      if (typeof window.addLog === 'function') window.addLog('Admin logged in: ' + email);
       if (typeof window.hideAuthPages === 'function') window.hideAuthPages();
       if (typeof window.launchPortalByRole === 'function') window.launchPortalByRole('admin');
-    } else {
-      alert('Invalid Admin credentials.');
+      if (typeof window.renderAdminAnnouncementList === 'function') window.renderAdminAnnouncementList();
+    } catch (err) {
+      console.error('[ERecPass] Admin login error:', err);
+      alert('Admin login failed: ' + (err?.message || err));
     }
   };
 
@@ -365,6 +441,7 @@ var epStore = window.epStore;
     } catch (_) {}
 
     window.currentSession = null;
+    try { currentSession = null; } catch (_) {}
     store.removeItem(KEYS.SESSION);
 
     ['patientApp', 'staffApp', 'adminApp'].forEach(id => {

@@ -1261,10 +1261,10 @@ body::before {
   #loginPage, #registerPage {
     isolation: isolate;
     background:
-      radial-gradient(ellipse at 50% 12%, rgba(32,171,184,.21), transparent 42%),
-      radial-gradient(ellipse at 4% 88%, rgba(36,116,205,.16), transparent 34%),
-      radial-gradient(ellipse at 96% 45%, rgba(30,166,163,.13), transparent 28%),
-      linear-gradient(140deg, #eaf7fc 0%, #e4f1fa 52%, #e8f7f4 100%) !important;
+      radial-gradient(ellipse at 12% 18%, rgba(0,164,190,.34), transparent 38%),
+      radial-gradient(ellipse at 88% 78%, rgba(23,105,224,.24), transparent 40%),
+      radial-gradient(ellipse at 92% 20%, rgba(30,166,163,.22), transparent 30%),
+      linear-gradient(140deg, #e3f4fb 0%, #e8f0fb 52%, #e2f5ef 100%) !important;
   }
   #loginPage .auth-medical-decor, #registerPage .auth-medical-decor {
     position: absolute !important;
@@ -1273,8 +1273,8 @@ body::before {
     overflow: hidden;
     pointer-events: none;
     background-image:
-      linear-gradient(rgba(29,132,163,.065) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(29,132,163,.065) 1px, transparent 1px);
+      linear-gradient(rgba(20,103,133,.13) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20,103,133,.13) 1px, transparent 1px);
     background-size: 42px 42px;
   }
   #loginPage .auth-medical-decor::before, #registerPage .auth-medical-decor::before {
@@ -1283,26 +1283,27 @@ body::before {
     inset: 0;
     background:
       radial-gradient(circle at 10% 20%, rgba(25,151,170,.18), transparent 23%),
-      radial-gradient(circle at 92% 76%, rgba(36,116,205,.15), transparent 27%);
+      radial-gradient(circle at 92% 76%, rgba(36,116,205,.23), transparent 30%),
+      radial-gradient(ellipse at 50% 48%, rgba(255,255,255,.28), transparent 62%);
   }
   #loginPage .auth-medical-ecg, #registerPage .auth-medical-ecg {
     position: absolute;
     left: -2%;
-    top: 17%;
+    top: 4%;
     width: 104%;
-    height: clamp(70px, 15vh, 140px);
-    opacity: .30;
+    height: clamp(100px, 20vh, 170px);
+    opacity: .78;
   }
   #loginPage .auth-medical-ecg path, #registerPage .auth-medical-ecg path {
     fill: none;
     stroke: #70b8c5;
-    stroke-width: 2.3;
+    stroke-width: 2.8;
     vector-effect: non-scaling-stroke;
   }
   #loginPage .auth-medical-ecg .auth-ecg-pulse,
   #registerPage .auth-medical-ecg .auth-ecg-pulse {
     stroke: #08798e;
-    stroke-width: 3;
+    stroke-width: 4;
     stroke-dasharray: 95 905;
     stroke-dashoffset: 1000;
     stroke-linecap: round;
@@ -1312,27 +1313,30 @@ body::before {
   }
   #loginPage > .auth-card, #registerPage > .auth-card { position: relative; z-index: 1; }
   #loginPage .auth-card, #registerPage .auth-card {
-    background: rgba(255, 255, 255, .84) !important;
-    border-color: rgba(23, 105, 224, .22) !important;
-    box-shadow: 0 18px 48px rgba(18, 75, 115, .12), inset 0 1px 0 rgba(255,255,255,.9) !important;
-    backdrop-filter: blur(18px) !important;
-    -webkit-backdrop-filter: blur(18px) !important;
+    background: rgba(255, 255, 255, .64) !important;
+    border-color: rgba(23, 105, 224, .30) !important;
+    box-shadow: 0 18px 48px rgba(18, 75, 115, .15), inset 0 1px 0 rgba(255,255,255,.82) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
   }
   html.ep-dark #loginPage, html.ep-dark #registerPage {
     background:
-      radial-gradient(ellipse at 50% 12%, rgba(35,178,184,.16), transparent 42%),
-      radial-gradient(ellipse at 4% 88%, rgba(36,116,205,.14), transparent 34%),
+      radial-gradient(ellipse at 12% 18%, rgba(24,181,194,.34), transparent 40%),
+      radial-gradient(ellipse at 88% 78%, rgba(36,116,205,.28), transparent 42%),
+      radial-gradient(ellipse at 92% 20%, rgba(30,166,163,.24), transparent 32%),
       linear-gradient(140deg, #0c1c29 0%, #102935 52%, #102c2d 100%) !important;
   }
   html.ep-dark #loginPage .auth-card, html.ep-dark #registerPage .auth-card {
-    background: rgba(17, 39, 53, .88) !important;
-    border-color: rgba(98, 205, 207, .30) !important;
-    box-shadow: 0 18px 48px rgba(0, 0, 0, .24), inset 0 1px 0 rgba(255,255,255,.06) !important;
+    background: rgba(17, 39, 53, .68) !important;
+    border-color: rgba(98, 205, 207, .38) !important;
+    box-shadow: 0 18px 48px rgba(0, 0, 0, .30), inset 0 1px 0 rgba(255,255,255,.08) !important;
+    backdrop-filter: blur(8px) !important;
+    -webkit-backdrop-filter: blur(8px) !important;
   }
   html.ep-dark #loginPage .auth-medical-decor, html.ep-dark #registerPage .auth-medical-decor {
     background-image:
-      linear-gradient(rgba(88,211,206,.04) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(88,211,206,.04) 1px, transparent 1px);
+      linear-gradient(rgba(88,211,206,.11) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,211,206,.11) 1px, transparent 1px);
   }
   html.ep-dark #loginPage .auth-medical-ecg path, html.ep-dark #registerPage .auth-medical-ecg path { stroke: #54d8d8; }
   html.ep-dark #loginPage .auth-medical-ecg .auth-ecg-pulse,
@@ -3450,6 +3454,17 @@ Already have an account?
 <!-- 2. Agreement Modal -->
 
 <style id="agreement-dark-mode-readable">
+  html:not(.ep-dark) #agreementModal {
+    background-color: rgba(20, 45, 70, .38) !important;
+  }
+  html:not(.ep-dark) #agreementModal > .glass-card {
+    background: #183b32 !important;
+    color: #18324b !important;
+    border-color: #d4dfeb !important;
+  }
+  html.ep-dark #agreementModal {
+    background-color: rgba(3, 10, 18, .86) !important;
+  }
   #agreementModalConsent {
     padding: 9px 10px !important;
     border: 1px solid #d4dfeb !important;
@@ -3469,12 +3484,15 @@ Already have an account?
   }
   html.ep-dark #agreementModalConsent label { color: #f4f8fc !important; }
   html.ep-dark #agreementModal > .glass-card {
-    background: #182532 !important;
+    background: #183b32 !important;
     color: #edf4fb !important;
     border-color: #40566a !important;
   }
   #agreementReviewBody { scrollbar-gutter: stable; }
   #agreementPhotoDisplayImg { background: #fff !important; cursor: zoom-in; }
+  #agreementModal .grid { grid-template-columns: minmax(0, 1fr); }
+  #agreementModal .grid > #agreeContinueBtn { order: 1; }
+  #agreementModal .grid > .agreement-cancel-btn { order: 2; width: 100%; }
   #agreementModal .agreement-cancel-btn {
     color: #29445d !important;
     background: #f8fbfe !important;
@@ -3507,7 +3525,7 @@ Already have an account?
 
 <div class="flex items-start justify-between gap-3 p-4 sm:p-5 border-b border-cyan-500/20">
   <div class="flex items-start gap-3">
-    <span class="flex h-10 w-10 shrink-0 items-center justify-center rounded-xl bg-cyan-400/10 text-cyan-300"><i class="fa-solid fa-file-shield text-lg"></i></span>
+    <span class="logo-icon flex h-10 w-10 shrink-0 items-center justify-center overflow-hidden rounded-xl border border-cyan-400/20 bg-white p-1" aria-label="ERecPass logo"></span>
     <div>
       <h2 id="agreementModalTitle" class="text-base sm:text-lg font-tech font-bold text-cyan-200">ERecPass User Agreement</h2>
       <p class="mt-1 text-xs text-slate-400">Required before entering the app</p>
@@ -7506,18 +7524,17 @@ setupLoginEmergencyHold();
 <style>
 /* Add-only styling: existing HTML/JS is preserved. */
 #loginPage {
-width: 100vw !important;
+width: 100% !important;
 min-height: 100vh !important;
 min-height: 100dvh !important;
-padding: 0 !important;
+padding: 24px !important;
 margin: 0 !important;
 }
 #loginPage .auth-card {
 width: 100% !important;
-max-width: 100% !important;
-min-height: 100vh !important;
-min-height: 100dvh !important;
-border-radius: 0 !important;
+max-width: 28rem !important;
+min-height: 0 !important;
+border-radius: 1.5rem !important;
 padding: 2rem !important;
 display: flex !important;
 flex-direction: column !important;
@@ -7525,13 +7542,26 @@ justify-content: center !important;
 }
 @media (min-width: 768px) {
 #loginPage .auth-card {
-padding: 3rem 8vw !important;
+max-width: 56rem !important;
+padding: 3rem 4rem !important;
 }
 #loginPage .auth-card > * {
 width: 100%;
 max-width: 900px;
 margin-left: auto;
 margin-right: auto;
+}
+}
+@media (max-width: 767px) {
+#loginPage {
+padding: 10px !important;
+}
+#loginPage .auth-card {
+min-height: min(620px, calc(100dvh - 20px)) !important;
+max-height: calc(100dvh - 20px) !important;
+padding: 24px !important;
+overflow-y: auto;
+overscroll-behavior: contain;
 }
 }
 </style>
@@ -8175,14 +8205,9 @@ html.ep-dark .quick-grid button,html.ep-dark .date-box,html.ep-dark button[class
 html.ep-dark .text-slate-900,html.ep-dark .text-gray-900,html.ep-dark .text-black{color:#edf4fb!important}
 html:not(.ep-dark){color-scheme:light}
 @media(max-width:640px){#epSettings{top:56px;right:8px}#epSettingsToggle{width:36px;height:36px;font-size:16px}#epSettingsPanel{flex-direction:column;align-items:stretch}#epSettingsPanel button{padding:7px;font-size:11px}}
-#epSettings.ep-global-settings{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:100000}
-#epSettings.ep-auth-settings,
-#epSettings.ep-agreement-settings{position:relative;top:auto;right:auto;z-index:20;width:100%;display:flex;justify-content:flex-end;margin:0 0 8px}
-#epSettings.ep-agreement-settings{margin-bottom:4px}
-#epSettings.ep-auth-settings.ep-open,
-#epSettings.ep-agreement-settings.ep-open{flex-direction:column;align-items:flex-end}
-#epSettings.ep-auth-settings #epSettingsPanel,
-#epSettings.ep-agreement-settings #epSettingsPanel{position:static;top:auto;right:auto;width:min(100%,220px);margin:6px 0 0}
+#epSettings.ep-global-settings{top:64px;right:10px;z-index:100000}
+@media(max-width:640px){#epSettings.ep-global-settings{top:56px;right:8px}}
+@media(min-width:641px){#epSettings.ep-auth-global-settings{top:48px}}
 html.ep-dark #epSettings.ep-global-settings #epSettingsToggle,
 html.ep-dark #epSettingsPanel,
 html.ep-dark #epSettingsPanel button{background:#203243!important;color:#edf4fb!important;border-color:#40566a!important}
@@ -8213,35 +8238,21 @@ function updateAdminSettingsAction(){
 function placeAppearanceControl(){
   if(!settings)return;
   const patientVisible=patientRoot && !patientRoot.classList.contains('hidden') && getComputedStyle(patientRoot).display!=='none';
-  const agreementModal=document.getElementById('agreementModal');
-  const agreementVisible=agreementModal && !agreementModal.classList.contains('hidden') && getComputedStyle(agreementModal).display!=='none';
-  const agreementBody=agreementVisible ? document.getElementById('agreementReviewBody') : null;
-  const authPage=Array.from(document.querySelectorAll('#loginPage, #registerPage, #staffLoginPage, #adminLoginPage'))
-    .find(page=>!page.classList.contains('hidden') && getComputedStyle(page).display!=='none');
-  const authCard=authPage?.querySelector('.auth-card');
+  const authPageVisible=Array.from(document.querySelectorAll('#loginPage, #registerPage'))
+    .some(page=>!page.classList.contains('hidden') && getComputedStyle(page).display!=='none');
+  settings.classList.toggle('ep-auth-global-settings',authPageVisible && !patientVisible);
   if(patientVisible && patientProfileButton){
-    settings.classList.remove('ep-global-settings','ep-auth-settings','ep-agreement-settings');
+    settings.classList.remove('ep-global-settings');
     if(settings.nextElementSibling!==patientProfileButton) patientProfileButton.insertAdjacentElement('beforebegin',settings);
-  }else if(agreementBody){
-    settings.classList.remove('ep-global-settings','ep-auth-settings');
-    settings.classList.add('ep-agreement-settings');
-    if(settings.parentElement!==agreementBody) agreementBody.prepend(settings);
-  }else if(authCard){
-    settings.classList.remove('ep-global-settings','ep-agreement-settings');
-    settings.classList.add('ep-auth-settings');
-    if(settings.parentElement!==authCard) authCard.prepend(settings);
   }else{
-    settings.classList.remove('ep-auth-settings','ep-agreement-settings');
     settings.classList.add('ep-global-settings');
     if(settings.parentElement!==document.body) document.body.appendChild(settings);
   }
   updateAdminSettingsAction();
 }
 placeAppearanceControl();
-if(patientRoot){
-  new MutationObserver(placeAppearanceControl).observe(patientRoot,{attributes:true,attributeFilter:['class','style']});
-}
-['loginPage','registerPage','staffLoginPage','adminLoginPage','agreementModal'].forEach(id=>{
+if(patientRoot)new MutationObserver(placeAppearanceControl).observe(patientRoot,{attributes:true,attributeFilter:['class','style']});
+['loginPage','registerPage'].forEach(id=>{
   const page=document.getElementById(id);
   if(page)new MutationObserver(placeAppearanceControl).observe(page,{attributes:true,attributeFilter:['class','style']});
 });
@@ -10907,7 +10918,7 @@ Please check your inbox and Spam folder.'); })
     #patientApp .main-content { padding-top: 76px; padding-bottom: 112px; }
     #staffApp main { padding-top: 76px; padding-bottom: 20px; }
     #loginPage .auth-card {
-      padding: clamp(16px, 5vw, 28px) !important;
+      padding: 24px !important;
       justify-content: flex-start !important;
       overflow-y: auto;
       overscroll-behavior: contain;

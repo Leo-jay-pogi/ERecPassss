@@ -292,7 +292,7 @@ jobs:
           set -euo pipefail
           sudo apt-get update
           sudo apt-get install -y imagemagick
-          ICON="assets/erecpass-app-icon.svg"
+          ICON="assets/erecpass-brand-logo.png"
           test -s "$ICON"
           RES="android/app/src/main/res"
           for spec in "mdpi:48" "hdpi:72" "xhdpi:96" "xxhdpi:144" "xxxhdpi:192"; do

@@ -9,8 +9,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
 <title>ERecPass - Electronic Health Record Pass</title>
-<link rel="icon" type="image/svg+xml" href="./assets/erecpass-app-icon.svg?v=1">
-<link rel="apple-touch-icon" href="./assets/erecpass-app-icon.svg?v=1">
+<link rel="icon" type="image/png" href="./assets/erecpass-brand-logo.png?v=1">
+<link rel="apple-touch-icon" href="./assets/erecpass-brand-logo.png?v=1">
 
 <!-- Fonts -->
 
@@ -389,7 +389,7 @@ color: #e2e8f0;
   touch-action: none;
   cursor: grab;
 }
-#erecpassImageViewer img:active { cursor: grabbing; }
+#erecpassImageViewer img.is-dragging { cursor: grabbing; }
 .erecpass-viewer-toolbar {
   position: absolute;
   top: 14px;
@@ -6173,7 +6173,7 @@ renderAdminLogs();
 
 }
 
-const DEFAULT_SYSTEM_LOGO_URL = './assets/system-logo.webp?v=2';
+const DEFAULT_SYSTEM_LOGO_URL = './assets/erecpass-brand-logo.png?v=1';
 
 function applySystemLogo(logoData) {
   const requestedLogo = logoData || DEFAULT_SYSTEM_LOGO_URL;
@@ -6182,7 +6182,7 @@ function applySystemLogo(logoData) {
     if (!img) {
       img = document.createElement('img');
       img.className = 'erecpass-system-logo';
-      img.alt = 'FIRTS Logo';
+      img.alt = 'ERecPass logo';
       img.style.cssText = 'width:100%;height:100%;object-fit:contain;border-radius:inherit;display:block;';
       el.innerHTML = '';
       el.appendChild(img);
@@ -6197,9 +6197,11 @@ function applySystemLogo(logoData) {
   });
   const preview=document.getElementById('adminLogoPreview');
   if(preview){
-    preview.innerHTML = '<img src="'+requestedLogo.replace(/"/g,'&quot;')+'" alt="FIRTS Logo" style="width:100%;height:100%;object-fit:contain;display:block;" onerror="this.src=\''+DEFAULT_SYSTEM_LOGO_URL+'\'">';
+    preview.innerHTML = '<img src="'+requestedLogo.replace(/"/g,'&quot;')+'" alt="ERecPass logo" style="width:100%;height:100%;object-fit:contain;display:block;" onerror="this.src=\''+DEFAULT_SYSTEM_LOGO_URL+'\'">';
   }
 }
+
+applySystemLogo();
 
 async function handleAdminLogoUpload(event) {
   if (typeof role !== 'undefined' && role !== 'admin') { alert('Admin access required.'); return; }
@@ -7229,19 +7231,6 @@ handleAdminLogoUpload({ target: input }).catch(function(error) {
 });
 }
 
-function uipaquibsLoadSavedLogo() {
-const dataUrl = epStore.getItem('erecpass_app_logo');
-if (!dataUrl) return;
-document.querySelectorAll('.logo-icon, .brand > div:first-child').forEach(el => {
-el.innerHTML = '<img src="' + dataUrl + '" alt="ERecPass Logo" class="w-full h-full object-contain rounded-xl">';
-});
-}
-
-if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', uipaquibsLoadSavedLogo);
-} else {
-uipaquibsLoadSavedLogo();
-}
 </script>
 
 <!-- UIPAQUIBS: Patient Account 2 seed -->
@@ -8187,6 +8176,13 @@ html.ep-dark .text-slate-900,html.ep-dark .text-gray-900,html.ep-dark .text-blac
 html:not(.ep-dark){color-scheme:light}
 @media(max-width:640px){#epSettings{top:56px;right:8px}#epSettingsToggle{width:36px;height:36px;font-size:16px}#epSettingsPanel{flex-direction:column;align-items:stretch}#epSettingsPanel button{padding:7px;font-size:11px}}
 #epSettings.ep-global-settings{top:max(10px,env(safe-area-inset-top));right:max(10px,env(safe-area-inset-right));z-index:100000}
+#epSettings.ep-auth-settings,
+#epSettings.ep-agreement-settings{position:relative;top:auto;right:auto;z-index:20;width:100%;display:flex;justify-content:flex-end;margin:0 0 8px}
+#epSettings.ep-agreement-settings{margin-bottom:4px}
+#epSettings.ep-auth-settings.ep-open,
+#epSettings.ep-agreement-settings.ep-open{flex-direction:column;align-items:flex-end}
+#epSettings.ep-auth-settings #epSettingsPanel,
+#epSettings.ep-agreement-settings #epSettingsPanel{position:static;top:auto;right:auto;width:min(100%,220px);margin:6px 0 0}
 html.ep-dark #epSettings.ep-global-settings #epSettingsToggle,
 html.ep-dark #epSettingsPanel,
 html.ep-dark #epSettingsPanel button{background:#203243!important;color:#edf4fb!important;border-color:#40566a!important}
@@ -8217,10 +8213,25 @@ function updateAdminSettingsAction(){
 function placeAppearanceControl(){
   if(!settings)return;
   const patientVisible=patientRoot && !patientRoot.classList.contains('hidden') && getComputedStyle(patientRoot).display!=='none';
+  const agreementModal=document.getElementById('agreementModal');
+  const agreementVisible=agreementModal && !agreementModal.classList.contains('hidden') && getComputedStyle(agreementModal).display!=='none';
+  const agreementBody=agreementVisible ? document.getElementById('agreementReviewBody') : null;
+  const authPage=Array.from(document.querySelectorAll('#loginPage, #registerPage, #staffLoginPage, #adminLoginPage'))
+    .find(page=>!page.classList.contains('hidden') && getComputedStyle(page).display!=='none');
+  const authCard=authPage?.querySelector('.auth-card');
   if(patientVisible && patientProfileButton){
-    settings.classList.remove('ep-global-settings');
+    settings.classList.remove('ep-global-settings','ep-auth-settings','ep-agreement-settings');
     if(settings.nextElementSibling!==patientProfileButton) patientProfileButton.insertAdjacentElement('beforebegin',settings);
+  }else if(agreementBody){
+    settings.classList.remove('ep-global-settings','ep-auth-settings');
+    settings.classList.add('ep-agreement-settings');
+    if(settings.parentElement!==agreementBody) agreementBody.prepend(settings);
+  }else if(authCard){
+    settings.classList.remove('ep-global-settings','ep-agreement-settings');
+    settings.classList.add('ep-auth-settings');
+    if(settings.parentElement!==authCard) authCard.prepend(settings);
   }else{
+    settings.classList.remove('ep-auth-settings','ep-agreement-settings');
     settings.classList.add('ep-global-settings');
     if(settings.parentElement!==document.body) document.body.appendChild(settings);
   }
@@ -8230,6 +8241,10 @@ placeAppearanceControl();
 if(patientRoot){
   new MutationObserver(placeAppearanceControl).observe(patientRoot,{attributes:true,attributeFilter:['class','style']});
 }
+['loginPage','registerPage','staffLoginPage','adminLoginPage','agreementModal'].forEach(id=>{
+  const page=document.getElementById(id);
+  if(page)new MutationObserver(placeAppearanceControl).observe(page,{attributes:true,attributeFilter:['class','style']});
+});
 if(adminRoot){
   new MutationObserver(updateAdminSettingsAction).observe(adminRoot,{attributes:true,attributeFilter:['class','style']});
 }
@@ -8259,16 +8274,28 @@ Never place a service_role/secret key in browser code. -->
     <button type="button" onclick="closeErecpassImageViewer()" aria-label="Close">✕</button>
   </div>
   <img id="erecpassViewerImage" src="" alt="Enlarged image">
-  <div class="erecpass-viewer-hint">Tap image • Pinch in/out to zoom • Mouse wheel supported</div>
+  <div class="erecpass-viewer-hint">Zoom in, then drag to pan • Pinch or use the mouse wheel to zoom</div>
 </div>
 
 <script>
 /* ADDITION: Image viewer / pinch zoom / larger login controls */
 (function() {
-  let viewer, viewerImage, scale = 1, startScale = 1, startDistance = 0;
+  let viewer, viewerImage, scale = 1, panX = 0, panY = 0;
+  let dragPointerId = null, dragStartX = 0, dragStartY = 0, panStartX = 0, panStartY = 0;
+  let pinchStartDistance = 0, pinchStartScale = 1;
+  const activePointers = new Map();
 
   function applyScale() {
-    if (viewerImage) viewerImage.style.transform = 'scale(' + scale + ')';
+    if (scale === 1) {
+      panX = 0;
+      panY = 0;
+    }
+    if (viewerImage) viewerImage.style.transform = 'translate(' + panX + 'px, ' + panY + 'px) scale(' + scale + ')';
+  }
+
+  function pointerDistance(points) {
+    const [first, second] = points;
+    return Math.hypot(first.x - second.x, first.y - second.y);
   }
 
   window.openErecpassImageViewer = function(src, alt) {
@@ -8278,6 +8305,10 @@ Never place a service_role/secret key in browser code. -->
     viewerImage.src = src;
     viewerImage.alt = alt || 'Enlarged image';
     scale = 1;
+    panX = 0;
+    panY = 0;
+    activePointers.clear();
+    dragPointerId = null;
     applyScale();
     viewer.classList.add('active');
     viewer.setAttribute('aria-hidden', 'false');
@@ -8291,9 +8322,14 @@ Never place a service_role/secret key in browser code. -->
     }
     if (viewerImage) {
       viewerImage.src = '';
-      viewerImage.style.transform = 'scale(1)';
+      viewerImage.style.transform = 'translate(0, 0) scale(1)';
+      viewerImage.classList.remove('is-dragging');
     }
     scale = 1;
+    panX = 0;
+    panY = 0;
+    activePointers.clear();
+    dragPointerId = null;
   };
 
   window.erecpassZoomIn = function() {
@@ -8308,12 +8344,6 @@ Never place a service_role/secret key in browser code. -->
     scale = 1;
     applyScale();
   };
-
-  function distance(t1, t2) {
-    const dx = t1.clientX - t2.clientX;
-    const dy = t1.clientY - t2.clientY;
-    return Math.sqrt(dx * dx + dy * dy);
-  }
 
   document.addEventListener('click', function(e) {
     const img = e.target.closest('.photo-viewable, .logo-icon img, .brand > div:first-child img');
@@ -8330,23 +8360,61 @@ Never place a service_role/secret key in browser code. -->
     applyScale();
   }, { passive: false });
 
-  document.addEventListener('touchstart', function(e) {
-    if (!viewerImage || e.target !== viewerImage || e.touches.length !== 2) return;
-    startDistance = distance(e.touches[0], e.touches[1]);
-    startScale = scale;
-  }, { passive: true });
+  if (window.PointerEvent) {
+    document.addEventListener('pointerdown', function(e) {
+      if (!viewerImage || e.target !== viewerImage || (e.pointerType === 'mouse' && e.button !== 0)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      viewerImage.setPointerCapture(e.pointerId);
+      if (activePointers.size === 1) {
+        dragPointerId = e.pointerId;
+        dragStartX = e.clientX;
+        dragStartY = e.clientY;
+        panStartX = panX;
+        panStartY = panY;
+      } else if (activePointers.size === 2) {
+        dragPointerId = null;
+        viewerImage.classList.remove('is-dragging');
+        pinchStartDistance = pointerDistance(Array.from(activePointers.values()));
+        pinchStartScale = scale;
+      }
+    });
 
-  document.addEventListener('touchmove', function(e) {
-    if (!viewerImage || e.target !== viewerImage || e.touches.length !== 2 || !startDistance) return;
-    e.preventDefault();
-    const newDistance = distance(e.touches[0], e.touches[1]);
-    scale = Math.max(1, Math.min(5, startScale * (newDistance / startDistance)));
-    applyScale();
-  }, { passive: false });
+    document.addEventListener('pointermove', function(e) {
+      if (!viewerImage || !activePointers.has(e.pointerId)) return;
+      activePointers.set(e.pointerId, { x: e.clientX, y: e.clientY });
+      if (activePointers.size === 2 && pinchStartDistance > 0) {
+        const distance = pointerDistance(Array.from(activePointers.values()));
+        scale = Math.max(1, Math.min(5, pinchStartScale * (distance / pinchStartDistance)));
+        applyScale();
+      } else if (e.pointerId === dragPointerId && scale > 1) {
+        panX = panStartX + e.clientX - dragStartX;
+        panY = panStartY + e.clientY - dragStartY;
+        viewerImage.classList.add('is-dragging');
+        applyScale();
+      }
+    });
 
-  document.addEventListener('touchend', function(e) {
-    if (e.touches.length < 2) startDistance = 0;
-  }, { passive: true });
+    function finishPointer(e) {
+      if (!activePointers.has(e.pointerId)) return;
+      activePointers.delete(e.pointerId);
+      if (viewerImage?.hasPointerCapture(e.pointerId)) viewerImage.releasePointerCapture(e.pointerId);
+      viewerImage?.classList.remove('is-dragging');
+      if (activePointers.size === 1) {
+        const [remainingId, point] = Array.from(activePointers.entries())[0];
+        dragPointerId = remainingId;
+        dragStartX = point.x;
+        dragStartY = point.y;
+        panStartX = panX;
+        panStartY = panY;
+      } else {
+        dragPointerId = null;
+        pinchStartDistance = 0;
+      }
+    }
+
+    document.addEventListener('pointerup', finishPointer);
+    document.addEventListener('pointercancel', finishPointer);
+  }
 
   document.addEventListener('keydown', function(e) {
     if (e.key === 'Escape') closeErecpassImageViewer();
@@ -8357,7 +8425,7 @@ Never place a service_role/secret key in browser code. -->
     const img = document.getElementById('agreementPhotoDisplayImg');
     if (img) {
       img.classList.add('photo-viewable');
-      img.setAttribute('title', 'Tap to view and pinch to zoom');
+      img.setAttribute('title', 'Tap to view, pinch to zoom, and drag to pan');
     }
   }
 
@@ -11126,4 +11194,3 @@ Please check your inbox and Spam folder.'); })
 
 </body>
 </html>
-

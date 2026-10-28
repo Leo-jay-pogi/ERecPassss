@@ -56,6 +56,8 @@ jobs:
           set -euo pipefail
           mkdir -p www
           rsync -av ./ www/ --exclude '.git/' --exclude '.github/' --exclude 'www/' --exclude 'android/' --exclude 'node_modules/' --exclude 'package-lock.json' --exclude 'package.json' --exclude 'google-services.json'
+          test -s www/assets/erecpass-brand-logo.png
+          test -s www/assets/erecpass-app-icon.svg
           npm init -y
           npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode @capacitor/local-notifications@^6 @capacitor/push-notifications@^6
           npm install --save-dev @capacitor/cli@^6 esbuild
@@ -321,10 +323,12 @@ jobs:
           grep -q "sdkVersion:'22'" /tmp/erecpass-apk-badging.txt
           sha256sum "$APK"
           unzip -t "$APK" | tail -n 2
+      - name: Name APK
+        run: cp android/app/build/outputs/apk/debug/app-debug.apk erecpass-debug.apk
       - name: Upload APK
         uses: actions/upload-artifact@v4
         with:
-          name: ERecPass-Android-APK
-          path: android/app/build/outputs/apk/debug/app-debug.apk
+          name: erecpass-debug
+          path: erecpass-debug.apk
           if-no-files-found: error
           retention-days: 14

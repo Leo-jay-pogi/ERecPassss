@@ -387,6 +387,9 @@ var epStore = window.epStore;
       window.currentSession = adminSession;
       try { currentSession = adminSession; } catch (_) {}
       setLocal(KEYS.SESSION, adminSession);
+      // Load all cloud-backed records before revealing the Admin portal.
+      // supabase-runtime.js installs this hydrator and its epStore adapter.
+      if (typeof window.erecpassCloudHydrate === 'function') await window.erecpassCloudHydrate();
       if (typeof window.addLog === 'function') window.addLog('Admin logged in: ' + email);
       if (typeof window.hideAuthPages === 'function') window.hideAuthPages();
       if (typeof window.launchPortalByRole === 'function') window.launchPortalByRole('admin');

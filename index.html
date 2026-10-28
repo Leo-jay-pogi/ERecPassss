@@ -1398,6 +1398,139 @@ body::before {
 #patientBottomNav.patient-nav-expanded .patient-nav-extra { display: flex !important; }
 #patientBottomNav.patient-nav-expanded .patient-nav-extra { animation: patientNavItemEnter .24s ease both; }
 #patientBottomNav.patient-nav-expanded #patientNavSeeMore i { animation: patientNavIconOpen .24s ease both; }
+@media (min-width: 641px) and (max-width: 1023px) {
+  #patientBottomNav.patient-nav-collapsed,
+  #patientBottomNav.patient-nav-expanded {
+    height: 96px !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-rows: 1fr !important;
+    padding-top: 8px !important;
+  }
+  #patientBottomNav.patient-nav-collapsed .patient-nav-extra {
+    display: none !important;
+  }
+  #patientBottomNav.patient-nav-expanded .patient-nav-extra {
+    display: flex !important;
+  }
+  #patientBottomNav.patient-nav-collapsed .patient-nav-see-more,
+  #patientBottomNav.patient-nav-expanded .patient-nav-see-more {
+    display: flex !important;
+  }
+  #patientApp .main-content { padding-bottom: 112px !important; }
+}
+@media (min-width: 1024px) {
+  #patientBottomNav.patient-nav-collapsed,
+  #patientBottomNav.patient-nav-expanded {
+    height: 96px !important;
+    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+    grid-template-rows: 1fr !important;
+    padding-top: 8px !important;
+  }
+  #patientBottomNav.patient-nav-collapsed .patient-nav-extra,
+  #patientBottomNav.patient-nav-expanded .patient-nav-extra {
+    display: flex !important;
+  }
+  #patientBottomNav.patient-nav-collapsed .patient-nav-see-more,
+  #patientBottomNav.patient-nav-expanded .patient-nav-see-more {
+    display: none !important;
+  }
+}
+#patientBottomNav .patient-nav-menu { display: contents; }
+@media (max-width: 1023px) {
+  #patientApp #patientBottomNav.patient-nav-collapsed,
+  #patientApp #patientBottomNav.patient-nav-expanded {
+    height: 96px !important;
+    grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    grid-template-rows: 1fr !important;
+    overflow: visible !important;
+    transition: none;
+  }
+  #patientApp #patientBottomNav.patient-nav-collapsed .patient-nav-menu {
+    display: none !important;
+  }
+  #patientApp #patientBottomNav.patient-nav-collapsed .patient-nav-extra,
+  #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-extra {
+    display: flex !important;
+  }
+  #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu {
+    position: absolute;
+    right: max(12px, env(safe-area-inset-right));
+    bottom: calc(100% + 10px);
+    z-index: 31;
+    display: grid !important;
+    width: min(270px, calc(100vw - 24px));
+    max-height: min(60vh, calc(100dvh - 120px));
+    grid-template-columns: minmax(0, 1fr);
+    gap: 4px;
+    overflow-y: auto;
+    padding: 8px;
+    border: 1px solid #d5e0eb;
+    border-radius: 14px;
+    background: rgba(255,255,255,.72);
+    -webkit-backdrop-filter: blur(12px);
+    backdrop-filter: blur(12px);
+    box-shadow: 0 10px 24px rgba(24,50,75,.12);
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra {
+    display: grid !important;
+    grid-template-columns: 24px minmax(0, 1fr);
+    column-gap: 8px;
+    width: 100%;
+    height: auto;
+    min-height: 52px;
+    align-items: center;
+    padding: 10px;
+    border-radius: 9px;
+    color: #18324b !important;
+    text-align: left;
+    font-size: 15px;
+    transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:hover,
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:focus-visible,
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active {
+    background: #eef5fb !important;
+    box-shadow: 0 3px 10px rgba(24,50,75,.12);
+    transform: translateX(2px);
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:focus-visible {
+    outline: 2px solid #6da9dc;
+    outline-offset: 1px;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra i {
+    grid-column: 1;
+    grid-row: 1;
+    justify-self: center;
+    width: 22px;
+    font-size: 19px !important;
+    text-align: center;
+    filter: drop-shadow(0 0 5px currentColor);
+    transition: filter .18s ease;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra span {
+    grid-column: 2;
+    grid-row: 1;
+    text-align: left;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,:active) i {
+    filter: drop-shadow(0 0 8px currentColor);
+  }
+  html.ep-dark #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu {
+    border-color: #40566a;
+    background: rgba(24,37,50,.72);
+    box-shadow: 0 12px 30px rgba(0,0,0,.22);
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra {
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:hover,
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:focus-visible,
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active {
+    background: rgba(38,59,77,.3) !important;
+    box-shadow: 0 3px 12px rgba(0,0,0,.2);
+  }
+}
 @keyframes patientNavItemEnter {
   from { opacity: 0; transform: translateY(10px) scale(.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -2149,23 +2282,6 @@ Already have an account?
 
 <div class="header-actions flex items-center gap-2">
 
-<button class="px-3 py-2 rounded-xl bg-rose-50 border border-rose-200 text-rose-700 text-xs font-semibold flex items-center gap-1.5 hover:bg-rose-100 transition-colors" onclick="openEmergencyModal()">
-
-<i class="fa-solid fa-triangle-exclamation"></i> Emergency
-
-</button>
-
-<button class="w-9 h-9 rounded-full bg-slate-100 border border-slate-200 text-slate-700 flex items-center justify-center hover:bg-slate-200 transition-colors" aria-label="Open profile menu" aria-haspopup="menu" aria-expanded="false" onclick="togglePatientProfileMenu(event)">
-
-<i class="fa-solid fa-user text-xs"></i>
-
-</button>
-
-<div id="patientProfileDropdown" class="hidden" role="menu" aria-label="Profile options">
-  <button type="button" role="menuitem" onclick="closePatientProfileMenu(); showPage('profile')"><i class="fa-solid fa-user"></i> View profile</button>
-  <button type="button" role="menuitem" onclick="closePatientProfileMenu(); logout()"><i class="fa-solid fa-right-from-bracket"></i> Log out</button>
-</div>
-
 </div>
 
 </header>
@@ -2306,6 +2422,20 @@ Already have an account?
     outline: 3px solid #ff9aa7 !important;
     outline-offset: 4px;
     box-shadow: 0 0 0 4px rgba(220,38,60,.4), 0 0 24px rgba(220,38,60,.85), 0 0 40px rgba(244,63,94,.62) !important;
+  }
+  @media (max-width: 640px) {
+    #patientEmergencyCard { align-items: center; gap: 10px; padding: 12px; }
+    #patientEmergencyCard > div { flex: 1 1 auto; min-width: 0; }
+    #patientEmergencyCard #patientHoldEmergencyBtn {
+      box-sizing: border-box;
+      flex: 0 0 56px !important;
+      width: 56px !important;
+      min-width: 56px;
+      height: 56px !important;
+      min-height: 56px;
+      border-radius: 50% !important;
+    }
+    #patientEmergencyCard #patientHoldEmergencyBtn svg { width: 100%; height: 100%; }
   }
   @keyframes patientEmergencyHoverBloom {
     from { filter: brightness(1.04) saturate(1.1) drop-shadow(0 0 5px rgba(220,38,60,.48)); }
@@ -2455,11 +2585,11 @@ Already have an account?
 
 <h2 class="text-base font-bold text-white mt-1">Angono Barangay Dispatch</h2>
 
-  <p class="text-[11px] text-slate-400">Hold the circle for 3 seconds, or hold elsewhere for 1 second to start a 3-second countdown. Double-tap the box to cancel.</p>
+  <p class="text-[11px] text-slate-400">Hold the circle for 3 seconds. Releasing before 0.5 seconds cancels; after that, the countdown continues. Double-tap the box to cancel.</p>
 
 </div>
 
-<button id="patientHoldEmergencyBtn" type="button" class="hold-button relative w-16 h-16 rounded-full bg-rose-950 border-2 border-rose-500 text-rose-400 flex flex-col items-center justify-center text-lg font-bold shadow-lg shadow-rose-900/50 active:scale-95 transition-all" aria-label="Press and hold for 3 seconds for emergency options">
+<button id="patientHoldEmergencyBtn" type="button" class="hold-button relative w-16 h-16 rounded-full bg-rose-950 border-2 border-rose-500 text-rose-400 flex flex-col items-center justify-center text-lg font-bold shadow-lg shadow-rose-900/50 active:scale-95 transition-all" aria-label="Press and hold for 3 seconds to activate emergency options">
 
 <i class="fa-solid fa-phone text-rose-400"></i>
 
@@ -2891,38 +3021,40 @@ Already have an account?
 <nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-4 items-center justify-items-center px-2 gap-x-1 gap-y-0">
 
 <button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
-<i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><spanclass="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
+<i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><span class="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
 </button>
 
 <button id="nav-hospital-map" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('hospital-map')" type="button">
-<i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600" style="color:#16834b !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Map</span>
+<i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600" style="color:#16834b !important"></i><span class="text-slate-500" style="color:#66788a !important">Map</span>
 </button>
 
 <button id="nav-medicines" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medicines')" type="button">
-<i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600" style="color:#7b2be2 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Meds</span>
+<i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600" style="color:#7b2be2 !important"></i><span class="text-slate-500" style="color:#66788a !important">Meds</span>
 </button>
 
 <button id="nav-doctors" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
-<i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Staff</span>
+<i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><span class="text-slate-500" style="color:#66788a !important">Staff</span>
 </button>
 
-<button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-label="Show more navigation items" title="Show more navigation items" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+<button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-label="Open navigation menu" title="Open navigation menu" aria-controls="patientNavMenu" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
 
-<button id="nav-appointments" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('appointments')" type="button">
-<i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Appts</span>
+<div id="patientNavMenu" class="patient-nav-menu" role="menu" aria-label="More patient functions">
+<button id="nav-appointments" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('appointments')" type="button">
+<i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><span class="text-slate-500" style="color:#66788a !important">Appointments</span>
 </button>
 
-<button id="nav-medical-records" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('medical-records')" type="button">
-<i class="fa-solid fa-file-medical text-2xl sm:text-3xl text-red-600" style="color:#d92f2f !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Records</span>
+<button id="nav-medical-records" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('medical-records')" type="button">
+<i class="fa-solid fa-file-medical text-2xl sm:text-3xl text-red-600" style="color:#d92f2f !important"></i><span class="text-slate-500" style="color:#66788a !important">Records</span>
 </button>
 
-<button id="nav-qr" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('qr')" type="button">
-<i class="fa-solid fa-qrcode text-2xl sm:text-3xl text-sky-500" style="color:#159bd3 !important"></i><spanclass="text-slate-500" style="color:#66788a !important">My QR</span>
+<button id="nav-qr" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('qr')" type="button">
+<i class="fa-solid fa-qrcode text-2xl sm:text-3xl text-sky-500" style="color:#159bd3 !important"></i><span class="text-slate-500" style="color:#66788a !important">My QR</span>
 </button>
 
-<button id="nav-help" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('help')" type="button">
-<i class="fa-solid fa-comments text-2xl sm:text-3xl text-orange-500" style="color:#f0643d !important"></i><spanclass="text-slate-500" style="color:#66788a !important">Chat</span>
+<button id="nav-help" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('help')" type="button">
+<i class="fa-solid fa-comments text-2xl sm:text-3xl text-orange-500" style="color:#f0643d !important"></i><span class="text-slate-500" style="color:#66788a !important">Chat</span>
 </button>
+</div>
 
 </nav>
 
@@ -3105,7 +3237,8 @@ Already have an account?
 
 <header class="top-header fixed top-0 left-0 right-0 z-20 h-16 flex justify-between items-center px-4 border-b border-rose-500/30">
 
-<div class="brand flex items-center gap-2">
+<div class="admin-header-inner flex w-full items-center justify-between gap-3">
+<div class="brand flex min-w-0 items-center gap-2">
 
 <div class="w-8 h-8 rounded-xl bg-rose-950 border border-rose-400/60 flex items-center justify-center text-rose-400">
 
@@ -3113,8 +3246,10 @@ Already have an account?
 
 </div>
 
-<strong class="font-tech text-rose-300 text-base">ERecPass Admin Console</strong>
+<strong class="truncate font-tech text-rose-300 text-base">ERecPass Admin Console</strong>
 
+</div>
+<div class="admin-header-actions flex shrink-0 items-center"></div>
 </div>
 
 </header>
@@ -3153,26 +3288,31 @@ Already have an account?
 
 <!-- Quick Tab Controls for Admin -->
 
-<div class="flex flex-wrap gap-2 border-b border-cyan-500/20 pb-3 font-tech text-xs">
+<div class="admin-function-nav-wrap">
+<button type="button" class="admin-function-scroll-arrow admin-function-scroll-left" aria-label="Scroll functions left">‹</button>
+<div class="admin-function-nav flex flex-wrap gap-2 border-b border-cyan-500/20 pb-3 font-tech text-xs">
 
-<button onclick="switchAdminTab('patients')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-400/40 font-bold admin-function-active" aria-pressed="true">Patient Management</button>
+<button onclick="switchAdminTab('patients')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-400/40 font-bold admin-function-active" aria-pressed="true"><i class="fa-solid fa-hospital-user" aria-hidden="true"></i><span>Patient Management</span></button>
 
-<button onclick="switchAdminTab('staff')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Staff Accounts & Tasks</button>
+<button onclick="switchAdminTab('staff')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-user-doctor" aria-hidden="true"></i><span>Staff Accounts & Tasks</span></button>
 
-<button onclick="switchAdminTab('announcements')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Announcements</button>
+<button onclick="switchAdminTab('announcements')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i><span>Announcements</span></button>
 
-<button onclick="switchAdminTab('agreement')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Upload Agreement</button>
+<button onclick="switchAdminTab('agreement')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-file-signature" aria-hidden="true"></i><span>Upload Agreement</span></button>
 
-<button onclick="switchAdminTab('appointments')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Manage Appointments</button>
+<button onclick="switchAdminTab('appointments')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Manage Appointments</span></button>
 
-<button onclick="switchAdminTab('chat')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Patient Messages</button>
+<button onclick="switchAdminTab('chat')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Patient Messages</span></button>
 
-<button onclick="switchAdminTab('logs')" class="hidden px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">Activity Logs</button>
+<button onclick="switchAdminTab('logs')" class="admin-function-tab hidden px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><span>Activity Logs</span></button>
 
 
-<button onclick="switchAdminTab('settings')" class="px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300">System Settings</button>
+<button onclick="switchAdminTab('settings')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>System Settings</span></button>
 
 </div>
+<button type="button" class="admin-function-scroll-arrow admin-function-scroll-right" aria-label="Scroll functions right">›</button>
+</div>
+<div id="adminCloudDataStatus" class="hidden text-xs rounded-lg px-3 py-2" role="status" aria-live="polite"></div>
 
 <!-- ADMIN TAB 1: PATIENT MANAGEMENT -->
 
@@ -3417,6 +3557,31 @@ Already have an account?
 
 <!-- 1. Emergency Numbers Modal -->
 
+<style>
+  html.ep-dark #emergencyModal > .glass-card {
+    background: #182532 !important;
+    color: #edf4fb !important;
+    border-color: #9f354b !important;
+  }
+  html.ep-dark #emergencyModal .emergency-contact-card {
+    background: #3b1f2b !important;
+    border-color: #9f354b !important;
+  }
+  html.ep-dark #emergencyModal .emergency-contact-card strong {
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  html.ep-dark #emergencyModal .emergency-contact-card span {
+    color: #fecdd3 !important;
+    -webkit-text-fill-color: #fecdd3 !important;
+  }
+  html.ep-dark #emergencyModal .emergency-contact-card a {
+    background: #fb7185 !important;
+    color: #301018 !important;
+    -webkit-text-fill-color: #301018 !important;
+  }
+</style>
+
 <div id="emergencyModal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4">
 
 <div class="glass-card p-5 rounded-2xl w-full max-w-sm border-rose-500/50 space-y-4 text-center">
@@ -3427,7 +3592,7 @@ Already have an account?
 
 <div class="space-y-2 text-left">
 
-<div class="p-3 bg-rose-950/60 rounded-xl border border-rose-500/40 flex justify-between items-center">
+<div class="emergency-contact-card p-3 bg-rose-950/60 rounded-xl border border-rose-500/40 flex justify-between items-center">
 
 <div><strong class="text-white text-xs block">Angono Barangay Hotline</strong><span id="displayBarangayNum" class="text-xs text-rose-300">0917-123-4567</span></div>
 
@@ -3435,7 +3600,7 @@ Already have an account?
 
 </div>
 
-<div class="p-3 bg-rose-950/60 rounded-xl border border-rose-500/40 flex justify-between items-center">
+<div class="emergency-contact-card p-3 bg-rose-950/60 rounded-xl border border-rose-500/40 flex justify-between items-center">
 
 <div><strong class="text-white text-xs block">National Emergency</strong><span id="display911Num" class="text-xs text-rose-300">911</span></div>
 
@@ -3458,9 +3623,14 @@ Already have an account?
     background-color: rgba(20, 45, 70, .38) !important;
   }
   html:not(.ep-dark) #agreementModal > .glass-card {
-    background: #183b32 !important;
     color: #18324b !important;
     border-color: #d4dfeb !important;
+  }
+  html:not(.ep-dark) #agreementModal .agreement-review-badge {
+    color: #78350f !important;
+    -webkit-text-fill-color: #78350f !important;
+    background: #fef3c7 !important;
+    border-color: #f59e0b !important;
   }
   html.ep-dark #agreementModal {
     background-color: rgba(3, 10, 18, .86) !important;
@@ -3482,9 +3652,8 @@ Already have an account?
     background: #203243 !important;
     border-color: #40566a !important;
   }
-  html.ep-dark #agreementModalConsent label { color: #f4f8fc !important; }
+  html.ep-dark #agreementModalConsent label { color: #f4f8fc !important;   }
   html.ep-dark #agreementModal > .glass-card {
-    background: #183b32 !important;
     color: #edf4fb !important;
     border-color: #40566a !important;
   }
@@ -3517,6 +3686,52 @@ Already have an account?
     background: #203243 !important;
     border-color: #5a7184 !important;
   }
+  #agreementModal {
+    padding: max(8px, env(safe-area-inset-top)) max(8px, env(safe-area-inset-right))
+      max(8px, env(safe-area-inset-bottom)) max(8px, env(safe-area-inset-left)) !important;
+  }
+  #agreementModal > .glass-card {
+    width: min(100%, 48rem) !important;
+    height: calc(100dvh - 1rem - env(safe-area-inset-top) - env(safe-area-inset-bottom)) !important;
+    max-height: 880px !important;
+    overflow: hidden !important;
+  }
+  #agreementModal > .glass-card > .flex.items-start.justify-between {
+    flex: 0 0 auto;
+    padding: .75rem 1rem !important;
+  }
+  #agreementReviewBody {
+    display: flex;
+    flex-direction: column;
+    gap: .5rem !important;
+    min-height: 0;
+    overflow: hidden !important;
+    padding: .75rem 1rem !important;
+  }
+  #agreementReviewBody > * { margin-top: 0 !important; }
+  #agreementReviewIntro { flex: 0 0 auto; font-size: .75rem; }
+  #agreementDocumentHint { display: none; }
+  #agreementPhotoPreviewContainer:not(.hidden) {
+    display: flex;
+    flex: 1 1 0;
+    min-height: 0;
+  }
+  #agreementPhotoDisplayImg {
+    width: 100%;
+    height: 100%;
+    max-height: none !important;
+    object-fit: contain;
+  }
+  #fullAgreementTextDisplay {
+    flex: 0 1 auto;
+    min-height: 0;
+    font-size: clamp(.55rem, 1.4vh, .875rem);
+    overflow: hidden !important;
+  }
+  #agreementModal > .glass-card > .shrink-0 {
+    flex: 0 0 auto;
+    padding: .75rem 1rem !important;
+  }
 </style>
 
 <div id="agreementModal" role="dialog" aria-modal="true" aria-labelledby="agreementModalTitle" class="fixed inset-0 z-50 bg-slate-950/80 backdrop-blur-sm hidden flex items-center justify-center p-3 sm:p-4">
@@ -3531,11 +3746,11 @@ Already have an account?
       <p class="mt-1 text-xs text-slate-400">Required before entering the app</p>
     </div>
   </div>
-  <span class="shrink-0 rounded-full border border-amber-300/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-200">Review required</span>
+  <span class="agreement-review-badge shrink-0 rounded-full border border-amber-300/30 bg-amber-400/10 px-2.5 py-1 text-[10px] font-bold uppercase tracking-wide text-amber-200">Review required</span>
 </div>
 
 <div id="agreementReviewBody" class="min-h-0 flex-1 overflow-y-auto p-4 sm:p-5 space-y-3">
-  <p id="agreementReviewIntro" class="text-sm leading-relaxed text-slate-200">Please read the agreement below. Tap the page to enlarge it.</p>
+  <p id="agreementReviewIntro" class="text-sm leading-relaxed text-slate-200">Please review the ERecPass User Agreement below before continuing.</p>
   <p id="agreementDocumentHint" class="flex items-center gap-2 text-xs text-slate-400"><i class="fa-solid fa-magnifying-glass-plus text-cyan-300"></i> Tap or click the document to view it larger. On touch screens, pinch to zoom.</p>
   <div id="agreementPhotoPreviewContainer" class="hidden rounded-xl border border-slate-300 bg-white p-2 shadow-inner shadow-slate-900/10">
     <img id="agreementPhotoDisplayImg" src="" alt="ERecPass User Agreement" class="mx-auto w-full h-auto max-h-[65vh] object-contain rounded-lg">
@@ -4620,6 +4835,11 @@ window.patientDashboardNavigate = function(pageId) {
   return showPage(pageId);
 };
 
+function cacheSupabaseSnapshot(key, value) {
+  if (typeof epStore?._put === 'function') epStore._put(key, value);
+  else epStore.setItem(key, JSON.stringify(value));
+}
+
 async function loadHospitalAnnouncementsFromSupabase() {
   const client = window.erecpassSupabase;
   if (!client?.from || !client?.auth) return null;
@@ -4636,7 +4856,7 @@ async function loadHospitalAnnouncementsFromSupabase() {
     photo: row.photo || '',
     date: row.published_on || ''
   }));
-  epStore.setItem(DB_KEYS.ANNOUNCEMENTS, JSON.stringify(list));
+  cacheSupabaseSnapshot(DB_KEYS.ANNOUNCEMENTS, list);
   return list;
 }
 
@@ -5631,6 +5851,7 @@ let holdFrame = 0;
 let boxCountdownFrame = 0;
 let emergencySequenceRunning = false;
 let lastBoxCancelTapAt = 0;
+let circleHoldStartedAt = 0;
 
 function finishEmergencySequence() {
   emergencySequenceRunning = false;
@@ -5652,19 +5873,19 @@ function cancelActiveHold() {
   ring.style.strokeDashoffset = '100';
 }
 
-// Circle control: keep pressing for 3 seconds. Releasing early cancels it.
+// Circle: a 3-second hold activates. After 0.5 seconds, release no longer cancels it.
 btn.addEventListener('pointerdown', event => {
   if (event.pointerType && event.button !== 0) return;
   if (emergencySequenceRunning || activePointerId !== null) return;
   event.preventDefault();
   activePointerId = event.pointerId;
   activeHoldSource = 'circle';
-  const startedAt = performance.now();
+  const startedAt = circleHoldStartedAt = performance.now();
   card.classList.add('is-processing');
   btn.classList.add('is-pressing');
   try { btn.setPointerCapture(event.pointerId); } catch (_) {}
   const update = () => {
-    if (activeHoldSource !== 'circle') return;
+    if (activeHoldSource !== 'circle' && activeHoldSource !== 'circle-countdown') return;
     const fraction = Math.min(1, (performance.now() - startedAt) / 3000);
     ring.style.strokeDashoffset = String(100 * (1 - fraction));
     if (fraction >= 1) {
@@ -5680,21 +5901,29 @@ btn.addEventListener('pointerdown', event => {
 function endCircleHold(event) {
   if (activeHoldSource !== 'circle') return;
   if (event.pointerId !== undefined && activePointerId !== event.pointerId) return;
-  cancelActiveHold();
+  if (performance.now() - circleHoldStartedAt < 500) {
+    cancelActiveHold();
+    return;
+  }
+  // Keep counting toward the original 3-second total after release.
+  activePointerId = null;
+  activeHoldSource = 'circle-countdown';
+  emergencySequenceRunning = true;
 }
 btn.addEventListener('pointerup', endCircleHold);
 btn.addEventListener('pointercancel', endCircleHold);
-btn.addEventListener('lostpointercapture', endCircleHold);
 
 // Box add-on: hold outside the circle for 1 second to arm its own 3-second countdown.
 card.addEventListener('pointerdown', event => {
   if (event.pointerType && event.button !== 0) return;
-  if (activeHoldSource === 'box-countdown' && emergencySequenceRunning) {
+  if ((activeHoldSource === 'box-countdown' || activeHoldSource === 'circle-countdown') && emergencySequenceRunning) {
     event.preventDefault();
     const tapAt = performance.now();
     if (lastBoxCancelTapAt && tapAt - lastBoxCancelTapAt <= 500) {
       if (boxCountdownFrame) cancelAnimationFrame(boxCountdownFrame);
       boxCountdownFrame = 0;
+      if (holdFrame) cancelAnimationFrame(holdFrame);
+      holdFrame = 0;
       emergencySequenceRunning = false;
       activeHoldSource = null;
       lastBoxCancelTapAt = 0;
@@ -6130,38 +6359,72 @@ ADMIN PORTAL FEATURES
 ========================================================================== */
 
 async function refreshAdminPortal() {
-let patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
+let patients = [];
+let staffList = [];
+let logs = [];
+const cloudReadErrors = [];
+const client = window.erecpassSupabase;
 
-// Admin must always rebuild the Patient List from Supabase so every patient
-// remains visible even when the local cache is empty/stale after login.
-try {
-  const client = window.erecpassSupabase;
-  // The Admin Patient List must load all patient records from Supabase.
-  // Do not depend on a specific admin email; this keeps the fix isolated to admins.
-  if (client && currentSession?.role === 'admin') {
-    const cloud = await client.from('patients').select('*').order('created_at', { ascending: true });
-    if (!cloud.error && Array.isArray(cloud.data)) {
-      patients = cloud.data.map(p => ({
-        id: p.id, user_id: p.user_id, fullName: p.full_name || p.name || '',
-        email: p.email || '', sim: p.sim || '', photo: p.photo || '',
-        age: p.age ?? (p.birth_date ? getPatientAgeFromBirthDate(p.birth_date) : null),
-        ageCategory: p.age_category || '', age_category: p.age_category || '',
-        birthDate: p.birth_date || '', birth_date: p.birth_date || '',
-        gender: p.gender || '', bloodType: p.blood_type || '', blood_type: p.blood_type || '', address: p.address || '',
-        guardianName: p.guardian_name || '', guardian_name: p.guardian_name || '', guardianNum: p.guardian_num || '', guardian_num: p.guardian_num || '',
-        status: p.status || 'Green', labResults: p.lab_results || [],
-        lab_results: p.lab_results || [],
-        prescriptions: p.prescriptions || [], doctorNotes: p.doctor_notes || '',
-        doctor_notes: p.doctor_notes || '',
-        online: !!p.online, active: p.active !== false
-      }));
-      epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
-    } else if (cloud.error) {
-      console.warn('[ERecPass] Admin Patient List cloud load:', cloud.error);
-    }
+if (currentSession?.role === 'admin') {
+  try {
+    if (!client?.auth || !client?.from) throw new Error('Supabase client is unavailable. Refresh the app and sign in again.');
+    const auth = await client.auth.getUser();
+    if (auth.error) throw auth.error;
+    if (!auth.data?.user) throw new Error('Supabase Admin session has expired. Sign in again.');
+    const profile = await client.from('profiles').select('role,active').eq('id', auth.data.user.id).maybeSingle();
+    if (profile.error) throw profile.error;
+    if (profile.data?.role !== 'admin' || profile.data?.active === false) throw new Error('The signed-in Supabase account is not an active Admin.');
+
+    const [patientResult, staffResult, logResult] = await Promise.all([
+      client.from('patients').select('*').order('created_at', { ascending: true }),
+      client.from('staff').select('*').order('name', { ascending: true }),
+      client.from('activity_logs').select('id,created_at,event_text').order('created_at', { ascending: false }).limit(200)
+    ]);
+
+    if (patientResult.error) cloudReadErrors.push('patients: ' + patientResult.error.message);
+    else patients = (patientResult.data || []).map(p => ({
+      id: p.id, user_id: p.user_id, fullName: p.full_name || p.name || '',
+      email: p.email || '', sim: p.sim || '', photo: p.photo || '',
+      age: p.age ?? (p.birth_date ? getPatientAgeFromBirthDate(p.birth_date) : null),
+      ageCategory: p.age_category || '', age_category: p.age_category || '',
+      birthDate: p.birth_date || '', birth_date: p.birth_date || '',
+      gender: p.gender || '', bloodType: p.blood_type || '', blood_type: p.blood_type || '', address: p.address || '',
+      guardianName: p.guardian_name || '', guardian_name: p.guardian_name || '', guardianNum: p.guardian_num || '', guardian_num: p.guardian_num || '',
+      status: p.status || 'Green', labResults: p.lab_results || [], lab_results: p.lab_results || [],
+      prescriptions: p.prescriptions || [], doctorNotes: p.doctor_notes || '', doctor_notes: p.doctor_notes || '',
+      online: !!p.online, active: p.active !== false
+    }));
+
+    if (staffResult.error) cloudReadErrors.push('staff: ' + staffResult.error.message);
+    else staffList = (staffResult.data || []).map(s => ({
+      id: s.id, user_id: s.user_id, name: s.name || s.email || 'Staff', email: s.email || '',
+      role: s.role_title || 'Staff', task: s.task || '', available: s.available !== false,
+      schedule: s.schedule || '', active: s.active !== false
+    }));
+
+    if (logResult.error) cloudReadErrors.push('activity logs: ' + logResult.error.message);
+    else logs = (logResult.data || []).map(l => ({ timestamp: l.created_at, text: l.event_text || 'Activity' }));
+  } catch (e) {
+    cloudReadErrors.push(e.message || 'Could not read Supabase data.');
+    console.error('[ERecPass] Admin Supabase data load:', e);
   }
-} catch (e) {
-  console.warn('[ERecPass] Admin Patient List refresh:', e);
+} else {
+  cloudReadErrors.push('Admin session is missing. Please sign in again.');
+}
+
+// Treat Supabase as the source of truth. Never display seeded or stale local
+// patient/staff/log entries when a cloud read fails.
+cacheSupabaseSnapshot(DB_KEYS.PATIENTS, patients);
+cacheSupabaseSnapshot(DB_KEYS.STAFF, staffList);
+cacheSupabaseSnapshot(DB_KEYS.LOGS, logs);
+const cloudStatus = document.getElementById('adminCloudDataStatus');
+if (cloudStatus) {
+  cloudStatus.className = cloudReadErrors.length
+    ? 'text-xs rounded-lg px-3 py-2 bg-rose-950/60 border border-rose-500/40 text-rose-200'
+    : 'text-xs rounded-lg px-3 py-2 bg-emerald-950/40 border border-emerald-500/30 text-emerald-200';
+  cloudStatus.textContent = cloudReadErrors.length
+    ? 'Some Supabase data could not be loaded: ' + cloudReadErrors.join(' · ')
+    : 'Patient, staff, and activity data loaded from Supabase.';
 }
 
 document.getElementById('adminTotalPatients').innerText = patients.length;
@@ -6672,12 +6935,15 @@ renderAdminStaffList();
 async function renderAdminAnnouncementList() {
   const container = document.getElementById('adminAnnouncementList');
   if (!container) return;
-  let announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+  let announcements = [];
   try {
     const cloudList = await loadHospitalAnnouncementsFromSupabase();
-    if (cloudList) announcements = cloudList;
+    if (!cloudList) throw new Error('Supabase Admin session is unavailable. Sign in again.');
+    announcements = cloudList;
   } catch (error) {
     console.error('[ERecPass] Could not load admin announcements from Supabase:', error);
+    container.innerHTML = '<p class="text-xs text-rose-300">Could not load announcements from Supabase: ' + escapeStaffDashboardText(error.message || 'Please refresh and sign in again.') + '</p>';
+    return;
   }
 
   if (!announcements.length) {
@@ -6890,7 +7156,7 @@ try {
   }).join('');
 } catch (e) {
   console.error('[ERecPass] Admin appointments:', e);
-  container.innerHTML = '<p class="text-xs text-rose-300 p-2">Unable to load appointments. Please refresh.</p>';
+  container.innerHTML = '<p class="text-xs text-rose-300 p-2">Unable to load appointments from Supabase: ' + escapeStaffDashboardText(e.message || 'Please refresh and sign in again.') + '</p>';
 }
 
 }
@@ -7000,7 +7266,7 @@ try {
         online: !!p.online,
         active: p.active !== false
       }));
-      epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
+      cacheSupabaseSnapshot(DB_KEYS.PATIENTS, patients);
     }
   }
 } catch (e) {
@@ -7168,27 +7434,8 @@ Close
 </div>
 </div>
 
-<!-- UIPAQUIBS: Admin Settings launcher -->
+<!-- UIPAQUIBS: Admin settings are available from the header gear menu. -->
 <script>
-(function addUipaquibsSettingsLauncher() {
-const run = () => {
-const adminTabs = document.querySelector('.flex.flex-wrap.gap-2.border-b');
-if (!adminTabs || document.getElementById('uipaquibsSettingsBtn')) return;
-const btn = document.createElement('button');
-btn.id = 'uipaquibsSettingsBtn';
-btn.type = 'button';
-btn.className = 'px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300 font-tech text-xs';
-btn.textContent = 'Settings';
-btn.onclick = uipaquibsOpenSettings;
-adminTabs.appendChild(btn);
-};
-if (document.readyState === 'loading') {
-document.addEventListener('DOMContentLoaded', run);
-} else {
-run();
-}
-})();
-
 function uipaquibsOpenSettings() {
 if (!currentSession || currentSession.role !== 'admin') {
 alert('Admin access only.');
@@ -7292,15 +7539,7 @@ seed();
 })();
 </script>
 
-<!-- UIPAQUIBS: Database / Supabase backend-ready configuration.
-The existing epStore database remains untouched.
-Replace the placeholders with the project's Supabase URL and anon key
-when connecting this front end to a Supabase project. -->
-<script>
-// Supabase decoupled: ERecPass runs standalone using Firebase Authentication & epStore database.
-window.erecpassSupabase = null;
-console.log('ERecPass is running standalone with Firebase Auth & epStore database.');
-</script>
+<!-- Supabase client configuration and initialization are loaded below. -->
 
 <!-- UIPAQUIBS requirements already present in the original file:
 Agreement, Login, Create Account, Emergency, Hospital Map,
@@ -7776,13 +8015,13 @@ overscroll-behavior: contain;
   /* ADMIN HELP CENTER */
   function injectAdminHelpTab(){
     const adminApp=document.getElementById('adminApp'); if(!adminApp) return;
-    const tabBar=adminApp.querySelector('.flex.flex-wrap.gap-2.border-b');
+    const tabBar=adminApp.querySelector('.admin-function-nav');
     if(tabBar && !document.getElementById('adminHelpCenterTabBtn')){
       const b=document.createElement('button');
       b.id='adminHelpCenterTabBtn';
       b.type='button';
-      b.className='px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300';
-      b.textContent='Help Center';
+      b.className='admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300';
+      b.innerHTML='<i class="fa-solid fa-life-ring" aria-hidden="true"></i><span>Help Center</span>';
       b.onclick=()=>switchAdminTab('helpcenter');
       tabBar.appendChild(b);
     }
@@ -7900,7 +8139,7 @@ overscroll-behavior: contain;
   const oldSwitch=window.switchAdminTab;
   window.switchAdminTab=function(tabName){
     if(typeof oldSwitch==='function') oldSwitch(tabName);
-    document.querySelectorAll('#adminApp .flex.flex-wrap.gap-2.border-b button').forEach(button=>{
+    document.querySelectorAll('#adminApp .admin-function-nav .admin-function-tab').forEach(button=>{
       const isSelected=(button.getAttribute('onclick')||'').includes(`'${tabName}'`);
       button.classList.toggle('admin-function-active',isSelected);
       button.setAttribute('aria-pressed',isSelected?'true':'false');
@@ -8215,50 +8454,71 @@ html.ep-dark #epSettingsPanel #adminSettingsLogout{background:#48232b!important;
 #patientApp .header-actions #epSettings{position:relative;top:auto;right:auto;z-index:30;flex:0 0 auto;font:600 12px Arial,sans-serif}
 #patientApp .header-actions #epSettingsToggle{width:36px;height:36px;font-size:16px}
 #patientApp .header-actions #epSettingsPanel{position:absolute;top:calc(100% + 8px);right:0;margin:0;min-width:128px;flex-direction:column;align-items:stretch}
+#patientApp .header-actions #epSettingsPanel{min-width:176px}
+#patientApp .header-actions #epSettingsPanel #patientSettingsEmergency{background:#fff1f2;color:#a7192a;border-color:#fecdd3}
+html.ep-dark #patientApp .header-actions #epSettingsPanel #patientSettingsEmergency{background:#48232b!important;color:#ffd8dd!important;border-color:#87414d!important}
+#adminApp .admin-header-actions #epSettings{position:relative;top:auto;right:auto;z-index:30;flex:0 0 auto;font:600 12px Arial,sans-serif}
+#adminApp .admin-header-actions #epSettingsPanel{position:absolute;top:calc(100% + 8px);right:0;margin:0;min-width:184px;flex-direction:column;align-items:stretch}
+#adminApp .admin-header-actions #epSettingsPanel :is(#adminSettingsEmergency,#adminSettingsApp){background:#fff1f2;color:#a7192a;border-color:#fecdd3}
+html.ep-dark #adminApp .admin-header-actions #epSettingsPanel :is(#adminSettingsEmergency,#adminSettingsApp){background:#48232b!important;color:#ffd8dd!important;border-color:#87414d!important}
 </style>
-<div id="epSettings" aria-label="Appearance settings">
-<button type="button" id="epSettingsToggle" aria-label="Open appearance settings" aria-expanded="false">⚙️</button>
-<div id="epSettingsPanel">
-<button type="button" id="epThemeBtn">🌙 Dark</button>
-<button type="button" id="adminSettingsLogout" class="hidden" onclick="logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
+<div id="epSettings" aria-label="Settings">
+<button type="button" id="epSettingsToggle" aria-label="Open settings" aria-expanded="false">⚙️</button>
+<div id="epSettingsPanel" role="menu" aria-label="Settings">
+<button type="button" id="patientSettingsProfile" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); showPage('profile')"><i class="fa-solid fa-user" aria-hidden="true"></i> View profile</button>
+<button type="button" id="epThemeBtn" role="menuitem">🌙 Dark</button>
+<button type="button" id="patientSettingsEmergency" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); openEmergencyModal()"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Emergency</button>
+<button type="button" id="patientSettingsLogout" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
+<button type="button" id="adminSettingsApp" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); uipaquibsOpenSettings()"><i class="fa-solid fa-sliders" aria-hidden="true"></i> Logo &amp; emergency settings</button>
+<button type="button" id="adminSettingsEmergency" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); openEmergencyModal()"><i class="fa-solid fa-phone" aria-hidden="true"></i> Emergency dispatch</button>
+<button type="button" id="adminSettingsLogout" class="hidden" role="menuitem" onclick="logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
 </div>
 </div>
 <script>
 (function(){
 const root=document.documentElement,settings=document.getElementById('epSettings'),settingsToggle=document.getElementById('epSettingsToggle'),themeBtn=document.getElementById('epThemeBtn');
 const patientHeaderActions=document.querySelector('#patientApp .header-actions');
-const patientProfileButton=patientHeaderActions?.querySelector('button[aria-haspopup="menu"]');
 const patientRoot=document.getElementById('patientApp');
 const adminRoot=document.getElementById('adminApp');
+const adminHeaderActions=document.querySelector('#adminApp .admin-header-actions');
 const adminSettingsLogout=document.getElementById('adminSettingsLogout');
+const adminSettingsEmergency=document.getElementById('adminSettingsEmergency');
+const adminSettingsApp=document.getElementById('adminSettingsApp');
+const patientSettingsActions=['patientSettingsProfile','patientSettingsEmergency','patientSettingsLogout']
+  .map(id=>document.getElementById(id));
 function updateAdminSettingsAction(){
   const adminVisible=adminRoot && !adminRoot.classList.contains('hidden') && getComputedStyle(adminRoot).display!=='none';
   adminSettingsLogout?.classList.toggle('hidden',!adminVisible);
+  adminSettingsEmergency?.classList.toggle('hidden',!adminVisible);
+  adminSettingsApp?.classList.toggle('hidden',!adminVisible);
 }
 function placeAppearanceControl(){
   if(!settings)return;
   const patientVisible=patientRoot && !patientRoot.classList.contains('hidden') && getComputedStyle(patientRoot).display!=='none';
-  const authPageVisible=Array.from(document.querySelectorAll('#loginPage, #registerPage'))
-    .some(page=>!page.classList.contains('hidden') && getComputedStyle(page).display!=='none');
-  settings.classList.toggle('ep-auth-global-settings',authPageVisible && !patientVisible);
-  if(patientVisible && patientProfileButton){
+  const adminVisible=adminRoot && !adminRoot.classList.contains('hidden') && getComputedStyle(adminRoot).display!=='none';
+  patientSettingsActions.forEach(action=>action?.classList.toggle('hidden',!patientVisible));
+  adminSettingsLogout?.classList.toggle('hidden',!adminVisible);
+  adminSettingsEmergency?.classList.toggle('hidden',!adminVisible);
+  adminSettingsApp?.classList.toggle('hidden',!adminVisible);
+  settings.classList.remove('hidden');
+  settings.removeAttribute('aria-hidden');
+  if(patientVisible && patientHeaderActions){
     settings.classList.remove('ep-global-settings');
-    if(settings.nextElementSibling!==patientProfileButton) patientProfileButton.insertAdjacentElement('beforebegin',settings);
+    if(settings.parentElement!==patientHeaderActions || settings!==patientHeaderActions.lastElementChild) patientHeaderActions.appendChild(settings);
+  }else if(adminVisible && adminHeaderActions){
+    settings.classList.remove('ep-global-settings','ep-auth-global-settings');
+    if(settings.parentElement!==adminHeaderActions) adminHeaderActions.appendChild(settings);
   }else{
     settings.classList.add('ep-global-settings');
     if(settings.parentElement!==document.body) document.body.appendChild(settings);
   }
-  updateAdminSettingsAction();
 }
 placeAppearanceControl();
 if(patientRoot)new MutationObserver(placeAppearanceControl).observe(patientRoot,{attributes:true,attributeFilter:['class','style']});
-['loginPage','registerPage'].forEach(id=>{
-  const page=document.getElementById(id);
-  if(page)new MutationObserver(placeAppearanceControl).observe(page,{attributes:true,attributeFilter:['class','style']});
+document.querySelectorAll('#patientApp .page').forEach(patientPage=>{
+  new MutationObserver(placeAppearanceControl).observe(patientPage,{attributes:true,attributeFilter:['class']});
 });
-if(adminRoot){
-  new MutationObserver(updateAdminSettingsAction).observe(adminRoot,{attributes:true,attributeFilter:['class','style']});
-}
+if(adminRoot)new MutationObserver(placeAppearanceControl).observe(adminRoot,{attributes:true,attributeFilter:['class','style']});
 settingsToggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();const open=settings.classList.toggle('ep-open');settingsToggle.setAttribute('aria-expanded',String(open));});
 document.addEventListener('click',function(e){if(!settings.contains(e.target)){settings.classList.remove('ep-open');settingsToggle.setAttribute('aria-expanded','false');}});
 function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore.getItem(key);if(v!==null)return v}}catch(e){}return fallback}
@@ -9819,7 +10079,8 @@ setTimeout(installAddedUI,2500);
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
 <script src="./firebase-auth-client.js?v=20261028b"></script>
-<script src="./firebase-auth-runtime.js?v=20261028d"></script>
+<script src="./supabase-runtime.js?v=20261029a"></script>
+<script src="./firebase-auth-runtime.js?v=20261029a"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
 (function(){
@@ -10490,9 +10751,6 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 })();
 </script>
 <!-- END ERECPASS PATIENT PROFILE FINAL RESTORE -->
-<!-- ERECPASS FIREBASE AUTH & LOCAL RUNTIME OVERRIDE -->
-<script src="./firebase-auth-runtime.js?v=20261028d"></script>
-
 <!-- ERECPASS FINAL LIVE GUARD: remove any stale Change Language control; keep theme toggle -->
 <script>
 (function(){
@@ -10524,32 +10782,6 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
 </script>
 <script id="erecpass-patient-see-more-nav-script">
 /* Toggles visibility only; each existing navigation button keeps its original action. */
-function togglePatientProfileMenu(event) {
-  event?.stopPropagation();
-  const menu = document.getElementById('patientProfileDropdown');
-  const button = document.querySelector('#patientApp .header-actions button[aria-haspopup="menu"]');
-  if (!menu || !button) return;
-  const opening = menu.classList.contains('hidden');
-  menu.classList.toggle('hidden', !opening);
-  button.setAttribute('aria-expanded', String(opening));
-}
-
-function closePatientProfileMenu() {
-  const menu = document.getElementById('patientProfileDropdown');
-  const button = document.querySelector('#patientApp .header-actions button[aria-haspopup="menu"]');
-  menu?.classList.add('hidden');
-  button?.setAttribute('aria-expanded', 'false');
-}
-
-document.addEventListener('click', event => {
-  if (!event.target.closest('#patientProfileDropdown, #patientApp .header-actions button[aria-haspopup="menu"]')) {
-    closePatientProfileMenu();
-  }
-});
-document.addEventListener('keydown', event => {
-  if (event.key === 'Escape') closePatientProfileMenu();
-});
-
 function togglePatientMoreNav() {
   const nav = document.getElementById('patientBottomNav');
   const toggle = document.getElementById('patientNavSeeMore');
@@ -10558,12 +10790,24 @@ function togglePatientMoreNav() {
   nav.classList.toggle('patient-nav-expanded', !expanded);
   nav.classList.toggle('patient-nav-collapsed', expanded);
   toggle.setAttribute('aria-expanded', String(!expanded));
-  toggle.setAttribute('aria-label', expanded ? 'Show more navigation items' : 'Show fewer navigation items');
-  toggle.setAttribute('title', expanded ? 'Show more navigation items' : 'Show fewer navigation items');
-  toggle.innerHTML = expanded
-    ? '<i class="fa-solid fa-bars" aria-hidden="true"></i>'
-    : '<i class="fa-solid fa-xmark" aria-hidden="true"></i>';
+  toggle.setAttribute('aria-label', expanded ? 'Open navigation menu' : 'Close navigation menu');
+  toggle.setAttribute('title', expanded ? 'Open navigation menu' : 'Close navigation menu');
+  const icon = toggle.querySelector('i');
+  icon?.classList.toggle('fa-bars', expanded);
+  icon?.classList.toggle('fa-xmark', !expanded);
 }
+document.addEventListener('click', event => {
+  const nav = document.getElementById('patientBottomNav');
+  if (!nav?.classList.contains('patient-nav-expanded')) return;
+  if (event.target.closest('#patientNavMenu .patient-nav-extra') || !nav.contains(event.target)) {
+    togglePatientMoreNav();
+  }
+});
+document.addEventListener('keydown', event => {
+  if (event.key === 'Escape' && document.getElementById('patientBottomNav')?.classList.contains('patient-nav-expanded')) {
+    togglePatientMoreNav();
+  }
+});
 </script>
 
 
@@ -10964,6 +11208,20 @@ Please check your inbox and Spam folder.'); })
     #patientEmergencyCard #patientHoldEmergencyBtn { flex: 0 0 56px; width: 56px; height: 56px; }
   }
 
+  @media (max-width: 360px) {
+    #patientApp #patientEmergencyCard {
+      flex-direction: column;
+      align-items: stretch;
+      gap: 12px;
+    }
+    #patientApp #patientEmergencyCard > div {
+      width: 100%;
+    }
+    #patientApp #patientEmergencyCard #patientHoldEmergencyBtn {
+      align-self: flex-end;
+    }
+  }
+
   @media (min-width: 641px) and (max-width: 1024px) {
     #patientApp .main-content { max-width: 900px; }
     #staffApp main { max-width: 900px; }
@@ -10980,13 +11238,13 @@ Please check your inbox and Spam folder.'); })
     color: #65c0c9 !important;
     -webkit-text-fill-color: #65c0c9 !important;
   }
-  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button {
+  html.ep-dark #adminApp .admin-function-nav .admin-function-tab {
     background-color: #1c2a36 !important;
     color: #bdcbd8 !important;
     -webkit-text-fill-color: #bdcbd8 !important;
     border-color: #344b5e !important;
   }
-  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button.admin-function-active {
+  html.ep-dark #adminApp .admin-function-nav .admin-function-tab.admin-function-active {
     background: linear-gradient(135deg, #185d68, #174653) !important;
     color: #a4f4fa !important;
     -webkit-text-fill-color: #a4f4fa !important;
@@ -10994,10 +11252,10 @@ Please check your inbox and Spam folder.'); })
     box-shadow: 0 0 0 1px rgba(83,212,223,.3), 0 0 18px rgba(52,211,225,.35) !important;
     transform: translateY(-1px);
   }
-  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button {
+  html.ep-dark #adminApp .admin-function-nav .admin-function-tab {
     transition: background-color .18s ease, color .18s ease, border-color .18s ease, box-shadow .18s ease, transform .18s ease;
   }
-  html.ep-dark #adminApp .flex.flex-wrap.gap-2.border-b button:active {
+  html.ep-dark #adminApp .admin-function-nav .admin-function-tab:active {
     box-shadow: 0 0 22px rgba(52,211,225,.58) !important;
     transform: scale(.97);
   }
@@ -11199,8 +11457,250 @@ Please check your inbox and Spam folder.'); })
   html.ep-dark #erecpassDialog .epd-message { color: #c5d1dc !important; }
   html.ep-dark #erecpassDialog .epd-actions { background: #14202b !important; border-color: #34495b !important; }
   html.ep-dark #erecpassDialog .epd-cancel { background: #293a49 !important; color: #e2eaf1 !important; }
+  #adminApp .admin-function-nav {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(min(100%, 150px), 1fr));
+    gap: 10px;
+    padding: 4px 0 14px;
+    border-bottom-color: rgba(23,105,224,.16);
+  }
+  #adminApp .admin-function-nav-wrap { width: 100%; }
+  #adminApp .admin-function-scroll-hint { display: none; }
+  #adminApp .admin-function-nav-wrap { min-width: 0; }
+  #adminApp .admin-function-scroll-arrow { display: none; }
+  #adminApp .admin-header-actions #epSettingsToggle {
+    width: 38px;
+    height: 38px;
+    border-color: #e8a7ae;
+    color: #983b49;
+  }
+  #adminApp .admin-header-actions #epSettingsPanel { min-width: 220px; }
+  @media (max-width: 640px) {
+    #adminApp main { padding-left: 12px !important; padding-right: 12px !important; }
+    #adminApp main > .grid:first-child { grid-template-columns: 1fr; }
+    #adminApp .admin-function-nav {
+      display: flex;
+      flex-wrap: nowrap;
+      gap: 8px;
+      flex: 1 1 auto;
+      min-width: 0;
+      margin: 0;
+      padding: 4px 0 14px;
+      overflow-x: auto;
+      overflow-y: hidden;
+      overscroll-behavior-x: contain;
+      scroll-snap-type: x mandatory;
+      scrollbar-width: none;
+      -webkit-overflow-scrolling: touch;
+      touch-action: pan-y;
+      cursor: grab;
+      user-select: none;
+      -webkit-user-select: none;
+    }
+    #adminApp .admin-function-nav.is-dragging { cursor: grabbing; scroll-snap-type: none; }
+    #adminApp .admin-function-nav::-webkit-scrollbar { display: none; }
+    #adminApp .admin-function-nav-wrap {
+      display: flex;
+      align-items: center;
+      gap: 4px;
+      min-width: 0;
+    }
+    #adminApp .admin-function-scroll-arrow {
+      display: flex;
+      flex: 0 0 24px;
+      width: 24px;
+      height: 40px;
+      align-items: center;
+      justify-content: center;
+      padding: 0;
+      border: 0;
+      border-radius: 8px;
+      background: transparent;
+      color: #1687a2;
+      font: 600 24px/1 Arial, sans-serif;
+      cursor: pointer;
+      touch-action: manipulation;
+    }
+    #adminApp .admin-function-scroll-arrow:active { background: rgba(22,135,162,.12); }
+    #adminApp .admin-function-tab {
+      flex: 0 0 148px;
+      min-height: 78px;
+      padding: 9px 6px;
+      font-size: 10px;
+      scroll-snap-align: start;
+    }
+    #adminApp .admin-header-inner { gap: 8px; }
+    #adminApp .admin-header-inner .brand { gap: 7px; }
+    #adminApp .admin-header-inner .brand strong { font-size: 13px !important; }
+    #adminApp .admin-header-actions #epSettingsPanel { min-width: 210px; }
+  }
+  @media (min-width: 481px) and (max-width: 640px) {
+    #adminApp main > .grid:first-child { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (min-width: 641px) and (max-width: 1023px) {
+    #adminApp .admin-function-nav { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
+  }
+  @media (max-width: 1023px) {
+    #adminApp main > .grid:first-child {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 8px;
+    }
+    #adminApp main > .grid:first-child > .glass-card {
+      min-width: 0;
+      padding: 10px;
+    }
+    #adminApp main > .grid:first-child > .glass-card > span {
+      display: block;
+      font-size: 10px;
+      line-height: 1.2;
+    }
+    #adminApp main > .grid:first-child > .glass-card > h2 {
+      margin-top: 6px;
+      font-size: 20px;
+      line-height: 1.1;
+    }
+  }
+  #adminApp .admin-function-tab {
+    display: flex;
+    min-width: 0;
+    min-height: 82px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 10px 8px;
+    border: 1px solid #d5e0eb !important;
+    border-radius: 14px;
+    background: rgba(255,255,255,.72) !important;
+    color: #526a80 !important;
+    -webkit-text-fill-color: #526a80 !important;
+    font-size: 11px;
+    font-weight: 600;
+    line-height: 1.25;
+    text-align: center;
+    transition: transform .18s ease, background-color .18s ease, color .18s ease, box-shadow .18s ease, border-color .18s ease;
+  }
+  #adminApp .admin-function-tab.hidden { display: none !important; }
+  #adminApp .admin-function-tab i {
+    color: #208bba;
+    font-size: 22px;
+    transition: transform .18s ease, filter .18s ease;
+  }
+  #adminApp .admin-function-tab span { color: inherit; }
+  @media (hover: hover) and (pointer: fine) {
+    #adminApp .admin-function-tab:hover {
+      transform: translateY(-3px);
+      border-color: #7bc8dd !important;
+      background: #f2fbfd !important;
+      box-shadow: 0 5px 16px rgba(24,115,148,.14);
+    }
+    #adminApp .admin-function-tab:hover i {
+      transform: scale(1.1);
+      filter: drop-shadow(0 2px 5px rgba(32,139,186,.3));
+    }
+  }
+  #adminApp .admin-function-tab.admin-function-active {
+    border-color: #36b4c8 !important;
+    background: linear-gradient(145deg, #e4f8fb, #f4fcfd) !important;
+    color: #12677a !important;
+    -webkit-text-fill-color: #12677a !important;
+    box-shadow: inset 0 2px 0 rgba(54,180,200,.22), 0 3px 12px rgba(24,115,148,.12);
+  }
+  #adminApp .admin-function-tab.admin-function-active i {
+    color: #087f9b;
+    filter: drop-shadow(0 2px 5px rgba(32,139,186,.25));
+  }
+  #adminApp .admin-function-tab:active { transform: scale(.97); }
+  #adminApp .admin-function-tab:focus-visible {
+    outline: 3px solid rgba(23,105,224,.4);
+    outline-offset: 2px;
+  }
+  html.ep-dark #adminApp .admin-function-nav { border-bottom-color: rgba(83,212,223,.2); }
+  html.ep-dark #adminApp .admin-function-scroll-arrow { color: #7bdde6; }
+  html.ep-dark #adminApp .admin-function-tab {
+    border-color: #344b5e !important;
+    background: rgba(28,42,54,.9) !important;
+    color: #bdcbd8 !important;
+    -webkit-text-fill-color: #bdcbd8 !important;
+  }
+  html.ep-dark #adminApp .admin-function-tab i { color: #65c0c9; }
+  @media (hover: hover) and (pointer: fine) {
+    html.ep-dark #adminApp .admin-function-tab:hover {
+      border-color: #53b9c5 !important;
+      background: #203b48 !important;
+      box-shadow: 0 5px 16px rgba(0,0,0,.2), 0 0 12px rgba(52,211,225,.12);
+    }
+  }
+  html.ep-dark #adminApp .admin-function-tab.admin-function-active {
+    border-color: #53d4df !important;
+    background: linear-gradient(145deg, #185d68, #174653) !important;
+    color: #a4f4fa !important;
+    -webkit-text-fill-color: #a4f4fa !important;
+    box-shadow: 0 0 0 1px rgba(83,212,223,.25), 0 0 16px rgba(52,211,225,.22);
+  }
+  html.ep-dark #adminApp .admin-function-tab.admin-function-active i { color: #a4f4fa; }
 </style>
 
+<script>
+(function enableAdminTabStripDragging() {
+  const nav = document.querySelector('#adminApp .admin-function-nav');
+  if (!nav) return;
+  const leftArrow = document.querySelector('#adminApp .admin-function-scroll-left');
+  const rightArrow = document.querySelector('#adminApp .admin-function-scroll-right');
+  const scrollDistance = () => Math.max(140, nav.clientWidth * 0.75);
+  leftArrow?.addEventListener('click', () => { nav.scrollLeft -= scrollDistance(); });
+  rightArrow?.addEventListener('click', () => { nav.scrollLeft += scrollDistance(); });
+
+  let pointerId = null;
+  let startX = 0;
+  let startY = 0;
+  let startScrollLeft = 0;
+  let isDragging = false;
+  let suppressClick = false;
+
+  nav.addEventListener('pointerdown', event => {
+    if (event.pointerType === 'mouse' && event.button !== 0) return;
+    pointerId = event.pointerId;
+    startX = event.clientX;
+    startY = event.clientY;
+    startScrollLeft = nav.scrollLeft;
+    isDragging = false;
+  });
+
+  nav.addEventListener('pointermove', event => {
+    if (event.pointerId !== pointerId) return;
+    const deltaX = event.clientX - startX;
+    const deltaY = event.clientY - startY;
+    if (!isDragging && Math.abs(deltaX) > 6 && Math.abs(deltaX) > Math.abs(deltaY)) {
+      isDragging = true;
+      nav.classList.add('is-dragging');
+      try { nav.setPointerCapture(pointerId); } catch (_) {}
+    }
+    if (isDragging) {
+      nav.scrollLeft = startScrollLeft - deltaX;
+      event.preventDefault();
+    }
+  });
+
+  function finishDrag(event) {
+    if (event.pointerId !== pointerId) return;
+    suppressClick = isDragging;
+    pointerId = null;
+    isDragging = false;
+    nav.classList.remove('is-dragging');
+    window.setTimeout(() => { suppressClick = false; }, 0);
+  }
+
+  nav.addEventListener('pointerup', finishDrag);
+  nav.addEventListener('pointercancel', finishDrag);
+  nav.addEventListener('click', event => {
+    if (!suppressClick) return;
+    event.preventDefault();
+    event.stopPropagation();
+    suppressClick = false;
+  }, true);
+})();
+</script>
 <script src="./medication-reminders.js"></script>
 
 </body>

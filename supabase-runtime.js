@@ -4,7 +4,7 @@
   [K.P,K.S,K.A,K.N,K.B,K.C,K.L].forEach(k=>cache.set(k,'[]'));cache.set(K.T,'{}');cache.set(K.G,JSON.stringify({text:'Welcome to ERecPass. Please keep your account secure and use this portal only for authorized hospital services.',photo:''}));cache.set(K.E,JSON.stringify({barangay:'0917-123-4567',national:'911'}));
   let role='anon',user=null,loading=false,channel=null,queue=Promise.resolve();
   const sb=()=>window.erecpassSupabase,putSettings=v=>cache.set(K.T,JSON.stringify(v||{})),parse=(s,d=[])=>{try{return JSON.parse(s||'null')??d}catch{return d}},put=(k,v)=>cache.set(k,typeof v==='string'?v:JSON.stringify(v)),err=(s,e)=>console.error('[ERecPass cloud] '+s,e);
-  const patient=p=>({id:p.id,user_id:p.user_id,fullName:p.full_name,email:p.email,sim:p.sim,photo:p.photo,birthDate:p.birth_date||'',birth_date:p.birth_date||'',age:p.age??null,ageCategory:p.age_category,guardianNum:p.guardian_num,status:p.status,labResults:p.lab_results||[],prescriptions:p.prescriptions||[],doctorNotes:p.doctor_notes||'',online:!!p.online,active:p.active!==false});
+  const patient=p=>({id:p.id,user_id:p.user_id,fullName:p.full_name,email:p.email,sim:p.sim,photo:p.photo,birthDate:p.birth_date||'',birth_date:p.birth_date||'',age:p.age??null,ageCategory:p.age_category,age_category:p.age_category,gender:p.gender||'',bloodType:p.blood_type||'',blood_type:p.blood_type||'',address:p.address||'',guardianName:p.guardian_name||'',guardian_name:p.guardian_name||'',guardianNum:p.guardian_num,guardian_num:p.guardian_num,status:p.status,labResults:p.lab_results||[],lab_results:p.lab_results||[],prescriptions:p.prescriptions||[],doctorNotes:p.doctor_notes||'',doctor_notes:p.doctor_notes||'',online:!!p.online,active:p.active!==false});
   const staff=s=>({id:s.id,user_id:s.user_id,name:s.name,email:s.email,role:s.role_title,task:s.task,available:s.available,schedule:s.schedule,active:s.active!==false});
   const appt=a=>({id:a.legacy_id||a.id,patientId:a.patient_id,patientName:a.patient_name,doctor:a.doctor,date:a.appointment_date,reason:a.reason,status:a.status,created_by:a.created_by});
   const ann=a=>({id:a.legacy_id||a.id,text:a.body,photo:a.photo,date:a.published_on});
@@ -79,7 +79,9 @@
         }else if(role==='admin'||role==='staff'){
           const rows=a.map(p=>({
             id:String(p.id),user_id:p.user_id||p.auth_user_id||null,full_name:p.fullName||p.full_name||p.name||'',
-            email:p.email||'',sim:p.sim||'',photo:p.photo||'',age_category:p.ageCategory||p.age_category||'',
+            email:p.email||'',sim:p.sim||'',photo:p.photo||'',birth_date:p.birthDate||p.birth_date||null,
+            age:p.age??null,age_category:p.ageCategory||p.age_category||'',gender:p.gender||'',
+            blood_type:p.bloodType||p.blood_type||'',address:p.address||'',guardian_name:p.guardianName||p.guardian_name||'',
             guardian_num:p.guardianNum||p.guardian_num||'',status:p.status||'Green',
             lab_results:p.labResults||p.lab_results||[],prescriptions:p.prescriptions||[],
             doctor_notes:p.doctorNotes||p.doctor_notes||'',online:!!p.online,active:p.active!==false

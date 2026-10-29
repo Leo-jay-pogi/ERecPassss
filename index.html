@@ -3142,6 +3142,17 @@ Already have an account?
   </div>
 </div>
 
+<article id="patientGuideShortcut" class="rounded-2xl mb-5 p-4 sm:p-5 flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+  <div class="min-w-0">
+    <h2 class="text-base font-bold">New to ERecPass?</h2>
+    <p class="mt-1 text-sm">Open the patient guide for simple steps to use your pages and account safely.</p>
+  </div>
+  <button type="button" class="patient-guide-open-button" onclick="patientDashboardNavigate('patient-guide')">
+    <i class="fa-solid fa-book-open" aria-hidden="true"></i>
+    <span>Patient User Guide</span>
+  </button>
+</article>
+
 <!-- Emergency Hold Button Card -->
 
 <div id="patientEmergencyCard" class="glass-card p-5 rounded-2xl flex justify-between items-center mb-5 border-rose-500/30">
@@ -3180,6 +3191,436 @@ Already have an account?
 </div>
 
 </section>
+
+<!-- PATIENT USER GUIDE: educational content only -->
+<section id="patient-guide" class="page" aria-labelledby="patientGuideTitle">
+  <style id="patient-guide-styles">
+    #patientApp #patientGuideShortcut {
+      border: 1px solid #D5E8D9;
+      background: linear-gradient(120deg, #fff, #EAF8ED);
+      box-shadow: 0 4px 14px rgba(36,91,53,.07);
+    }
+    #patientApp #patientGuideShortcut h2 { color: #245B35 !important; }
+    #patientApp #patientGuideShortcut p { color: #52665A !important; }
+    #patientApp .patient-guide-open-button,
+    #patientApp .patient-guide-action {
+      display: inline-flex;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      padding: 10px 15px;
+      border: 1px solid #245B35;
+      border-radius: 12px;
+      background: #245B35;
+      color: #fff;
+      font: 700 14px/1.3 Inter, Arial, sans-serif;
+      text-align: center;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    #patientApp .patient-guide-open-button:hover,
+    #patientApp .patient-guide-action:hover { background: #174426; }
+    #patientApp .patient-guide-open-button:focus-visible,
+    #patientApp .patient-guide-action:focus-visible,
+    #patientApp .patient-guide-card summary:focus-visible,
+    #patientApp .patient-guide-faq summary:focus-visible {
+      outline: 3px solid #8FDAA0;
+      outline-offset: 3px;
+    }
+    #patientApp .patient-guide-hero {
+      padding: clamp(18px, 4vw, 30px);
+      border: 1px solid #D5E8D9;
+      border-radius: 22px;
+      background: linear-gradient(135deg, #fff, #EAF8ED);
+    }
+    #patientApp .patient-guide-hero h1 { color: #245B35 !important; line-height: 1.2; }
+    #patientApp .patient-guide-hero p { color: #52665A !important; line-height: 1.65; }
+    #patientApp .patient-guide-section-title { margin: 24px 0 10px; color: #245B35 !important; font-size: 19px; font-weight: 750; line-height: 1.35; }
+    #patientApp .patient-guide-card,
+    #patientApp .patient-guide-faq,
+    #patientApp .patient-guide-panel {
+      min-width: 0;
+      margin-top: 10px;
+      border: 1px solid #D5E8D9;
+      border-radius: 16px;
+      background: #fff;
+      box-shadow: 0 3px 12px rgba(36,91,53,.045);
+    }
+    #patientApp .patient-guide-card summary,
+    #patientApp .patient-guide-faq summary {
+      min-height: 52px;
+      padding: 15px 17px;
+      color: #245B35;
+      font-size: 16px;
+      font-weight: 750;
+      line-height: 1.4;
+      cursor: pointer;
+    }
+    #patientApp .patient-guide-card summary::marker,
+    #patientApp .patient-guide-faq summary::marker { color: #3d8b54; }
+    #patientApp .patient-guide-content { padding: 0 18px 18px; color: #24352A; }
+    #patientApp .patient-guide-content p,
+    #patientApp .patient-guide-content li { color: #52665A; font-size: 15px; line-height: 1.65; overflow-wrap: anywhere; }
+    #patientApp .patient-guide-content p { margin-top: 10px; }
+    #patientApp .patient-guide-content h4 { margin: 17px 0 4px; color: #245B35; font-size: 14px; font-weight: 750; }
+    #patientApp .patient-guide-content ol,
+    #patientApp .patient-guide-content ul { margin: 8px 0 0; padding-left: 22px; }
+    #patientApp .patient-guide-content li { padding-left: 3px; margin-top: 5px; }
+    #patientApp .patient-guide-callout {
+      padding: 12px 14px;
+      border-left: 4px solid #8FDAA0;
+      border-radius: 8px;
+      background: #EAF8ED;
+    }
+    #patientApp .patient-guide-links { display: flex; flex-wrap: wrap; gap: 9px; margin-top: 15px; }
+    #patientApp .patient-guide-links .patient-guide-action { min-height: 42px; }
+    #patientApp .patient-guide-back { margin: 18px 0 6px; }
+    html.ep-dark #patientApp #patientGuideShortcut,
+    html.ep-dark #patientApp .patient-guide-hero,
+    html.ep-dark #patientApp .patient-guide-card,
+    html.ep-dark #patientApp .patient-guide-faq,
+    html.ep-dark #patientApp .patient-guide-panel {
+      border-color: #36553d;
+      background: #203b29;
+      color: #edf4fb;
+    }
+    html.ep-dark #patientApp #patientGuideShortcut h2,
+    html.ep-dark #patientApp .patient-guide-hero h1,
+    html.ep-dark #patientApp .patient-guide-section-title,
+    html.ep-dark #patientApp .patient-guide-card summary,
+    html.ep-dark #patientApp .patient-guide-faq summary,
+    html.ep-dark #patientApp .patient-guide-content h4 { color: #b7e5bf !important; }
+    html.ep-dark #patientApp #patientGuideShortcut p,
+    html.ep-dark #patientApp .patient-guide-hero p,
+    html.ep-dark #patientApp .patient-guide-content p,
+    html.ep-dark #patientApp .patient-guide-content li { color: #c4d6c8 !important; }
+    html.ep-dark #patientApp .patient-guide-content { color: #edf4fb; }
+    html.ep-dark #patientApp .patient-guide-callout { border-color: #8FDAA0; background: #294834; }
+    @media (max-width: 420px) {
+      #patientApp .patient-guide-content { padding-right: 14px; padding-left: 14px; }
+      #patientApp .patient-guide-card summary,
+      #patientApp .patient-guide-faq summary { padding-right: 13px; padding-left: 13px; }
+      #patientApp .patient-guide-open-button { width: 100%; }
+    }
+  </style>
+
+  <header class="patient-guide-hero">
+    <p class="text-xs font-bold uppercase tracking-wider">Patient Help Center</p>
+    <h1 id="patientGuideTitle" class="mt-2 text-2xl sm:text-3xl font-bold">Welcome to ERecPass</h1>
+    <p class="mt-2 text-base">Your step-by-step guide to using your patient account.</p>
+    <div class="patient-guide-links">
+      <button type="button" class="patient-guide-action" onclick="patientDashboardNavigate('dashboard')">
+        <i class="fa-solid fa-house" aria-hidden="true"></i><span>Return to Dashboard</span>
+      </button>
+    </div>
+  </header>
+
+  <section aria-labelledby="patientGuideStartTitle">
+    <h2 id="patientGuideStartTitle" class="patient-guide-section-title">Getting Started</h2>
+    <article class="patient-guide-panel patient-guide-content p-4">
+      <p><strong>What is ERecPass?</strong> ERecPass is the hospital patient portal. After you sign in to your patient account, it provides the pages and information currently available for your account, such as prescriptions, appointments, laboratory results, a hospital map, and messages to hospital admin.</p>
+      <ol>
+        <li>Sign in using your own patient account. If you have not signed in, use the Patient login option shown on the opening screen.</li>
+        <li>The <strong>Dashboard</strong> is the home page. It includes your welcome message, the emergency hotline control, and hospital announcements when available.</li>
+        <li>Use the Patient navigation bar at the bottom to move between pages. On smaller screens, select the menu icon (bars) to reveal the remaining destinations; select it again to close the menu.</li>
+        <li>There are nine existing destinations: Dashboard, Maps, Meds, Doctors &amp; Staff, Appointments, Record, My QR, Chat, and Profile.</li>
+        <li>For this guide, return to Dashboard and choose <strong>Patient User Guide</strong>. The guide does not replace the existing Chat page.</li>
+      </ol>
+      <p class="patient-guide-callout"><strong>Seeing a loading message?</strong> Give the page a moment to load. If it remains unavailable, check your internet connection, refresh the page, and sign in again if asked.</p>
+    </article>
+  </section>
+
+  <section aria-labelledby="patientGuideFeaturesTitle">
+    <h2 id="patientGuideFeaturesTitle" class="patient-guide-section-title">Patient Feature Guide</h2>
+    <p class="text-sm text-slate-500">Select a section to read its steps. Use the existing navigation bar to open each feature in ERecPass.</p>
+
+    <details id="patient-guide-dashboard" class="patient-guide-card" open>
+      <summary>Dashboard</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>Your home page and starting point for the Patient portal.</p>
+        <h4>What can you do here?</h4>
+        <p>See your welcome name, open the Patient User Guide, view hospital announcements when provided, and open the Emergency Dispatch controls.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Dashboard</strong> in the Patient navigation.</li>
+          <li>Read the welcome message and review any announcements displayed below it.</li>
+          <li>Select <strong>Patient User Guide</strong> if you need help understanding the portal.</li>
+          <li>Use the navigation bar to open Maps, Meds, Doctors &amp; Staff, or another page. The Dashboard does not show an appointment list; open <strong>Appointments</strong> to view bookings.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>After signing in, read the announcements shown on your Dashboard, then choose Appointments in the navigation menu to review a booking.</p>
+        <h4>Important reminders</h4>
+        <p>The emergency control is not a general help or chat button. Use it only when emergency assistance is needed.</p>
+        <h4>If something goes wrong</h4>
+        <p>If announcements are blank, none may currently be available. If page content remains loading, refresh and check your connection.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-maps" class="patient-guide-card">
+      <summary>Maps</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>The Maps page displays the pinned location for Angono General Hospital in an embedded Google Map.</p>
+        <h4>What can you do here?</h4>
+        <p>View the hospital pin and choose <strong>Open in Google Maps</strong> to open the location in Google Maps.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Maps</strong> in the Patient navigation.</li>
+          <li>Read the hospital name and address shown above the map.</li>
+          <li>Interact with the embedded map, or select <strong>Open in Google Maps</strong> for the external map.</li>
+          <li>Return using the Patient navigation, for example by choosing Dashboard.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>To find the hospital pin, open Maps, read the address card, then choose Open in Google Maps if you want to view it in the Maps app or website.</p>
+        <h4>Important reminders</h4>
+        <p>This page shows the hospital location. It does not search for other facilities or display your device’s live location.</p>
+        <h4>If something goes wrong</h4>
+        <p>If the map does not load, check your internet connection or use <strong>Open in Google Maps</strong>. If Google Maps is unavailable on your device, ask the hospital for directions.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-meds" class="patient-guide-card">
+      <summary>Meds</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>The Meds page shows prescription information saved for your patient account.</p>
+        <h4>What can you do here?</h4>
+        <p>Review medicine names, dosage or duration/instructions when provided, whether a prescription is active, and use <strong>Set Reminder</strong>. The Medication Reminders panel also provides reminder time, start/end date, repeat days, optional note, saved reminders, and an <strong>Enable Alerts</strong> control.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Meds</strong> in the Patient navigation.</li>
+          <li>Read each prescription card. A card may say <strong>No active prescriptions</strong> when none are listed.</li>
+          <li>To create a reminder, choose <strong>Set Reminder</strong> on an active prescription, or enter the medicine name in the Medication Reminders form.</li>
+          <li>Enter the time and dates, select repeat days, and choose <strong>Save Medication Reminder</strong>. Enter medication details exactly as prescribed by your clinician.</li>
+          <li>If you want device alerts, choose <strong>Enable Alerts</strong> and follow the permission instructions shown by your device.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>If a prescription card has a Set Reminder button, select it, check the prefilled medicine details, and enter a time and schedule that match your clinician’s instructions.</p>
+        <h4>Important reminders</h4>
+        <p>A reminder is only an alert; it does not change your prescription or provide medical advice. Follow your clinician’s instructions. Do not start, stop, or change medicine based on this guide.</p>
+        <h4>If something goes wrong</h4>
+        <p>If prescriptions are missing, contact your healthcare provider. If alerts do not arrive, check notification permissions and internet access, then try Enable Alerts again. The updated Android app may be needed for alerts while the app is closed.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-doctors" class="patient-guide-card">
+      <summary>Doctors &amp; Staff</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>A directory of active hospital staff information currently provided to ERecPass.</p>
+        <h4>What can you do here?</h4>
+        <p>Review a listed person’s profile photo (if available), name, role, schedule, and reported availability. No staff profile action or booking button is provided on this directory page.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Doctors &amp; Staff</strong> in the Patient navigation.</li>
+          <li>Browse the staff cards. A picture may be replaced by a default icon when no usable profile photo is available.</li>
+          <li>Read the displayed name and role. Use the schedule and availability only when they are shown.</li>
+          <li>Choose <strong>Appointments</strong> if you want to submit an appointment request, or return to Dashboard using the navigation bar.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>If a card says “Schedule unavailable,” use the hospital’s contact information to ask when that staff member is available.</p>
+        <h4>Important reminders</h4>
+        <p>A role is the account information provided by the hospital and may not list a medical specialty. “Schedule unavailable” or “Availability not provided” means that information was not supplied; it does not confirm that someone is available.</p>
+        <h4>If something goes wrong</h4>
+        <p>If the directory cannot refresh, try again later. Contact hospital admin through Chat if staff information appears incomplete.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-appointments" class="patient-guide-card">
+      <summary>Appointments</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>A list of appointments linked to your Patient account, with an option to submit a booking request.</p>
+        <h4>What can you do here?</h4>
+        <p>See the appointment purpose, doctor, date, and current status. Use <strong>+ Book Now</strong> to submit a request, or <strong>Delete</strong> to remove a listed booking after confirmation. The page does not provide a separate appointment-details screen.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Appointments</strong> in the Patient navigation.</li>
+          <li>Review the appointment cards. If no bookings exist, the page displays <strong>No scheduled appointments</strong>.</li>
+          <li>To request a visit, choose <strong>+ Book Now</strong>, select a date and doctor, enter the consultation purpose, then select <strong>Confirm Booking</strong>.</li>
+          <li>After a successful submission, the request appears in the list with its current status. New requests are submitted for admin approval; look for the status shown on the card.</li>
+          <li>To remove a booking, select <strong>Delete</strong> and confirm. This permanently deletes the booking.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>Choose + Book Now, select a date and listed doctor, enter a consultation purpose, and confirm. Check the appointment card for its status before treating the visit as approved.</p>
+        <h4>Important reminders</h4>
+        <p>A submitted request is not the same as an approved appointment. Check the displayed status and contact the hospital if you need confirmation.</p>
+        <h4>If something goes wrong</h4>
+        <p>If appointments cannot load, refresh and check your connection. If a booking cannot be saved, sign in again if asked and retry; do not assume the request succeeded unless it appears in the list.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-record" class="patient-guide-card">
+      <summary>Record</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>A read-only view of patient information and laboratory results currently available to your account.</p>
+        <h4>What can you do here?</h4>
+        <p>Review the gender and birthday shown in Patient Information, and laboratory result cards that may include a test name, date, result, unit, reference range, status, doctor notes, or an image attachment.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Record</strong> in the Patient navigation.</li>
+          <li>Start with the Patient Information card, then read the lab result cards below it.</li>
+          <li>Select a result attachment if the page provides one to view it more closely.</li>
+          <li>Use the navigation bar to return to Dashboard or open another page.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>Open a lab result card to review the values and notes provided, then ask your healthcare provider if you need help understanding them.</p>
+        <h4>Important reminders</h4>
+        <p>Medical records are private. Use your own account, avoid sharing records with unauthorized people, and sign out using Profile when finished on a shared device. Ask your healthcare provider about incorrect or unclear information.</p>
+        <h4>If something goes wrong</h4>
+        <p>If the page says <strong>No lab results on file</strong>, no results are currently listed. If you believe information is missing or incorrect, contact your healthcare provider rather than relying on an incomplete record.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-qr" class="patient-guide-card">
+      <summary>My QR</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>A QR code made from your ERecPass patient ID for identification in ERecPass.</p>
+        <h4>What can you do here?</h4>
+        <p>Choose <strong>Generate QR</strong> to display your code and <strong>Download / Save QR</strong> to save or share the image using the options available on your device.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>My QR</strong> in the Patient navigation.</li>
+          <li>Review the patient identification label and select <strong>Generate QR</strong> if the code is not already visible.</li>
+          <li>Present the code only when requested by authorized hospital personnel, or choose <strong>Download / Save QR</strong> if you need to save it.</li>
+          <li>Return to Dashboard using the Patient navigation.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>When authorized hospital personnel ask for your ERecPass identification, open My QR and display the generated code for them.</p>
+        <h4>Important reminders</h4>
+        <p>Your QR code is linked to your patient ID and may provide access to sensitive information. Do not post it publicly or share it with unauthorized people.</p>
+        <h4>If something goes wrong</h4>
+        <p>If the page says the QR is unavailable, sign in again. If saving fails, check your internet/device permissions or ask authorized hospital personnel to help identify you another way.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-chat" class="patient-guide-card">
+      <summary>Chat</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>The Patient Chat page is labeled <strong>Help Center / Admin Chat</strong> and provides a conversation with hospital admin.</p>
+        <h4>What can you do here?</h4>
+        <p>Read the message history, type a text message in the message field, and select the paper-plane button to send it. Pressing Enter also sends a message. The paperclip control is visible, but file/photo sending is not currently available.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Chat</strong> in the Patient navigation.</li>
+          <li>Read existing messages. If the conversation is empty, the page prompts you to send a message to hospital admin.</li>
+          <li>Enter your message in the text field and choose the paper-plane button. You can also press Enter.</li>
+          <li>Wait for the sent message to appear, then return to Dashboard using the navigation bar.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>You can message hospital admin to ask where to find a page or report that directory information is missing. Do not use Chat to request urgent help.</p>
+        <h4>Important reminders</h4>
+        <p>Do not send private medical details to an unintended recipient. Chat is not an emergency service and may not be monitored immediately. For urgent help, use the Emergency Dispatch controls or contact local emergency services.</p>
+        <h4>If something goes wrong</h4>
+        <p>If messages do not load or send, check your connection and sign-in status, then try again. Contact the hospital another way if the matter is urgent.</p>
+      </div>
+    </details>
+
+    <details id="patient-guide-profile" class="patient-guide-card">
+      <summary>Profile (the ninth Patient navigation item)</summary>
+      <div class="patient-guide-content">
+        <h4>What is this feature?</h4>
+        <p>Your patient profile page for account details and the Patient Digital ID.</p>
+        <h4>What can you do here?</h4>
+        <p>View or update the profile photo, name, gender, birthday, blood type, address, guardian name, and guardian emergency contact. Each editable field has its own <strong>Save</strong> button. The page also shows the health status currently recorded for your profile and a two-sided Digital ID.</p>
+        <h4>How to use it</h4>
+        <ol>
+          <li>Choose <strong>Profile</strong> in the Patient navigation.</li>
+          <li>To change your photo, choose the camera icon on the profile photo and select an image.</li>
+          <li>For an editable detail, enter or select the value and choose the <strong>Save</strong> button beside that field. Wait for the confirmation message.</li>
+          <li>Review the Digital ID. Choose <strong>Flip Digital ID (Front / Back)</strong> to see its emergency-information side, then choose it again to flip back.</li>
+          <li>Choose <strong>Log Out</strong> when finished, especially on a shared device.</li>
+        </ol>
+        <h4>Example</h4>
+        <p>To update your address, enter it in the Address field and choose the Save button beside it. Confirm the page reports that it was saved.</p>
+        <h4>Important reminders</h4>
+        <p>Profile and Digital ID details, including the QR code, are sensitive. Check details for accuracy and share them only with authorized healthcare personnel.</p>
+        <h4>If something goes wrong</h4>
+        <p>If a save reports a problem, check your connection and try again. Do not assume a change was saved unless ERecPass confirms it. Ask hospital staff to correct details you cannot update.</p>
+      </div>
+    </details>
+  </section>
+
+  <section aria-labelledby="patientGuideOtherTitle">
+    <h2 id="patientGuideOtherTitle" class="patient-guide-section-title">Other Dashboard Features</h2>
+    <details class="patient-guide-card">
+      <summary>Emergency Dispatch and hospital announcements</summary>
+      <div class="patient-guide-content">
+        <h4>Emergency Dispatch</h4>
+        <p>The Dashboard has an emergency circle labeled <strong>HOLD 3S</strong>. Holding it for three seconds opens the Emergency Dispatch dialog with the Angono Barangay Hotline and National Emergency <strong>911</strong> numbers, plus call controls. The emergency numbers are displayed in the dialog and may be configured by the hospital.</p>
+        <p>Use this control only when emergency assistance is needed. It opens call options; it does not itself send a medical report or replace emergency services. Confirm the number and device before placing a call.</p>
+        <h4>Announcements</h4>
+        <p>Hospital announcements appear below the Dashboard controls when provided. Read the text and use any <strong>Read more</strong> or <strong>Show less</strong> control displayed on a longer announcement.</p>
+      </div>
+    </details>
+  </section>
+
+  <section aria-labelledby="patientGuideFaqTitle">
+    <h2 id="patientGuideFaqTitle" class="patient-guide-section-title">Frequently Asked Questions</h2>
+    <details class="patient-guide-faq">
+      <summary>How do I return to the Dashboard?</summary>
+      <div class="patient-guide-content"><p>Choose <strong>Dashboard</strong> from the Patient navigation. From this guide, you can also use the <strong>Return to Dashboard</strong> button at the top or bottom of the page.</p></div>
+    </details>
+    <details class="patient-guide-faq">
+      <summary>Where can I find an appointment or request one?</summary>
+      <div class="patient-guide-content"><p>Open <strong>Appointments</strong>. Existing cards show the purpose, doctor, date, and status. Choose <strong>+ Book Now</strong> to submit a new request; a new request is pending until its status changes.</p></div>
+    </details>
+    <details class="patient-guide-faq">
+      <summary>Where are my test results and prescriptions?</summary>
+      <div class="patient-guide-content"><p>Choose <strong>Record</strong> for patient information and lab results. Choose <strong>Meds</strong> for prescriptions and medication reminders.</p></div>
+    </details>
+    <details class="patient-guide-faq">
+      <summary>How do I find a doctor or staff member?</summary>
+      <div class="patient-guide-content"><p>Open <strong>Doctors &amp; Staff</strong> to browse the directory information provided by the hospital. If a role, schedule, or availability is missing, contact the hospital for current information.</p></div>
+    </details>
+    <details class="patient-guide-faq">
+      <summary>What if my QR code or a page does not load?</summary>
+      <div class="patient-guide-content"><p>Check your internet connection and refresh. If a page asks you to sign in, use your own patient account. For account access, use the existing <strong>Forgot Password?</strong> option on the login screen or contact hospital support.</p></div>
+    </details>
+    <details class="patient-guide-faq">
+      <summary>What if information is missing or looks incorrect?</summary>
+      <div class="patient-guide-content"><p>Refresh once to check for updated information. If it remains missing or incorrect, contact your healthcare provider or hospital admin through Chat. Do not rely on incomplete medical information for care decisions.</p></div>
+    </details>
+  </section>
+
+  <section aria-labelledby="patientGuideTroubleshootingTitle">
+    <h2 id="patientGuideTroubleshootingTitle" class="patient-guide-section-title">Troubleshooting</h2>
+    <div class="patient-guide-panel patient-guide-content p-4">
+      <ul>
+        <li><strong>A page is still loading:</strong> Check the connection, refresh the page, and sign in again if requested.</li>
+        <li><strong>No appointments appear:</strong> The page may say “No scheduled appointments.” If a request was just submitted, check the list again and wait for its status to update.</li>
+        <li><strong>No medication or lab information appears:</strong> The account may not have active prescriptions or lab results on file. Ask your healthcare provider if you expected information to be present.</li>
+        <li><strong>A doctor’s schedule or availability is not shown:</strong> The directory does not have that information. Contact the hospital for current details.</li>
+        <li><strong>A message cannot be sent:</strong> Check that you are signed in and connected, then retry. Chat is not for emergencies.</li>
+        <li><strong>A profile change fails:</strong> Check the connection and retry. Look for an on-screen confirmation before assuming it was saved.</li>
+        <li><strong>You cannot access your account:</strong> Use the existing Forgot Password option on the login screen or contact hospital support. Do not share your password with anyone.</li>
+      </ul>
+    </div>
+  </section>
+
+  <section aria-labelledby="patientGuideSafetyTitle">
+    <h2 id="patientGuideSafetyTitle" class="patient-guide-section-title">Safety and Privacy</h2>
+    <div class="patient-guide-panel patient-guide-content p-4">
+      <ul>
+        <li>Use your own patient account and sign out after using a shared device.</li>
+        <li>Keep your password, QR code, Digital ID, and medical records private. Share them only with authorized healthcare personnel.</li>
+        <li>Check who will receive a Chat message before sending it. The paperclip/file option is not currently enabled for sending files.</li>
+        <li>Use the hospital's instructions and your healthcare provider for medical questions. ERecPass reminders and this guide do not replace professional advice.</li>
+        <li>For an emergency, use the displayed emergency call options or contact local emergency services. Chat is not an emergency service.</li>
+      </ul>
+    </div>
+  </section>
+
+  <button type="button" class="patient-guide-action patient-guide-back" onclick="patientDashboardNavigate('dashboard')">
+    <i class="fa-solid fa-house" aria-hidden="true"></i><span>Return to Dashboard</span>
+  </button>
+</section>
+
 <!-- PATIENT HOSPITAL MAP -->
 
 <section id="hospital-map" class="page">
@@ -5518,7 +5959,7 @@ if (!targetPage) {
 
 targetPage.classList.add('active');
 
-const navBtn = document.getElementById('nav-' + pageId);
+const navBtn = document.getElementById('nav-' + (pageId === 'patient-guide' ? 'dashboard' : pageId));
 
 if (navBtn) {
   navBtn.classList.add('active');

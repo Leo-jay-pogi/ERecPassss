@@ -9043,7 +9043,6 @@ html.ep-dark #adminApp .admin-header-actions #epSettingsPanel :is(#adminSettings
 <div id="epSettings" aria-label="Settings">
 <button type="button" id="epSettingsToggle" aria-label="Open settings" aria-expanded="false">⚙️</button>
 <div id="epSettingsPanel" role="menu" aria-label="Settings">
-<button type="button" id="patientSettingsProfile" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); showPage('profile')"><i class="fa-solid fa-user" aria-hidden="true"></i> View profile</button>
 <button type="button" id="epThemeBtn" role="menuitem">🌙 Dark</button>
 <button type="button" id="patientSettingsEmergency" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); openEmergencyModal()"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Emergency</button>
 <button type="button" id="patientSettingsLogout" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
@@ -9062,7 +9061,7 @@ const adminHeaderActions=document.querySelector('#adminApp .admin-header-actions
 const adminSettingsLogout=document.getElementById('adminSettingsLogout');
 const adminSettingsEmergency=document.getElementById('adminSettingsEmergency');
 const adminSettingsApp=document.getElementById('adminSettingsApp');
-const patientSettingsActions=['patientSettingsProfile','patientSettingsEmergency','patientSettingsLogout']
+const patientSettingsActions=['patientSettingsEmergency','patientSettingsLogout']
   .map(id=>document.getElementById(id));
 function updateAdminSettingsAction(){
   const adminVisible=adminRoot && !adminRoot.classList.contains('hidden') && getComputedStyle(adminRoot).display!=='none';

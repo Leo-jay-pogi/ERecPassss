@@ -11703,5 +11703,66 @@ Please check your inbox and Spam folder.'); })
 </script>
 <script src="./medication-reminders.js"></script>
 
+<style id="erecpass-mobile-splash-layout-fix">
+@media (max-width: 640px) {
+  /* The entrance content is taller than a phone viewport. Keep it scrollable
+     inside the fixed splash layer so the agreement and its action stay reachable. */
+  #splashScreen {
+    height: 100vh;
+    height: 100dvh;
+    min-height: 0;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    gap: 12px;
+    overflow-x: hidden;
+    overflow-y: auto;
+    overscroll-behavior-y: contain;
+    -webkit-overflow-scrolling: touch;
+    padding-top: max(16px, env(safe-area-inset-top));
+    padding-right: 16px;
+    padding-bottom: max(20px, env(safe-area-inset-bottom));
+    padding-left: 16px;
+  }
+
+  #splashScreen > .w-full.max-w-md.flex.justify-between {
+    flex: 0 0 auto;
+    width: 100%;
+    font-size: 10px;
+    letter-spacing: .08em;
+  }
+
+  #splashScreen > .relative.w-64.h-64 {
+    width: 176px;
+    height: 176px;
+    min-height: 176px;
+    flex: 0 0 176px;
+    margin: 2px 0;
+  }
+
+  #splashScreen > .text-center.z-10 {
+    flex: 0 0 auto;
+    margin: 0;
+  }
+
+  #splashScreen > .text-center.z-10 h1 {
+    font-size: 2rem;
+    line-height: 1.1;
+  }
+
+  #splashScreen > .text-center.z-10 p {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+
+  #splashScreen > .glass-card {
+    flex: 0 0 auto;
+    width: 100%;
+    box-sizing: border-box;
+    margin-bottom: 4px;
+    padding: 14px;
+  }
+}
+</style>
+
 </body>
 </html>

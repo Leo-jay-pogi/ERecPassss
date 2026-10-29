@@ -37,6 +37,16 @@ var epStore = window.epStore;
     } catch (e) { console.warn('[ERecPass] Store write warning:', e); }
   }
 
+  async function ensureTrustedDevice(email) {
+    if (typeof window.isErecpassDeviceTrusted !== 'function' ||
+        typeof window.triggerNewDeviceConfirmation !== 'function') {
+      throw new Error('Email login confirmation is unavailable. Refresh the page and try again.');
+    }
+    if (window.isErecpassDeviceTrusted(email)) return true;
+    await window.triggerNewDeviceConfirmation({ email: email });
+    return false;
+  }
+
   function calculateAge(birthDate) {
     const match = String(birthDate || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (!match) return null;
@@ -285,6 +295,8 @@ var epStore = window.epStore;
         return;
       }
 
+      if (!await ensureTrustedDevice(email)) return;
+
       const patients = getLocal(KEYS.PATIENTS, []);
       const local = patients.find(p => String(p.email || '').toLowerCase() === email);
       const fullName = String(local?.fullName || local?.name || check.displayName || email.split('@')[0])
@@ -340,6 +352,20 @@ var epStore = window.epStore;
 
     if (!staff) { alert('Invalid Staff email or password.'); return; }
     if (staff.active === false) { alert('This staff account is deactivated.'); return; }
+
+    const staffEmail = String(staff.email || '').trim().toLowerCase();
+    if (!staffEmail || !staffEmail.includes('@')) {
+      alert('This staff account does not have a valid email address for login confirmation. Contact the administrator.');
+      return;
+    }
+
+    try {
+      if (!await ensureTrustedDevice(staffEmail)) return;
+    } catch (err) {
+      console.error('[ERecPass] Staff device confirmation error:', err);
+      alert('Staff login could not be confirmed: ' + (err?.message || err));
+      return;
+    }
 
     const staffSession = { role: 'staff', data: staff };
     window.currentSession = staffSession;
@@ -453,6 +479,67 @@ var epStore = window.epStore;
 
     if (typeof window.showLogin === 'function') window.showLogin();
   };
+
+  const DEVICE_EMAIL_KEY = 'erecpass_pending_device_email';
+
+  window.isErecpassDeviceTrusted = function (email) {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    return !!normalizedEmail && window.localStorage.getItem('erecpass_trusted_device:' + normalizedEmail) === '1';
+  };
+
+  window.markErecpassDeviceAsTrusted = function (email) {
+    const normalizedEmail = String(email || '').trim().toLowerCase();
+    if (!normalizedEmail) throw new Error('A valid email address is required to trust this device.');
+    window.localStorage.setItem('erecpass_trusted_device:' + normalizedEmail, '1');
+  };
+
+  window.triggerNewDeviceConfirmation = async function (request) {
+    const email = String(request?.email || '').trim().toLowerCase();
+    if (!email) throw new Error('A valid email address is required for login confirmation.');
+    if (!window.ERecPassFirebase || !window.ERecPassFirebase.isConfigured()) {
+      throw new Error('Email login confirmation is unavailable. Please try again later.');
+    }
+    window.localStorage.setItem(DEVICE_EMAIL_KEY, email);
+    try {
+      await window.ERecPassFirebase.sendNewDeviceConfirmationEmail(email, window.location.origin + window.location.pathname);
+    } catch (err) {
+      window.localStorage.removeItem(DEVICE_EMAIL_KEY);
+      throw err;
+    }
+    alert('We sent a sign-in confirmation link to ' + email + '. Open the link on this same phone and browser. After confirmation, return here and sign in again.');
+  };
+
+  async function completeNewDeviceConfirmation() {
+    const auth = window.ERecPassFirebase?.getAuth();
+    if (!auth || !auth.isSignInWithEmailLink(window.location.href)) return;
+
+    const pendingEmail = window.localStorage.getItem(DEVICE_EMAIL_KEY) || '';
+    const email = (pendingEmail || window.prompt('Enter the email address that received this sign-in link:') || '')
+      .trim().toLowerCase();
+    if (!email) throw new Error('The email address is required to finish sign-in confirmation.');
+
+    try {
+      const credential = await auth.signInWithEmailLink(email, window.location.href);
+      const signedInEmail = String(credential.user?.email || '').trim().toLowerCase();
+      if (signedInEmail !== email) {
+        throw new Error('The confirmation link belongs to a different email address.');
+      }
+
+      window.markErecpassDeviceAsTrusted(email);
+      window.localStorage.removeItem(DEVICE_EMAIL_KEY);
+      window.history.replaceState(null, document.title, window.location.pathname);
+      alert('This phone is confirmed. Return to the login screen and sign in again.');
+    } finally {
+      if (auth.currentUser) await auth.signOut();
+    }
+  }
+
+  window.addEventListener('load', function () {
+    completeNewDeviceConfirmation().catch(function (err) {
+      console.error('[ERecPass] Device confirmation error:', err);
+      alert('Could not confirm this device: ' + (err?.message || err));
+    });
+  }, { once: true });
 
   console.info('[ERecPass] Firebase Auth runtime ready.');
 })();

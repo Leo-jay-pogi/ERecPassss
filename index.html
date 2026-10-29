@@ -10718,9 +10718,9 @@ setTimeout(installAddedUI,2500);
 <script src="./supabase-client.js?v=20261028c"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
 <script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="./firebase-auth-client.js?v=20261028b"></script>
+<script src="./firebase-auth-client.js?v=20261029b"></script>
 <script src="./supabase-runtime.js?v=20261029a"></script>
-<script src="./firebase-auth-runtime.js?v=20261029a"></script>
+<script src="./firebase-auth-runtime.js?v=20261029b"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
 (function(){
@@ -11610,8 +11610,7 @@ document.addEventListener('keydown', event => {
     if (!email || !pass) { alert('No pending account found. Please register again.'); return; }
     if (window.ERecPassFirebase && window.ERecPassFirebase.isConfigured()) {
       window.ERecPassFirebase.resendVerificationEmail(email, pass)
-        .then(function() { alert('Confirmation email resent to ' + email + '.
-Please check your inbox and Spam folder.'); })
+        .then(function() { alert('Confirmation email resent to ' + email + '.\nPlease check your inbox and Spam folder.'); })
         .catch(function(e) { alert('Could not resend: ' + (e.message || e)); });
     } else {
       alert('Firebase is not available. Please check your internet connection.');

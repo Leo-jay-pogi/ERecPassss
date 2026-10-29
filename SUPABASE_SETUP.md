@@ -41,11 +41,14 @@ The browser calls Supabase Auth `resetPasswordForEmail` and uses the current Git
 
 
 ## Firebase Email Confirmation Integration
-To prevent hitting Supabase free-tier email rate limits (3 emails/hour), patient account email confirmation is handled by Firebase Auth (`firebase-auth-client.js`):
+To prevent hitting Supabase free-tier email rate limits (3 emails/hour), patient account email confirmation and new-device login links are handled by Firebase Auth (`firebase-auth-client.js`):
 1. **Firebase Console**: Ensure **Authentication -> Sign-in method -> Email/Password** is enabled on project `erecpass-portal` (the project configured in `firebase-auth-client.js`).
-2. Verification emails use Firebase's default action page without an app continue URL, so clicking the link shows Firebase's email-verified confirmation and does not automatically return to ERecPass.
-3. The app creates/signs into the matching Supabase Auth account on the patient's first verified login, then records the patient in `public.patients`. The registration fields are combined as `First Middle Last` and saved in the `full_name` column; if the patient has no middle name, it saves `First Last`.
-4. **Supabase Dashboard**: In **Authentication -> Providers -> Email**, uncheck **"Confirm email"** because Firebase already verified the address. This allows the first Supabase login to create a usable session without sending a second email.
-5. Existing Firebase accounts must verify their email before the first account sync. Existing legacy accounts not present in Firebase can log into Supabase only when their Supabase profile and patient row already exist.
+2. Also enable **Email link (passwordless sign-in)** and add the deployed app domain under **Authentication -> Settings -> Authorized domains**. New-device login confirmation uses a one-time Firebase sign-in link and fails explicitly if this provider is disabled.
+3. Registration verification emails use Firebase's default action page without an app continue URL, so clicking the link shows Firebase's email-verified confirmation and does not automatically return to ERecPass.
+4. On an unrecognized device, patient and staff logins send a Firebase sign-in link to the account email. Admin login does not use this confirmation. Open the link on the phone and browser where login was started, then sign in again. The device is remembered in that browser's local storage.
+   This is a client-side device prompt, not backend-enforced multi-factor authentication; continue enforcing access through Supabase RLS and server-side authorization.
+5. The app creates/signs into the matching Supabase Auth account on the patient's first verified login, then records the patient in `public.patients`. The registration fields are combined as `First Middle Last` and saved in the `full_name` column; if the patient has no middle name, it saves `First Last`.
+6. **Supabase Dashboard**: In **Authentication -> Providers -> Email**, uncheck **"Confirm email"** because Firebase already verified the address. This allows the first Supabase login to create a usable session without sending a second email.
+7. Existing Firebase accounts must verify their email before the first account sync. Existing legacy accounts not present in Firebase can log into Supabase only when their Supabase profile and patient row already exist.
 
 The new project `onjdhnpaehiqccfkribx` is not the active app target. The app currently points back to the existing project `bfboehvgrivanmrfqquw`.

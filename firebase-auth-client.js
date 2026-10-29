@@ -1,6 +1,5 @@
 /* ERecPass Firebase Auth Client
- * Handles email verification and code confirmation during patient account creation
- * to avoid Supabase free-tier email rate limits.
+ * Handles Firebase email verification and new-device login confirmation.
  */
 (function () {
   'use strict';
@@ -152,6 +151,28 @@
       const user = userCred.user;
       await user.sendEmailVerification();
       await auth.signOut();
+      return true;
+    },
+
+    /**
+     * Dispatches a new device login confirmation email via Firebase.
+     */
+    sendNewDeviceConfirmationEmail: async function (email, confirmUrl) {
+      const auth = this.getAuth();
+      if (!auth) throw new Error('Firebase Authentication is not available.');
+
+      try {
+        await auth.sendSignInLinkToEmail(email, {
+          url: confirmUrl,
+          handleCodeInApp: true
+        });
+      } catch (err) {
+        if (err.code === 'auth/operation-not-allowed') {
+          throw new Error('Firebase Email link sign-in is disabled. Enable Email link sign-in in the Firebase Authentication sign-in methods.');
+        }
+        console.error('[ERecPass Firebase] Could not send device confirmation email:', err);
+        throw err;
+      }
       return true;
     }
   };

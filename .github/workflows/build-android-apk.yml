@@ -59,7 +59,7 @@ jobs:
           test -s www/assets/erecpass-brand-logo.png
           test -s www/assets/erecpass-app-icon.svg
           npm init -y
-          npm install @capacitor/core@^6 @capacitor/android@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode @capacitor/local-notifications@^6 @capacitor/push-notifications@^6
+          npm install @capacitor/core@^6 @capacitor/android@^6 @capacitor/geolocation@^6 @supabase/supabase-js@^2 qrcodejs html5-qrcode @capacitor/local-notifications@^6 @capacitor/push-notifications@^6
           npm install --save-dev @capacitor/cli@^6 esbuild
           # Bundle Supabase locally for Android WebView so Admin login does not
           # depend on loading the Supabase SDK from a third-party CDN at runtime.
@@ -70,6 +70,8 @@ jobs:
           npx esbuild local-notifications-bridge.js --bundle --format=iife --outfile=www/vendor/local-notifications.js
           # Bundle Capacitor Push Notifications as a native-only enhancement. Web behavior remains unchanged.
           npx esbuild push-notifications-bridge.js --bundle --format=iife --outfile=www/vendor/push-notifications.js
+          # Bundle native location access so the APK can request Android's runtime permission.
+          npx esbuild geolocation-bridge.js --bundle --format=iife --outfile=www/vendor/geolocation.js
           python3 - <<'PY'
           from pathlib import Path
           p = Path("www/index.html")
@@ -78,6 +80,7 @@ jobs:
           tags = [
               '<script src="./vendor/local-notifications.js"></script>',
               '<script src="./vendor/push-notifications.js"></script>',
+              '<script src="./vendor/geolocation.js"></script>',
               '<script src="./push-notifications-runtime.js"></script>'
           ]
           if s.count(target) != 1:
@@ -175,6 +178,8 @@ jobs:
           s = p.read_text()
           permissions = [
               '<uses-permission android:name="android.permission.CAMERA" />',
+              '<uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION" />',
+              '<uses-permission android:name="android.permission.ACCESS_FINE_LOCATION" />',
               '<uses-permission android:name="android.permission.POST_NOTIFICATIONS" />',
               '<uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM" />',
               '<uses-permission android:name="android.permission.VIBRATE" />',

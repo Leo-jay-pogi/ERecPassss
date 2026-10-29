@@ -13256,6 +13256,20 @@ document.addEventListener('keydown', event => {
 
   function requestEmergencyLocation() {
     return new Promise(resolve => {
+      const nativeLocation = window.ERecPassNativeGeolocation;
+      if (nativeLocation && typeof nativeLocation.getCurrentPosition === 'function') {
+        nativeLocation.getCurrentPosition({ enableHighAccuracy: true, timeout: 12000, maximumAge: 0 })
+          .then(position => resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            location_accuracy_m: Number.isFinite(position.coords.accuracy) ? position.coords.accuracy : null
+          }))
+          .catch(error => {
+            console.warn('[ERecPass] Native location request failed:', error);
+            resolve(null);
+          });
+        return;
+      }
       if (!navigator.geolocation) {
         resolve(null);
         return;

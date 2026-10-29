@@ -1380,7 +1380,7 @@ body::before {
   border-radius: 14px;
   background: #f1f6fb;
   color: #1769e0 !important;
-  font-size: 20px;
+  font-size: 24px;
   line-height: 1;
   cursor: pointer;
   transition: background .18s ease, color .18s ease, transform .18s ease;
@@ -1729,7 +1729,7 @@ body::before {
     border-radius: 12px;
     background: #f1f6fb !important;
     color: #27445f !important;
-    font-size: 16px;
+    font-size: 18px;
     box-shadow: 0 4px 12px rgba(13,31,48,.22);
   }
   #patientApp #patientBottomNav .patient-nav-see-more i {
@@ -4529,6 +4529,69 @@ APP LOGIC & VIEW MANAGEMENT
 ========================================================================== */
 
 let currentSession = null; // { role: 'patient'|'staff'|'admin', data: ... }
+
+// Save the currently visible UI for this browser tab so a full browser refresh
+// can restore any screen, panel, or modal across the app.
+const RELOAD_UI_STATE_KEY = 'erecpass_reload_ui_state';
+const RELOAD_UI_STATE_CLASSES = ['hidden', 'active', 'open', 'expanded', 'collapsed', 'selected', 'show', 'visible', 'is-open', 'is-active'];
+
+function captureReloadUiState() {
+  try {
+    const elements = {};
+    document.querySelectorAll('[id]').forEach(function(el) {
+      const state = { classes: {}, attrs: {}, scrollTop: el.scrollTop || 0 };
+      RELOAD_UI_STATE_CLASSES.forEach(function(name) {
+        state.classes[name] = el.classList.contains(name);
+      });
+      ['aria-hidden', 'aria-current', 'aria-pressed', 'aria-expanded', 'aria-selected'].forEach(function(name) {
+        if (el.hasAttribute(name)) state.attrs[name] = el.getAttribute(name);
+      });
+      elements[el.id] = state;
+    });
+    sessionStorage.setItem(RELOAD_UI_STATE_KEY, JSON.stringify({
+      path: location.pathname + location.search + location.hash,
+      scrollY: window.scrollY || 0,
+      elements: elements
+    }));
+  } catch (error) {
+    console.warn('[ERecPass] Could not save the current screen for refresh:', error);
+  }
+}
+
+function restoreReloadUiState() {
+  try {
+    const saved = JSON.parse(sessionStorage.getItem(RELOAD_UI_STATE_KEY) || 'null');
+    if (!saved || saved.path !== location.pathname + location.search + location.hash || !saved.elements) return;
+
+    Object.keys(saved.elements).forEach(function(id) {
+      const el = document.getElementById(id);
+      const state = saved.elements[id];
+      if (!el || !state) return;
+
+      RELOAD_UI_STATE_CLASSES.forEach(function(name) {
+        if (state.classes && Object.prototype.hasOwnProperty.call(state.classes, name)) {
+          el.classList.toggle(name, !!state.classes[name]);
+        }
+      });
+      ['aria-hidden', 'aria-current', 'aria-pressed', 'aria-expanded', 'aria-selected'].forEach(function(name) {
+        if (state.attrs && Object.prototype.hasOwnProperty.call(state.attrs, name)) el.setAttribute(name, state.attrs[name]);
+        else el.removeAttribute(name);
+      });
+      if (state.scrollTop) el.scrollTop = state.scrollTop;
+    });
+
+    window.scrollTo(0, Number(saved.scrollY) || 0);
+    sessionStorage.removeItem(RELOAD_UI_STATE_KEY);
+  } catch (error) {
+    console.warn('[ERecPass] Could not restore the screen after refresh:', error);
+  }
+}
+
+window.addEventListener('beforeunload', captureReloadUiState);
+window.addEventListener('load', function() {
+  // Run after the app's own startup handler, which may show its default screen.
+  window.setTimeout(restoreReloadUiState, 100);
+});
 
 let staffHtml5QrCode = null;
 
@@ -11825,7 +11888,7 @@ Please check your inbox and Spam folder.'); })
     }
     #patientBottomNav > button:not(.patient-nav-see-more) { min-width: 0; min-height: 48px; }
     #patientBottomNav > button:not(.patient-nav-see-more) i { font-size: 22px !important; }
-    #patientApp #patientBottomNav .patient-nav-see-more { width: 34px; height: 34px; font-size: 15px; }
+    #patientApp #patientBottomNav .patient-nav-see-more { width: 34px; height: 34px; font-size: 17px; }
     #patientApp:has(#patientBottomNav.patient-nav-expanded) .main-content { padding-bottom: 200px; }
   }
 
@@ -11840,7 +11903,7 @@ Please check your inbox and Spam folder.'); })
     #patientBottomNav.patient-nav-expanded { height: 172px !important; }
     #patientBottomNav > button:not(.patient-nav-see-more) { gap: 2px; font-size: 9px; }
     #patientBottomNav > button:not(.patient-nav-see-more) i { font-size: 20px !important; }
-    #patientApp #patientBottomNav .patient-nav-see-more { width: 32px; height: 32px; font-size: 14px; }
+    #patientApp #patientBottomNav .patient-nav-see-more { width: 32px; height: 32px; font-size: 18px; }
     #patientWelcomeCard { gap: 8px; padding: 12px; }
     #patientDashboardAvatar { width: 64px; height: 64px; flex-basis: 64px; }
     #patientEmergencyCard { gap: 8px; padding: 12px; }

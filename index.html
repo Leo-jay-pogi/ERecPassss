@@ -1396,8 +1396,10 @@ body::before {
 #patientBottomNav.patient-nav-expanded .patient-nav-see-more { display: flex !important; }
 #patientBottomNav.patient-nav-collapsed .patient-nav-extra { display: none !important; }
 #patientBottomNav.patient-nav-expanded .patient-nav-extra { display: flex !important; }
-#patientBottomNav.patient-nav-expanded .patient-nav-extra { animation: patientNavItemEnter .24s ease both; }
-#patientBottomNav.patient-nav-expanded #patientNavSeeMore i { animation: patientNavIconOpen .24s ease both; }
+@media (max-width: 1023px) {
+  #patientBottomNav.patient-nav-expanded .patient-nav-extra { animation: patientNavItemEnter .24s ease both; }
+  #patientBottomNav.patient-nav-expanded #patientNavSeeMore i { animation: patientNavIconOpen .24s ease both; }
+}
 @media (min-width: 641px) and (max-width: 1023px) {
   #patientBottomNav.patient-nav-collapsed,
   #patientBottomNav.patient-nav-expanded {
@@ -1422,7 +1424,7 @@ body::before {
   #patientBottomNav.patient-nav-collapsed,
   #patientBottomNav.patient-nav-expanded {
     height: 96px !important;
-    grid-template-columns: repeat(8, minmax(0, 1fr)) !important;
+    grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
     grid-template-rows: 1fr !important;
     padding-top: 8px !important;
   }
@@ -1669,6 +1671,302 @@ body::before {
     }
   }
 }
+  @media (max-width: 1023px) {
+  #patientApp #patientBottomNav {
+    overflow: visible !important;
+    background: rgba(248,250,252,.96) !important;
+    border-color: #d7e2ec !important;
+    box-shadow: 0 -5px 20px rgba(24,50,75,.12) !important;
+    touch-action: none;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more) {
+    min-width: 0;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    color: #64748b !important;
+    transition: background-color .18s ease, border-color .18s ease, transform .18s ease;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more) span {
+    max-width: 100%;
+    color: #64748b !important;
+    -webkit-text-fill-color: #64748b !important;
+    text-align: center;
+    line-height: 1.1;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active {
+    background: #e8f1ff !important;
+    border-color: rgba(37,123,255,.2);
+    box-shadow: inset 0 0 0 1px rgba(37,123,255,.06);
+    color: #2583ff !important;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active i,
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active span {
+    color: #2583ff !important;
+    -webkit-text-fill-color: #2583ff !important;
+  }
+  #patientApp #patientBottomNav #nav-dashboard i,
+  #patientApp #patientBottomNav #nav-dashboard span { color: #2583ff !important; -webkit-text-fill-color: #2583ff !important; }
+  #patientApp #patientBottomNav #nav-hospital-map i { color: #16834b !important; -webkit-text-fill-color: #16834b !important; }
+  #patientApp #patientBottomNav #nav-medicines i { color: #7b2be2 !important; -webkit-text-fill-color: #7b2be2 !important; }
+  #patientApp #patientBottomNav #nav-doctors i { color: #28a9a1 !important; -webkit-text-fill-color: #28a9a1 !important; }
+  #patientApp #patientBottomNav #nav-profile i {
+    color: #ec7cc2 !important;
+    -webkit-text-fill-color: #ec7cc2 !important;
+  }
+  #patientApp #patientBottomNav #nav-profile.active i {
+    color: #2583ff !important;
+    -webkit-text-fill-color: #2583ff !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more {
+    width: 36px;
+    height: 36px;
+    position: absolute;
+    top: -13px;
+    right: -8px;
+    z-index: 32;
+    transform: none;
+    border: 1px solid #d5e0eb;
+    border-radius: 12px;
+    background: #f1f6fb !important;
+    color: #27445f !important;
+    font-size: 16px;
+    box-shadow: 0 4px 12px rgba(13,31,48,.22);
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more i {
+    color: #27445f !important;
+    -webkit-text-fill-color: #27445f !important;
+  }
+  html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-see-more {
+    background: #f1f6fb !important;
+    border-color: #d5e0eb !important;
+    color: #27445f !important;
+  }
+  html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-see-more i {
+    color: #27445f !important;
+    -webkit-text-fill-color: #27445f !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more:hover {
+    background: #fff !important;
+    transform: scale(1.04);
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more:hover {
+    background: #f0f6ff !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav {
+    background: #172838 !important;
+    border-color: #263d52 !important;
+    box-shadow: 0 -5px 20px rgba(13,31,48,.2) !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more) {
+    color: #8fa4b8 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active {
+    background: #1b3550 !important;
+    border-color: rgba(37,123,255,.22);
+    box-shadow: inset 0 0 0 1px rgba(37,123,255,.08);
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more {
+    background: #dceaff !important;
+    border-color: #b6d2f5;
+    color: #173653 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more i {
+    color: #173653 !important;
+    -webkit-text-fill-color: #173653 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more) span {
+    color: #a9bac9 !important;
+    -webkit-text-fill-color: #a9bac9 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active span {
+    color: #2583ff !important;
+    -webkit-text-fill-color: #2583ff !important;
+  }
+  @media (min-width: 641px) and (max-width: 1023px) {
+    #patientApp #patientBottomNav.patient-nav-collapsed,
+    #patientApp #patientBottomNav.patient-nav-expanded {
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+    }
+  }
+  }
+  @media (max-width: 1023px) {
+    #patientApp #patientBottomNav.patient-nav-expanded {
+      border-top-color: transparent !important;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: calc(100% - 1px);
+      z-index: 31;
+      display: grid !important;
+      width: auto;
+      max-width: none;
+      max-height: none;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      grid-template-rows: 1fr;
+      justify-items: stretch;
+      gap: 2px;
+      overflow: visible;
+      padding: 8px 10px 6px;
+      border: 1px solid #263d52;
+      border-bottom: 0;
+      border-radius: 12px 12px 0 0;
+      background: rgba(255,255,255,.86) !important;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+      box-shadow: none;
+      opacity: 0;
+      visibility: hidden;
+      pointer-events: none;
+      transform: translateY(12px) scaleY(.86);
+      transform-origin: bottom center;
+      transition: opacity .2s ease, transform .2s ease, visibility 0s linear .2s;
+    }
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu {
+      border-color: rgba(203,216,228,.88);
+      background: rgba(255,255,255,.86) !important;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra,
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra span {
+      color: #64748b !important;
+      -webkit-text-fill-color: #64748b !important;
+    }
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,:active),
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active {
+      background: rgba(37,123,255,.1) !important;
+      box-shadow: 0 0 12px rgba(37,123,255,.12), inset 0 0 0 1px rgba(74,151,255,.2);
+    }
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible) span,
+    html:not(.ep-dark) #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active span {
+      color: #1769e0 !important;
+      -webkit-text-fill-color: #1769e0 !important;
+    }
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu {
+      opacity: 1;
+      visibility: visible;
+      pointer-events: auto;
+      transform: translateY(0) scaleY(1);
+      transition-delay: 0s;
+    }
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu .patient-nav-extra {
+      animation: patientNavPopupItemEnter .38s cubic-bezier(.2,.8,.2,1) both;
+    }
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu #nav-appointments { animation-delay: .02s; }
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu #nav-medical-records { animation-delay: .07s; }
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu #nav-qr { animation-delay: .12s; }
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu #nav-help { animation-delay: .17s; }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra {
+      display: grid !important;
+      grid-template-columns: 1fr;
+      grid-template-rows: 38px auto;
+      justify-items: center;
+      align-content: center;
+      gap: 2px;
+      width: 100%;
+      min-width: 0;
+      min-height: 66px;
+      height: auto;
+      padding: 3px 1px;
+      border: 0;
+      border-radius: 9px;
+      background: transparent !important;
+      box-shadow: none;
+      color: #8fa4b8 !important;
+      text-align: center !important;
+      font-size: 11px;
+      transform: none;
+      transition: background-color .18s ease, box-shadow .18s ease, transform .18s ease;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra i {
+      grid-column: 1;
+      grid-row: 1;
+      display: grid;
+      place-items: center;
+      width: 34px;
+      height: 34px;
+      border-radius: 50%;
+      background: transparent !important;
+      font-size: 20px !important;
+      filter: drop-shadow(0 1px 5px currentColor);
+      transition: transform .18s ease, filter .18s ease;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra span {
+      position: static;
+      grid-column: 1;
+      grid-row: 2;
+      width: auto;
+      height: auto;
+      margin: 0;
+      overflow: visible;
+      clip: auto;
+      white-space: normal;
+      color: #8fa4b8 !important;
+      -webkit-text-fill-color: #8fa4b8 !important;
+      text-align: center;
+      font-size: 10px;
+      line-height: 1.15;
+      transition: color .18s ease, text-shadow .18s ease;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,:active),
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active {
+      background: rgba(37,123,255,.12) !important;
+      box-shadow: 0 0 14px rgba(37,123,255,.2), inset 0 0 0 1px rgba(74,151,255,.24);
+      transform: translateY(-3px) scale(1.035);
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible) i,
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active i {
+      transform: scale(1.16);
+      filter: drop-shadow(0 0 8px currentColor);
+      animation: patientNavPopupIconHover .42s ease both;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible) span,
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active span {
+      color: #e4f2ff !important;
+      -webkit-text-fill-color: #e4f2ff !important;
+      text-shadow: 0 0 8px rgba(80,157,255,.42);
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:active {
+      transform: translateY(-1px) scale(.98);
+    }
+    html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,:active) span,
+    html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active span {
+      color: #e4f2ff !important;
+      -webkit-text-fill-color: #e4f2ff !important;
+    }
+    html.ep-dark #patientApp #patientBottomNav .patient-nav-menu {
+      border-color: #263d52;
+      background: rgba(23,40,56,.78) !important;
+      -webkit-backdrop-filter: blur(12px);
+      backdrop-filter: blur(12px);
+    }
+    html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra span {
+      color: #a9bac9 !important;
+      -webkit-text-fill-color: #a9bac9 !important;
+    }
+  }
+  @media (max-width: 1023px) and (prefers-reduced-motion: reduce) {
+    #patientApp #patientBottomNav .patient-nav-menu {
+      transition: none;
+      transform: none;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra,
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra i {
+      animation: none !important;
+      transition: none;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,:active),
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active {
+      transform: none;
+    }
+  }
+  @media (max-width: 640px) {
+    #patientApp:has(#patientBottomNav.patient-nav-expanded) .main-content {
+      padding-bottom: 170px !important;
+    }
+  }
 @keyframes patientNavItemEnter {
   from { opacity: 0; transform: translateY(10px) scale(.96); }
   to { opacity: 1; transform: translateY(0) scale(1); }
@@ -1682,6 +1980,22 @@ body::before {
   35% { transform: scale(1.22) rotate(-8deg); }
   70% { transform: scale(.94) rotate(4deg); }
 }
+@keyframes patientNavClosingWave {
+  0%, 100% { transform: translateY(0) rotate(0); }
+  28% { transform: translateY(-11px) rotate(-2deg); }
+  55% { transform: translateY(2px) rotate(1deg); }
+  78% { transform: translateY(-4px) rotate(-.5deg); }
+}
+@keyframes patientNavPopupItemEnter {
+  from { opacity: 0; transform: translateY(12px) scale(.92); }
+  to { opacity: 1; transform: translateY(0) scale(1); }
+}
+@keyframes patientNavPopupIconHover {
+  0%, 100% { transform: scale(1.16) rotate(0); }
+  45% { transform: scale(1.28) rotate(-7deg); }
+  75% { transform: scale(1.12) rotate(4deg); }
+}
+@media (max-width: 1023px) {
 #patientBottomNav > button:not(.patient-nav-see-more) { min-height: 0; }
 #patientBottomNav > button:not(.patient-nav-see-more) {
   border-radius: 14px;
@@ -1692,6 +2006,14 @@ body::before {
 }
 #patientBottomNav .patient-nav-icon-clicked {
   animation: patientNavIconTap .42s cubic-bezier(.2,.8,.2,1);
+}
+#patientBottomNav #nav-dashboard.patient-nav-close-wave { animation: patientNavClosingWave .72s ease-out both; animation-delay: 0s; }
+#patientBottomNav #nav-hospital-map.patient-nav-close-wave { animation: patientNavClosingWave .72s ease-out both; animation-delay: .07s; }
+#patientBottomNav #nav-medicines.patient-nav-close-wave { animation: patientNavClosingWave .72s ease-out both; animation-delay: .14s; }
+#patientBottomNav #nav-doctors.patient-nav-close-wave { animation: patientNavClosingWave .72s ease-out both; animation-delay: .21s; }
+#patientBottomNav #nav-profile.patient-nav-close-wave { animation: patientNavClosingWave .72s ease-out both; animation-delay: .28s; }
+@media (prefers-reduced-motion: reduce) {
+  #patientBottomNav > button.patient-nav-close-wave { animation: none !important; }
 }
 @media (hover: hover) and (pointer: fine) {
   #patientBottomNav > button:not(.patient-nav-see-more):hover {
@@ -1716,6 +2038,44 @@ body::before {
 #patientBottomNav > button.patient-nav-see-more:focus-visible {
   outline: 3px solid rgba(23,105,224,.45);
   outline-offset: 2px;
+}
+}
+@media (min-width: 1024px) {
+  #patientApp #patientBottomNav #nav-dashboard i { color: #1769e0 !important; -webkit-text-fill-color: #1769e0 !important; }
+  #patientApp #patientBottomNav #nav-hospital-map i { color: #16834b !important; -webkit-text-fill-color: #16834b !important; }
+  #patientApp #patientBottomNav #nav-medicines i { color: #7b2be2 !important; -webkit-text-fill-color: #7b2be2 !important; }
+  #patientApp #patientBottomNav #nav-doctors i { color: #28a9a1 !important; -webkit-text-fill-color: #28a9a1 !important; }
+  #patientApp #patientBottomNav #nav-profile i { color: #ec7cc2 !important; -webkit-text-fill-color: #ec7cc2 !important; }
+}
+@media (min-width: 1024px) and (hover: hover) and (pointer: fine) {
+  #patientApp #patientBottomNav > button,
+  #patientApp #patientBottomNav .patient-nav-menu button {
+    border-radius: 14px;
+    transition: transform .2s ease, background-color .2s ease, box-shadow .2s ease;
+  }
+  #patientApp #patientBottomNav > button i,
+  #patientApp #patientBottomNav .patient-nav-menu button i {
+    transition: transform .2s ease, filter .2s ease;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more):hover,
+  #patientApp #patientBottomNav .patient-nav-menu button:hover {
+    background: rgba(23,105,224,.08) !important;
+    box-shadow: 0 5px 14px rgba(18,52,86,.12);
+    transform: translateY(-4px);
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more):hover i,
+  #patientApp #patientBottomNav .patient-nav-menu button:hover i {
+    filter: brightness(1.3) saturate(1.3) drop-shadow(0 0 7px currentColor);
+    transform: scale(1.12);
+  }
+}
+@media (min-width: 1024px) and (prefers-reduced-motion: reduce) {
+  #patientApp #patientBottomNav > button,
+  #patientApp #patientBottomNav .patient-nav-menu button,
+  #patientApp #patientBottomNav > button i,
+  #patientApp #patientBottomNav .patient-nav-menu button i {
+    transition: none !important;
+  }
 }
 #patientApp .header-actions { position: relative; }
 #patientProfileDropdown {
@@ -2042,7 +2402,7 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 </div>
 
-<form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3">
+<form id="loginForm" onsubmit="handleLogin(event)" class="space-y-3" autocomplete="on">
 
 <div>
 
@@ -2052,7 +2412,7 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <i class="fa-solid fa-envelope text-cyan-400 text-xs"></i>
 
-<input type="email" id="loginEmail" placeholder="Enter the email you registered" required class="w-full bg-transparent outline-none text-xs">
+<input type="email" id="loginEmail" name="username" autocomplete="username" inputmode="email" autocapitalize="none" spellcheck="false" placeholder="Enter the email you registered" required class="w-full bg-transparent outline-none text-xs">
 
 </div>
 
@@ -2066,7 +2426,7 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <i class="fa-solid fa-lock text-cyan-400 text-xs"></i>
 
-<input type="password" id="loginPassword" placeholder="Enter your password" required class="w-full bg-transparent outline-none text-xs">
+<input type="password" id="loginPassword" name="current-password" autocomplete="current-password" placeholder="Enter your password" required class="w-full bg-transparent outline-none text-xs">
 
 </div>
 
@@ -2483,10 +2843,49 @@ Already have an account?
   }
   #patientWelcomeCard[data-health-status="yellow"] { --patient-health-rgb: 245,158,11; }
   #patientWelcomeCard[data-health-status="red"] { --patient-health-rgb: 244,63,94; }
+  #patientWelcomeCard #patientDashboardHealthIcon,
+  #patientWelcomeCard #patientDashboardStatusBadge { display: none !important; }
+  #patientDashboardAvatar {
+    position: relative;
+    box-sizing: border-box;
+    width: 72px;
+    height: 72px;
+    flex: 0 0 72px;
+    padding: 3px;
+    overflow: hidden;
+    border: 2px solid rgba(var(--patient-health-rgb), .65);
+    border-radius: 50%;
+    background: linear-gradient(145deg, #fff, rgba(var(--patient-health-rgb), .14));
+    box-shadow: 0 0 0 4px rgba(var(--patient-health-rgb), .1), 0 4px 14px rgba(24,50,75,.16);
+    transition: box-shadow .2s ease, transform .2s ease;
+  }
+  #patientDashboardPhoto {
+    display: none;
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    border-radius: 50%;
+  }
+  #patientDashboardAvatarFallback {
+    position: absolute;
+    inset: 3px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 50%;
+    background: rgba(var(--patient-health-rgb), .13);
+    color: rgb(var(--patient-health-rgb));
+    font-size: 28px;
+  }
   #patientWelcomeCard:hover, #patientWelcomeCard:focus-within {
     transform: translateY(-2px);
     border-color: rgba(var(--patient-health-rgb), .9);
     box-shadow: 0 0 0 1px rgba(var(--patient-health-rgb), .2), 0 12px 32px rgba(var(--patient-health-rgb), .22);
+  }
+  #patientWelcomeCard:hover #patientDashboardAvatar,
+  #patientWelcomeCard:focus-within #patientDashboardAvatar {
+    transform: scale(1.04);
+    box-shadow: 0 0 0 5px rgba(var(--patient-health-rgb), .12), 0 6px 18px rgba(24,50,75,.2);
   }
   #patientDashboardHealthIcon {
     color: rgb(var(--patient-health-rgb));
@@ -2670,6 +3069,7 @@ Already have an account?
     color: #edf4fb !important;
   }
   html.ep-dark #patientApp #patientWelcomeCard #patientDashboardName { color: #f4f8fc !important; -webkit-text-fill-color: #f4f8fc !important; }
+  html.ep-dark #patientApp #patientDashboardAvatar { background: linear-gradient(145deg, #263849, rgba(var(--patient-health-rgb), .2)); }
   html.ep-dark #patientApp #dashboard > #patientEmergencyCard {
     background: linear-gradient(110deg, #211f29, #271c25) !important;
   }
@@ -2702,8 +3102,12 @@ Already have an account?
     border-color: #40566a !important;
   }
   @media (prefers-reduced-motion: reduce) {
-    #patientWelcomeCard { transition: none; }
-    #patientWelcomeCard:hover, #patientWelcomeCard:focus-within { transform: none; }
+    #patientWelcomeCard,
+    #patientDashboardAvatar { transition: none; }
+    #patientWelcomeCard:hover,
+    #patientWelcomeCard:focus-within,
+    #patientWelcomeCard:hover #patientDashboardAvatar,
+    #patientWelcomeCard:focus-within #patientDashboardAvatar { transform: none; }
   }
 </style>
 
@@ -2711,9 +3115,12 @@ Already have an account?
   <div class="min-w-0">
     <p class="text-xs font-semibold text-slate-600">Welcome back,</p>
     <h1 id="patientDashboardName" class="text-lg sm:text-xl font-bold text-slate-900 truncate">Patient</h1>
-    <p class="mt-1 text-[11px] text-slate-600">Your health status at a glance</p>
   </div>
-  <div class="flex shrink-0 flex-col items-center gap-2">
+  <div id="patientDashboardAvatar" class="shrink-0" aria-hidden="true">
+    <img id="patientDashboardPhoto" alt="">
+    <span id="patientDashboardAvatarFallback"><i class="fa-solid fa-user"></i></span>
+  </div>
+  <div class="hidden flex shrink-0 flex-col items-center gap-2" aria-hidden="true">
     <div id="patientDashboardHealthIcon" class="w-12 h-12 rounded-2xl flex items-center justify-center text-2xl" aria-hidden="true">
       <i class="fa-solid fa-heart-pulse"></i>
     </div>
@@ -3164,22 +3571,26 @@ Already have an account?
 </main>
 <!-- PATIENT BOTTOM NAVIGATION -->
 
-<nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-4 items-center justify-items-center px-2 gap-x-1 gap-y-0">
+<nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-5 items-center justify-items-center px-2 gap-x-1 gap-y-0">
 
 <button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
-<i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600" style="color:#1769e0 !important"></i><span class="text-blue-600" style="color:#1769e0 !important">Dashboard</span>
+<i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600"></i><span class="text-blue-600">Dashboard</span>
 </button>
 
 <button id="nav-hospital-map" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('hospital-map')" type="button">
-<i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600" style="color:#16834b !important"></i><span class="text-slate-500" style="color:#66788a !important">Map</span>
+<i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600"></i><span class="text-slate-500">Map</span>
 </button>
 
 <button id="nav-medicines" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medicines')" type="button">
-<i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600" style="color:#7b2be2 !important"></i><span class="text-slate-500" style="color:#66788a !important">Meds</span>
+<i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600"></i><span class="text-slate-500">Meds</span>
 </button>
 
 <button id="nav-doctors" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
-<i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500" style="color:#28a9a1 !important"></i><span class="text-slate-500" style="color:#66788a !important">Staff</span>
+<i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500"></i><span class="text-slate-500">Staff</span>
+</button>
+
+<button id="nav-profile" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[9px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('profile')" type="button" aria-label="View Profile" title="View Profile">
+<i class="fa-solid fa-user-circle text-2xl sm:text-3xl" aria-hidden="true"></i><span>View Profile</span>
 </button>
 
 <button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-label="Open navigation menu" title="Open navigation menu" aria-controls="patientNavMenu" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
@@ -4769,6 +5180,25 @@ function getPatientCategoryFromBirthDate(value) {
   const age = getPatientAgeFromBirthDate(value);
   return age === null ? '' : (age <= 17 ? 'Minor' : 'Adult');
 }
+function setPatientDashboardPhoto(photo) {
+  const image = document.getElementById('patientDashboardPhoto');
+  const fallback = document.getElementById('patientDashboardAvatarFallback');
+  if (!image || !fallback) return;
+
+  const showFallback = () => {
+    image.style.display = 'none';
+    fallback.style.display = 'flex';
+  };
+  image.onerror = showFallback;
+  if (typeof photo !== 'string' || !photo.trim()) {
+    image.removeAttribute('src');
+    showFallback();
+    return;
+  }
+  image.src = photo;
+  image.style.display = 'block';
+  fallback.style.display = 'none';
+}
 function previewPatientBirthDate() {
   const input = document.getElementById('editProfileBirthDateInput');
   const preview = document.getElementById('profileAgePreview');
@@ -4877,6 +5307,7 @@ async function refreshPatientPortal() {
   const qrId = document.getElementById('patientQrIdDisplay');
 
   if (dashboardName) dashboardName.innerText = p.fullName || 'Patient';
+  setPatientDashboardPhoto(p.photo || '');
   if (profileName) profileName.innerText = p.fullName || 'Patient';
   if (profileEmail) profileEmail.innerText = p.email || '';
   if (editName) editName.value = p.fullName || '';
@@ -10791,6 +11222,7 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
       const profilePhoto=document.getElementById('profilePhotoDisplay');
 
       if(dashboardName) dashboardName.innerText=name;
+      setPatientDashboardPhoto(data.photo || '');
       if(profileName) profileName.innerText=name;
       if(profileEmail) profileEmail.innerText=data.email || '';
       if(editName) editName.value=name;
@@ -10866,6 +11298,7 @@ setTimeout(()=>{if(currentSession?.role==='staff') renderStaffAdminChat();},1000
       const edit=document.getElementById('editProfileNameInput');
       const img=document.getElementById('profilePhotoDisplay');
       if(dashboard) dashboard.innerText=name;
+      setPatientDashboardPhoto(photo);
       if(profile) profile.innerText=name;
       if(email) email.innerText=user.email||'';
       if(edit) edit.value=name;
@@ -10934,6 +11367,14 @@ function togglePatientMoreNav() {
   const toggle = document.getElementById('patientNavSeeMore');
   if (!nav || !toggle) return;
   const expanded = nav.classList.contains('patient-nav-expanded');
+  if (expanded && window.matchMedia('(max-width: 1023px)').matches &&
+      !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
+    nav.querySelectorAll('#nav-dashboard, #nav-hospital-map, #nav-medicines, #nav-doctors, #nav-profile').forEach(button => {
+      button.classList.remove('patient-nav-close-wave');
+      void button.offsetWidth;
+      button.classList.add('patient-nav-close-wave');
+    });
+  }
   nav.classList.toggle('patient-nav-expanded', !expanded);
   nav.classList.toggle('patient-nav-collapsed', expanded);
   toggle.setAttribute('aria-expanded', String(!expanded));
@@ -10944,7 +11385,46 @@ function togglePatientMoreNav() {
   icon?.classList.toggle('fa-xmark', !expanded);
 }
 const patientBottomNav = document.getElementById('patientBottomNav');
+let patientNavSwipeStart = null;
+let patientNavSwipeClick = null;
+patientBottomNav?.addEventListener('pointerdown', event => {
+  if (!event.isPrimary || (event.pointerType !== 'touch' && event.pointerType !== 'pen')) return;
+  if (!window.matchMedia('(max-width: 1023px)').matches) return;
+  patientNavSwipeStart = { x: event.clientX, y: event.clientY, pointerId: event.pointerId };
+}, { passive: true });
+document.addEventListener('pointerup', event => {
+  const start = patientNavSwipeStart;
+  patientNavSwipeStart = null;
+  if (!start || event.pointerId !== start.pointerId) return;
+
+  const deltaY = event.clientY - start.y;
+  const deltaX = event.clientX - start.x;
+  if (Math.abs(deltaY) < 48 || Math.abs(deltaY) < Math.abs(deltaX) * 1.25) return;
+
+  const isExpanded = patientBottomNav?.classList.contains('patient-nav-expanded');
+  if ((!isExpanded && deltaY < 0) || (isExpanded && deltaY > 0)) {
+    patientNavSwipeClick = { x: event.clientX, y: event.clientY, expires: Date.now() + 500 };
+    togglePatientMoreNav();
+  }
+}, { passive: true });
+document.addEventListener('pointercancel', event => {
+  if (patientNavSwipeStart?.pointerId === event.pointerId) patientNavSwipeStart = null;
+});
 patientBottomNav?.addEventListener('click', event => {
+  if (!patientNavSwipeClick || Date.now() > patientNavSwipeClick.expires) {
+    patientNavSwipeClick = null;
+    return;
+  }
+  const clickEvent = event;
+  if (Math.abs(clickEvent.clientX - patientNavSwipeClick.x) <= 32 &&
+      Math.abs(clickEvent.clientY - patientNavSwipeClick.y) <= 32) {
+    event.preventDefault();
+    event.stopImmediatePropagation();
+    patientNavSwipeClick = null;
+  }
+}, true);
+patientBottomNav?.addEventListener('click', event => {
+  if (!window.matchMedia('(max-width: 1023px)').matches) return;
   if (!(event.target instanceof Element)) return;
   const button = event.target.closest('#patientBottomNav > button, #patientNavMenu button');
   const icon = button?.querySelector('i');
@@ -10954,12 +11434,13 @@ patientBottomNav?.addEventListener('click', event => {
   icon.classList.add('patient-nav-icon-clicked');
 });
 patientBottomNav?.addEventListener('animationend', event => {
-  if (event.target instanceof Element) event.target.classList.remove('patient-nav-icon-clicked');
+  if (!(event.target instanceof Element)) return;
+  event.target.classList.remove('patient-nav-icon-clicked', 'patient-nav-close-wave');
 });
 document.addEventListener('click', event => {
   const nav = document.getElementById('patientBottomNav');
   if (!nav?.classList.contains('patient-nav-expanded')) return;
-  if (event.target.closest('#patientNavMenu .patient-nav-extra') || !nav.contains(event.target)) {
+  if (event.target.closest('#patientNavMenu .patient-nav-extra, #nav-profile') || !nav.contains(event.target)) {
     togglePatientMoreNav();
   }
 });
@@ -11345,7 +11826,7 @@ Please check your inbox and Spam folder.'); })
     }
     #patientBottomNav > button:not(.patient-nav-see-more) { min-width: 0; min-height: 48px; }
     #patientBottomNav > button:not(.patient-nav-see-more) i { font-size: 22px !important; }
-    #patientBottomNav .patient-nav-see-more { width: 40px; height: 40px; }
+    #patientApp #patientBottomNav .patient-nav-see-more { width: 34px; height: 34px; font-size: 15px; }
     #patientApp:has(#patientBottomNav.patient-nav-expanded) .main-content { padding-bottom: 200px; }
   }
 
@@ -11360,9 +11841,9 @@ Please check your inbox and Spam folder.'); })
     #patientBottomNav.patient-nav-expanded { height: 172px !important; }
     #patientBottomNav > button:not(.patient-nav-see-more) { gap: 2px; font-size: 9px; }
     #patientBottomNav > button:not(.patient-nav-see-more) i { font-size: 20px !important; }
-    #patientBottomNav .patient-nav-see-more { width: 36px; height: 36px; font-size: 18px; }
+    #patientApp #patientBottomNav .patient-nav-see-more { width: 32px; height: 32px; font-size: 14px; }
     #patientWelcomeCard { gap: 8px; padding: 12px; }
-    #patientWelcomeCard #patientDashboardHealthIcon { width: 42px; height: 42px; font-size: 20px; }
+    #patientDashboardAvatar { width: 64px; height: 64px; flex-basis: 64px; }
     #patientEmergencyCard { gap: 8px; padding: 12px; }
     #patientEmergencyCard p { font-size: 10px; line-height: 1.35; }
     #patientEmergencyCard #patientHoldEmergencyBtn { flex: 0 0 56px; width: 56px; height: 56px; }

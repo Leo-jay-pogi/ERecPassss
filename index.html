@@ -14929,7 +14929,9 @@ document.addEventListener('keydown', event => {
       border: 1px solid rgba(36,91,53,.2) !important;
       border-radius: 20px !important;
       padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
-      animation: erecpass-hotbar-enter .32s ease-out both;
+      /* Keep the Home Screen app navigation bar anchored on reopen; the entrance animation
+         made it visibly slide each time iOS reloaded the page. */
+      animation: none !important;
     }
     #patientApp #patientBottomNav .patient-primary-nav { min-height: 54px; }
     #patientApp #patientBottomNav .patient-primary-nav span { font-size: 10px !important; }

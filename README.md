@@ -6,7 +6,7 @@ ERecPass is a hospital portal with a Supabase-backed data layer. The existing UI
 - Supabase project: `ERECPASS`
 - Active Supabase project URL: `https://bfboehvgrivanmrfqquw.supabase.co`
 - Browser client uses the Supabase **publishable** key only.
-- Tables: `profiles`, `patients`, `staff`, `appointments`, `announcements`, `help_center_messages`, `activity_logs`, `app_settings`
+- Tables: `profiles`, `patients`, `staff`, `appointments`, `announcements`, `help_center_messages`, `activity_logs`, `app_settings`, `emergency_alerts`
 - RLS is enabled on all exposed public tables.
 - Admin account operations use the protected `admin-manage-account` Edge Function.
 - GitHub Pages workflow: `.github/workflows/pages.yml`
@@ -31,6 +31,14 @@ ERecPass is a hospital portal with a Supabase-backed data layer. The existing UI
 The app uses Supabase Auth password recovery. The reset link returns to the current GitHub Pages path and the app handles the `PASSWORD_RECOVERY` event before allowing the new password to be saved.
 
 If a reset link shows a 404, make sure the GitHub Pages URL is registered in Supabase Authentication URL Configuration as an allowed redirect URL.
+
+## Emergency alerts
+- For a new database, use `supabase/migrations/20261030000100_emergency_alerts.sql`. Existing databases with the verified alert columns do not need a schema migration for the frontend column-name fix.
+- The alert workflow uses the existing `user_id`, `message`, `latitude`, `longitude`, `status`, `created_at`, and `updated_at` columns. It does not require a patient foreign key or a `patient_id` column.
+- Enable Supabase Anonymous Sign-Ins so a pre-login alert can be recorded with a temporary authenticated identity. If anonymous sign-in is unavailable, the app reports that the admin alert could not be sent; the phone call options remain available.
+- The emergency gesture is three taps followed by a three-second hold on the third press. After activation, the app requests location permission, records the alert, and opens call options. Call links open the device dialer; the user must confirm the call. The 911 option remains available.
+- GPS coordinates are optional and visible only to active admins. The Admin Emergency Alert Dashboard refreshes alerts every 15 seconds while the Admin console is open. Admins can optionally enable browser desktop notifications; acknowledging an alert clears its saved coordinates.
+- Verify the Barangay hotline in Admin Settings before relying on it. The built-in example number is disabled; do not treat it as a real emergency contact.
 
 ## Database/security maintenance
 - Foreign-key indexes were added for common account/audit relationships.

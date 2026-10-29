@@ -2382,9 +2382,9 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div class="flex justify-between items-center mb-4 pb-3 border-b border-cyan-500/20">
 
-<button class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-500/50 text-rose-400 text-[11px] font-tech font-bold flex items-center gap-1.5 animate-pulse-red" onclick="openEmergencyModal()">
+<button class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-500/50 text-rose-400 text-[11px] font-tech font-bold flex items-center gap-1.5 animate-pulse-red" title="Tap 3 times, then hold the third press for 3 seconds" onclick="openEmergencyModal()">
 
-<i class="fa-solid fa-triangle-exclamation"></i> Emergency
+<i class="fa-solid fa-triangle-exclamation"></i> Emergency · 3 taps + hold
 
 </button>
 
@@ -3163,7 +3163,7 @@ Already have an account?
 
 <h2 class="text-base font-bold text-white mt-1">Angono Barangay Dispatch</h2>
 
-  <p class="text-[11px] text-slate-400">Hold the circle for 3 seconds. Releasing before 0.5 seconds cancels; after that, the countdown continues. Double-tap the box to cancel.</p>
+  <p id="patientEmergencyGestureStatus" class="text-[11px] text-slate-400">Tap 3 times, then hold the third press for 3 seconds. An alert is sent to admins; choose a call option next.</p>
 
 </div>
 
@@ -3171,7 +3171,7 @@ Already have an account?
 
 <i class="fa-solid fa-phone text-rose-400"></i>
 
-<span class="text-[8px] font-tech">HOLD 3S</span>
+<span class="text-[8px] font-tech">3 TAPS</span>
 
 <svg class="absolute inset-0 w-full h-full -rotate-90 pointer-events-none" viewBox="0 0 36 36">
 
@@ -3964,6 +3964,7 @@ Already have an account?
     </div>
   </div>
   <button type="button" onclick="flipPatientDigitalID()" class="w-full mt-3 py-2.5 rounded-xl border border-cyan-400/40 bg-cyan-950 text-cyan-300 font-tech text-xs font-bold"><i class="fa-solid fa-arrows-rotate mr-1"></i> Flip Digital ID (Front / Back)</button>
+  <button type="button" onclick="printPatientDigitalID()" class="w-full mt-2 py-2.5 rounded-xl border border-green-600/40 bg-green-50 text-green-800 font-tech text-xs font-bold"><i class="fa-solid fa-print mr-1"></i> Download / Print Wallet ID</button>
 </div>
 
 <button onclick="logout()" class="w-full py-3 bg-rose-950/60 border border-rose-500/40 text-rose-400 rounded-xl font-tech font-bold text-xs tracking-wider hover:bg-rose-900/40 transition-all mt-4">
@@ -4352,6 +4353,21 @@ Already have an account?
 
 </div>
 
+<section id="adminEmergencyAlertsPanel" class="glass-card p-4 rounded-2xl border-rose-500/30 space-y-3">
+  <div class="flex items-center justify-between gap-3">
+    <div>
+      <h2 class="text-sm font-tech font-bold text-rose-300"><i class="fa-solid fa-triangle-exclamation mr-1"></i> Emergency Alert Dashboard</h2>
+      <p class="text-[11px] text-slate-400">New alerts appear here within 15 seconds while this admin console is open. Acknowledging an alert clears its GPS coordinates.</p>
+    </div>
+    <div class="flex shrink-0 flex-col gap-2">
+      <button id="adminEmergencyNotificationsButton" type="button" class="px-3 py-2 bg-slate-900 border border-rose-500/40 text-rose-200 rounded-xl text-xs font-tech">Enable desktop alerts</button>
+      <button type="button" onclick="refreshEmergencyAlerts()" class="px-3 py-2 bg-slate-900 border border-rose-500/40 text-rose-200 rounded-xl text-xs font-tech">Refresh now</button>
+    </div>
+  </div>
+  <div id="adminEmergencyAlertsStatus" class="text-xs text-slate-400" role="status" aria-live="polite">Loading alerts…</div>
+  <div id="adminEmergencyAlertsList" class="space-y-2"></div>
+</section>
+
 <!-- Quick Tab Controls for Admin -->
 
 <div class="admin-function-nav-wrap">
@@ -4655,6 +4671,9 @@ Already have an account?
 <i class="fa-solid fa-triangle-exclamation text-3xl text-rose-500 animate-bounce"></i>
 
 <h2 class="text-lg font-tech font-bold text-white">Emergency Dispatch</h2>
+
+<div id="emergencyAlertStatus" class="text-xs text-slate-300 rounded-lg bg-slate-900/70 p-3" role="status" aria-live="polite">Emergency alert has not been sent yet.</div>
+<p class="text-[11px] text-slate-400">Call links open your device dialer; confirm the call there. The Barangay number must be verified in Admin Settings.</p>
 
 <div class="space-y-2 text-left">
 
@@ -5221,11 +5240,26 @@ function loadEmergencyNums() {
 
 const nums = JSON.parse(epStore.getItem(DB_KEYS.EMERGENCY_NUMS));
 
-document.getElementById('displayBarangayNum').innerText = nums.barangay;
+const barangayNumber = String(nums?.barangay || '').trim();
+const isPlaceholder = !barangayNumber || barangayNumber.replace(/\D/g, '') === '09171234567';
+const barangayDisplay = document.getElementById('displayBarangayNum');
+const barangayCall = document.getElementById('callBarangayBtn');
+if (barangayDisplay) barangayDisplay.innerText = isPlaceholder ? 'Not configured' : barangayNumber;
+if (barangayCall) {
+  if (isPlaceholder) {
+    barangayCall.removeAttribute('href');
+    barangayCall.setAttribute('aria-disabled', 'true');
+    barangayCall.classList.add('opacity-50', 'pointer-events-none');
+    barangayCall.textContent = 'Unavailable';
+  } else {
+    barangayCall.href = 'tel:' + barangayNumber.replace(/[^\d+]/g, '');
+    barangayCall.removeAttribute('aria-disabled');
+    barangayCall.classList.remove('opacity-50', 'pointer-events-none');
+    barangayCall.textContent = 'Call';
+  }
+}
 
-document.getElementById('callBarangayBtn').href = "tel:" + nums.barangay;
-
-document.getElementById('display911Num').innerText = nums.national;
+document.getElementById('display911Num').innerText = nums?.national || '911';
 
 }
 
@@ -5603,70 +5637,61 @@ async function handleAdminLogin(e) {
 
   const user = document.getElementById('adminLoginUser').value.trim().toLowerCase();
   const pass = document.getElementById('adminLoginPassword').value;
+  const client = window.erecpassSupabase;
 
   if(!user || !pass){
     alert("Please enter admin email and password.");
     return;
   }
 
-  try {
-    if(window.erecpassSupabase?.auth){
-      const r = await window.erecpassSupabase.auth.signInWithPassword({email:user,password:pass});
-      if(r.error) throw r.error;
-
-      const authUser = r.data.user;
-      const profileResult = await window.erecpassSupabase
-        .from('profiles')
-        .select('role,active,full_name')
-        .eq('id',authUser.id)
-        .maybeSingle();
-
-      if(profileResult.error) throw profileResult.error;
-      const profile = profileResult.data;
-
-      if(!profile || profile.role !== 'admin' || profile.active === false){
-        await window.erecpassSupabase.auth.signOut();
-        alert(profile?.active === false
-          ? 'This admin account is deactivated. Login is disabled.'
-          : 'This account is not enabled for Admin Login.');
-        return;
-      }
-
-      currentSession = {
-        role:'admin',
-        data:{
-          id:authUser.id,
-          name:profile.full_name || authUser.email || 'Admin',
-          username:authUser.email || user,
-          email:authUser.email || user
-        }
-      };
-      epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
-      addLog("Admin logged in.");
-      hideAuthPages();
-      launchPortalByRole('admin');
-      return;
-    }
-  } catch(err) {
-    console.warn('Supabase admin login:',err);
-    alert(err?.message || 'Invalid Admin Credentials!');
+  if(!client?.auth || typeof client.auth.signInWithPassword !== 'function'){
+    alert('Supabase authentication is unavailable. Refresh the page and try again.');
     return;
   }
 
-  const adminAccounts = JSON.parse(epStore.getItem(DB_KEYS.ADMIN_ACCOUNTS)) || [];
-  const admin = adminAccounts.find(a =>
-    ((a.username||'').toLowerCase() === user || (a.email||'').toLowerCase() === user) &&
-    a.password === pass
-  );
+  try {
+    const r = await client.auth.signInWithPassword({email:user,password:pass});
+    if(r.error) throw r.error;
 
-  if(admin){
-    currentSession = { role:'admin', data:{name:admin.name, username:admin.username, email:admin.email||user} };
+    const authUser = r.data?.user;
+    if(!authUser?.id) throw new Error('Supabase did not return a signed-in account.');
+    const profileResult = await client
+      .from('profiles')
+      .select('role,active,full_name')
+      .eq('id',authUser.id)
+      .maybeSingle();
+
+    if(profileResult.error){
+      try { await client.auth.signOut(); }
+      catch(signOutError) { console.error('Could not close unverified Admin session:',signOutError); }
+      throw profileResult.error;
+    }
+    const profile = profileResult.data;
+
+    if(!profile || profile.role !== 'admin' || profile.active !== true){
+      await client.auth.signOut();
+      alert(profile?.active !== true && profile?.role === 'admin'
+        ? 'This Admin account is inactive or not enabled. Contact the system administrator.'
+        : 'This account is not enabled for Admin Login.');
+      return;
+    }
+
+    currentSession = {
+      role:'admin',
+      data:{
+        id:authUser.id,
+        name:profile.full_name || authUser.email || 'Admin',
+        username:authUser.email || user,
+        email:authUser.email || user
+      }
+    };
     epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
     addLog("Admin logged in.");
     hideAuthPages();
     launchPortalByRole('admin');
-  } else {
-    alert("Invalid Admin Credentials!");
+  } catch(err) {
+    console.warn('Supabase admin login:',err);
+    alert(err?.message || 'Invalid Admin Credentials!');
   }
 }
 function logout() {
@@ -6543,6 +6568,119 @@ function renderPatientDigitalID(patient) {
       qr.appendChild(empty);
     }
   }
+}
+
+function printPatientDigitalID() {
+  const patient = currentSession?.data;
+  const qr = document.getElementById('patientDigitalIDQR');
+  const photo = document.getElementById('digitalIDPhoto');
+  if (!patient?.id || !qr || !photo) {
+    alert('Patient ID is not ready. Refresh the app and try again.');
+    return;
+  }
+
+  const qrCanvas = qr.querySelector('canvas');
+  const qrImage = qr.querySelector('img');
+  const qrSource = qrCanvas?.toDataURL('image/png') || qrImage?.src || '';
+  if (!qrSource) {
+    alert('The patient QR code is not ready. Refresh the app and try again.');
+    return;
+  }
+
+  const escapeHtml = value => String(value ?? '').replace(/[&<>"']/g, character => ({
+    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
+  })[character]);
+  const field = (label, value, className = '') =>
+    `<div class="field ${className}"><span>${escapeHtml(label)}</span><strong>${escapeHtml(value || 'Not set')}</strong></div>`;
+  const fullName = patient.fullName || patient.full_name || patient.name || 'Patient';
+  const patientId = patient.id;
+  const birthDate = document.getElementById('digitalIDBirthDate')?.textContent.trim() || 'Not set';
+  const age = document.getElementById('digitalIDAge')?.textContent.trim() || 'Not set';
+  const bloodType = document.getElementById('digitalIDBloodType')?.textContent.trim() || 'Not set';
+  const gender = document.getElementById('digitalIDGender')?.textContent.trim() || 'Not set';
+  const address = document.getElementById('digitalIDAddress')?.textContent.trim() || 'Not set';
+  const guardianName = document.getElementById('digitalIDGuardianName')?.textContent.trim() || 'Not set';
+  const guardianContact = document.getElementById('digitalIDGuardianContact')?.textContent.trim() || 'Not set';
+  const photoSource = photo.getAttribute('src') || '';
+  const initials = fullName.split(/\s+/).filter(Boolean).slice(0, 2).map(part => part[0]).join('').toUpperCase();
+  const photoMarkup = photoSource
+    ? `<img class="photo" src="${escapeHtml(photoSource)}" alt="">`
+    : `<div class="photo initials">${escapeHtml(initials)}</div>`;
+  const printWindow = window.open('', '_blank');
+  if (!printWindow) {
+    alert('Allow pop-ups for this site to download or print your wallet ID.');
+    return;
+  }
+  printWindow.opener = null;
+  printWindow.addEventListener('load', function() {
+    window.setTimeout(function() {
+      printWindow.focus();
+      printWindow.print();
+    }, 300);
+  }, { once: true });
+  printWindow.document.open();
+  printWindow.document.write(`<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>ERecPass Patient ID - ${escapeHtml(fullName)}</title>
+  <style>
+    @page { size: A4 landscape; margin: 12mm; }
+    * { box-sizing: border-box; }
+    body { margin: 0; color: #172a24; font-family: Arial, Helvetica, sans-serif; }
+    .sheet { min-height: 100vh; display: flex; align-items: flex-start; justify-content: center; gap: 8mm; padding-top: 12mm; }
+    .card { position: relative; width: 85.6mm; height: 54mm; overflow: hidden; border: .35mm solid #18804c; border-radius: 3mm; background: #fff; box-shadow: 0 1mm 3mm #0002; }
+    .header { height: 12mm; padding: 2mm 3mm; display: flex; align-items: center; justify-content: space-between; gap: 2mm; color: #fff; background: #147344; }
+    .hospital { font-size: 8pt; font-weight: 800; letter-spacing: .15mm; }
+    .subhead { margin-top: .6mm; font-size: 5.5pt; }
+    .badge { padding: 1mm 2mm; border-radius: 1mm; color: #17613d; background: #fff; font-size: 6pt; font-weight: 800; }
+    .front-body { padding: 2.5mm 3mm; }
+    .identity { display: flex; align-items: flex-start; gap: 3mm; margin-bottom: 2mm; }
+    .photo { width: 18mm; height: 21mm; flex: 0 0 18mm; border: .4mm solid #147344; border-radius: 1.5mm; object-fit: cover; background: #edf4ef; }
+    .initials { display: flex; align-items: center; justify-content: center; color: #147344; font-size: 16pt; font-weight: 800; }
+    .name-block { min-width: 0; padding-top: .4mm; }
+    .label, .field span { display: block; margin-bottom: .6mm; color: #66776e; font-size: 5pt; font-weight: 700; letter-spacing: .2mm; text-transform: uppercase; }
+    .name { color: #14251d; font-size: 10pt; font-weight: 800; line-height: 1.15; overflow-wrap: anywhere; }
+    .patient-number { margin-top: 2mm; color: #17613d; font-size: 7pt; font-weight: 800; overflow-wrap: anywhere; }
+    .fields { display: grid; grid-template-columns: 1fr 1fr; gap: 1.6mm 3mm; }
+    .field { min-width: 0; }
+    .field strong { display: block; color: #172a24; font-size: 6.5pt; line-height: 1.15; overflow-wrap: anywhere; }
+    .wide { grid-column: 1 / -1; }
+    .footer { position: absolute; right: 0; bottom: 0; left: 0; padding: 1.5mm 3mm; border-top: .25mm solid #d5e8dc; color: #17613d; background: #f0f8f3; font-size: 5pt; font-weight: 700; }
+    .back-body { height: 42mm; padding: 3mm; display: flex; flex-direction: column; justify-content: space-between; }
+    .emergency { display: grid; grid-template-columns: 1fr 1fr; gap: 3mm; }
+    .qr-row { display: flex; align-items: center; justify-content: space-between; gap: 3mm; }
+    .qr-copy { color: #45584e; font-size: 6pt; line-height: 1.4; }
+    .qr-copy strong { display: block; margin-bottom: 1mm; color: #17613d; font-size: 7pt; overflow-wrap: anywhere; }
+    .qr { width: 21mm; height: 21mm; flex: 0 0 21mm; image-rendering: pixelated; }
+    .disclaimer { margin: 1mm 0 0; color: #59665f; font-size: 4.5pt; line-height: 1.25; }
+    @media print { .sheet { min-height: 0; padding-top: 0; } .card { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
+    @media screen { body { padding: 12mm; background: #eef2ef; } }
+  </style>
+</head>
+<body>
+  <main class="sheet">
+    <article class="card" aria-label="Patient ID front">
+      <header class="header"><div><div class="hospital">ANGONO GENERAL HOSPITAL</div><div class="subhead">ERecPass · Patient Digital ID</div></div><span class="badge">PATIENT</span></header>
+      <div class="front-body">
+        <div class="identity">${photoMarkup}<div class="name-block"><span class="label">Full name</span><div class="name">${escapeHtml(fullName)}</div><div class="patient-number">PATIENT ID · ${escapeHtml(patientId)}</div></div></div>
+        <div class="fields">${field('Gender', gender)}${field('Date of birth', birthDate)}${field('Age', age)}${field('Blood type', bloodType)}${field('Address', address, 'wide')}</div>
+      </div>
+      <footer class="footer">Keep this card available for hospital identification.</footer>
+    </article>
+    <article class="card" aria-label="Patient ID back">
+      <header class="header"><div><div class="hospital">EMERGENCY INFORMATION</div><div class="subhead">ERecPass Digital ID · Back</div></div><span class="badge">RETURN TO HOSPITAL IF FOUND</span></header>
+      <div class="back-body">
+        <div class="emergency">${field('Guardian name', guardianName)}${field('Guardian contact', guardianContact)}</div>
+        <div class="qr-row"><div class="qr-copy"><span class="label">Patient ID</span><strong>${escapeHtml(patientId)}</strong>Scan this code to identify the patient in ERecPass.</div><img class="qr" src="${escapeHtml(qrSource)}" alt="Patient ID QR code"></div>
+        <p class="disclaimer">For ERecPass hospital identification only. Not a PhilHealth card, government-issued ID, or proof of insurance.</p>
+      </div>
+    </article>
+  </main>
+</body>
+</html>`);
+  printWindow.document.close();
 }
 
 function generatePatientQR() {
@@ -11488,8 +11626,8 @@ setTimeout(installAddedUI,2500);
 <!-- Supabase Auth and cloud data -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-client.js?v=20261028c"></script>
-<script src="./supabase-runtime.js?v=20261030a"></script>
-<script src="./supabase-auth-runtime.js?v=20261029d"></script>
+<script src="./supabase-runtime.js?v=20261029a"></script>
+<script src="./supabase-auth-runtime.js?v=20261030c"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
 (function(){
@@ -13185,6 +13323,418 @@ document.addEventListener('keydown', event => {
 })();
 </script>
 <script src="./medication-reminders.js"></script>
+
+<script>
+(function installEmergencyAlerts() {
+  'use strict';
+
+  const tapWindowMs = 2000;
+  const holdDurationMs = 3000;
+  let emergencyAlertRefreshRunning = false;
+  let knownEmergencyAlertIds = null;
+
+  function setEmergencyGestureStatus(message) {
+    const status = document.getElementById('patientEmergencyGestureStatus');
+    if (status) status.textContent = message;
+  }
+
+  function setupEmergencyTripleHold(button, action) {
+    if (!button || button.dataset.emergencyTripleHoldReady === '1') return;
+    button.dataset.emergencyTripleHoldReady = '1';
+
+    const ring = button.querySelector('#patientProgressRing');
+    let tapCount = 0;
+    let lastTapAt = 0;
+    let holdStartedAt = 0;
+    let animationFrame = 0;
+    let holdActive = false;
+
+    function resetGesture(resetTaps) {
+      if (animationFrame) cancelAnimationFrame(animationFrame);
+      animationFrame = 0;
+      holdActive = false;
+      if (ring) ring.style.strokeDashoffset = '100';
+      button.classList.remove('is-pressing');
+      if (resetTaps) {
+        tapCount = 0;
+        lastTapAt = 0;
+        setEmergencyGestureStatus('Tap 3 times, then hold the third press for 3 seconds. An alert is sent to admins; choose a call option next.');
+      }
+    }
+
+    function beginThirdPress() {
+      holdActive = true;
+      holdStartedAt = performance.now();
+      button.classList.add('is-pressing');
+      button.setAttribute('aria-label', 'Keep holding for 3 seconds to send an emergency alert and open call options');
+      setEmergencyGestureStatus('Keep holding the third press for 3 seconds…');
+
+      function updateProgress() {
+        if (!holdActive) return;
+        const fraction = Math.min(1, (performance.now() - holdStartedAt) / holdDurationMs);
+        if (ring) ring.style.strokeDashoffset = String(100 * (1 - fraction));
+        if (fraction >= 1) {
+          resetGesture(true);
+          button.setAttribute('aria-label', 'Tap 3 times, then hold the third press for 3 seconds to activate emergency options');
+          action();
+          return;
+        }
+        animationFrame = requestAnimationFrame(updateProgress);
+      }
+      animationFrame = requestAnimationFrame(updateProgress);
+    }
+
+    function registerPress() {
+      const now = performance.now();
+      if (now - lastTapAt > tapWindowMs) tapCount = 0;
+      lastTapAt = now;
+      if (tapCount < 2) {
+        tapCount += 1;
+        const remaining = 3 - tapCount;
+        setEmergencyGestureStatus('Emergency activation: tap ' + remaining + (remaining === 1 ? ' more time, then hold.' : ' more times.'));
+        button.setAttribute('aria-label', 'Tap ' + remaining + ' more time' + (remaining === 1 ? '' : 's') + ', then hold the third press for 3 seconds');
+        return false;
+      }
+      tapCount = 3;
+      beginThirdPress();
+      return true;
+    }
+
+    button.addEventListener('pointerdown', event => {
+      if (event.pointerType === 'mouse' && event.button !== 0) return;
+      event.preventDefault();
+      if (holdActive) return;
+      const started = registerPress();
+      if (started) {
+        try { button.setPointerCapture(event.pointerId); } catch (_) {}
+      }
+    });
+
+    button.addEventListener('pointerup', event => {
+      if (!holdActive) return;
+      if (event.pointerId !== undefined && button.hasPointerCapture && !button.hasPointerCapture(event.pointerId)) return;
+      resetGesture(true);
+      button.setAttribute('aria-label', 'Tap 3 times, then hold the third press for 3 seconds to activate emergency options');
+    });
+    button.addEventListener('pointercancel', () => {
+      if (holdActive) resetGesture(true);
+    });
+    button.addEventListener('lostpointercapture', () => {
+      if (holdActive) resetGesture(true);
+    });
+    button.addEventListener('click', event => event.preventDefault());
+
+    button.addEventListener('keydown', event => {
+      if (event.key !== ' ' && event.key !== 'Enter') return;
+      event.preventDefault();
+      if (event.repeat || holdActive) return;
+      registerPress();
+    });
+    button.addEventListener('keyup', event => {
+      if ((event.key === ' ' || event.key === 'Enter') && holdActive) {
+        resetGesture(true);
+        button.setAttribute('aria-label', 'Tap 3 times, then hold the third press for 3 seconds to activate emergency options');
+      }
+    });
+    button.addEventListener('blur', () => {
+      if (holdActive) resetGesture(true);
+    });
+  }
+
+  function requestEmergencyLocation() {
+    return new Promise(resolve => {
+      if (!navigator.geolocation) {
+        resolve(null);
+        return;
+      }
+      try {
+        navigator.geolocation.getCurrentPosition(
+          position => resolve({
+            latitude: position.coords.latitude,
+            longitude: position.coords.longitude,
+            location_accuracy_m: Number.isFinite(position.coords.accuracy) ? position.coords.accuracy : null
+          }),
+          () => resolve(null),
+          { enableHighAccuracy: true, timeout: 8000, maximumAge: 0 }
+        );
+      } catch (_) {
+        resolve(null);
+      }
+    });
+  }
+
+  async function saveEmergencyAlert(location, sourceHint) {
+    const client = window.erecpassSupabase;
+    if (!client?.auth || !client?.from) throw new Error('Supabase is unavailable. Refresh the app and try again.');
+
+    const sessionResult = await client.auth.getSession();
+    if (sessionResult.error) throw sessionResult.error;
+    let user = sessionResult.data?.session?.user || null;
+    let signedInAnonymously = false;
+
+    if (!user) {
+      const anonymousResult = await client.auth.signInAnonymously();
+      if (anonymousResult.error) throw new Error('Could not start a protected pre-login alert session: ' + anonymousResult.error.message);
+      user = anonymousResult.data?.user || anonymousResult.data?.session?.user || null;
+      signedInAnonymously = true;
+    }
+    if (!user?.id) throw new Error('Supabase did not provide an alert reporter identity.');
+
+    const anonymousUser = signedInAnonymously || user.is_anonymous === true || user.app_metadata?.provider === 'anonymous';
+    const role = currentSession?.role;
+    const source = anonymousUser ? 'pre_login' : sourceHint || (role === 'patient' ? 'patient_portal' : role === 'staff' ? 'staff_portal' : role === 'admin' ? 'admin_portal' : 'pre_login');
+    const alert = {
+      user_id: user.id,
+      message: 'Emergency alert from ' + source.replaceAll('_', ' ') + '.',
+      status: 'new',
+      latitude: location?.latitude ?? null,
+      longitude: location?.longitude ?? null,
+      updated_at: new Date().toISOString()
+    };
+
+    try {
+      const insertResult = await client.from('emergency_alerts').insert(alert);
+      if (insertResult.error) throw insertResult.error;
+    } finally {
+      if (anonymousUser) {
+        const signOutResult = await client.auth.signOut();
+        if (signOutResult.error) console.error('[ERecPass] Could not close temporary emergency session:', signOutResult.error);
+      }
+    }
+  }
+
+  function activateEmergency(sourceHint) {
+    openEmergencyModal();
+    const status = document.getElementById('emergencyAlertStatus');
+    if (status) status.textContent = 'Sending emergency alert to the admin dashboard… Requesting your location permission.';
+    setEmergencyGestureStatus('Emergency options opened.');
+
+    const locationPromise = requestEmergencyLocation();
+    saveEmergencyAlertAfterLocation(locationPromise, status, sourceHint);
+  }
+
+  async function saveEmergencyAlertAfterLocation(locationPromise, status, sourceHint) {
+    let location = null;
+    try {
+      location = await locationPromise;
+      await saveEmergencyAlert(location, sourceHint);
+      if (status) {
+        status.textContent = location
+          ? 'Emergency alert sent to the admin dashboard with your shared location. Tap a call option to open your phone dialer.'
+          : 'Emergency alert sent without GPS location. Tap a call option to open your phone dialer.';
+      }
+    } catch (error) {
+      console.error('[ERecPass] Emergency alert submission failed:', error);
+      if (status) status.textContent = 'Admin alert could not be sent: ' + (error.message || 'unknown error') + ' Call the configured hotline or 911 now.';
+    }
+  }
+
+  window.setupHoldEmergencyButtons = function() {
+    const patientButton = document.getElementById('patientHoldEmergencyBtn');
+    const card = document.getElementById('patientEmergencyCard');
+    if (card && patientButton) {
+      card.dataset.holdSetup = 'true';
+      setupEmergencyTripleHold(patientButton, () => activateEmergency('patient_portal'));
+    }
+  };
+
+  window.refreshEmergencyAlerts = async function() {
+    const status = document.getElementById('adminEmergencyAlertsStatus');
+    const list = document.getElementById('adminEmergencyAlertsList');
+    const client = window.erecpassSupabase;
+    if (!status || !list || emergencyAlertRefreshRunning) return;
+    if (currentSession?.role !== 'admin') {
+      status.textContent = 'Sign in as an active administrator to view emergency alerts.';
+      list.replaceChildren();
+      return;
+    }
+    if (!client?.from || !client?.auth) {
+      status.textContent = 'Supabase is unavailable. Emergency alerts cannot be loaded.';
+      return;
+    }
+
+    emergencyAlertRefreshRunning = true;
+    try {
+      const result = await client.from('emergency_alerts')
+        .select('id,user_id,message,latitude,longitude,status,created_at,updated_at')
+        .order('created_at', { ascending: false })
+        .limit(30);
+      if (result.error) throw result.error;
+      const alerts = result.data || [];
+      list.replaceChildren();
+      status.textContent = alerts.length ? alerts.filter(alert => alert.status === 'new').length + ' new · ' + alerts.length + ' recent alert(s).' : 'No emergency alerts have been received.';
+      const currentAlertIds = new Set(alerts.map(alert => String(alert.id)));
+      if (knownEmergencyAlertIds) {
+        const newAlerts = alerts.filter(alert => alert.status === 'new' && !knownEmergencyAlertIds.has(String(alert.id)));
+        if (newAlerts.length && 'Notification' in window && Notification.permission === 'granted') {
+          try {
+            const notice = new Notification(newAlerts.length === 1 ? 'Emergency alert received' : newAlerts.length + ' emergency alerts received', {
+              body: 'Open the ERecPass Admin console and check the Emergency Alert Dashboard.',
+              tag: 'erecpass-emergency-alerts',
+              requireInteraction: true
+            });
+            notice.onclick = () => {
+              window.focus();
+              document.getElementById('adminEmergencyAlertsPanel')?.scrollIntoView({ behavior: 'smooth', block: 'start' });
+              notice.close();
+            };
+          } catch (error) {
+            console.warn('[ERecPass] Could not show desktop emergency notification:', error);
+          }
+        }
+      }
+      knownEmergencyAlertIds = currentAlertIds;
+
+      alerts.forEach(alert => {
+        const item = document.createElement('article');
+        item.className = 'rounded-xl border border-rose-500/30 bg-slate-950/50 p-3 space-y-2';
+        const heading = document.createElement('div');
+        heading.className = 'flex flex-wrap items-center justify-between gap-2';
+        const title = document.createElement('strong');
+        title.className = 'text-sm text-white';
+        title.textContent = alert.user_id ? 'Reporter: ' + alert.user_id : 'Reporter unavailable';
+        const state = document.createElement('span');
+        state.className = 'text-[10px] uppercase font-bold ' + (alert.status === 'new' ? 'text-rose-300' : 'text-emerald-300');
+        state.textContent = alert.status === 'new' ? 'NEW' : 'ACKNOWLEDGED';
+        heading.append(title, state);
+        item.appendChild(heading);
+
+        const details = document.createElement('p');
+        details.className = 'text-xs text-slate-400';
+        const created = new Date(alert.created_at);
+        details.textContent = (Number.isNaN(created.getTime()) ? 'Time unavailable' : created.toLocaleString()) + ' · ' + String(alert.message || 'Emergency alert');
+        item.appendChild(details);
+
+        const latitude = alert.latitude == null ? null : Number(alert.latitude);
+        const longitude = alert.longitude == null ? null : Number(alert.longitude);
+        if (Number.isFinite(latitude) && Number.isFinite(longitude)) {
+          const mapLink = document.createElement('a');
+          mapLink.className = 'inline-block text-xs text-cyan-300 underline';
+          mapLink.href = 'https://www.google.com/maps?q=' + encodeURIComponent(latitude + ',' + longitude);
+          mapLink.target = '_blank';
+          mapLink.rel = 'noopener noreferrer';
+          mapLink.textContent = 'Open shared location';
+          item.appendChild(mapLink);
+        } else {
+          const noLocation = document.createElement('p');
+          noLocation.className = 'text-xs text-slate-500';
+          noLocation.textContent = 'No GPS location was shared.';
+          item.appendChild(noLocation);
+        }
+
+        if (alert.status === 'new') {
+          const acknowledge = document.createElement('button');
+          acknowledge.type = 'button';
+          acknowledge.className = 'px-3 py-1.5 rounded-lg border border-emerald-500/30 bg-emerald-950/50 text-emerald-200 text-xs font-bold';
+          acknowledge.textContent = 'Acknowledge and clear location';
+          acknowledge.addEventListener('click', () => window.acknowledgeEmergencyAlert(alert.id));
+          item.appendChild(acknowledge);
+        }
+        list.appendChild(item);
+      });
+    } catch (error) {
+      console.error('[ERecPass] Emergency alert dashboard load failed:', error);
+      status.textContent = 'Could not load emergency alerts: ' + (error.message || 'unknown error') + ' Check alert table access and Supabase RLS policies.';
+    } finally {
+      emergencyAlertRefreshRunning = false;
+    }
+  };
+
+  window.acknowledgeEmergencyAlert = async function(alertId) {
+    const client = window.erecpassSupabase;
+    const status = document.getElementById('adminEmergencyAlertsStatus');
+    if (!client?.auth || !client?.from || currentSession?.role !== 'admin') {
+      if (status) status.textContent = 'An active admin session is required to acknowledge alerts.';
+      return;
+    }
+    try {
+      const authResult = await client.auth.getUser();
+      if (authResult.error) throw authResult.error;
+      if (!authResult.data?.user) throw new Error('Admin session has expired. Sign in again.');
+      const result = await client.from('emergency_alerts')
+        .update({
+          status: 'acknowledged',
+          latitude: null,
+          longitude: null
+        })
+        .eq('id', alertId)
+        .eq('status', 'new');
+      if (result.error) throw result.error;
+      await window.refreshEmergencyAlerts();
+    } catch (error) {
+      console.error('[ERecPass] Emergency alert acknowledgement failed:', error);
+      if (status) status.textContent = 'Could not acknowledge this alert: ' + (error.message || 'unknown error');
+    }
+  };
+
+  function setupEmergencyEntryPoints() {
+    document.querySelectorAll('button[onclick="openEmergencyModal()"]').forEach(button => {
+      const source = button.closest('#loginPage') ? 'pre_login' : undefined;
+      button.removeAttribute('onclick');
+      setupEmergencyTripleHold(button, () => activateEmergency(source));
+    });
+    ['patientSettingsEmergency', 'adminSettingsEmergency'].forEach(id => {
+      const button = document.getElementById(id);
+      if (!button) return;
+      button.removeAttribute('onclick');
+      setupEmergencyTripleHold(button, () => {
+        document.getElementById('epSettings')?.classList.remove('ep-open');
+        activateEmergency(id === 'patientSettingsEmergency' ? 'patient_portal' : 'admin_portal');
+      });
+    });
+    document.querySelectorAll('#emergencyModal a[href^="tel:"]').forEach(button => {
+      button.dataset.hold3sEmergencyReady = '1';
+    });
+    window.setupHoldEmergencyButtons();
+  }
+
+  const notificationsButton = document.getElementById('adminEmergencyNotificationsButton');
+  if (notificationsButton) {
+    const updateNotificationsButton = () => {
+      if (!('Notification' in window)) {
+        notificationsButton.textContent = 'Desktop alerts unsupported';
+        notificationsButton.disabled = true;
+      } else if (Notification.permission === 'granted') {
+        notificationsButton.textContent = 'Desktop alerts enabled';
+        notificationsButton.disabled = true;
+      } else if (Notification.permission === 'denied') {
+        notificationsButton.textContent = 'Desktop alerts blocked';
+        notificationsButton.disabled = true;
+      }
+    };
+    updateNotificationsButton();
+    notificationsButton.addEventListener('click', async () => {
+      if (!('Notification' in window)) {
+        updateNotificationsButton();
+        return;
+      }
+      try {
+        await Notification.requestPermission();
+        updateNotificationsButton();
+      } catch (error) {
+        console.error('[ERecPass] Could not request desktop notification permission:', error);
+        notificationsButton.textContent = 'Desktop alerts unavailable';
+      }
+    });
+  }
+
+  setupEmergencyEntryPoints();
+  const originalLaunch = window.launchPortalByRole;
+  if (typeof originalLaunch === 'function') {
+    window.launchPortalByRole = function(role) {
+      const result = originalLaunch.apply(this, arguments);
+      if (role === 'admin') window.refreshEmergencyAlerts();
+      return result;
+    };
+  }
+  window.setInterval(() => {
+    const adminApp = document.getElementById('adminApp');
+    if (adminApp && !adminApp.classList.contains('hidden') && currentSession?.role === 'admin') {
+      window.refreshEmergencyAlerts();
+    }
+  }, 15000);
+})();
+</script>
 
 <style id="erecpass-mobile-splash-layout-fix">
 @media (min-width: 641px) and (max-height: 900px) {

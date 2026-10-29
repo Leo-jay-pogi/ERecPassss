@@ -7,6 +7,7 @@
   };
   const client = () => window.erecpassSupabase;
   const cleanEmail = value => String(value || '').trim().toLowerCase();
+  let adminLoginInProgress = false;
   const ageFromBirthDate = value => {
     const m = String(value || '').match(/^(\d{4})-(\d{2})-(\d{2})$/);
     if (!m) return null;
@@ -162,6 +163,9 @@
 
   async function completeRoleLogin(email, password, expectedRole, label) {
     const sb = client();
+    if (!sb?.auth || typeof sb.auth.signInWithPassword !== 'function') {
+      throw new Error('Supabase authentication is unavailable. Refresh the page and try again.');
+    }
     const auth = await sb.auth.signInWithPassword({ email, password });
     if (auth.error) throw auth.error;
     const user = auth.data?.user;
@@ -178,10 +182,22 @@
       }
     }
     const result = await sb.from('profiles').select('id,full_name,role,active').eq('id', user.id).maybeSingle();
-    if (result.error) throw result.error;
+    if (result.error) {
+      if (expectedRole === 'admin') {
+        try { await sb.auth.signOut(); }
+        catch (signOutError) { console.error('[ERecPass] Could not close unverified Admin session:', signOutError); }
+      }
+      throw result.error;
+    }
     const profile = result.data;
-    if (!profile || String(profile.role || '').toLowerCase() !== expectedRole || profile.active === false) {
-      await sb.auth.signOut();
+    const roleMatches = profile && String(profile.role || '').toLowerCase() === expectedRole;
+    const accountIsActive = expectedRole === 'admin' ? profile?.active === true : profile?.active !== false;
+    if (!roleMatches || !accountIsActive) {
+      try { await sb.auth.signOut(); }
+      catch (signOutError) { console.error('[ERecPass] Could not close rejected ' + label + ' session:', signOutError); }
+      if (roleMatches && expectedRole === 'admin') {
+        throw new Error('This Admin account is inactive or not enabled. Contact the system administrator.');
+      }
       throw new Error(profile?.active === false ? 'This account is deactivated.' : 'This account is not enabled for ' + label + ' Login.');
     }
     if (typeof window.erecpassCloudHydrate === 'function') await window.erecpassCloudHydrate();
@@ -268,11 +284,29 @@
 
   window.handleAdminLogin = async function (event) {
     event?.preventDefault();
+    if (adminLoginInProgress) return;
     const email = cleanEmail(document.getElementById('adminLoginUser')?.value);
     const password = document.getElementById('adminLoginPassword')?.value || '';
     if (!email || !password) { alert('Please enter your Admin email and password.'); return; }
+    const form = document.getElementById('adminLoginForm');
+    const button = form?.querySelector('button[type="submit"]');
+    const originalLabel = button?.textContent || 'ADMIN LOGIN';
+    adminLoginInProgress = true;
+    if (button) {
+      button.disabled = true;
+      button.textContent = 'SIGNING IN...';
+    }
+    form?.setAttribute('aria-busy', 'true');
     try { await completeRoleLogin(email, password, 'admin', 'Admin'); }
     catch (error) { console.error('[ERecPass] Admin login failed:', error); showAuthError(error, 'Admin'); }
+    finally {
+      adminLoginInProgress = false;
+      if (button) {
+        button.disabled = false;
+        button.textContent = originalLabel;
+      }
+      form?.removeAttribute('aria-busy');
+    }
   };
 
   window.showWaitingConfirmation = function (email) {

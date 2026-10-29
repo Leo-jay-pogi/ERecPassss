@@ -10243,7 +10243,7 @@ window.sendErecpassPasswordReset=async function(){
   }catch(_){ /* Continue if browser storage is unavailable. */ }
 
   try{
-    const redirectTo='https://jomarportfolio.github.io/ERECPASS-/';
+    const redirectTo=window.location.origin+window.location.pathname;
     const result=await window.erecpassSupabase.auth.resetPasswordForEmail(email,{redirectTo});
     if(result.error) throw result.error;
     try{ localStorage.setItem(cooldownKey,String(Date.now())); }catch(_){}

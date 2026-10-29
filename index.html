@@ -2440,6 +2440,8 @@ Review the user agreement before continuing. You can enlarge the document in the
   Forgot Password?
 </button>
 
+<button type="button" onclick="window.showWaitingConfirmation(document.getElementById('loginEmail')?.value)" class="w-full py-1 text-xs text-cyan-300 font-tech hover:underline">Verify email with a code</button>
+
 <p class="text-center text-xs text-slate-400 mt-4">
 
 Don't have an account? 
@@ -2504,7 +2506,7 @@ Don't have an account?
 
 <i class="fa-solid fa-id-badge text-cyan-400 text-xs"></i>
 
-<input type="text" id="staffLoginName" placeholder="Enter staff name" required class="w-full bg-transparent outline-none text-xs">
+<input type="email" id="staffLoginName" placeholder="Enter staff email" autocomplete="username" required class="w-full bg-transparent outline-none text-xs">
 
 </div>
 
@@ -4823,7 +4825,7 @@ function getRegisterFullName() {
 
 function sendSimCode() {
   const email = document.getElementById('regEmail')?.value.trim();
-  alert("Firebase Email Confirmation is active.\n\nWhen you click 'CREATE ACCOUNT', Firebase will automatically send a confirmation link to your email (" + (email || 'your registered email') + "). Open the link in your inbox to verify your account before logging in.");
+  alert("Supabase email confirmation is active. When you create your account, Supabase will send a verification code to " + (email || 'your registered email') + '.');
 }
 
 async function handleRegister(e) {
@@ -4875,17 +4877,13 @@ return;
 
 try {
 
-const redirectTo = window.location.origin + window.location.pathname;
-
-const { data, error } = await client.auth.signUp({
+  const { data, error } = await client.auth.signUp({
 
 email: email,
 
 password: pass,
 
 options: {
-
-emailRedirectTo: redirectTo,
 
 data: {
 
@@ -7497,31 +7495,28 @@ const button = document.querySelector('#adminTabStaff button[onclick="adminCreat
 if (button) { button.disabled = true; button.textContent = "CREATING STAFF ACCOUNT…"; }
 
 try {
-  const { data, error } = await window.erecpassSupabase.functions.invoke('admin-manage-account', {
-    body: { action: 'create_staff', fullName: name, email, password: pass, roleTitle: role, task }
+const { data, error } = await window.erecpassSupabase.functions.invoke('admin-create-staff', {
+    body: { fullName: name, email, password: pass, roleTitle: role, task }
   });
   if (error) throw error;
   if (!data?.ok || !data?.staff) throw new Error(data?.error || 'Staff account could not be created.');
 
-  const staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF)) || [];
-  const created = data.staff;
-  const staffRecord = {
-    id: created.id, user_id: created.user_id, name: created.name, email: created.email,
-    role: created.role || role, task: created.task || task, available: true,
-    schedule: "Mon-Sat", active: true
-  };
-  const existingIndex = staffList.findIndex(s => String(s.id) === String(created.id) || String(s.user_id || '') === String(created.user_id || ''));
-  if (existingIndex >= 0) staffList[existingIndex] = { ...staffList[existingIndex], ...staffRecord };
-  else staffList.push(staffRecord);
-  epStore.setItem(DB_KEYS.STAFF, JSON.stringify(staffList));
-
-  addLog("Created Staff Account: " + name + " (" + email + ")");
-  renderAdminStaffList();
+  if (data.verificationRequired === false) addLog("Created Staff account without email verification for " + email);
+  else addLog("Sent Supabase Staff verification email to " + email);
   ['adminCreateStaffName','adminCreateStaffEmail','adminCreateStaffPass','adminCreateStaffRole','adminCreateStaffTask'].forEach(id => { const el=document.getElementById(id); if(el) el.value=''; });
-  alert("Staff account created successfully.\n\nStaff Email: " + email + "\nThe Staff can now log in using the email and password assigned by Admin.");
+  if (data.verificationRequired === false) {
+    alert("Staff account created without email verification. The staff member can sign in now using the email and password you set.");
+  } else {
+    alert("Staff account created. A Supabase verification email was sent to " + email + ". The staff member must verify the email before signing in.");
+  }
 } catch (cloudError) {
   console.error("Staff account creation failed:", cloudError);
-  alert("Could not create Staff account: " + (cloudError.message || cloudError));
+  const errorMessage = String(cloudError?.message || cloudError || 'Could not create Staff account.');
+  if (/email rate limit exceeded|over_email_send_rate_limit|email.*rate.?limit/i.test(errorMessage)) {
+    alert("Supabase has reached its email sending limit. Set up custom SMTP in Supabase Authentication settings, then try again later. Avoid repeated retries.");
+  } else {
+    alert("Could not create Staff account: " + errorMessage);
+  }
 } finally {
   if (button) { button.disabled = false; button.textContent = "Create Staff Account"; }
 }
@@ -10713,14 +10708,11 @@ setTimeout(installAddedUI,2500);
 })();
 </script>
 
-<!-- Firebase App and Auth SDKs for Email Confirmation & Verification -->
+<!-- Supabase Auth and cloud data -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-client.js?v=20261028c"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-app-compat.js"></script>
-<script src="https://www.gstatic.com/firebasejs/10.12.2/firebase-auth-compat.js"></script>
-<script src="./firebase-auth-client.js?v=20261029b"></script>
 <script src="./supabase-runtime.js?v=20261029a"></script>
-<script src="./firebase-auth-runtime.js?v=20261029b"></script>
+<script src="./supabase-auth-runtime.js?v=20261029d"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
 (function(){
@@ -11538,31 +11530,22 @@ document.addEventListener('keydown', event => {
 </style>
 <!-- END ERECPASS APPOINTMENT STATUS COLORS -->
 
-<!-- ===== FIREBASE EMAIL CONFIRMATION MODAL ===== -->
-<div id="firebaseConfirmModal" style="display:none;position:fixed;inset:0;z-index:99999;background:rgba(3,10,22,0.92);backdrop-filter:blur(8px);-webkit-backdrop-filter:blur(8px);align-items:center;justify-content:center;" class="flex">
-  <div style="background:rgba(6,20,43,0.98);border:1px solid rgba(0,240,255,0.35);border-radius:24px;padding:32px 28px;max-width:340px;width:90%;box-shadow:0 0 40px rgba(0,240,255,0.18);text-align:center;">
-    <div style="width:64px;height:64px;background:rgba(0,240,255,0.1);border:2px solid rgba(0,240,255,0.5);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 16px;">
-      <i class="fa-solid fa-envelope-circle-check" style="font-size:28px;color:#00f0ff;"></i>
-    </div>
-    <h2 style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-size:15px;font-weight:700;margin-bottom:8px;letter-spacing:1px;">CHECK YOUR GMAIL</h2>
-    <p style="color:#94a3b8;font-size:12px;line-height:1.6;margin-bottom:6px;">A confirmation link has been sent to</p>
-    <p id="firebaseConfirmEmail" style="color:#00f0ff;font-size:12px;font-weight:700;margin-bottom:16px;word-break:break-all;"></p>
-    <p style="color:#94a3b8;font-size:11px;line-height:1.6;margin-bottom:24px;">Open your Gmail inbox (or Spam folder) and click the confirmation link to activate your account.</p>
-    <button onclick="window.showWaitingConfirmation()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;border-radius:12px;padding:12px 32px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;transition:opacity 0.2s;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">OK</button>
-  </div>
-</div>
-
 <!-- ===== WAITING FOR CONFIRMATION SCREEN ===== -->
 <div id="waitingConfirmPage" class="auth-page hidden min-h-screen flex items-center justify-center p-4 relative z-10">
   <div class="auth-card w-full max-w-md rounded-3xl p-8" style="text-align:center;">
     <div style="width:80px;height:80px;background:rgba(0,240,255,0.08);border:2px solid rgba(0,240,255,0.4);border-radius:50%;display:flex;align-items:center;justify-content:center;margin:0 auto 20px;animation:pulseGlow 2.5s infinite ease-in-out;">
       <i class="fa-solid fa-hourglass-half" style="font-size:32px;color:#00f0ff;"></i>
     </div>
-    <h2 style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:1px;">WAITING FOR CONFIRMATION</h2>
-    <p style="color:#94a3b8;font-size:12px;line-height:1.8;margin-bottom:6px;">We sent a confirmation link to</p>
+    <h2 style="font-family:'Orbitron',sans-serif;color:#00f0ff;font-size:16px;font-weight:700;margin-bottom:8px;letter-spacing:1px;">VERIFY YOUR EMAIL</h2>
+    <p style="color:#94a3b8;font-size:12px;line-height:1.8;margin-bottom:6px;">Enter the one-time code Supabase emailed to</p>
     <p id="waitingConfirmEmail" style="color:#00f0ff;font-size:13px;font-weight:700;margin-bottom:20px;word-break:break-all;"></p>
-    <p style="color:#64748b;font-size:11px;line-height:1.8;margin-bottom:28px;">Please open your Gmail, click the verification link, and come back here to log in.</p>
+    <label for="verifyCodeEmail" style="display:block;color:#94a3b8;font-size:11px;text-align:left;margin-bottom:6px;">Email (for staff, enter the invited email)</label>
+    <input id="verifyCodeEmail" type="email" autocomplete="email" placeholder="you@example.com" style="width:100%;box-sizing:border-box;background:#0f172a;color:#fff;border:1px solid rgba(0,240,255,.35);border-radius:10px;padding:12px;margin-bottom:10px;">
+    <label for="verifySignupToken" style="display:block;color:#94a3b8;font-size:11px;text-align:left;margin-bottom:6px;">Verification code</label>
+    <input id="verifySignupToken" type="text" inputmode="numeric" autocomplete="one-time-code" placeholder="Enter the code from your email" style="width:100%;box-sizing:border-box;background:#0f172a;color:#fff;border:1px solid rgba(0,240,255,.35);border-radius:10px;padding:12px;text-align:center;letter-spacing:5px;margin-bottom:16px;">
+    <p style="color:#64748b;font-size:11px;line-height:1.8;margin-bottom:20px;">After verification, sign in here. Opening the code email itself will not navigate to the app.</p>
     <div style="display:flex;gap:10px;flex-direction:column;">
+      <button id="verifySignupButton" type="button" onclick="window.verifySignupCode()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;">VERIFY EMAIL</button>
       <button onclick="window.showLogin()" style="background:linear-gradient(135deg,#0891b2,#0e7490);color:#fff;border:none;border-radius:12px;padding:13px;font-family:'Orbitron',sans-serif;font-size:11px;font-weight:700;letter-spacing:1px;cursor:pointer;width:100%;" onmouseover="this.style.opacity='0.85'" onmouseout="this.style.opacity='1'">
         <i class="fa-solid fa-right-to-bracket" style="margin-right:6px;"></i> GO TO LOGIN
       </button>
@@ -11572,53 +11555,6 @@ document.addEventListener('keydown', event => {
     </div>
   </div>
 </div>
-
-<script>
-(function() {
-  // Store email for both screens
-  window._erecpassPendingEmail = '';
-  window._erecpassPendingPass = '';
-
-  window.showFirebaseConfirmModal = function(email, pass) {
-    window._erecpassPendingEmail = email || '';
-    window._erecpassPendingPass = pass || '';
-    var modal = document.getElementById('firebaseConfirmModal');
-    var emailEl = document.getElementById('firebaseConfirmEmail');
-    if (emailEl) emailEl.textContent = email || '';
-    if (modal) modal.style.display = 'flex';
-  };
-
-  window.showWaitingConfirmation = function() {
-    // Hide modal
-    var modal = document.getElementById('firebaseConfirmModal');
-    if (modal) modal.style.display = 'none';
-
-    // Hide all auth pages and show waiting screen
-    document.querySelectorAll('.auth-page').forEach(function(p) { p.classList.add('hidden'); });
-    var waiting = document.getElementById('waitingConfirmPage');
-    var emailEl = document.getElementById('waitingConfirmEmail');
-    if (emailEl) emailEl.textContent = window._erecpassPendingEmail || '';
-    if (waiting) {
-      waiting.classList.remove('hidden');
-      waiting.style.display = 'flex';
-    }
-  };
-
-  window.resendConfirmEmailFromWaiting = function() {
-    var email = window._erecpassPendingEmail;
-    var pass = window._erecpassPendingPass;
-    if (!email || !pass) { alert('No pending account found. Please register again.'); return; }
-    if (window.ERecPassFirebase && window.ERecPassFirebase.isConfigured()) {
-      window.ERecPassFirebase.resendVerificationEmail(email, pass)
-        .then(function() { alert('Confirmation email resent to ' + email + '.\nPlease check your inbox and Spam folder.'); })
-        .catch(function(e) { alert('Could not resend: ' + (e.message || e)); });
-    } else {
-      alert('Firebase is not available. Please check your internet connection.');
-    }
-  };
-
-})();
-</script>
 
 <!-- Replace browser alert/confirm dialogs (which display localhost) with ERecPass dialogs. -->
 <script>

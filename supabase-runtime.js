@@ -27,6 +27,25 @@
       }
       const sr=await sb().auth.getSession();if(sr.error)throw sr.error;
       const u=sr.data.session?.user;
+      // Signup confirmation can return a temporary Supabase session before the
+      // patient record has been finalized. Do not hydrate/refresh the patient
+      // portal yet: that startup refresh writes the incomplete profile through
+      // the cloud adapter and can fail its patient-row check. Sign out of the
+      // confirmation callback and let the normal password login finish setup.
+      if(u?.user_metadata?.erecpass_pending_registration){
+        const verifiedEmail=u.email||'';
+        await sb().auth.signOut();
+        role='anon';user=null;
+        [K.P,K.S,K.A,K.N,K.B,K.C,K.L].forEach(k=>put(k,'[]'));
+        put(K.X,null);
+        window.currentSession=null;
+        try{currentSession=null}catch(_){}
+        setTimeout(()=>{
+          if(typeof window.showLogin==='function')window.showLogin();
+          if(verifiedEmail)alert('Email verified for '+verifiedEmail+'. Sign in now to finish saving your patient profile.');
+        },0);
+        return;
+      }
       if(!u){role='anon';user=null;[K.P,K.S,K.A,K.N,K.B,K.C,K.L].forEach(k=>put(k,'[]'));put(K.X,null);return}
       user=u;
       const pr=await sb().from('profiles').select('id,full_name,role,active').eq('id',u.id).maybeSingle();
@@ -180,7 +199,7 @@
   // Keep the existing control, but do not block account creation on a fake verification step.
   window.sendSimCode=function(){
     const email=document.getElementById('regEmail')?.value.trim();
-    alert('Firebase Email Confirmation is active.\n\nWhen you click CREATE ACCOUNT, Firebase will send a confirmation link to '+(email||'your registered email')+'. Open the link in your inbox to verify your account before logging in.');
+    alert('Supabase email verification is active. When you create your account, a verification link will be sent to '+(email||'your registered email')+'.');
   };
   window.handleRegister=async function(e){
     e?.preventDefault();
@@ -204,16 +223,7 @@
     const submit=document.querySelector('#registerForm button[type="submit"]');
     if(submit){submit.disabled=true;submit.textContent='CREATING ACCOUNT…'}
     try{
-      // 1. Send confirmation email via Firebase Auth
-      if(window.ERecPassFirebase&&window.ERecPassFirebase.isConfigured()){
-        try{
-          await window.ERecPassFirebase.registerAndSendConfirmation(email,password,fullName);
-        }catch(fbErr){
-          console.error('[ERecPass] Firebase registration error:',fbErr);
-          throw fbErr;
-        }
-      }
-      // 2. Register account in Supabase
+      // Supabase Auth owns account creation and email verification.
       let signupUser=null,signupSession=null;
       try{
         const r=await sb().auth.signUp({email,password,options:{data:{full_name:fullName,sim,role:'patient'}}});
@@ -230,7 +240,7 @@
         if(!errMsg.includes('rate limit')&&!errMsg.includes('email_send_rate_limit')){
           throw sbErr;
         }
-        console.warn('[ERecPass] Supabase email rate limit suppressed because Firebase dispatched confirmation:',sbErr);
+        console.warn('[ERecPass] Supabase email rate limit:',sbErr);
       }
       // When Supabase returns a session, confirm that the patient row exists.
       // The auth trigger remains responsible for the no-session confirmation flow.
@@ -251,7 +261,7 @@
       try{await sb().auth.signOut()}catch(_){}
       document.getElementById('registerForm')?.reset();
       showLogin();
-      alert('Registration successful!\n\nA confirmation link has been sent to '+email+' via Firebase.\n\nPlease open your email inbox (and Spam folder), click the confirmation link, and then log in.');
+      alert('Registration successful!\n\nA confirmation link has been sent to '+email+' by Supabase. Please verify your email, then log in.');
     }catch(x){
       const message=x?.message||'Registration failed.';
       if(/already registered|already been registered|user already exists/i.test(message)){
@@ -267,30 +277,6 @@
     e?.preventDefault();
     const email=document.getElementById('loginEmail')?.value.trim().toLowerCase(),password=document.getElementById('loginPassword')?.value||'';
     if(!email||!password){alert('Please enter email and password.');return}
-
-    if(window.ERecPassFirebase&&window.ERecPassFirebase.isConfigured()){
-      try{
-        const fbCheck=await window.ERecPassFirebase.checkEmailVerification(email,password);
-        if(fbCheck.error){
-          alert(fbCheck.error);
-          return;
-        }
-        if(fbCheck.verified===false){
-          const resend=confirm('Your email address ('+email+') has not been verified yet.\n\nPlease check your inbox (or Spam folder) and click the confirmation link sent by Firebase before logging in.\n\nWould you like us to resend the confirmation email now?');
-          if(resend){
-            try{
-              await window.ERecPassFirebase.resendVerificationEmail(email,password);
-              alert('A new confirmation email has been sent to '+email+'. Please check your inbox.');
-            }catch(rErr){
-              alert('Could not resend email: '+(rErr?.message||rErr));
-            }
-          }
-          return;
-        }
-      }catch(fbErr){
-        console.warn('[ERecPass] Firebase verification check bypassed due to error:',fbErr);
-      }
-    }
 
     try{
       const r=await sb().auth.signInWithPassword({email,password});

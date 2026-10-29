@@ -40,15 +40,18 @@ The browser calls Supabase Auth `resetPasswordForEmail` and uses the current Git
 - Use fake/test patient data until all account, appointment, Help Center, uploads, QR scanning, and multi-device workflows have been tested end-to-end.
 
 
-## Firebase Email Confirmation Integration
-To prevent hitting Supabase free-tier email rate limits (3 emails/hour), patient account email confirmation and new-device login links are handled by Firebase Auth (`firebase-auth-client.js`):
-1. **Firebase Console**: Ensure **Authentication -> Sign-in method -> Email/Password** is enabled on project `erecpass-portal` (the project configured in `firebase-auth-client.js`).
-2. Also enable **Email link (passwordless sign-in)** and add the deployed app domain under **Authentication -> Settings -> Authorized domains**. New-device login confirmation uses a one-time Firebase sign-in link and fails explicitly if this provider is disabled.
-3. Registration verification emails use Firebase's default action page without an app continue URL, so clicking the link shows Firebase's email-verified confirmation and does not automatically return to ERecPass.
-4. On an unrecognized device, patient and staff logins send a Firebase sign-in link to the account email. Admin login does not use this confirmation. Open the link on the phone and browser where login was started, then sign in again. The device is remembered in that browser's local storage.
-   This is a client-side device prompt, not backend-enforced multi-factor authentication; continue enforcing access through Supabase RLS and server-side authorization.
-5. The app creates/signs into the matching Supabase Auth account on the patient's first verified login, then records the patient in `public.patients`. The registration fields are combined as `First Middle Last` and saved in the `full_name` column; if the patient has no middle name, it saves `First Last`.
-6. **Supabase Dashboard**: In **Authentication -> Providers -> Email**, uncheck **"Confirm email"** because Firebase already verified the address. This allows the first Supabase login to create a usable session without sending a second email.
-7. Existing Firebase accounts must verify their email before the first account sync. Existing legacy accounts not present in Firebase can log into Supabase only when their Supabase profile and patient row already exist.
+## Supabase Auth email verification
+Firebase Authentication is no longer used for patient or staff sign-in or email verification. Supabase Auth handles email/password accounts, verification codes, and browser sessions.
+
+1. **Supabase Dashboard -> Authentication -> Providers -> Email**: enable Email/Password and enable **Confirm email**.
+2. **Authentication -> Email Templates -> Confirm signup**: replace the confirmation-link template with a one-time-code template. For example: `<h2>Verify your ERecPass account</h2><p>Enter this code in ERecPass to verify your email:</p><p style="font-size:24px;font-weight:bold;letter-spacing:4px">{{ .Token }}</p>`. Do not include `{{ .ConfirmationURL }}`. The app verifies the entered signup code with Supabase and does not send a redirect URL for signup/resend. This lets patients and invited staff verify without opening the web app from their email.
+3. Configure a custom SMTP provider under **Authentication -> SMTP Settings** for production delivery and appropriate sending limits. Supabase's built-in sender is currently limited to 2 emails per hour, even on Pro. Test the confirmation email before inviting users.
+4. Apply `supabase/migrations/20261029000100_pending_staff_verification.sql` before deploying the new functions.
+5. Deploy the new Staff provisioning functions: `supabase functions deploy admin-create-staff` and `supabase functions deploy complete-staff-registration`. Staff invitations are kept pending until the user verifies the Supabase email and signs in; then the function creates the public Staff record.
+6. Patient registration sends Supabase a confirmation code. Users enter that code on the app's **Verify email with a code** screen, then sign in. Login is blocked until confirmation. Registration details are held in that browser until the first verified login, when the app writes/completes the patient record. The patient must use the browser used to register so those details can be saved. Invited staff can open the app, use **Verify email with a code**, enter the invited email and code, then sign in.
+7. Existing Firebase patient accounts are not automatically migrated. They need matching Supabase Auth accounts before they can sign in through the new Supabase-only flow. Existing Staff accounts created through the former endpoint continue only if they already have a Supabase profile and Staff row.
+
+### Temporary Staff verification bypass
+To create Staff accounts immediately while keeping Patient verification enabled, deploy the updated `admin-create-staff` function, then set the Edge Function secret `STAFF_EMAIL_VERIFICATION_REQUIRED` to `false`. New Staff accounts will be confirmed and added to `profiles` and `staff` immediately; no verification email is sent. Staff can sign in with the password the Admin sets. When finished, set this secret to `true` (or remove it; the function defaults to requiring verification) to restore email verification for new Staff accounts. This does not change existing accounts or patient verification. Supabase secrets take effect without another function deployment. See [Supabase Edge Function secrets](https://supabase.com/docs/guides/functions/secrets).
 
 The new project `onjdhnpaehiqccfkribx` is not the active app target. The app currently points back to the existing project `bfboehvgrivanmrfqquw`.

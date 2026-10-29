@@ -20,6 +20,13 @@ ERecPass is a hospital portal with a Supabase-backed data layer. The existing UI
 - Current Supabase profile counts at last verification: **4 Patient**, **2 Staff**, **1 Admin**.
 - Migration source: `supabase/migrations/20261016_account_limits.sql`.
 
+## Authentication
+- Patient and Staff email/password authentication and email verification use Supabase Auth.
+- Enable **Confirm email** in Supabase Auth and allow the deployed GitHub Pages URL as a redirect URL.
+- Staff invitations use the `admin-create-staff` and `complete-staff-registration` Supabase Edge Functions. Apply the pending-staff migration and deploy both functions before enabling the updated app.
+- Patient registration details are saved to the patient record after the first verified login; that login must happen in the browser used to register.
+- Firebase Authentication is no longer part of the login or email verification flow. Firebase Cloud Messaging remains available for push notifications.
+
 ## Password reset
 The app uses Supabase Auth password recovery. The reset link returns to the current GitHub Pages path and the app handles the `PASSWORD_RECOVERY` event before allowing the new password to be saved.
 

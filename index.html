@@ -3176,7 +3176,7 @@ Already have an account?
 
 <h1 class="text-xl font-bold font-tech text-white">Hospital Map</h1>
 
-<p class="text-xs text-slate-400">Find Angono General Hospital</p>
+<p class="text-xs text-slate-400">Pinned hospital location in Angono, Rizal</p>
 
 </div>
 
@@ -3192,9 +3192,9 @@ Already have an account?
 
 <h2 class="font-bold text-white text-sm">Angono General Hospital</h2>
 
-<p class="text-xs text-slate-400">Quezon Ave, Angono, Rizal, Philippines</p>
+<p class="text-xs text-slate-400">A. Ibañez Street, San Isidro, Angono, Rizal, Philippines</p>
 
-<span class="text-[10px] font-bold text-emerald-400">● Pinned Location · Open 24/7</span>
+<span class="text-[10px] font-bold text-emerald-400">● Live map pin · Hospital</span>
 
 </div>
 
@@ -3202,7 +3202,7 @@ Already have an account?
 
 <div class="map-container h-64 rounded-2xl overflow-hidden mb-3 border border-cyan-500/30">
 
-<iframe src="https://www.google.com/maps?q=Angono+General+Hospital&output=embed" loading="lazy" class="w-full h-full border-0"></iframe>
+<iframe title="Live map pinned to Angono General Hospital, A. Ibañez Street, Angono, Rizal" src="https://www.google.com/maps?q=14.5266831%2C121.1521407&z=17&output=embed" loading="lazy" referrerpolicy="no-referrer-when-downgrade" allowfullscreen class="w-full h-full border-0"></iframe>
 
 </div>
 
@@ -3284,17 +3284,17 @@ Already have an account?
 
 <section id="doctors" class="page">
 
-<div class="page-header mb-4">
+<div class="page-header mb-4 patient-directory-heading">
 
-<h1 class="text-xl font-bold font-tech text-white">Doctors & Staff Availability</h1>
+<h1 class="text-xl font-bold font-tech text-white">Doctors &amp; Staff</h1>
 
-<p class="text-xs text-slate-400">Green = Available · Red = Not Available</p>
+<p class="text-sm text-slate-400">Browse hospital staff profiles and the availability information currently provided.</p>
 
 </div>
 
-<div id="patientDoctorsList" class="space-y-3">
+<div id="patientDoctorsList" class="patient-directory-grid">
 
-<!-- Populated dynamically -->
+<p class="patient-directory-empty">Loading hospital staff directory...</p>
 
 </div>
 
@@ -3573,48 +3573,37 @@ Already have an account?
 </main>
 <!-- PATIENT BOTTOM NAVIGATION -->
 
-<nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-5 items-center justify-items-center px-2 gap-x-1 gap-y-0">
-
-<button id="nav-dashboard" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('dashboard')" type="button">
-<i class="fa-solid fa-chart-line text-2xl sm:text-3xl text-blue-600"></i><span class="text-blue-600">Dashboard</span>
+<nav id="patientBottomNav" class="bottom-nav patient-nav-collapsed fixed bottom-0 left-0 right-0 border-t z-30 grid grid-cols-5 items-center justify-items-center px-2 gap-x-1 gap-y-0" aria-label="Patient navigation">
+<button id="nav-dashboard" class="patient-primary-nav flex w-full h-full flex-col items-center justify-center gap-1 py-2" onclick="patientDashboardNavigate('dashboard')" type="button" aria-current="page" aria-label="Dashboard">
+<i class="fa-solid fa-house text-2xl" aria-hidden="true"></i><span>Dashboard</span>
 </button>
-
-<button id="nav-hospital-map" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('hospital-map')" type="button">
-<i class="fa-solid fa-map text-2xl sm:text-3xl text-emerald-600"></i><span class="text-slate-500">Map</span>
+<button id="nav-hospital-map" class="patient-primary-nav flex w-full h-full flex-col items-center justify-center gap-1 py-2" onclick="patientDashboardNavigate('hospital-map')" type="button" aria-label="Maps">
+<i class="fa-solid fa-map-location-dot text-2xl" aria-hidden="true"></i><span>Maps</span>
 </button>
-
-<button id="nav-medicines" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('medicines')" type="button">
-<i class="fa-solid fa-pills text-2xl sm:text-3xl text-purple-600"></i><span class="text-slate-500">Meds</span>
+<button id="nav-medicines" class="patient-primary-nav flex w-full h-full flex-col items-center justify-center gap-1 py-2" onclick="patientDashboardNavigate('medicines')" type="button" aria-label="Meds">
+<i class="fa-solid fa-pills text-2xl" aria-hidden="true"></i><span>Meds</span>
 </button>
-
-<button id="nav-doctors" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('doctors')" type="button">
-<i class="fa-solid fa-user-doctor text-2xl sm:text-3xl text-teal-500"></i><span class="text-slate-500">Staff</span>
+<button id="nav-doctors" class="patient-primary-nav flex w-full h-full flex-col items-center justify-center gap-1 py-2" onclick="patientDashboardNavigate('doctors')" type="button" aria-label="Doctors and Staff">
+<i class="fa-solid fa-user-doctor text-2xl" aria-hidden="true"></i><span>Doctors &amp; Staff</span>
 </button>
-
-<button id="nav-profile" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[9px] sm:text-xs font-tech py-2" onclick="patientDashboardNavigate('profile')" type="button" aria-label="View Profile" title="View Profile">
-<i class="fa-solid fa-user-circle text-2xl sm:text-3xl" aria-hidden="true"></i><span>View Profile</span>
+<button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-label="Open more navigation options" title="Open more navigation options" aria-controls="patientNavMenu" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
+<div id="patientNavMenu" class="patient-nav-menu" role="group" aria-label="More patient pages">
+<button id="nav-appointments" class="patient-nav-extra" onclick="patientDashboardNavigate('appointments')" type="button" aria-label="Appointments">
+<i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Appointments</span>
 </button>
-
-<button id="patientNavSeeMore" class="patient-nav-see-more" type="button" onclick="togglePatientMoreNav()" aria-label="Open navigation menu" title="Open navigation menu" aria-controls="patientNavMenu" aria-expanded="false"><i class="fa-solid fa-bars" aria-hidden="true"></i></button>
-
-<div id="patientNavMenu" class="patient-nav-menu" role="menu" aria-label="More patient functions">
-<button id="nav-appointments" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('appointments')" type="button">
-<i class="fa-solid fa-calendar-check text-2xl sm:text-3xl text-yellow-500" style="color:#f2c300 !important"></i><span class="text-slate-500" style="color:#66788a !important">Appointments</span>
+<button id="nav-medical-records" class="patient-nav-extra" onclick="patientDashboardNavigate('medical-records')" type="button" aria-label="Record">
+<i class="fa-solid fa-file-medical" aria-hidden="true"></i><span>Record</span>
 </button>
-
-<button id="nav-medical-records" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('medical-records')" type="button">
-<i class="fa-solid fa-file-medical text-2xl sm:text-3xl text-red-600" style="color:#d92f2f !important"></i><span class="text-slate-500" style="color:#66788a !important">Records</span>
+<button id="nav-qr" class="patient-nav-extra" onclick="patientDashboardNavigate('qr')" type="button" aria-label="My QR">
+<i class="fa-solid fa-qrcode" aria-hidden="true"></i><span>My QR</span>
 </button>
-
-<button id="nav-qr" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('qr')" type="button">
-<i class="fa-solid fa-qrcode text-2xl sm:text-3xl text-sky-500" style="color:#159bd3 !important"></i><span class="text-slate-500" style="color:#66788a !important">My QR</span>
+<button id="nav-help" class="patient-nav-extra" onclick="patientDashboardNavigate('help')" type="button" aria-label="Chat">
+<i class="fa-solid fa-comments" aria-hidden="true"></i><span>Chat</span>
 </button>
-
-<button id="nav-help" role="menuitem" class="flex w-full h-full flex-col items-center justify-center gap-1 text-[11px] sm:text-xs font-tech py-2 patient-nav-extra" onclick="patientDashboardNavigate('help')" type="button">
-<i class="fa-solid fa-comments text-2xl sm:text-3xl text-orange-500" style="color:#f0643d !important"></i><span class="text-slate-500" style="color:#66788a !important">Chat</span>
+<button id="nav-profile" class="patient-nav-extra" onclick="patientDashboardNavigate('profile')" type="button" aria-label="Profile">
+<i class="fa-solid fa-user-circle" aria-hidden="true"></i><span>Profile</span>
 </button>
 </div>
-
 </nav>
 
 </div>
@@ -3641,23 +3630,20 @@ Already have an account?
 
 </header>
 
-<main class="max-w-4xl mx-auto px-4 pt-20 pb-12 space-y-6">
+<main class="staff-portal-content max-w-5xl mx-auto px-4 pt-20 pb-12 space-y-6">
 
-<div class="glass-card p-4 rounded-2xl flex justify-between items-center">
+<section class="staff-tab-panel space-y-6" data-staff-panel="dashboard" aria-label="Staff dashboard">
+<div class="staff-page-heading">
+  <h1>Staff Dashboard</h1>
+  <p>Your appointments and the latest hospital updates.</p>
+</div>
+<div class="glass-card p-4 rounded-2xl flex justify-between items-center" id="staffDashboardCard">
 
 <div>
 
-<span class="text-xs text-slate-400">Staff Account</span>
+<span class="text-xs text-slate-400">Your staff workspace</span>
 
-<h2 id="staffPortalNameDisplay" class="text-lg font-bold text-white font-tech">Staff Member</h2>
-
-</div>
-
-<div class="text-right">
-
-<span class="text-[10px] text-slate-400">Assigned Task</span>
-
-<p id="staffAssignedTaskDisplay" class="text-xs font-bold text-cyan-300">Triage & QR Scanning</p>
+<h2 class="text-lg font-bold text-white font-tech">Welcome to the Staff Portal</h2>
 
 </div>
 
@@ -3666,41 +3652,61 @@ Already have an account?
 <!-- STAFF DASHBOARD: Approved Patient Appointments -->
 <div class="glass-card p-5 rounded-2xl" id="staffApprovedAppointmentsCard">
   <div class="flex items-center justify-between gap-3 mb-3">
-    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-calendar-check mr-1"></i> Patient Appointments</h2>
+    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-calendar-check mr-1"></i> Upcoming Appointments</h2>
     <span id="staffApprovedAppointmentsCount" class="erecpass-status-approved px-2 py-1 rounded-full text-[10px] font-bold">0 Approved</span>
   </div>
-  <p class="text-xs text-slate-400 mb-3">All patient appointments approved by the hospital admin.</p>
-  <div id="staffApprovedAppointmentsList" class="space-y-3">
-    <p class="text-xs text-slate-400">Loading approved appointments...</p>
+  <p class="text-sm text-slate-400 mb-3">Appointments approved by the hospital admin, starting today or later.</p>
+  <div id="staffApprovedAppointmentsList" class="staff-appointments-list space-y-3">
+    <p class="staff-appointment-empty">Loading appointments...</p>
   </div>
+  <button type="button" class="staff-secondary-action" onclick="staffNavigateTo('appointments')">View All Appointments <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
 </div>
 
-<!-- STAFF DASHBOARD: Hospital Announcements -->
+<!-- STAFF DASHBOARD: Hospital Updates -->
 <div class="glass-card p-5 rounded-2xl" id="staffHospitalAnnouncementsCard">
   <div class="flex items-center justify-between gap-3 mb-3">
-    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-bullhorn mr-1"></i> Hospital Announcements</h2>
+    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-bullhorn mr-1"></i> Updates</h2>
   </div>
-  <p class="text-xs text-slate-400 mb-3">Hospital announcements and attached images.</p>
-  <div id="staffHospitalAnnouncementsList" class="space-y-3">
-    <p class="text-xs text-slate-400">Loading hospital announcements...</p>
+  <p class="text-sm text-slate-400 mb-3">Recent hospital announcements and updates.</p>
+  <div id="staffHospitalAnnouncementsList" class="staff-announcements-list space-y-3">
+    <p class="staff-update-empty">Loading updates...</p>
   </div>
 </div>
+</section>
 
+<section class="staff-tab-panel space-y-6" data-staff-panel="appointments" aria-label="Staff appointments" hidden>
+<div class="glass-card p-5 rounded-2xl" id="staffAllAppointmentsCard">
+  <div class="flex items-center justify-between gap-3 mb-3">
+    <div>
+      <h1 class="staff-panel-heading"><i class="fa-solid fa-calendar-check mr-1" aria-hidden="true"></i> Appointments</h1>
+      <p class="text-sm text-slate-500 mt-1">Approved appointments from the existing appointment list.</p>
+    </div>
+    <button type="button" class="staff-secondary-action" onclick="staffNavigateTo('dashboard')">Back to Dashboard</button>
+  </div>
+  <div id="staffAllApprovedAppointmentsList" class="staff-appointments-list space-y-3">
+    <p class="staff-appointment-empty">Loading appointments...</p>
+  </div>
+</div>
+</section>
+
+<section class="staff-tab-panel space-y-6" data-staff-panel="scanner" aria-label="Staff QR scanner" hidden>
 <!-- QR Scanner Module for Staff -->
 
-<div class="glass-card p-5 rounded-2xl">
+<div class="glass-card p-5 rounded-2xl" id="staffQrScannerCard">
 
-<h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider mb-2"><i class="fa-solid fa-qrcode mr-1"></i> Patient QR Scanner</h2>
+<h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider mb-2"><i class="fa-solid fa-qrcode mr-1"></i> QR Scanner</h2>
 
-<p class="text-xs text-slate-400 mb-3">Scan patient QR code with camera to view full record, status, guardian info, and doctor notes.</p>
+<p class="text-sm text-slate-400 mb-3">Scan an existing ERecPass QR code. On mobile, Start Camera opens the device camera; desktop devices can choose an image. Camera access may require a supported secure browser context.</p>
 
 <div class="flex gap-2 mb-3">
 
-<button onclick="startStaffQrScanner()" class="primary-btn px-4 py-2 rounded-xl text-xs font-tech">Start Camera</button>
+<button type="button" onclick="startStaffQrScanner()" class="primary-btn px-4 py-2 rounded-xl text-xs font-tech">Start Scanning</button>
 
-<button onclick="stopStaffQrScanner()" class="px-4 py-2 bg-slate-900 border border-cyan-500/30 text-cyan-300 rounded-xl text-xs font-tech">Stop Camera</button>
+<button type="button" onclick="stopStaffQrScanner()" class="px-4 py-2 bg-slate-900 border border-cyan-500/30 text-cyan-300 rounded-xl text-xs font-tech">Stop / Cancel</button>
 
 </div>
+
+<p id="staffQrStatus" class="text-sm text-slate-500 mb-3" role="status" aria-live="polite">Scanner is idle. Select Start Scanning when ready.</p>
 
 <div id="staffQrReader" class="w-full max-w-sm mx-auto rounded-xl overflow-hidden bg-black/50 min-h-[200px] mb-4"></div>
 
@@ -3771,22 +3777,70 @@ Already have an account?
 </div>
 
 </div>
+</section>
 
+<section class="staff-tab-panel space-y-6" data-staff-panel="chat" aria-label="Staff chat with Admin" hidden>
 <!-- STAFF: CONTACT ADMIN CHAT -->
-<div class="glass-card p-5 rounded-2xl">
+<div class="glass-card p-5 rounded-2xl" id="staffAdminChatCard">
   <div class="flex items-center justify-between mb-2">
-    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-comments mr-1"></i> Contact Admin</h2>
-    <span class="text-[10px] text-slate-500">Admin: admin2@gmail.com</span>
+    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-comments mr-1"></i> Staff Chat with Admin</h2>
   </div>
-  <p class="text-xs text-slate-400 mb-3">Send a private message directly to the hospital admin.</p>
-  <div id="staffAdminChatBox" class="h-56 overflow-y-auto my-3 space-y-2 text-xs pr-1 p-2 rounded-xl bg-slate-950/50 border border-cyan-500/10"></div>
+  <p class="text-sm text-slate-500 mb-3">Your existing private conversation with the hospital admin.</p>
+  <div id="staffAdminChatStatus" class="text-sm text-slate-500" role="status" aria-live="polite"></div>
+  <div id="staffAdminChatBox" class="h-56 overflow-y-auto my-3 space-y-2 text-sm pr-1 p-3 rounded-xl bg-slate-950/50 border border-cyan-500/10" role="log" aria-live="polite" aria-relevant="additions text" aria-label="Messages with Admin"></div>
   <div class="chat-input p-2 rounded-xl flex items-center gap-2">
-    <input type="text" id="staffAdminChatInput" placeholder="Type a message to admin..." class="w-full text-xs outline-none bg-transparent">
-    <button type="button" onclick="sendStaffAdminMessage()" class="primary-btn px-3 py-2 rounded-xl text-xs font-bold">Send</button>
+    <input type="text" id="staffAdminChatInput" maxlength="4000" aria-label="Message to Admin" placeholder="Type a message to Admin..." class="w-full text-sm outline-none bg-transparent">
+    <button type="button" onclick="sendStaffAdminMessage()" class="primary-btn px-4 py-3 rounded-xl text-sm font-bold">Send</button>
   </div>
 </div>
+</section>
+
+<section class="staff-tab-panel space-y-6" data-staff-panel="profile" aria-label="Staff profile" hidden>
+<div class="glass-card p-5 rounded-2xl staff-profile-card">
+  <div class="staff-panel-heading-wrap">
+    <h1 class="staff-panel-heading">My Profile</h1>
+    <p class="text-sm text-slate-500">Your staff account information.</p>
+  </div>
+  <div class="staff-profile-summary">
+    <div class="staff-profile-photo-wrap">
+      <img id="staffProfilePhoto" class="staff-profile-photo" alt="" hidden>
+      <div id="staffProfilePhotoPlaceholder" class="staff-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user-doctor"></i></div>
+      <button type="button" class="staff-profile-photo-upload" aria-label="Change profile photo" title="Change profile photo" onclick="document.getElementById('staffProfilePhotoInput').click()">
+        <i class="fa-solid fa-camera" aria-hidden="true"></i>
+      </button>
+      <input id="staffProfilePhotoInput" type="file" accept="image/*" class="hidden" tabindex="-1" aria-label="Choose a staff profile photo" onchange="handleStaffProfilePhotoUpload(event)">
+    </div>
+    <div class="min-w-0">
+      <p class="staff-profile-label">Staff account</p>
+      <h2 id="staffPortalNameDisplay" class="staff-profile-name">Staff Member</h2>
+      <p class="staff-profile-label mt-2">Role or department</p>
+      <p id="staffProfileRoleDisplay" class="staff-profile-task">Role not provided</p>
+      <p class="staff-profile-label mt-2">Assigned task</p>
+      <p id="staffAssignedTaskDisplay" class="staff-profile-task">General Triage</p>
+    </div>
+  </div>
+  <p class="staff-profile-note">Only information already provided by your Staff account is shown here.</p>
+  <p id="staffProfilePhotoStatus" class="staff-profile-photo-status" role="status" aria-live="polite"></p>
+  <button type="button" onclick="logout()" class="staff-profile-logout">Log out</button>
+</div>
+</section>
 
 </main>
+
+<nav id="staffBottomNav" class="staff-bottom-nav" aria-label="Staff navigation">
+  <button type="button" data-staff-destination="dashboard" aria-current="page" onclick="staffNavigateTo('dashboard')">
+    <i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span>
+  </button>
+  <button type="button" data-staff-destination="scanner" onclick="staffNavigateTo('scanner')">
+    <i class="fa-solid fa-qrcode" aria-hidden="true"></i><span>QR Scanner</span>
+  </button>
+  <button type="button" data-staff-destination="chat" onclick="staffNavigateTo('chat')">
+    <i class="fa-solid fa-comments" aria-hidden="true"></i><span>Chat</span>
+  </button>
+  <button type="button" data-staff-destination="profile" onclick="staffNavigateTo('profile')">
+    <i class="fa-solid fa-user" aria-hidden="true"></i><span>Profile</span>
+  </button>
+</nav>
 
 </div>
 
@@ -4750,7 +4804,7 @@ openGoogleMaps();
 
 function openGoogleMaps() {
 
-window.open('https://www.google.com/maps?q=Angono+General+Hospital', '_blank');
+window.open('https://www.google.com/maps/search/?api=1&query=14.5266831%2C121.1521407', '_blank', 'noopener,noreferrer');
 
 }
 
@@ -5176,6 +5230,10 @@ epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(patients));
 
 }
 
+if (currentSession?.role === 'staff' && typeof stopStaffQrScanner === 'function') {
+  stopStaffQrScanner();
+}
+
 currentSession = null;
 
 epStore.removeItem(DB_KEYS.SESSION);
@@ -5434,7 +5492,10 @@ function showPage(pageId) {
 
 document.querySelectorAll('#patientApp .page').forEach(page => page.classList.remove('active'));
 
-document.querySelectorAll('#patientApp .bottom-nav button').forEach(btn => btn.classList.remove('active'));
+document.querySelectorAll('#patientApp .bottom-nav button').forEach(btn => {
+  btn.classList.remove('active');
+  btn.removeAttribute('aria-current');
+});
 
 const targetPage = document.getElementById(pageId);
 
@@ -5447,7 +5508,26 @@ targetPage.classList.add('active');
 
 const navBtn = document.getElementById('nav-' + pageId);
 
-if (navBtn) navBtn.classList.add('active');
+if (navBtn) {
+  navBtn.classList.add('active');
+  navBtn.setAttribute('aria-current', 'page');
+}
+
+const moreNavToggle = document.getElementById('patientNavSeeMore');
+if (moreNavToggle) {
+  const activeOverflowLabel = navBtn?.classList.contains('patient-nav-extra')
+    ? navBtn.querySelector('span')?.textContent.trim()
+    : '';
+  moreNavToggle.classList.toggle('has-active-overflow', Boolean(activeOverflowLabel));
+  const expanded = document.getElementById('patientBottomNav')?.classList.contains('patient-nav-expanded');
+  const toggleLabel = expanded
+    ? 'Close navigation menu'
+    : activeOverflowLabel
+      ? 'Open navigation menu; current page: ' + activeOverflowLabel
+      : 'Open navigation menu';
+  moreNavToggle.setAttribute('aria-label', toggleLabel);
+  moreNavToggle.title = toggleLabel;
+}
 
 // Refresh Supabase-backed patient sections when opened so recent profile,
 // appointment, lab, prescription, and staff changes are reflected immediately.
@@ -5842,59 +5922,111 @@ async function renderPatientDoctors() {
   const container = document.getElementById('patientDoctorsList');
   if (!container) return;
   let staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF) || '[]') || [];
+  let loadError = null;
+  let photoSupportUnavailable = false;
 
   try {
     const client = window.erecpassSupabase;
     const session = client?.auth ? await client.auth.getSession() : null;
     if (session?.error) throw session.error;
     if (client?.from && session?.data?.session) {
-      const result = await client.from('staff')
-        .select('user_id,name,email,role_title,task,available,schedule,active')
+      let result = await client.from('staff')
+        .select('user_id,name,email,role_title,task,available,schedule,active,photo')
         .eq('active', true)
         .order('name', { ascending: true });
+      if (result.error && (result.error.code === '42703' || /staff\.photo|column .*photo.*does not exist/i.test(result.error.message || ''))) {
+        photoSupportUnavailable = true;
+        console.warn('[ERecPass] Staff profile photo migration is not applied yet; loading the directory without photos.');
+        result = await client.from('staff')
+          .select('user_id,name,email,role_title,task,available,schedule,active')
+          .eq('active', true)
+          .order('name', { ascending: true });
+      }
       if (result.error) throw result.error;
       staffList = (result.data || []).map(row => ({
         id: row.user_id || row.email,
         user_id: row.user_id,
-        name: row.name || row.email || 'Hospital Staff',
-        email: row.email || '',
-        role: row.role_title || 'Staff',
+        name: row.name || 'Hospital staff',
+        role: row.role_title || '',
         task: row.task || '',
-        available: row.available !== false,
-        schedule: row.schedule || 'Mon-Fri',
+        available: typeof row.available === 'boolean' ? row.available : null,
+        schedule: row.schedule || '',
+        photo: photoSupportUnavailable ? '' : row.photo || '',
         active: row.active !== false
       }));
       epStore.setItem(DB_KEYS.STAFF, JSON.stringify(staffList));
     }
   } catch (error) {
     console.error('[ERecPass] Patient staff directory Supabase load:', error);
+    loadError = error;
   }
 
   container.replaceChildren();
   if (!staffList.length) {
     const empty = document.createElement('p');
-    empty.className = 'text-xs text-slate-400';
-    empty.textContent = 'No staff members are currently listed.';
+    empty.className = 'patient-directory-empty';
+    empty.setAttribute('role', loadError ? 'alert' : 'status');
+    empty.textContent = loadError
+      ? 'Unable to load the hospital staff directory. Please refresh and try again.'
+      : 'No staff members are currently listed.';
     container.appendChild(empty);
     return;
   }
+  if (loadError || photoSupportUnavailable) {
+    const notice = document.createElement('p');
+    notice.className = 'patient-directory-empty';
+    notice.setAttribute('role', 'status');
+    notice.textContent = photoSupportUnavailable
+      ? 'Staff profile photos will appear after the database update is applied.'
+      : 'Could not refresh the directory. Showing saved staff information.';
+    container.appendChild(notice);
+  }
   staffList.filter(staff => staff.active !== false).forEach(staff => {
     const card = document.createElement('div');
-    card.className = 'doctor-card p-3.5 rounded-xl flex items-center justify-between';
+    card.className = 'doctor-card patient-directory-card';
+    const photoUrl = String(staff.photo || staff.profilePhoto || staff.avatar || '').trim();
+    const photo = photoUrl ? document.createElement('img') : createDirectoryAvatar();
+    if (photoUrl) {
+      photo.className = 'patient-directory-photo';
+      photo.alt = staff.name ? 'Profile photo of ' + staff.name : 'Staff profile photo';
+      photo.src = photoUrl;
+      photo.addEventListener('error', function() {
+        photo.replaceWith(createDirectoryAvatar());
+      }, { once: true });
+    }
     const info = document.createElement('div');
+    info.className = 'patient-directory-info';
     const name = document.createElement('strong');
-    name.className = 'text-white text-xs block';
-    name.textContent = staff.name || 'Hospital Staff';
+    name.className = 'patient-directory-name';
+    name.textContent = staff.name || 'Hospital staff';
     const role = document.createElement('p');
-    role.className = 'text-[11px] text-slate-400';
-    role.textContent = (staff.role || 'Staff') + ' · ' + (staff.schedule || 'Mon-Fri');
+    role.className = 'patient-directory-role';
+    role.textContent = staff.role || 'Hospital staff';
+    const schedule = document.createElement('p');
+    schedule.className = 'patient-directory-schedule';
+    schedule.textContent = staff.schedule ? 'Schedule: ' + staff.schedule : 'Schedule unavailable';
     const availability = document.createElement('span');
-    availability.className = 'patient-staff-availability text-[10px] font-bold ' + (staff.available === false ? 'is-unavailable' : 'is-available');
-    availability.textContent = staff.available === false ? '● Red (Not Available)' : '● Green (Available)';
-    info.append(name, role, availability);
-    card.appendChild(info);
+    availability.className = 'patient-staff-availability ' +
+      (staff.available === true ? 'is-available' : staff.available === false ? 'is-unavailable' : 'is-unreported');
+    availability.textContent = staff.available === true
+      ? 'Available'
+      : staff.available === false
+        ? 'Unavailable'
+        : 'Availability not provided';
+    info.append(name, role, schedule, availability);
+    card.append(photo, info);
     container.appendChild(card);
   });
+
+  function createDirectoryAvatar() {
+    const avatar = document.createElement('div');
+    avatar.className = 'patient-directory-avatar';
+    avatar.setAttribute('aria-hidden', 'true');
+    const icon = document.createElement('i');
+    icon.className = 'fa-solid fa-user-doctor';
+    avatar.appendChild(icon);
+    return avatar;
+  }
 }
 
 function flipPatientDigitalID() {
@@ -6672,14 +6804,123 @@ STAFF PORTAL FEATURES
 
 function refreshStaffPortal() {
 
-document.getElementById('staffPortalNameDisplay').innerText = currentSession.data.name;
+document.getElementById('staffPortalNameDisplay').innerText = currentSession.data.name || currentSession.data.fullName || 'Staff Member';
 
 document.getElementById('staffAssignedTaskDisplay').innerText = currentSession.data.task || "General Triage";
 
+const profileRole = document.getElementById('staffProfileRoleDisplay');
+if (profileRole) profileRole.innerText = currentSession.data.role_title || currentSession.data.role || 'Role not provided';
+
+const profilePhoto = document.getElementById('staffProfilePhoto');
+const profilePlaceholder = document.getElementById('staffProfilePhotoPlaceholder');
+const photoUrl = String(currentSession.data.photo || currentSession.data.profilePhoto || '').trim();
+if (profilePhoto && profilePlaceholder) {
+  profilePhoto.onerror = function() {
+    profilePhoto.hidden = true;
+    profilePlaceholder.hidden = false;
+  };
+  if (photoUrl) {
+    profilePhoto.src = photoUrl;
+    profilePhoto.alt = 'Profile photo of ' + (currentSession.data.name || 'staff member');
+    profilePhoto.hidden = false;
+    profilePlaceholder.hidden = true;
+  } else {
+    profilePhoto.removeAttribute('src');
+    profilePhoto.hidden = true;
+    profilePlaceholder.hidden = false;
+  }
+}
+
 renderStaffApprovedAppointments();
 renderStaffHospitalAnnouncements();
+if (typeof window.staffNavigateTo === 'function') window.staffNavigateTo('dashboard');
 
 }
+
+window.handleStaffProfilePhotoUpload = async function(event) {
+  const input = event?.target;
+  const file = input?.files?.[0];
+  if (!file) return;
+  const status = document.getElementById('staffProfilePhotoStatus');
+  const setStatus = message => { if (status) status.textContent = message; };
+  if (!file.type || !file.type.startsWith('image/')) {
+    setStatus('Choose an image file to upload.');
+    alert('Please select an image file.');
+    input.value = '';
+    return;
+  }
+  if (file.size > 10 * 1024 * 1024) {
+    setStatus('The selected image is too large. Choose an image under 10 MB.');
+    alert('Please choose an image smaller than 10 MB.');
+    input.value = '';
+    return;
+  }
+  const button = document.querySelector('#staffApp .staff-profile-photo-upload');
+  if (button) button.setAttribute('aria-busy', 'true');
+  setStatus('Preparing your photo…');
+  try {
+    const photo = await new Promise((resolve, reject) => {
+      const objectUrl = URL.createObjectURL(file);
+      const image = new Image();
+      image.onload = function() {
+        URL.revokeObjectURL(objectUrl);
+        const maxDimension = 640;
+        const scale = Math.min(1, maxDimension / Math.max(image.naturalWidth, image.naturalHeight));
+        const canvas = document.createElement('canvas');
+        canvas.width = Math.max(1, Math.round(image.naturalWidth * scale));
+        canvas.height = Math.max(1, Math.round(image.naturalHeight * scale));
+        const context = canvas.getContext('2d');
+        if (!context) { reject(new Error('Your browser could not prepare the image.')); return; }
+        context.drawImage(image, 0, 0, canvas.width, canvas.height);
+        canvas.toBlob(blob => {
+          if (!blob) { reject(new Error('The selected image could not be compressed.')); return; }
+          if (blob.size > 650 * 1024) { reject(new Error('The compressed image is still too large. Choose a smaller image.')); return; }
+          const reader = new FileReader();
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = () => reject(new Error('The selected image could not be read.'));
+          reader.readAsDataURL(blob);
+        }, 'image/jpeg', 0.82);
+      };
+      image.onerror = function() {
+        URL.revokeObjectURL(objectUrl);
+        reject(new Error('The selected image could not be opened.'));
+      };
+      image.src = objectUrl;
+    });
+    const client = window.erecpassSupabase;
+    if (!client?.auth || !client?.rpc) throw new Error('Staff photo upload is unavailable. Please try again after signing in.');
+    const auth = await client.auth.getUser();
+    if (auth.error) throw auth.error;
+    if (!auth.data?.user?.id || currentSession?.role !== 'staff') {
+      throw new Error('Sign in with your Staff account before uploading a profile photo.');
+    }
+    const result = await client.rpc('update_own_staff_photo', { p_photo: photo });
+    if (result.error) throw result.error;
+    if (!result.data) throw new Error('The photo was not saved to your staff profile.');
+    currentSession.data.photo = result.data;
+    const staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF) || '[]');
+    const staff = staffList.find(item => String(item.user_id || '') === String(auth.data.user.id));
+    if (staff) staff.photo = result.data;
+    epStore.setItem(DB_KEYS.STAFF, JSON.stringify(staffList));
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    const profilePhoto = document.getElementById('staffProfilePhoto');
+    const placeholder = document.getElementById('staffProfilePhotoPlaceholder');
+    if (profilePhoto && placeholder) {
+      profilePhoto.src = result.data;
+      profilePhoto.alt = 'Profile photo of ' + (currentSession.data.name || 'staff member');
+      profilePhoto.hidden = false;
+      placeholder.hidden = true;
+    }
+    setStatus('Profile photo saved. Patients will see it in Doctors & Staff.');
+  } catch (error) {
+    console.error('[ERecPass] Staff profile photo upload failed:', error);
+    setStatus(error?.message || 'The profile photo could not be saved.');
+    alert('Profile photo was not saved. ' + (error?.message || 'Please try again.'));
+  } finally {
+    if (button) button.removeAttribute('aria-busy');
+    if (input) input.value = '';
+  }
+};
 
 function escapeStaffDashboardText(value) {
   return String(value == null ? '' : value).replace(/[&<>"']/g, function(ch) {
@@ -6688,9 +6929,10 @@ function escapeStaffDashboardText(value) {
 }
 
 async function renderStaffApprovedAppointments() {
-  const container = document.getElementById('staffApprovedAppointmentsList');
+  const previewContainer = document.getElementById('staffApprovedAppointmentsList');
+  const fullListContainer = document.getElementById('staffAllApprovedAppointmentsList');
   const count = document.getElementById('staffApprovedAppointmentsCount');
-  if (!container || !count) return;
+  if (!previewContainer && !fullListContainer) return;
   try {
     let appointments = JSON.parse(epStore.getItem(DB_KEYS.APPOINTMENTS) || '[]') || [];
     const client = window.erecpassSupabase;
@@ -6716,32 +6958,55 @@ async function renderStaffApprovedAppointments() {
         }));
       }
     }
+    const now = new Date();
+    const today = [now.getFullYear(), String(now.getMonth() + 1).padStart(2, '0'), String(now.getDate()).padStart(2, '0')].join('-');
     const approved = appointments.filter(function(a) {
       return String(a.status || '').trim().toLowerCase() === 'approved';
     }).sort(function(a, b) {
       return String(a.date || a.appointment_date || '').localeCompare(String(b.date || b.appointment_date || ''));
     });
-    count.textContent = approved.length + (approved.length === 1 ? ' Approved' : ' Approved');
-    if (!approved.length) {
-      container.innerHTML = '<p class="text-xs text-slate-400 p-2">No approved patient appointments yet.</p>';
-      return;
-    }
-    container.innerHTML = approved.map(function(a) {
+    const upcoming = approved.filter(function(a) {
+      const date = String(a.date || a.appointment_date || '').trim().slice(0, 10);
+      return /^\d{4}-\d{2}-\d{2}$/.test(date) && date >= today;
+    });
+    if (count) count.textContent = upcoming.length + ' Upcoming';
+    const renderAppointment = function(a) {
       const patientName = escapeStaffDashboardText(a.patientName || a.patient_name || 'Patient');
       const doctor = escapeStaffDashboardText(a.doctor || a.doctor_name || 'Not specified');
-      const date = escapeStaffDashboardText(a.date || a.appointment_date || 'Date not specified');
+      const dateValue = String(a.date || a.appointment_date || '').trim();
+      const datePart = dateValue.slice(0, 10);
+      const date = /^\d{4}-\d{2}-\d{2}$/.test(datePart)
+        ? escapeStaffDashboardText(new Date(datePart + 'T00:00:00').toLocaleDateString(undefined, { year: 'numeric', month: 'short', day: 'numeric' }))
+        : 'Date not specified';
+      const timeMatch = dateValue.match(/T(\d{2}:\d{2})/);
+      const time = timeMatch
+        ? escapeStaffDashboardText(new Date('1970-01-01T' + timeMatch[1] + ':00').toLocaleTimeString(undefined, { hour: 'numeric', minute: '2-digit' }))
+        : 'Time not provided';
       const reason = escapeStaffDashboardText(a.reason || 'Appointment');
       return '<div class="appointment-card p-3 rounded-xl border border-emerald-400/25 bg-emerald-950/20">' +
         '<div class="flex items-start justify-between gap-3"><div class="min-w-0 flex-1">' +
-        '<strong class="text-white text-xs block break-words">' + patientName + '</strong>' +
-        '<p class="text-xs text-slate-300 mt-1">' + reason + '</p>' +
-        '<p class="text-[11px] text-slate-400 mt-1"><i class="fa-solid fa-user-doctor mr-1"></i>' + doctor + '</p>' +
-        '<p class="text-[11px] text-cyan-300 mt-1"><i class="fa-regular fa-calendar mr-1"></i>' + date + '</p>' +
-        '</div><span class="erecpass-status-approved px-2 py-1 rounded-full text-[10px] font-bold shrink-0">Approved</span></div></div>';
-    }).join('');
+        '<strong class="staff-appointment-name block break-words">' + patientName + '</strong>' +
+        '<p class="staff-appointment-reason mt-1">' + reason + '</p>' +
+        '<p class="staff-appointment-meta mt-1"><i class="fa-solid fa-user-doctor mr-1"></i>' + doctor + '</p>' +
+        '<p class="staff-appointment-meta mt-1"><i class="fa-regular fa-calendar mr-1"></i>' + date + '</p>' +
+        '<p class="staff-appointment-meta mt-1"><i class="fa-regular fa-clock mr-1"></i>' + time + '</p>' +
+        '</div><span class="staff-appointment-status erecpass-status-approved px-2 py-1 rounded-full font-bold shrink-0">Approved</span></div></div>';
+    };
+    if (previewContainer) {
+      previewContainer.innerHTML = upcoming.length
+        ? upcoming.slice(0, 3).map(renderAppointment).join('')
+        : '<p class="staff-appointment-empty p-2">No upcoming appointments.</p>';
+    }
+    if (fullListContainer) {
+      fullListContainer.innerHTML = approved.length
+        ? approved.map(renderAppointment).join('')
+        : '<p class="staff-appointment-empty p-2">No approved appointments.</p>';
+    }
   } catch (error) {
     console.error('[ERecPass] Staff approved appointments:', error);
-    container.innerHTML = '<p class="text-xs text-rose-300 p-2">Unable to load approved appointments. Please refresh.</p>';
+    const errorMessage = '<p class="staff-appointment-error p-2">Unable to load appointments. Please refresh.</p>';
+    if (previewContainer) previewContainer.innerHTML = errorMessage;
+    if (fullListContainer) fullListContainer.innerHTML = errorMessage;
   }
 }
 
@@ -6753,23 +7018,26 @@ async function renderStaffHospitalAnnouncements() {
     const cloudList = await loadHospitalAnnouncementsFromSupabase();
     if (cloudList) announcements = cloudList;
     if (!announcements.length) {
-      container.innerHTML = '<p class="text-xs text-slate-400 p-2">No hospital announcements posted yet.</p>';
+      container.innerHTML = '<p class="staff-update-empty p-2">No updates available right now.</p>';
       return;
     }
-    container.innerHTML = announcements.map(function(a) {
+    const announcementHtml = announcements.map(function(a) {
+      const title = escapeStaffDashboardText(a.title || 'Hospital Announcement');
       const text = escapeStaffDashboardText(a.text || a.body || '');
       const date = escapeStaffDashboardText(a.date || a.published_on || '');
       const photo = String(a.photo || a.image_url || '').trim();
       const photoHtml = photo ? '<div class="mt-3 overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-950/40"><img src="' + escapeStaffDashboardText(photo) + '" alt="Hospital announcement image" class="photo-viewable w-full max-h-80 object-contain rounded-xl" loading="lazy" title="Tap to view, zoom in, and zoom out" onerror="this.parentElement.style.display=\'none\';"></div>' : '';
       return '<article class="glass-card p-3 rounded-xl border border-cyan-500/20">' +
         '<div class="flex items-start gap-2"><i class="fa-solid fa-bullhorn text-cyan-400 mt-0.5"></i><div class="min-w-0 flex-1">' +
-        '<p class="text-[11px] text-slate-400">' + date + '</p>' +
-        (text ? '<p class="text-xs text-slate-200 mt-1 whitespace-pre-wrap break-words">' + text + '</p>' : '') +
+        '<h3 class="staff-announcement-title text-sm font-bold">' + title + '</h3>' +
+        (date ? '<p class="staff-announcement-date mt-1">' + date + '</p>' : '') +
+        (text ? '<p class="staff-announcement-body mt-1 whitespace-pre-wrap break-words">' + text + '</p>' : '') +
         photoHtml + '</div></div></article>';
-    }).join('');
+    });
+    container.innerHTML = announcementHtml.join('');
   } catch (error) {
     console.error('[ERecPass] Staff hospital announcements:', error);
-    container.innerHTML = '<p class="text-xs text-rose-300 p-2">Unable to load hospital announcements. Please refresh.</p>';
+    container.innerHTML = '<p class="staff-update-error p-2">Unable to load updates. Please refresh.</p>';
   }
 }
 
@@ -6784,13 +7052,22 @@ if (!window.erecpassStaffDashboardRefreshTimer) {
 }
 
 function startStaffQrScanner() {
+if (currentSession?.role !== 'staff') {
+  console.warn('[ERecPass] QR scanning requires an authenticated staff session.');
+  return false;
+}
 const reader = document.getElementById('staffQrReader');
 const card = document.getElementById('scannedPatientCard');
+const status = document.getElementById('staffQrStatus');
+if (status) status.textContent = 'Opening your device camera or image picker...';
 if (card) card.classList.add('hidden');
-if (!reader) { alert('QR scanner area is not available.'); return; }
+if (!reader) {
+  if (status) status.textContent = 'The QR scanner area is unavailable. Refresh and try again.';
+  return false;
+}
 if (typeof Html5Qrcode === 'undefined') {
-  alert('QR camera scanner is still loading. Please wait a moment and try again.');
-  return;
+  if (status) status.textContent = 'The QR scanner is still loading. Wait a moment and try again.';
+  return false;
 }
 
 const openAndroidCameraCapture = () => {
@@ -6811,17 +7088,28 @@ const openAndroidCameraCapture = () => {
     input.addEventListener('change', async () => {
       const file = input.files && input.files[0];
       input.value = '';
-      if (!file) return;
+      if (!file) {
+        const status = document.getElementById('staffQrStatus');
+        if (status) status.textContent = 'Scanning was cancelled. Select Start Scanning when ready.';
+        return;
+      }
 
       try {
+        const status = document.getElementById('staffQrStatus');
+        if (status) status.textContent = 'Reading the selected QR image...';
         const imageScanner = new Html5Qrcode('staffQrReader');
         const decodedText = await imageScanner.scanFile(file, true);
         try { imageScanner.clear(); } catch (e) {}
-        handleScannedQrText(decodedText);
+        await handleScannedQrText(decodedText);
       } catch (scanError) {
         console.error('ERecPass captured QR scan error:', scanError);
-        alert('Hindi mabasa ang QR code. Kumuha ng malinaw na larawan ng buong QR code at subukan ulit.');
+        const status = document.getElementById('staffQrStatus');
+        if (status) status.textContent = 'Could not read that QR image. Choose a clear, complete ERecPass QR code and try again.';
       }
+    });
+    input.addEventListener('cancel', () => {
+      const status = document.getElementById('staffQrStatus');
+      if (status) status.textContent = 'Camera or image selection was cancelled. Check camera permission and try again when ready.';
     });
   }
 
@@ -6830,77 +7118,109 @@ const openAndroidCameraCapture = () => {
   input.click();
 };
 
-const cleanupScanner = async () => {
-  if (!staffHtml5QrCode) return;
-  try { await staffHtml5QrCode.stop(); } catch (e) {}
-  try { staffHtml5QrCode.clear(); } catch (e) {}
-  staffHtml5QrCode = null;
-};
-
 // Use Android's native camera capture first. This avoids the site's getUserMedia
 // permission wall in browsers/custom tabs that block web camera access.
 openAndroidCameraCapture();
 
-// Keep the live scanner available for browsers that support it after a successful
-// native capture is cancelled/returned. The native capture path is the primary
-// Android-compatible path and does not change the existing UI.
+// Scanning uses the device capture/image picker, not a persistent page camera stream.
 return;
 }
 
-async function handleScannedQrText(text) {
+async function stopStaffQrScanner() {
+  if (currentSession?.role !== 'staff') {
+    console.warn('[ERecPass] Stopping the QR scanner requires an authenticated staff session.');
+    return false;
+  }
+  const status = document.getElementById('staffQrStatus');
+  const reader = document.getElementById('staffQrReader');
+  const input = document.getElementById('staffCameraCapture');
+  const card = document.getElementById('scannedPatientCard');
+  if (input) input.value = '';
+  if (card) card.classList.add('hidden');
+  if (staffHtml5QrCode) {
+    try {
+      await staffHtml5QrCode.stop();
+      staffHtml5QrCode.clear();
+      staffHtml5QrCode = null;
+    } catch (error) {
+      console.error('[ERecPass] Unable to stop staff QR scanner:', error);
+      if (status) status.textContent = 'The camera could not be stopped cleanly. Close the camera dialog and refresh if needed.';
+      return false;
+    }
+  }
+  if (reader) reader.replaceChildren();
+  if (status) status.textContent = 'Scanner stopped. Select Start Scanning when ready.';
+  return true;
+}
 
-let patientId = text.replace("ERECPASS:", "").trim();
+async function handleScannedQrText(text) {
+if (currentSession?.role !== 'staff') {
+  console.warn('[ERecPass] QR results require an authenticated staff session.');
+  return false;
+}
+
+let patientId = String(text || "").replace(/^ERECPASS:/i, "").trim();
+const status = document.getElementById('staffQrStatus');
+const card = document.getElementById('scannedPatientCard');
+if (card) card.classList.add('hidden');
+if (status) status.textContent = 'Validating this QR code with the patient records service...';
 
 let p = null;
 
-// Staff QR results now use the live Supabase patient record first,
-// so the displayed profile, photo, laboratory results and notes are current.
 try {
   const client = window.erecpassSupabase;
-  if (client && patientId) {
-    const cloud = await client.from('patients').select('*').or('id.eq.' + patientId + ',user_id.eq.' + patientId).maybeSingle();
-    if (!cloud.error && cloud.data) {
-      const c = cloud.data;
-      p = {
-        id: c.id,
-        user_id: c.user_id,
-        fullName: c.full_name || c.name || 'Patient',
-        email: c.email || '',
-        sim: c.sim || '',
-        photo: c.photo || '',
-        ageCategory: c.age_category || '',
-        birthDate: c.birth_date || c.birthDate || c.date_of_birth || c.dob || '', birth_date: c.birth_date || c.birthDate || c.date_of_birth || c.dob || '',
-        gender: c.gender || c.sex || '',
-        bloodType: c.blood_type || c.bloodType || '',
-        address: c.address || '',
-        guardianName: c.guardian_name || c.guardianName || '',
-        guardianNum: c.guardian_num || c.guardianNum || '',
-        status: c.status || 'Green',
-        labResults: c.lab_results || [],
-        prescriptions: c.prescriptions || [],
-        doctorNotes: c.doctor_notes || ''
-      };
-      try {
-        const cached = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
-        const idx = cached.findIndex(x => String(x.id) === String(c.id));
-        if (idx >= 0) cached[idx] = Object.assign({}, cached[idx], p);
-        else cached.push(p);
-        epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(cached));
-      } catch (e) {}
+  if (!patientId) throw new Error('QR code did not contain a patient identifier.');
+  if (!client?.auth || !client?.from) throw new Error('Patient records service is unavailable.');
+  const auth = await client.auth.getUser();
+  if (auth.error) throw auth.error;
+  if (!auth.data?.user) throw new Error('Staff session has expired. Sign in again.');
+  const fields = 'id,user_id,full_name,email,sim,photo,age_category,birth_date,gender,blood_type,address,guardian_name,guardian_num,status,lab_results,doctor_notes';
+  let cloud = await client.from('patients').select(fields).eq('id', patientId).maybeSingle();
+  if (cloud.error) throw cloud.error;
+  if (!cloud.data) {
+    cloud = await client.from('patients').select(fields).eq('user_id', patientId).maybeSingle();
+    if (cloud.error) throw cloud.error;
+  }
+  if (cloud.data) {
+    const c = cloud.data;
+    p = {
+      id: c.id,
+      user_id: c.user_id,
+      fullName: c.full_name || 'Patient',
+      email: c.email || '',
+      sim: c.sim || '',
+      photo: c.photo || '',
+      ageCategory: c.age_category || '',
+      birthDate: c.birth_date || '',
+      birth_date: c.birth_date || '',
+      gender: c.gender || '',
+      bloodType: c.blood_type || '',
+      address: c.address || '',
+      guardianName: c.guardian_name || '',
+      guardianNum: c.guardian_num || '',
+      status: c.status || 'Green',
+      labResults: c.lab_results || [],
+      doctorNotes: c.doctor_notes || ''
+    };
+    try {
+      const cached = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+      const idx = cached.findIndex(x => String(x.id) === String(c.id));
+      if (idx >= 0) cached[idx] = Object.assign({}, cached[idx], p);
+      else cached.push(p);
+      epStore.setItem(DB_KEYS.PATIENTS, JSON.stringify(cached));
+    } catch (cacheError) {
+      console.warn('[ERecPass] Unable to refresh the local patient cache after QR verification:', cacheError);
     }
   }
-} catch (e) {
-  console.warn('[ERecPass] Staff QR cloud lookup:', e);
-}
-
-// Keep local-cache fallback for offline/older records.
-if (!p) {
-  const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
-  p = patients.find(item => item.id === patientId || item.id === text) || null;
+} catch (error) {
+  console.error('[ERecPass] Staff QR record validation failed:', error);
+  if (status) status.textContent = 'Unable to validate this QR code with the patient records service. No patient details were opened.';
+  return false;
 }
 
 if (p) {
 
+if (status) status.textContent = 'QR code matched a patient record authorized for this Staff session.';
 document.getElementById('scannedPatientCard').classList.remove('hidden');
 
 const patientPhoto = document.getElementById('scannedPatientPhoto');
@@ -6982,10 +7302,13 @@ if (scannedLabResultsEl) {
 }
 
 document.getElementById('scannedDoctorNote').innerText = p.doctorNotes || p.doctor_notes || "No active doctor notes.";
+return true;
 
 } else {
 
-alert("Patient QR Code not found in database.");
+const status = document.getElementById('staffQrStatus');
+if (status) status.textContent = 'No patient record matched this QR code. No patient details were opened.';
+return false;
 
 }
 
@@ -9027,7 +9350,7 @@ overscroll-behavior: contain;
     window.handleScannedQrText = async function (text) {
       // Wait for the existing handler to finish its Supabase lookup/cache refresh
       // before attaching the lab-photo action, so it targets the patient just scanned.
-      await Promise.resolve(originalHandleScannedQrText.apply(this, arguments));
+      var scanResult = await Promise.resolve(originalHandleScannedQrText.apply(this, arguments));
 
       var patientId = String(text || "").replace("ERECPASS:", "").trim();
       var patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS)) || [];
@@ -9039,6 +9362,7 @@ overscroll-behavior: contain;
         window.__erecpassScannedPatientId = patient.id;
         addLabPhotoButtonToScannedCard();
       }
+      return scanResult;
     };
   }
 
@@ -10711,7 +11035,7 @@ setTimeout(installAddedUI,2500);
 <!-- Supabase Auth and cloud data -->
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 <script src="./supabase-client.js?v=20261028c"></script>
-<script src="./supabase-runtime.js?v=20261029a"></script>
+<script src="./supabase-runtime.js?v=20261030a"></script>
 <script src="./supabase-auth-runtime.js?v=20261029d"></script>
 <!-- ERECPASS WHITE-SCREEN RECOVERY: reveal a usable entry screen if startup fails -->
 <script>
@@ -10962,35 +11286,61 @@ setTimeout(installAddedUI,2500);
   window.sendPatientChatFile=()=>alert('Text messaging is ready.');
 
   async function renderStaffAdminChat(){
-    if(currentSession?.role!=='staff'||!S()) return;
     const box=document.getElementById('staffAdminChatBox');
+    const status=document.getElementById('staffAdminChatStatus');
     if(!box) return;
+    if(currentSession?.role!=='staff'){
+      console.warn('[ERecPass] Staff chat requires an authenticated staff session.');
+      return false;
+    }
+    if(!S()){
+      box.innerHTML='<p class="staff-chat-error">The secure messaging service is unavailable. Try again when the connection is restored.</p>';
+      if(status) status.textContent='Messaging service unavailable.';
+      return false;
+    }
     try{
       const uid=await ensureAuthUserId();
       const x=await getMessages(uid);
       box.innerHTML=x.messages.length ? x.messages.map(m=>{
         const mine=m.sender_id===uid;
         return '<div class="flex flex-col '+(mine?'items-end':'items-start')+' gap-0.5" data-staff-message-id="'+esc(m.id)+'">'+
-          '<span class="text-[9px] font-bold '+(mine?'text-cyan-300':'text-rose-300')+'">'+(mine?'STAFF':'ADMIN')+'</span>'+
-          '<div class="staff-chat-bubble '+(mine?'bg-cyan-500 text-slate-950 font-semibold':'bot-message text-slate-200')+' p-2 rounded-xl max-w-[80%] break-words" data-message-id="'+esc(m.id)+'">'+esc(m.body)+'</div>'+
-          '<span class="text-[9px] text-slate-500">'+stamp(m.created_at)+'</span>'+
+          '<span class="staff-chat-author '+(mine?'staff-chat-author-self':'staff-chat-author-admin')+'">'+(mine?'STAFF':'ADMIN')+'</span>'+
+          '<div class="staff-chat-bubble '+(mine?'staff-chat-sent':'staff-chat-received')+' p-3 rounded-xl max-w-[88%] break-words" data-message-id="'+esc(m.id)+'">'+esc(m.body)+'</div>'+
+          '<span class="staff-chat-timestamp">'+stamp(m.created_at)+'</span>'+
           '<button type="button" class="staff-chat-delete inline-flex w-8 h-8 items-center justify-center text-rose-500 border border-rose-500/30 rounded-lg mt-1" data-delete-staff-message="'+esc(m.id)+'" title="Delete message" aria-label="Delete message"><i class="fa-solid fa-trash"></i></button>'+
         '</div>';
-      }).join('') : '<div class="text-center text-[10px] text-slate-500 py-8">No messages yet. Send a message to admin2@gmail.com.</div>';
+      }).join('') : '<div class="staff-chat-empty">No messages yet. Start a conversation with Admin.</div>';
       box.scrollTop=box.scrollHeight;
       subscribe(x.conversation.id);
-    }catch(e){ console.error('[ERecPass] Staff admin chat load failed:',e); }
+      if(status) status.textContent='';
+      return true;
+    }catch(e){
+      console.error('[ERecPass] Staff admin chat load failed:',e);
+      box.innerHTML='<p class="staff-chat-error">Unable to load your conversation. Check your connection and try again.</p>';
+      if(status) status.textContent='Message history could not be loaded.';
+      return false;
+    }
   }
 
   window.renderStaffAdminChat=renderStaffAdminChat;
 
-  window.sendStaffAdminMessage=async function(){
+  window.sendStaffAdminMessage=async function(messageText){
+    const status=document.getElementById('staffAdminChatStatus');
+    if(currentSession?.role!=='staff'||!S()){
+      console.warn('[ERecPass] Staff messaging requires an authenticated staff session.');
+      if(status) status.textContent='Sign in with an authorized Staff account to send a message.';
+      return false;
+    }
     const input=document.getElementById('staffAdminChatInput');
-    const body=(input?.value||'').trim();
-    if(!body) return;
+    const body=String(messageText==null?(input?.value||''):messageText).trim();
+    if(!body) return false;
+    if(body.length>4000) return false;
     const button=input?.parentElement?.querySelector('button');
+    if(button?.disabled) return false;
+    let messageInserted=false;
     try{
       if(button) button.disabled=true;
+      if(status) status.textContent='Sending message...';
       const uid=await ensureAuthUserId();
       const c=await getConversation(uid);
       const r=await S().from('message_messages').insert({
@@ -10999,16 +11349,26 @@ setTimeout(installAddedUI,2500);
         body:body
       }).select('id,conversation_id,sender_id,body,created_at,read_at').single();
       if(r.error) throw r.error;
+      messageInserted=true;
       const cr=await S().from('message_conversations').update({
         status:'Open',
         updated_at:new Date().toISOString()
       }).eq('id',c.id);
       if(cr.error) throw cr.error;
-      if(input) input.value='';
-      await renderStaffAdminChat();
+      if(messageText==null&&input) input.value='';
+      const loaded=await renderStaffAdminChat();
+      if(status) status.textContent=loaded ? 'Message sent.' : 'Message sent, but the conversation could not refresh.';
+      return true;
     }catch(e){
       console.error('[ERecPass] Staff admin chat send failed:',e);
-      alert('Hindi naipadala ang message sa admin. '+(e?.message||'Pakisubukan ulit.'));
+      if(messageInserted) {
+        if(messageText==null&&input) input.value='';
+        if(status) status.textContent='Message sent, but the conversation status could not update. Check Chat before retrying.';
+        await renderStaffAdminChat();
+        return true;
+      }
+      if(status) status.textContent='Unable to send the message. Your text has been kept; please try again.';
+      return false;
     }finally{
       if(button) button.disabled=false;
     }
@@ -11423,7 +11783,7 @@ function togglePatientMoreNav() {
   const expanded = nav.classList.contains('patient-nav-expanded');
   if (expanded && window.matchMedia('(max-width: 1023px)').matches &&
       !window.matchMedia('(prefers-reduced-motion: reduce)').matches) {
-    nav.querySelectorAll('#nav-dashboard, #nav-hospital-map, #nav-medicines, #nav-doctors, #nav-profile').forEach(button => {
+    nav.querySelectorAll('#nav-dashboard, #nav-hospital-map, #nav-medicines, #nav-doctors').forEach(button => {
       button.classList.remove('patient-nav-close-wave');
       void button.offsetWidth;
       button.classList.add('patient-nav-close-wave');
@@ -11432,8 +11792,14 @@ function togglePatientMoreNav() {
   nav.classList.toggle('patient-nav-expanded', !expanded);
   nav.classList.toggle('patient-nav-collapsed', expanded);
   toggle.setAttribute('aria-expanded', String(!expanded));
-  toggle.setAttribute('aria-label', expanded ? 'Open navigation menu' : 'Close navigation menu');
-  toggle.setAttribute('title', expanded ? 'Open navigation menu' : 'Close navigation menu');
+  const activeOverflowLabel = nav.querySelector('.patient-nav-extra[aria-current="page"] span')?.textContent.trim();
+  const toggleLabel = !expanded
+    ? 'Close navigation menu'
+    : activeOverflowLabel
+      ? 'Open navigation menu; current page: ' + activeOverflowLabel
+      : 'Open navigation menu';
+  toggle.setAttribute('aria-label', toggleLabel);
+  toggle.setAttribute('title', toggleLabel);
   const icon = toggle.querySelector('i');
   icon?.classList.toggle('fa-bars', expanded);
   icon?.classList.toggle('fa-xmark', !expanded);
@@ -11494,13 +11860,17 @@ patientBottomNav?.addEventListener('animationend', event => {
 document.addEventListener('click', event => {
   const nav = document.getElementById('patientBottomNav');
   if (!nav?.classList.contains('patient-nav-expanded')) return;
-  if (event.target.closest('#patientNavMenu .patient-nav-extra, #nav-profile') || !nav.contains(event.target)) {
+  const selectedMenuItem = event.target.closest('#patientNavMenu .patient-nav-extra');
+  if (selectedMenuItem || !nav.contains(event.target)) {
     togglePatientMoreNav();
+    if (selectedMenuItem && event.detail === 0) document.getElementById('patientNavSeeMore')?.focus();
   }
 });
 document.addEventListener('keydown', event => {
   if (event.key === 'Escape' && document.getElementById('patientBottomNav')?.classList.contains('patient-nav-expanded')) {
+    event.preventDefault();
     togglePatientMoreNav();
+    document.getElementById('patientNavSeeMore')?.focus();
   }
 });
 </script>
@@ -12437,6 +12807,1958 @@ document.addEventListener('keydown', event => {
   }
 }
 </style>
+
+<style id="erecpass-staff-ui-polish">
+  #staffLoginPage {
+    background:
+      radial-gradient(ellipse at 18% 18%, rgba(13, 148, 136, .12), transparent 38%),
+      radial-gradient(ellipse at 85% 82%, rgba(14, 165, 233, .10), transparent 36%);
+  }
+  #staffLoginPage .auth-card {
+    width: min(100%, 440px);
+    padding: clamp(24px, 6vw, 36px) !important;
+    border: 1px solid #dce8ef !important;
+    border-radius: 26px !important;
+    background: rgba(255,255,255,.97) !important;
+    color: #17324b !important;
+    box-shadow: 0 24px 70px rgba(20, 54, 74, .16) !important;
+  }
+  #staffLoginPage .logo { margin-bottom: 22px !important; }
+  #staffLoginPage .logo > div:first-child {
+    width: 52px;
+    height: 52px;
+    border-radius: 17px;
+    background: linear-gradient(145deg, #d9fbf4, #e0f2fe) !important;
+    border: 1px solid #b8e9df !important;
+    color: #087f75 !important;
+  }
+  #staffLoginPage .logo h1 {
+    color: #12344b !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 22px;
+    letter-spacing: -.04em;
+  }
+  #staffLoginPage .logo p {
+    margin-top: 4px;
+    color: #628096 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    letter-spacing: .12em;
+  }
+  #staffLoginPage > .auth-card > p {
+    margin-bottom: 22px;
+    color: #61798b !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+    line-height: 1.6;
+  }
+  #staffLoginPage label {
+    color: #24566a !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    letter-spacing: .06em;
+  }
+  #staffLoginPage .input-box {
+    min-height: 48px;
+    border: 1px solid #d4e2eb !important;
+    border-radius: 14px !important;
+    background: #f7fafc !important;
+    transition: border-color .18s ease, box-shadow .18s ease, background .18s ease;
+  }
+  #staffLoginPage .input-box:focus-within {
+    border-color: #3aa99c !important;
+    background: #fff !important;
+    box-shadow: 0 0 0 3px rgba(13,148,136,.12);
+  }
+  #staffLoginPage .input-box i { color: #378f8d !important; }
+  #staffLoginPage .input-box input {
+    min-height: 42px;
+    color: #17324b !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+  }
+  #staffLoginPage .input-box input::placeholder { color: #8ba0af !important; opacity: 1; }
+  #staffLoginPage .primary-btn {
+    min-height: 48px;
+    margin-top: 8px;
+    border-radius: 14px !important;
+    background: linear-gradient(110deg, #0d9488, #0e7490) !important;
+    color: #fff !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    letter-spacing: .1em;
+    box-shadow: 0 8px 18px rgba(13,148,136,.18);
+  }
+  #staffLoginPage .primary-btn:hover { box-shadow: 0 10px 24px rgba(13,148,136,.28); }
+  #staffLoginPage > .auth-card > button {
+    min-height: 42px;
+    margin-top: 10px !important;
+    border-radius: 12px;
+    color: #61798b !important;
+    font-family: 'Inter', sans-serif;
+  }
+  #staffLoginPage > .auth-card > button:hover { background: #f1f7fa; color: #176f70 !important; }
+
+  #staffApp {
+    min-height: 100vh;
+    background:
+      radial-gradient(ellipse at 8% 12%, rgba(20,184,166,.055), transparent 30%),
+      #f4f8fb !important;
+    color: #17324b !important;
+  }
+  #staffApp .staff-header {
+    height: 70px !important;
+    padding-left: max(20px, calc((100vw - 1120px) / 2)) !important;
+    padding-right: max(20px, calc((100vw - 1120px) / 2)) !important;
+    background: rgba(255,255,255,.92) !important;
+    border-color: #e0eaf0 !important;
+    box-shadow: 0 4px 18px rgba(27,62,82,.07) !important;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  #staffApp .staff-header .brand { gap: 11px; }
+  #staffApp .staff-header .brand > div {
+    width: 40px;
+    height: 40px;
+    border-radius: 13px;
+    background: linear-gradient(145deg, #d9fbf4, #e0f2fe) !important;
+    border-color: #b8e9df !important;
+    color: #087f75 !important;
+  }
+  #staffApp .staff-header .brand strong {
+    color: #163d55 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 15px !important;
+    font-weight: 750;
+    letter-spacing: -.025em;
+    text-shadow: none !important;
+  }
+  #staffApp .staff-header > button {
+    min-height: 40px;
+    padding: 0 15px !important;
+    border: 1px solid #f2cdd1 !important;
+    border-radius: 12px !important;
+    background: #fff7f7 !important;
+    color: #b34450 !important;
+    font-family: 'Inter', sans-serif !important;
+    font-size: 11px;
+    transition: background .18s ease, border-color .18s ease, transform .18s ease;
+  }
+  #staffApp .staff-header > button:hover {
+    background: #ffeded !important;
+    border-color: #e8aeb5 !important;
+    transform: translateY(-1px);
+  }
+  #staffApp main {
+    max-width: 1080px !important;
+    padding-top: 94px !important;
+    padding-bottom: 40px !important;
+    display: grid;
+    gap: 18px !important;
+  }
+  #staffApp main > .glass-card {
+    padding: 22px !important;
+    border: 1px solid #e0eaf0 !important;
+    border-radius: 20px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgba(27,62,82,.055) !important;
+    transition: border-color .18s ease, box-shadow .18s ease;
+  }
+  #staffApp main > .glass-card:first-child {
+    min-height: 112px;
+    padding: 24px 26px !important;
+    border-color: #d3ebe6 !important;
+    background: linear-gradient(115deg, #effaf8 0%, #fff 58%, #f2f8fc 100%) !important;
+    box-shadow: 0 10px 26px rgba(17,94,89,.07) !important;
+  }
+  #staffApp main > .glass-card:first-child > div:first-child > span {
+    color: #5e7b87 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: .08em;
+    text-transform: uppercase;
+  }
+  #staffApp #staffPortalNameDisplay {
+    margin-top: 5px;
+    color: #153d52 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: clamp(19px, 3vw, 24px);
+    font-weight: 750;
+    letter-spacing: -.04em;
+  }
+  #staffApp main > .glass-card:first-child > div:last-child {
+    max-width: 44%;
+    padding: 10px 14px;
+    border: 1px solid #d8e9ed;
+    border-radius: 14px;
+    background: rgba(255,255,255,.75);
+  }
+  #staffApp main > .glass-card:first-child > div:last-child > span {
+    color: #64818d !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+    font-weight: 650;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+  }
+  #staffApp #staffAssignedTaskDisplay {
+    margin-top: 3px;
+    color: #087f75 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    line-height: 1.4;
+  }
+  #staffApp #staffApprovedAppointmentsCard > div:first-child,
+  #staffApp #staffHospitalAnnouncementsCard > div:first-child,
+  #staffApp main > .glass-card:nth-child(4) > div:first-child,
+  #staffApp main > .glass-card:nth-child(5) > div:first-child {
+    margin-bottom: 12px !important;
+  }
+  #staffApp #staffApprovedAppointmentsCard > div:first-child h2,
+  #staffApp #staffHospitalAnnouncementsCard > div:first-child h2,
+  #staffApp main > .glass-card:nth-child(4) h2,
+  #staffApp main > .glass-card:nth-child(5) h2 {
+    color: #174e63 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 14px;
+    font-weight: 750;
+    letter-spacing: -.01em;
+    text-transform: none;
+  }
+  #staffApp #staffApprovedAppointmentsCard > div:first-child h2 i,
+  #staffApp #staffHospitalAnnouncementsCard > div:first-child h2 i,
+  #staffApp main > .glass-card:nth-child(4) h2 i,
+  #staffApp main > .glass-card:nth-child(5) h2 i { color: #148f87 !important; }
+  #staffApp #staffApprovedAppointmentsCard > p,
+  #staffApp #staffHospitalAnnouncementsCard > p,
+  #staffApp main > .glass-card:nth-child(4) > p,
+  #staffApp main > .glass-card:nth-child(5) > p {
+    margin-bottom: 16px !important;
+    color: #6b8190 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 12px;
+    line-height: 1.55;
+  }
+  #staffApp main > .glass-card:nth-child(5) > div:first-child > span {
+    padding: 6px 9px;
+    border: 1px solid #dce8ed;
+    border-radius: 999px;
+    background: #f7fafc;
+    color: #6b8190 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+  }
+  #staffApp #staffApprovedAppointmentsCount {
+    padding: 7px 10px !important;
+    border: 1px solid #bde8d4;
+    border-radius: 999px;
+    background: #effbf5;
+    color: #168253 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 10px;
+  }
+  #staffApp #staffApprovedAppointmentsList,
+  #staffApp #staffHospitalAnnouncementsList { display: grid; gap: 10px !important; }
+  #staffApp #staffApprovedAppointmentsList > .appointment-card {
+    padding: 15px !important;
+    border: 1px solid #dcece6 !important;
+    border-radius: 15px !important;
+    background: #f8fcfa !important;
+    box-shadow: none !important;
+  }
+  #staffApp #staffApprovedAppointmentsList > .appointment-card strong {
+    color: #173e53 !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  #staffApp #staffApprovedAppointmentsList > .appointment-card p {
+    color: #637b89 !important;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.5;
+  }
+  #staffApp #staffApprovedAppointmentsList > .appointment-card p:last-of-type { color: #087f75 !important; }
+  #staffApp #staffHospitalAnnouncementsList > article.glass-card {
+    padding: 15px !important;
+    border: 1px solid #e1ebf0 !important;
+    border-radius: 15px !important;
+    background: #f8fbfd !important;
+    box-shadow: none !important;
+  }
+  #staffApp #staffHospitalAnnouncementsList > article > div > i { color: #148f87 !important; }
+  #staffApp #staffHospitalAnnouncementsList > article p {
+    color: #476273 !important;
+    font-family: 'Inter', sans-serif;
+    line-height: 1.6;
+  }
+  #staffApp #staffHospitalAnnouncementsList > article p:first-child {
+    color: #7b909c !important;
+    font-size: 10px;
+    font-weight: 600;
+  }
+  #staffApp #staffQrReader {
+    min-height: 220px;
+    border: 1px dashed #bbd0dc;
+    border-radius: 16px !important;
+    background: #f3f7fa !important;
+  }
+  #staffApp #staffQrReader video { border-radius: 12px; }
+  #staffApp main > .glass-card:nth-child(4) button,
+  #staffApp #staffAdminChatBox + .chat-input button {
+    min-height: 42px;
+    border-radius: 12px !important;
+    font-family: 'Inter', sans-serif;
+    font-weight: 700;
+  }
+  #staffApp main > .glass-card:nth-child(4) button:not(.primary-btn) {
+    border: 1px solid #d8e5eb !important;
+    background: #f7fafc !important;
+    color: #426273 !important;
+  }
+  #staffApp main > .glass-card:nth-child(4) .primary-btn,
+  #staffApp #staffAdminChatBox + .chat-input .primary-btn {
+    background: linear-gradient(110deg, #0d9488, #0e7490) !important;
+    color: #fff !important;
+  }
+  #staffApp #staffAdminChatBox {
+    min-height: 220px;
+    border: 1px solid #e0eaf0 !important;
+    border-radius: 15px !important;
+    background: #f7fafc !important;
+  }
+  #staffApp .chat-input {
+    min-height: 54px;
+    border: 1px solid #dce7ed !important;
+    border-radius: 15px !important;
+    background: #fff !important;
+  }
+  #staffApp #staffAdminChatInput {
+    min-height: 40px;
+    color: #17324b !important;
+    font-family: 'Inter', sans-serif;
+    font-size: 13px;
+  }
+  #staffApp #staffAdminChatInput::placeholder { color: #8ba0af !important; opacity: 1; }
+  #staffApp :is(button,input):focus-visible {
+    outline: 3px solid rgba(13,148,136,.28);
+    outline-offset: 2px;
+  }
+  html.ep-dark #staffApp {
+    background:
+      radial-gradient(ellipse at 8% 12%, rgba(20,184,166,.09), transparent 30%),
+      #101820 !important;
+  }
+  html.ep-dark #staffApp .staff-header {
+    background: rgba(24,37,50,.94) !important;
+    border-color: #334b60 !important;
+  }
+  html.ep-dark #staffApp .staff-header .brand strong { color: #d9edf3 !important; }
+  html.ep-dark #staffApp main > .glass-card {
+    background: #182532 !important;
+    border-color: #334b60 !important;
+    box-shadow: 0 8px 24px rgba(0,0,0,.14) !important;
+  }
+  html.ep-dark #staffApp main > .glass-card:first-child {
+    background: linear-gradient(115deg, #183633, #182d38 64%, #1b2b38) !important;
+    border-color: #315a58 !important;
+  }
+  html.ep-dark #staffApp #staffPortalNameDisplay,
+  html.ep-dark #staffApp #staffApprovedAppointmentsCard > div:first-child h2,
+  html.ep-dark #staffApp #staffHospitalAnnouncementsCard > div:first-child h2,
+  html.ep-dark #staffApp main > .glass-card:nth-child(4) h2,
+  html.ep-dark #staffApp main > .glass-card:nth-child(5) h2 { color: #d8edf0 !important; }
+  html.ep-dark #staffApp main > .glass-card:first-child > div:last-child,
+  html.ep-dark #staffApp #staffApprovedAppointmentsList > .appointment-card,
+  html.ep-dark #staffApp #staffHospitalAnnouncementsList > article.glass-card,
+  html.ep-dark #staffApp #staffQrReader,
+  html.ep-dark #staffApp #staffAdminChatBox,
+  html.ep-dark #staffApp .chat-input {
+    background: #14232e !important;
+    border-color: #354d5b !important;
+  }
+  html.ep-dark #staffApp main > .glass-card:nth-child(5) > div:first-child > span {
+    background: #203243;
+    border-color: #354d5b;
+    color: #b6c8d2 !important;
+  }
+  html.ep-dark #staffApp #staffApprovedAppointmentsList > .appointment-card strong { color: #d6e8ed !important; }
+  html.ep-dark #staffApp #staffApprovedAppointmentsList > .appointment-card p,
+  html.ep-dark #staffApp #staffHospitalAnnouncementsList > article p { color: #b6c8d2 !important; }
+  html.ep-dark #staffApp #staffAdminChatInput { color: #edf4fb !important; }
+  html.ep-dark #staffApp #staffApprovedAppointmentsCount {
+    background: #16372d;
+    border-color: #28644a;
+    color: #8be0b2 !important;
+  }
+  html.ep-dark #staffLoginPage .auth-card {
+    border-color: #334b60 !important;
+    background: #182532 !important;
+    color: #edf4fb !important;
+  }
+  html.ep-dark #staffLoginPage .logo h1 { color: #edf4fb !important; }
+  html.ep-dark #staffLoginPage .logo p,
+  html.ep-dark #staffLoginPage > .auth-card > p,
+  html.ep-dark #staffLoginPage > .auth-card > button { color: #b7c8d4 !important; }
+  html.ep-dark #staffLoginPage .input-box {
+    border-color: #40566a !important;
+    background: #101820 !important;
+  }
+  html.ep-dark #staffLoginPage .input-box input { color: #edf4fb !important; }
+  html.ep-dark #staffLoginPage .input-box:focus-within { border-color: #42b9aa !important; }
+  @media (max-width: 640px) {
+    #staffApp .staff-header {
+      height: 64px !important;
+      padding-left: max(12px, env(safe-area-inset-left)) !important;
+      padding-right: max(12px, env(safe-area-inset-right)) !important;
+    }
+    #staffApp .staff-header .brand strong { font-size: 12px !important; }
+    #staffApp .staff-header .brand > div { width: 36px; height: 36px; }
+    #staffApp .staff-header > button { min-height: 38px; padding: 0 12px !important; }
+    #staffApp main {
+      padding: 80px 12px 24px !important;
+      gap: 13px !important;
+    }
+    #staffApp main > .glass-card { padding: 17px !important; border-radius: 17px !important; }
+    #staffApp main > .glass-card:first-child { padding: 18px !important; }
+    #staffApp main > .glass-card:first-child > div:last-child { padding: 8px 10px; }
+    #staffApp main > .glass-card:first-child > div:last-child > span { font-size: 9px; }
+    #staffApp #staffAssignedTaskDisplay { font-size: 10px; }
+    #staffApp #staffAdminChatBox { min-height: 190px; height: 48vh !important; max-height: 320px; }
+    #staffApp #scannedPatientCard { padding: 14px !important; }
+  }
+  @media (max-width: 380px) {
+    #staffApp .staff-header .brand { gap: 7px; }
+    #staffApp .staff-header .brand strong { max-width: 170px; font-size: 11px !important; }
+    #staffApp main > .glass-card:first-child { align-items: flex-start; gap: 10px; }
+    #staffApp main > .glass-card:first-child > div:last-child { max-width: 48%; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #staffApp *,
+    #staffLoginPage * { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  }
+
+  /* Shared green brand theme for Patient and Staff, including both login pages. */
+  #loginPage,
+  #staffLoginPage {
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(34,197,94,.14), transparent 40%),
+      radial-gradient(ellipse at 88% 82%, rgba(16,185,129,.12), transparent 38%),
+      linear-gradient(140deg, #effaf2 0%, #f2faf6 54%, #edf8f1 100%) !important;
+  }
+  #loginPage .auth-medical-decor { background-image:
+    linear-gradient(rgba(22,163,74,.045) 1px, transparent 1px),
+    linear-gradient(90deg, rgba(22,163,74,.045) 1px, transparent 1px); }
+  #loginPage .auth-medical-ecg path { stroke: #77bd91; }
+  #loginPage .auth-medical-ecg .auth-ecg-pulse { stroke: #16834b; }
+  #loginPage .auth-card {
+    border-color: rgba(22,126,69,.22) !important;
+    box-shadow: 0 24px 70px rgba(27,88,52,.13) !important;
+  }
+  #loginPage .logo-icon,
+  #staffLoginPage .logo > div:first-child {
+    background: linear-gradient(145deg, #e1f7e8, #e7f7ef) !important;
+    border-color: #b8e4c5 !important;
+    color: #16834b !important;
+  }
+  #loginPage .logo h1,
+  #staffLoginPage .logo h1 { color: #17683f !important; text-shadow: none !important; }
+  #loginPage label,
+  #staffLoginPage label { color: #28714a !important; }
+  #loginPage .input-box,
+  #staffLoginPage .input-box {
+    border-color: #cfe4d5 !important;
+    background: #f7fbf8 !important;
+  }
+  #loginPage .input-box:focus-within,
+  #staffLoginPage .input-box:focus-within {
+    border-color: #40a869 !important;
+    box-shadow: 0 0 0 3px rgba(34,160,82,.12) !important;
+  }
+  #loginPage .input-box i,
+  #staffLoginPage .input-box i { color: #25834e !important; }
+  #loginPage .primary-btn,
+  #staffLoginPage .primary-btn,
+  #patientApp .primary-btn,
+  #staffApp .primary-btn {
+    background: linear-gradient(110deg, #16834b, #22a653) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 20px rgba(22,131,75,.2) !important;
+  }
+  #loginPage .primary-btn:hover,
+  #staffLoginPage .primary-btn:hover,
+  #patientApp .primary-btn:hover,
+  #staffApp .primary-btn:hover { box-shadow: 0 11px 26px rgba(22,131,75,.28) !important; }
+  #staffApp main > .glass-card .primary-btn,
+  #staffApp main > .glass-card:nth-child(4) .primary-btn,
+  #staffApp #staffAdminChatBox + .chat-input .primary-btn {
+    background: linear-gradient(110deg, #16834b, #22a653) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 20px rgba(22,131,75,.2) !important;
+  }
+  #loginPage #erecpassForgotBtnAdded,
+  #loginPage button[onclick="showRegister()"] { color: #16834b !important; }
+  #loginPage .border-cyan-500\/20 { border-color: rgba(22,131,75,.2) !important; }
+  #loginPage .text-cyan-300,
+  #loginPage .text-cyan-400,
+  #loginPage .text-teal-300,
+  #loginPage .text-teal-400 { color: #16834b !important; }
+  #loginPage .bg-cyan-950 {
+    background: #e4f5e9 !important;
+    border-color: #b8e4c5 !important;
+  }
+  #loginPage .border-cyan-400\/40 { border-color: rgba(22,131,75,.35) !important; }
+  #loginPage button[onclick="showStaffLogin()"] {
+    border-color: rgba(22,131,75,.35) !important;
+    background: #eff8f1 !important;
+    color: #17683f !important;
+  }
+  #loginPage button[onclick="showStaffLogin()"]:hover { background: #e1f3e5 !important; }
+  #staffLoginPage .logo p,
+  #staffLoginPage > .auth-card > p { color: #617c6a !important; }
+  #staffLoginPage label { color: #28714a !important; }
+  #staffLoginPage .logo p { color: #62806c !important; }
+
+  #patientApp,
+  #staffApp {
+    background:
+      radial-gradient(ellipse at 8% 12%, rgba(34,197,94,.045), transparent 30%),
+      #f5faf6 !important;
+  }
+  #patientApp [class*="text-cyan-"],
+  #patientApp [class*="text-teal-"],
+  #staffApp [class*="text-cyan-"],
+  #staffApp [class*="text-teal-"] {
+    color: #16834b !important;
+    -webkit-text-fill-color: #16834b !important;
+  }
+  #patientApp [class*="border-cyan-"],
+  #patientApp [class*="border-teal-"],
+  #staffApp [class*="border-cyan-"],
+  #staffApp [class*="border-teal-"] { border-color: rgba(22,131,75,.25) !important; }
+  #patientApp [class*="bg-cyan-"],
+  #patientApp [class*="bg-teal-"],
+  #staffApp [class*="bg-cyan-"],
+  #staffApp [class*="bg-teal-"] { background-color: #e7f5eb !important; }
+  #patientApp [class~="bg-cyan-400"],
+  #patientApp [class~="bg-cyan-500"],
+  #patientApp [class~="bg-teal-400"],
+  #patientApp [class~="bg-teal-500"],
+  #staffApp [class~="bg-cyan-400"],
+  #staffApp [class~="bg-cyan-500"],
+  #staffApp [class~="bg-teal-400"],
+  #staffApp [class~="bg-teal-500"] {
+    background-color: #16834b !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  #patientApp [class*="shadow-cyan-"],
+  #staffApp [class*="shadow-cyan-"] { --tw-shadow-color: rgba(22,131,75,.2) !important; }
+  #patientApp .top-header {
+    border-color: #d7e9dc !important;
+    box-shadow: 0 5px 20px rgba(30,75,47,.07) !important;
+  }
+  #patientApp .top-header .brand > div {
+    background: #e5f5e9 !important;
+    border-color: #c8e8d0 !important;
+    color: #16834b !important;
+  }
+  #patientApp .top-header .brand strong {
+    color: #17683f !important;
+    -webkit-text-fill-color: #17683f !important;
+  }
+  #patientApp #patientBottomNav {
+    border-color: #d7e9dc !important;
+    box-shadow: 0 -5px 20px rgba(30,75,47,.09) !important;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more) {
+    color: #64806d !important;
+    -webkit-text-fill-color: #64806d !important;
+  }
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active,
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more):hover,
+  #patientApp #patientBottomNav > button:not(.patient-nav-see-more):focus-visible {
+    color: #16834b !important;
+    -webkit-text-fill-color: #16834b !important;
+    background: #eaf6ed !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,:active),
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra.active {
+    background: rgba(22,131,75,.1) !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more {
+    background: #edf7ef !important;
+    border-color: #cfe5d4 !important;
+    color: #17683f !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more i { color: #17683f !important; }
+  #patientApp #patientBottomNav #nav-appointments i,
+  #patientApp #patientBottomNav #nav-medical-records i,
+  #patientApp #patientBottomNav #nav-qr i,
+  #patientApp #patientBottomNav #nav-help i {
+    color: #16834b !important;
+    -webkit-text-fill-color: #16834b !important;
+    background: rgba(22,131,75,.11) !important;
+    filter: none !important;
+  }
+  #patientApp .input-box:focus-within,
+  #staffApp .input-box:focus-within,
+  #patientApp input:focus-visible,
+  #patientApp select:focus-visible,
+  #patientApp textarea:focus-visible,
+  #staffApp input:focus-visible,
+  #staffApp select:focus-visible,
+  #staffApp textarea:focus-visible {
+    border-color: #49a96c !important;
+    box-shadow: 0 0 0 3px rgba(34,160,82,.12) !important;
+  }
+  #staffApp .staff-header .brand > div {
+    background: linear-gradient(145deg, #e1f7e8, #e7f7ef) !important;
+    border-color: #b8e4c5 !important;
+    color: #16834b !important;
+  }
+  #staffApp .staff-header .brand strong { color: #17683f !important; }
+  #staffApp .staff-header > button {
+    border-color: #f2cdd1 !important;
+    background: #fff7f7 !important;
+    color: #b34450 !important;
+  }
+  #staffApp #staffAssignedTaskDisplay { color: #16834b !important; }
+
+  html.ep-dark #loginPage,
+  html.ep-dark #staffLoginPage {
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(34,197,94,.18), transparent 40%),
+      radial-gradient(ellipse at 88% 82%, rgba(16,185,129,.13), transparent 38%),
+      linear-gradient(140deg, #10241a 0%, #14271e 54%, #10251c 100%) !important;
+  }
+  html.ep-dark #loginPage .auth-medical-decor {
+    background-image:
+      linear-gradient(rgba(88,211,130,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,211,130,.1) 1px, transparent 1px);
+  }
+  html.ep-dark #loginPage .auth-medical-ecg path { stroke: #54b878; }
+  html.ep-dark #loginPage .auth-medical-ecg .auth-ecg-pulse { stroke: #8be0a5; }
+  html.ep-dark #loginPage .auth-card,
+  html.ep-dark #staffLoginPage .auth-card {
+    background: rgba(24,43,32,.92) !important;
+    border-color: rgba(98,190,126,.38) !important;
+  }
+  html.ep-dark #loginPage .logo h1,
+  html.ep-dark #staffLoginPage .logo h1 { color: #b9efc8 !important; }
+  html.ep-dark #loginPage label,
+  html.ep-dark #staffLoginPage label { color: #9cdbad !important; }
+  html.ep-dark #loginPage .input-box,
+  html.ep-dark #staffLoginPage .input-box {
+    background: #14251b !important;
+    border-color: #3d6048 !important;
+  }
+  html.ep-dark #loginPage .input-box input,
+  html.ep-dark #staffLoginPage .input-box input { color: #edf8ef !important; }
+  html.ep-dark #loginPage .input-box i,
+  html.ep-dark #staffLoginPage .input-box i { color: #80d699 !important; }
+  html.ep-dark #loginPage .logo-icon,
+  html.ep-dark #staffLoginPage .logo > div:first-child {
+    background: #1d3928 !important;
+    border-color: #396448 !important;
+    color: #8be0a5 !important;
+  }
+  html.ep-dark #loginPage button[onclick="showStaffLogin()"] {
+    background: #1b3525 !important;
+    border-color: #396448 !important;
+    color: #a4e7b6 !important;
+  }
+  html.ep-dark #loginPage #erecpassForgotBtnAdded,
+  html.ep-dark #loginPage button[onclick="showRegister()"] { color: #8be0a5 !important; }
+  html.ep-dark #patientApp,
+  html.ep-dark #staffApp {
+    background:
+      radial-gradient(ellipse at 8% 12%, rgba(34,197,94,.07), transparent 30%),
+      #101820 !important;
+  }
+  html.ep-dark #patientApp [class*="text-cyan-"],
+  html.ep-dark #patientApp [class*="text-teal-"],
+  html.ep-dark #staffApp [class*="text-cyan-"],
+  html.ep-dark #staffApp [class*="text-teal-"] {
+    color: #8be0a5 !important;
+    -webkit-text-fill-color: #8be0a5 !important;
+  }
+  html.ep-dark #patientApp [class*="border-cyan-"],
+  html.ep-dark #patientApp [class*="border-teal-"],
+  html.ep-dark #staffApp [class*="border-cyan-"],
+  html.ep-dark #staffApp [class*="border-teal-"] { border-color: rgba(102,190,128,.34) !important; }
+  html.ep-dark #patientApp [class*="bg-cyan-"],
+  html.ep-dark #patientApp [class*="bg-teal-"],
+  html.ep-dark #staffApp [class*="bg-cyan-"],
+  html.ep-dark #staffApp [class*="bg-teal-"] { background-color: #1b3525 !important; }
+  html.ep-dark #patientApp [class~="bg-cyan-400"],
+  html.ep-dark #patientApp [class~="bg-cyan-500"],
+  html.ep-dark #patientApp [class~="bg-teal-400"],
+  html.ep-dark #patientApp [class~="bg-teal-500"],
+  html.ep-dark #staffApp [class~="bg-cyan-400"],
+  html.ep-dark #staffApp [class~="bg-cyan-500"],
+  html.ep-dark #staffApp [class~="bg-teal-400"],
+  html.ep-dark #staffApp [class~="bg-teal-500"] {
+    background-color: #267c48 !important;
+    color: #f0fff4 !important;
+    -webkit-text-fill-color: #f0fff4 !important;
+  }
+  html.ep-dark #patientApp .top-header .brand strong,
+  html.ep-dark #staffApp .staff-header .brand strong { color: #b9efc8 !important; }
+  html.ep-dark #patientApp .top-header .brand > div,
+  html.ep-dark #staffApp .staff-header .brand > div {
+    background: #1d3928 !important;
+    border-color: #396448 !important;
+    color: #8be0a5 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more).active,
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more):hover,
+  html.ep-dark #patientApp #patientBottomNav > button:not(.patient-nav-see-more):focus-visible {
+    background: rgba(44,104,62,.3) !important;
+    color: #8be0a5 !important;
+    -webkit-text-fill-color: #8be0a5 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more {
+    background: #1b3525 !important;
+    border-color: #396448 !important;
+    color: #a4e7b6 !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more i,
+  html.ep-dark #patientApp #patientBottomNav #nav-appointments i,
+  html.ep-dark #patientApp #patientBottomNav #nav-medical-records i,
+  html.ep-dark #patientApp #patientBottomNav #nav-qr i,
+  html.ep-dark #patientApp #patientBottomNav #nav-help i {
+    color: #8be0a5 !important;
+    -webkit-text-fill-color: #8be0a5 !important;
+  }
+  html.ep-dark #staffApp .staff-header > button {
+    background: #48232b !important;
+    border-color: #a44756 !important;
+    color: #ff9aa7 !important;
+  }
+</style>
+
+<style id="erecpass-role-navigation-and-agreement">
+  #loginPage,
+  #registerPage,
+  #staffLoginPage,
+  #agreementModal,
+  #splashScreen,
+  #patientApp,
+  #staffApp {
+    --medical-green: #8FDAA0;
+    --medical-green-hover: #76C98A;
+    --medical-green-pale: #EAF8ED;
+    --medical-green-border: #D5E8D9;
+    --medical-green-text: #245B35;
+    --medical-muted: #52665A;
+  }
+  #loginPage,
+  #registerPage,
+  #staffLoginPage {
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(143,218,160,.22), transparent 42%),
+      linear-gradient(140deg, #fff 0%, #f5fbf6 55%, #EAF8ED 100%) !important;
+  }
+  #loginPage .auth-medical-decor,
+  #registerPage .auth-medical-decor {
+    background-image:
+      linear-gradient(rgba(36,91,53,.035) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(36,91,53,.035) 1px, transparent 1px);
+  }
+  #loginPage .auth-medical-ecg path { stroke: #76C98A; }
+  #loginPage .auth-medical-ecg .auth-ecg-pulse { stroke: #245B35; }
+  #registerPage .auth-medical-ecg path { stroke: #76C98A; }
+  #registerPage .auth-medical-ecg .auth-ecg-pulse { stroke: #245B35; }
+  #loginPage .auth-card,
+  #registerPage .auth-card,
+  #staffLoginPage .auth-card {
+    border-color: var(--medical-green-border) !important;
+    box-shadow: 0 16px 42px rgba(36,91,53,.1) !important;
+  }
+  #loginPage .logo h1,
+  #registerPage .logo h1,
+  #staffLoginPage .logo h1 { color: var(--medical-green-text) !important; }
+  #registerPage .logo-icon {
+    background: var(--medical-green-pale) !important;
+    border-color: var(--medical-green-border) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #loginPage label,
+  #registerPage label,
+  #staffLoginPage label { color: var(--medical-green-text) !important; }
+  #loginPage .input-box,
+  #registerPage .input-box,
+  #staffLoginPage .input-box {
+    border-color: var(--medical-green-border) !important;
+    background: #f9fcfa !important;
+  }
+  #loginPage .input-box:focus-within,
+  #registerPage .input-box:focus-within,
+  #staffLoginPage .input-box:focus-within {
+    border-color: #76C98A !important;
+    box-shadow: 0 0 0 3px rgba(36,91,53,.15) !important;
+  }
+  #loginPage .input-box i,
+  #registerPage .input-box i,
+  #staffLoginPage .input-box i { color: var(--medical-green-text) !important; }
+  #loginPage .primary-btn,
+  #registerPage .primary-btn,
+  #staffLoginPage .primary-btn,
+  #patientApp .primary-btn,
+  #staffApp .primary-btn,
+  #patientApp button.bg-cyan-400,
+  #staffApp button.bg-cyan-400 {
+    background: var(--medical-green) !important;
+    color: #173b23 !important;
+    -webkit-text-fill-color: #173b23 !important;
+    border: 1px solid #76C98A !important;
+    box-shadow: 0 4px 12px rgba(36,91,53,.13) !important;
+  }
+  #loginPage .primary-btn:hover,
+  #registerPage .primary-btn:hover,
+  #staffLoginPage .primary-btn:hover,
+  #patientApp .primary-btn:hover,
+  #staffApp .primary-btn:hover,
+  #patientApp button.bg-cyan-400:hover,
+  #staffApp button.bg-cyan-400:hover {
+    background: var(--medical-green-hover) !important;
+  }
+  #loginPage button[onclick="showStaffLogin()"] {
+    background: var(--medical-green-pale) !important;
+    border-color: var(--medical-green-border) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #loginPage #erecpassForgotBtnAdded,
+  #loginPage button[onclick="showRegister()"] { color: var(--medical-green-text) !important; }
+  #registerPage button[onclick="showLogin()"] { color: var(--medical-green-text) !important; }
+
+  #patientApp,
+  #staffApp {
+    background:
+      radial-gradient(ellipse at 8% 12%, rgba(143,218,160,.12), transparent 32%),
+      #f7fbf8 !important;
+  }
+  #patientApp .top-header .brand strong,
+  #staffApp .staff-header .brand strong { color: var(--medical-green-text) !important; }
+  #patientApp .top-header .brand > div,
+  #staffApp .staff-header .brand > div {
+    background: var(--medical-green-pale) !important;
+    border-color: var(--medical-green-border) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #patientApp [class*="text-cyan-"],
+  #patientApp [class*="text-teal-"],
+  #staffApp [class*="text-cyan-"],
+  #staffApp [class*="text-teal-"] {
+    color: var(--medical-green-text) !important;
+    -webkit-text-fill-color: var(--medical-green-text) !important;
+  }
+  #patientApp [class*="border-cyan-"],
+  #patientApp [class*="border-teal-"],
+  #staffApp [class*="border-cyan-"],
+  #staffApp [class*="border-teal-"] { border-color: var(--medical-green-border) !important; }
+  #patientApp [class*="bg-cyan-"],
+  #patientApp [class*="bg-teal-"],
+  #staffApp [class*="bg-cyan-"],
+  #staffApp [class*="bg-teal-"] { background-color: var(--medical-green-pale) !important; }
+  #patientApp #patientBottomNav,
+  #staffApp #staffBottomNav {
+    border-color: var(--medical-green-border) !important;
+    background: rgba(255,255,255,.97) !important;
+    box-shadow: 0 -5px 20px rgba(36,91,53,.1) !important;
+    -webkit-backdrop-filter: blur(14px);
+    backdrop-filter: blur(14px);
+  }
+  #patientApp #patientBottomNav .patient-primary-nav {
+    min-width: 0;
+    min-height: 56px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    color: var(--medical-muted) !important;
+    font: 600 11px/1.25 Inter, Arial, sans-serif !important;
+    text-align: center;
+    transition: background-color .16s ease, color .16s ease, border-color .16s ease;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav i {
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    font-size: 20px !important;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav span {
+    display: block;
+    max-width: 100%;
+    overflow: visible;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    white-space: nowrap;
+    font-size: 11px !important;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active) {
+    border-color: var(--medical-green-border);
+    background: var(--medical-green-pale) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:active,
+  #staffApp #staffBottomNav button:active { transform: scale(.97); }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,.active) {
+    background: var(--medical-green-pale) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra i { color: var(--medical-green-text) !important; }
+  #patientApp #patientBottomNav .patient-nav-see-more {
+    border-color: var(--medical-green-border) !important;
+    background: var(--medical-green-pale) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more i { color: var(--medical-green-text) !important; }
+  #staffApp main { padding-bottom: 116px !important; }
+  #staffApp main > * { scroll-margin-top: 88px; }
+  #staffApp #staffDashboardCard,
+  #staffApp #staffApprovedAppointmentsCard,
+  #staffApp #staffHospitalAnnouncementsCard,
+  #staffApp #staffQrScannerCard,
+  #staffApp #staffAdminChatCard { scroll-margin-top: 88px; }
+  #staffApp #staffBottomNav {
+    position: fixed;
+    z-index: 30;
+    left: 50%;
+    bottom: 14px;
+    display: grid;
+    grid-template-columns: repeat(4, minmax(0, 1fr));
+    width: min(980px, calc(100% - 32px));
+    min-height: 76px;
+    padding: 8px;
+    border: 1px solid var(--medical-green-border);
+    border-radius: 20px;
+    transform: translateX(-50%);
+  }
+  #staffApp #staffBottomNav button {
+    display: flex;
+    min-width: 0;
+    min-height: 56px;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 5px;
+    padding: 6px 8px;
+    border: 1px solid transparent;
+    border-radius: 14px;
+    background: transparent;
+    color: var(--medical-muted);
+    font: 600 12px/1.2 Inter, Arial, sans-serif;
+    text-align: center;
+    cursor: pointer;
+    transition: background-color .16s ease, color .16s ease, border-color .16s ease, transform .16s ease;
+  }
+  #staffApp #staffBottomNav button i { color: inherit; font-size: 20px; }
+  #staffApp #staffBottomNav button span { color: inherit !important; -webkit-text-fill-color: currentColor !important; }
+  #staffApp #staffQrScannerCard button.primary-btn,
+  #staffApp #staffAdminChatCard button.primary-btn {
+    background: var(--medical-green) !important;
+    color: #173b23 !important;
+    -webkit-text-fill-color: #173b23 !important;
+    border-color: #76C98A !important;
+    box-shadow: 0 4px 12px rgba(36,91,53,.13) !important;
+  }
+  #staffApp #staffQrScannerCard button.primary-btn:hover,
+  #staffApp #staffAdminChatCard button.primary-btn:hover { background: var(--medical-green-hover) !important; }
+  #staffApp #staffBottomNav button span {
+    width: 100%;
+    min-width: 0;
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  #staffApp #scannedPatientCard {
+    border-color: var(--medical-green-border) !important;
+    background: var(--medical-green-pale) !important;
+    color: var(--medical-green-text) !important;
+  }
+  #staffApp #scannedPatientCard :is(h3,div,span,strong,p):not(#scannedStatusBadge) {
+    color: var(--medical-green-text) !important;
+    -webkit-text-fill-color: var(--medical-green-text) !important;
+  }
+  #staffApp #staffBottomNav button:is(:hover,:focus-visible,[aria-current="page"]) {
+    border-color: var(--medical-green-border);
+    background: var(--medical-green-pale);
+    color: var(--medical-green-text);
+  }
+  #patientApp :is(button,input,select,textarea):focus-visible,
+  #staffApp :is(button,input,select,textarea):focus-visible,
+  #loginPage :is(button,input):focus-visible,
+  #staffLoginPage :is(button,input):focus-visible,
+  #agreementModal :is(button,input):focus-visible {
+    outline: 3px solid #245B35 !important;
+    outline-offset: 3px;
+  }
+
+  #splashScreen > .glass-card {
+    border-color: var(--medical-green-border) !important;
+    background: rgba(255,255,255,.96) !important;
+    box-shadow: 0 12px 32px rgba(36,91,53,.1) !important;
+  }
+  #splashScreen > .glass-card :is(span,div,p) { color: var(--medical-muted); }
+  #splashScreen > .glass-card :is(.text-cyan-200,.text-cyan-300,.text-teal-300) { color: var(--medical-green-text) !important; }
+  #splashScreen > .glass-card #enterAppBtn {
+    min-height: 48px;
+    border: 1px solid #76C98A !important;
+    background: var(--medical-green) !important;
+    color: #173b23 !important;
+    box-shadow: 0 4px 12px rgba(36,91,53,.13) !important;
+  }
+  #splashScreen :is(.text-cyan-200,.text-cyan-300,.text-cyan-400,.text-teal-200,.text-teal-300) {
+    color: var(--medical-green-text) !important;
+  }
+  #splashScreen [class*="border-cyan-"] { border-color: var(--medical-green-border) !important; }
+  #splashScreen .pass-orbit { border-color: rgba(36,91,53,.35) !important; }
+  #splashScreen .splash-pass-emblem {
+    border-color: #76C98A !important;
+    background: rgba(234,248,237,.75) !important;
+    color: var(--medical-green-text) !important;
+    box-shadow: 0 0 24px rgba(36,91,53,.12) !important;
+  }
+  #splashScreen h1.text-transparent {
+    background-image: linear-gradient(90deg, #245B35, #76C98A, #245B35) !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+    text-shadow: none !important;
+  }
+  #agreementModal { background-color: rgba(36,91,53,.35) !important; }
+  #agreementModal > .glass-card {
+    border-color: var(--medical-green-border) !important;
+    background: #fff !important;
+    box-shadow: 0 22px 64px rgba(36,91,53,.2) !important;
+  }
+  #agreementModal > .glass-card > .flex.items-start.justify-between,
+  #agreementModal > .glass-card > .shrink-0 {
+    border-color: var(--medical-green-border) !important;
+    background: #fff !important;
+  }
+  #agreementModalTitle { color: var(--medical-green-text) !important; }
+  #agreementModalConsent {
+    border-color: var(--medical-green-border) !important;
+    background: var(--medical-green-pale) !important;
+  }
+  #agreementModalConsent label { color: var(--medical-green-text) !important; }
+  #splashAgreeCheckbox { accent-color: #245B35 !important; }
+  #agreementModal .agreement-review-badge {
+    border-color: var(--medical-green-border) !important;
+    background: var(--medical-green-pale) !important;
+    color: var(--medical-green-text) !important;
+    -webkit-text-fill-color: var(--medical-green-text) !important;
+  }
+  #agreementModal .agreement-cancel-btn {
+    min-height: 48px;
+    border-color: #cbd8ce !important;
+    background: #fff !important;
+    color: #52665A !important;
+  }
+  #agreementModal #agreeContinueBtn { min-height: 48px; }
+  #agreementModal #fullAgreementTextDisplay {
+    font-size: 16px !important;
+    line-height: 1.65 !important;
+    overflow-y: auto !important;
+    border: 1px solid var(--medical-green-border);
+    background: #f8fcf9 !important;
+  }
+  #agreementModal #agreementReviewIntro { color: #52665A !important; line-height: 1.65; }
+
+  html.ep-dark #loginPage,
+  html.ep-dark #registerPage,
+  html.ep-dark #staffLoginPage {
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(88,190,115,.18), transparent 42%),
+      linear-gradient(140deg, #10241a 0%, #14271e 55%, #10251c 100%) !important;
+  }
+  html.ep-dark #registerPage .auth-medical-decor {
+    background-image:
+      linear-gradient(rgba(88,211,130,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,211,130,.1) 1px, transparent 1px);
+  }
+  html.ep-dark #loginPage .auth-medical-ecg path,
+  html.ep-dark #registerPage .auth-medical-ecg path,
+  html.ep-dark #staffLoginPage .auth-medical-ecg path { stroke: #76C98A; }
+  html.ep-dark #loginPage .auth-medical-ecg .auth-ecg-pulse,
+  html.ep-dark #registerPage .auth-medical-ecg .auth-ecg-pulse,
+  html.ep-dark #staffLoginPage .auth-medical-ecg .auth-ecg-pulse { stroke: #8FDAA0; }
+  html.ep-dark #loginPage .auth-card,
+  html.ep-dark #registerPage .auth-card,
+  html.ep-dark #staffLoginPage .auth-card {
+    border-color: #36553d !important;
+    background: rgba(24,43,32,.96) !important;
+  }
+  html.ep-dark #registerPage .logo-icon {
+    background: #1d3928 !important;
+    border-color: #396448 !important;
+    color: #8FDAA0 !important;
+  }
+  html.ep-dark #loginPage :is(.logo h1,label),
+  html.ep-dark #registerPage :is(.logo h1,label),
+  html.ep-dark #staffLoginPage :is(.logo h1,label) { color: #b7e9c1 !important; }
+  html.ep-dark #loginPage .input-box,
+  html.ep-dark #registerPage .input-box,
+  html.ep-dark #staffLoginPage .input-box { border-color: #3d6048 !important; background: #14251b !important; }
+  html.ep-dark #loginPage .input-box input,
+  html.ep-dark #registerPage .input-box input,
+  html.ep-dark #staffLoginPage .input-box input { color: #edf8ef !important; }
+  html.ep-dark #registerPage button[onclick="showLogin()"] { color: #8FDAA0 !important; }
+  html.ep-dark #loginPage .primary-btn,
+  html.ep-dark #registerPage .primary-btn,
+  html.ep-dark #staffLoginPage .primary-btn,
+  html.ep-dark #patientApp .primary-btn,
+  html.ep-dark #staffApp .primary-btn,
+  html.ep-dark #splashScreen > .glass-card #enterAppBtn,
+  html.ep-dark #agreementModal #agreeContinueBtn {
+    border-color: #245B35 !important;
+    background: #245B35 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  html.ep-dark #staffApp #staffQrScannerCard button.primary-btn,
+  html.ep-dark #staffApp #staffAdminChatCard button.primary-btn {
+    border-color: #245B35 !important;
+    background: #245B35 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav,
+  html.ep-dark #staffApp #staffBottomNav { border-color: #36553d !important; background: rgba(24,37,30,.97) !important; }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav,
+  html.ep-dark #staffApp #staffBottomNav button { color: #c3d2c7 !important; }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active),
+  html.ep-dark #staffApp #staffBottomNav button:is(:hover,:focus-visible,[aria-current="page"]) {
+    border-color: #36553d;
+    background: #203b29 !important;
+    color: #b7e9c1 !important;
+  }
+  html.ep-dark #agreementModal > .glass-card,
+  html.ep-dark #agreementModal > .glass-card > .flex.items-start.justify-between,
+  html.ep-dark #agreementModal > .glass-card > .shrink-0 {
+    border-color: #36553d !important;
+    background: #182b20 !important;
+  }
+  html.ep-dark #agreementModalTitle,
+  html.ep-dark #agreementModalConsent label { color: #b7e9c1 !important; }
+  html.ep-dark #agreementModalConsent { border-color: #36553d !important; background: #203b29 !important; }
+  html.ep-dark #agreementModal .agreement-cancel-btn { background: #203b29 !important; border-color: #50705a !important; color: #e5f1e8 !important; }
+  @media (max-width: 640px) {
+    #patientApp #patientBottomNav {
+      padding-left: max(5px, env(safe-area-inset-left)) !important;
+      padding-right: max(5px, env(safe-area-inset-right)) !important;
+    }
+    #patientApp #patientBottomNav .patient-primary-nav { gap: 4px; padding: 5px 2px; }
+    #patientApp #patientBottomNav .patient-primary-nav i { font-size: 20px !important; }
+    #patientApp #patientBottomNav .patient-primary-nav span { font-size: 10px !important; }
+    #staffApp main { padding-bottom: 108px !important; }
+    #staffApp #staffBottomNav {
+      left: 0;
+      right: 0;
+      bottom: 0;
+      width: 100%;
+      min-height: calc(68px + env(safe-area-inset-bottom));
+      padding: 5px max(4px, env(safe-area-inset-right)) calc(5px + env(safe-area-inset-bottom)) max(4px, env(safe-area-inset-left));
+      border-right: 0;
+      border-bottom: 0;
+      border-left: 0;
+      border-radius: 18px 18px 0 0;
+      transform: none;
+    }
+    #staffApp #staffBottomNav button { min-height: 52px; gap: 4px; padding: 4px 2px; font-size: 11px; }
+    #staffApp #staffBottomNav button i { font-size: 19px; }
+    #staffApp #staffBottomNav button span { font-size: 10px; line-height: 1.15; }
+  }
+  @media (max-width: 380px) {
+    #patientApp #patientBottomNav .patient-primary-nav span { font-size: 9px !important; }
+    #staffApp #staffBottomNav button { font-size: 10px; }
+    #staffApp #staffBottomNav button span { font-size: 9px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #patientApp #patientBottomNav *,
+    #staffApp #staffBottomNav *,
+    #agreementModal button { scroll-behavior: auto !important; transition-duration: .01ms !important; }
+  }
+</style>
+
+<style id="erecpass-staff-tabs-glass-chat">
+  @keyframes erecpass-hotbar-enter {
+    from { opacity: 0; translate: 0 8px; }
+    to { opacity: 1; translate: 0 0; }
+  }
+  #patientApp #patientBottomNav,
+  #staffApp #staffBottomNav {
+    border: 1px solid rgba(36,91,53,.2) !important;
+    background: rgba(255,255,255,.8) !important;
+    box-shadow: 0 8px 26px rgba(36,91,53,.16) !important;
+    -webkit-backdrop-filter: blur(16px);
+    backdrop-filter: blur(16px);
+  }
+  #patientApp #patientBottomNav .patient-primary-nav,
+  #staffApp #staffBottomNav button {
+    position: relative;
+    isolation: isolate;
+    min-height: 56px;
+    touch-action: manipulation;
+    transition: color .22s ease, transform .22s ease;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav::before,
+  #staffApp #staffBottomNav button::before {
+    position: absolute;
+    z-index: -1;
+    inset: 4px;
+    border: 1px solid rgba(36,91,53,.15);
+    border-radius: 15px;
+    background: rgba(234,248,237,.82);
+    content: "";
+    opacity: 0;
+    transform: scale(.92);
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav::after,
+  #staffApp #staffBottomNav button::after {
+    position: absolute;
+    top: 4px;
+    left: 50%;
+    width: 20px;
+    height: 3px;
+    border-radius: 999px;
+    background: #245B35;
+    content: "";
+    opacity: 0;
+    transform: translateX(-50%) scaleX(.55);
+    transition: opacity .22s ease, transform .22s ease;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]),
+  #staffApp #staffBottomNav button:is(:hover,:focus-visible,[aria-current="page"]) {
+    color: #245B35 !important;
+    transform: translateY(-1px);
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"])::before,
+  #staffApp #staffBottomNav button:is(:hover,:focus-visible,[aria-current="page"])::before {
+    opacity: 1;
+    transform: scale(1);
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(.active,[aria-current="page"])::after,
+  #staffApp #staffBottomNav button[aria-current="page"]::after {
+    opacity: 1;
+    transform: translateX(-50%) scaleX(1);
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:active,
+  #staffApp #staffBottomNav button:active { transform: scale(.97); }
+  #patientApp #patientBottomNav .patient-primary-nav i,
+  #staffApp #staffBottomNav button i {
+    position: relative;
+    transition: transform .22s ease;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(.active,[aria-current="page"]) i,
+  #staffApp #staffBottomNav button[aria-current="page"] i { transform: translateY(-1px) scale(1.06); }
+  #patientApp #patientBottomNav .patient-nav-see-more { min-width: 44px; min-height: 44px; }
+  @media (max-width: 1023px) {
+    #patientApp #patientBottomNav.patient-nav-collapsed,
+    #patientApp #patientBottomNav.patient-nav-expanded {
+      grid-template-columns: repeat(6, minmax(0, 1fr)) !important;
+      column-gap: 0 !important;
+      padding-left: 3px !important;
+      padding-right: 3px !important;
+    }
+    #patientApp #patientBottomNav .patient-primary-nav { min-width: 44px; }
+    #patientApp #patientBottomNav .patient-primary-nav span {
+      white-space: normal;
+      overflow-wrap: anywhere;
+      line-height: 1.05;
+    }
+    #patientApp #patientBottomNav.patient-nav-collapsed .patient-nav-menu .patient-nav-extra {
+      display: none !important;
+    }
+  }
+  #staffApp .staff-tab-panel[hidden] { display: none !important; }
+  #staffApp #staffAdminChatCard {
+    border: 1px solid #D5E8D9 !important;
+    background: #fff !important;
+    color: #24352A !important;
+  }
+  #staffApp #staffAdminChatBox {
+    min-height: 140px;
+    max-height: min(52vh, 480px);
+    border: 1px solid #D5E8D9 !important;
+    background: #fff !important;
+    color: #24352A !important;
+    font: 400 15px/1.55 Inter, Arial, sans-serif;
+    overflow-wrap: anywhere;
+    overscroll-behavior: contain;
+  }
+  #staffApp #staffAdminChatBox > [data-staff-message-id] { max-width: 100%; }
+  #staffApp #staffAdminChatBox .staff-chat-bubble {
+    max-width: min(88%, 42rem);
+    white-space: pre-wrap;
+    overflow-wrap: anywhere;
+    word-break: break-word;
+    line-height: 1.55;
+    font-size: 15px;
+  }
+  #staffApp #staffAdminChatBox .staff-chat-sent {
+    border: 1px solid #245B35;
+    background: #245B35 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    font-weight: 600;
+  }
+  #staffApp #staffAdminChatBox .staff-chat-received {
+    border: 1px solid #D5E8D9;
+    background: #F1F7F2 !important;
+    color: #24352A !important;
+    -webkit-text-fill-color: #24352A !important;
+  }
+  #staffApp #staffAdminChatBox .staff-chat-author {
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: .04em;
+  }
+  #staffApp #staffAdminChatBox .staff-chat-author-self { color: #245B35 !important; }
+  #staffApp #staffAdminChatBox .staff-chat-author-admin { color: #52665A !important; }
+  #staffApp #staffAdminChatBox .staff-chat-timestamp,
+  #staffApp #staffAdminChatBox .staff-chat-empty {
+    color: #52665A !important;
+    font-size: 12px;
+    line-height: 1.5;
+  }
+  #staffApp #staffAdminChatBox .staff-chat-error { color: #8b1e2d; font-size: 14px; }
+  #staffApp #staffAdminChatInput {
+    min-height: 44px;
+    color: #24352A !important;
+    font-size: 16px !important;
+  }
+  #staffApp #staffAdminChatInput::placeholder { color: #52665A !important; opacity: 1; }
+  #staffApp #staffAdminChatStatus { min-height: 1.5em; }
+  #staffApp #staffQrStatus { line-height: 1.5; }
+  #staffApp .staff-appointment-name,
+  #staffApp .staff-announcement-title { color: #24352A !important; }
+  #staffApp .staff-appointment-name,
+  #staffApp .staff-announcement-title { font-size: 16px !important; line-height: 1.4; }
+  #staffApp .staff-appointment-reason,
+  #staffApp .staff-announcement-body,
+  #staffApp .staff-appointment-empty {
+    color: #24352A !important;
+    font-size: 16px !important;
+    line-height: 1.55;
+    overflow-wrap: anywhere;
+  }
+  #staffApp .staff-appointment-meta { color: #52665A !important; font-size: 14px !important; line-height: 1.5; }
+  #staffApp .staff-appointment-status { font-size: 12px !important; }
+  #staffApp .staff-announcement-date { color: #52665A !important; font-size: 13px !important; line-height: 1.5; }
+  #patientApp .patient-directory-empty,
+  #staffApp .staff-appointment-empty,
+  #staffApp .staff-update-empty {
+    color: #52665A !important;
+    font-size: 16px;
+    line-height: 1.55;
+    padding: 14px;
+  }
+  #staffApp .staff-appointment-error,
+  #staffApp .staff-update-error { color: #8d2937; font-size: 15px; line-height: 1.5; }
+  #staffApp .staff-appointments-list .appointment-card {
+    border-color: #D5E8D9 !important;
+    background: #f7fbf8 !important;
+    box-shadow: none !important;
+  }
+  #staffApp #staffQrScannerCard button { min-height: 44px; }
+  #staffApp #staffHospitalAnnouncementsList > article.glass-card {
+    border-color: #D5E8D9 !important;
+    background: #f7fbf8 !important;
+    box-shadow: none !important;
+  }
+  #patientApp #doctors .page-header h1 { color: #245B35 !important; }
+  #patientApp #doctors .page-header p { color: #52665A !important; font-size: 16px !important; line-height: 1.5; }
+  #patientApp #patientDoctorsList.patient-directory-grid {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 1200px;
+    margin-inline: auto;
+  }
+  #patientApp .patient-directory-card {
+    display: flex;
+    min-width: 0;
+    align-items: flex-start;
+    gap: 16px;
+    padding: 18px !important;
+    border: 1px solid #D5E8D9 !important;
+    border-radius: 20px !important;
+    background: #fff !important;
+    box-shadow: 0 8px 24px rgba(36,91,53,.07);
+  }
+  #patientApp .patient-directory-photo,
+  #patientApp .patient-directory-avatar {
+    width: 76px;
+    height: 76px;
+    flex: 0 0 76px;
+    border: 2px solid #D5E8D9;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  #patientApp .patient-directory-avatar {
+    display: grid;
+    place-items: center;
+    background: #EAF8ED;
+    color: #245B35;
+    font-size: 28px;
+  }
+  #patientApp .patient-directory-info { min-width: 0; flex: 1; }
+  #patientApp .patient-directory-name {
+    display: block;
+    color: #245B35 !important;
+    font-size: 18px !important;
+    font-weight: 750;
+    line-height: 1.35;
+    overflow-wrap: anywhere;
+  }
+  #patientApp .patient-directory-role,
+  #patientApp .patient-directory-schedule {
+    margin-top: 5px;
+    color: #52665A !important;
+    font-size: 15px !important;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  #patientApp .patient-staff-availability {
+    display: inline-flex;
+    min-height: 32px;
+    align-items: center;
+    gap: 7px;
+    margin-top: 10px;
+    padding: 5px 10px;
+    border: 1px solid #D5E8D9;
+    border-radius: 999px;
+    background: #EAF8ED;
+    color: #245B35 !important;
+    font-size: 14px !important;
+    font-weight: 700;
+  }
+  #patientApp .patient-staff-availability::before {
+    width: 9px;
+    height: 9px;
+    border-radius: 50%;
+    background: currentColor;
+    content: "";
+  }
+  #patientApp .patient-staff-availability.is-unavailable {
+    border-color: #efcdd2;
+    background: #fff5f5;
+    color: #8d2937 !important;
+  }
+  #patientApp .patient-staff-availability.is-unreported {
+    border-color: #d9e3dc;
+    background: #f5f8f6;
+    color: #52665A !important;
+  }
+  #staffApp .staff-tab-panel[hidden] { display: none !important; }
+  #staffApp .staff-portal-content { width: min(100% - 32px, 1120px); }
+  #staffApp .staff-secondary-action {
+    display: inline-flex;
+    min-height: 44px;
+    flex: 0 0 auto;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 9px 14px;
+    border: 1px solid #D5E8D9;
+    border-radius: 12px;
+    background: #EAF8ED;
+    color: #245B35;
+    font-size: 14px;
+    font-weight: 700;
+    line-height: 1.25;
+    text-align: center;
+  }
+  #staffApp .staff-secondary-action:hover { background: #dff3e4; }
+  #staffApp .staff-secondary-action:focus-visible { outline: 3px solid rgba(36,91,53,.32); outline-offset: 2px; }
+  #staffApp [data-staff-panel="dashboard"] {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr);
+    gap: 18px;
+  }
+  #staffApp [data-staff-panel="dashboard"] > * { min-width: 0; margin: 0 !important; }
+  #staffApp .staff-page-heading h1,
+  #staffApp .staff-panel-heading {
+    margin: 0;
+    color: #245B35;
+    font-size: clamp(24px, 3vw, 32px);
+    font-weight: 750;
+    line-height: 1.2;
+  }
+  #staffApp .staff-page-heading p,
+  #staffApp .staff-panel-heading-wrap p { margin-top: 6px; color: #52665A; font-size: 16px; line-height: 1.5; }
+  #staffApp #staffDashboardCard { justify-content: flex-start; }
+  #staffApp #staffDashboardCard h2 { color: #245B35 !important; font-size: 18px; }
+  #staffApp #staffApprovedAppointmentsCard h2,
+  #staffApp #staffHospitalAnnouncementsCard h2 { color: #245B35 !important; }
+  #staffApp #staffAllAppointmentsCard { width: 100%; }
+  #staffApp .staff-profile-card { max-width: 640px; margin-inline: auto; }
+  #staffApp .staff-profile-photo-wrap {
+    position: relative;
+    width: 88px;
+    height: 88px;
+    flex: 0 0 88px;
+  }
+  #staffApp .staff-profile-summary {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-top: 22px;
+    padding: 20px;
+    border: 1px solid #D5E8D9;
+    border-radius: 18px;
+    background: #EAF8ED;
+  }
+  #staffApp .staff-profile-photo,
+  #staffApp .staff-profile-avatar {
+    width: 88px;
+    height: 88px;
+    flex: 0 0 88px;
+    border: 2px solid #D5E8D9;
+    border-radius: 50%;
+    object-fit: cover;
+  }
+  #staffApp .staff-profile-avatar {
+    display: grid;
+    place-items: center;
+    background: #fff;
+    color: #245B35;
+    font-size: 34px;
+  }
+  #staffApp .staff-profile-avatar[hidden],
+  #staffApp .staff-profile-photo[hidden] { display: none !important; }
+  #staffApp .staff-profile-label { color: #52665A; font-size: 14px; }
+  #staffApp .staff-profile-name { color: #245B35; font-size: 22px; font-weight: 750; line-height: 1.3; overflow-wrap: anywhere; }
+  #staffApp .staff-profile-task { color: #24352A; font-size: 16px; line-height: 1.5; overflow-wrap: anywhere; }
+  #staffApp .staff-profile-note { margin-top: 16px; color: #52665A; font-size: 14px; line-height: 1.5; }
+  #staffApp .staff-profile-photo-upload {
+    position: absolute;
+    right: 0;
+    bottom: 0;
+    display: grid;
+    width: 32px;
+    height: 32px;
+    place-items: center;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    background: #245B35;
+    color: #fff;
+    font-size: 13px;
+    cursor: pointer;
+    box-shadow: 0 2px 6px rgba(20,50,30,.25);
+  }
+  #staffApp .staff-profile-photo-upload:hover { background: #174426; }
+  #staffApp .staff-profile-photo-upload:focus-visible { outline: 3px solid rgba(36,91,53,.38); outline-offset: 2px; }
+  #staffApp .staff-profile-photo-upload[aria-busy="true"] { opacity: .65; pointer-events: none; }
+  #staffApp .staff-profile-photo-status { min-height: 20px; margin-top: 8px; color: #52665A; font-size: 13px; line-height: 1.5; }
+  #staffApp .staff-profile-logout {
+    min-height: 44px;
+    margin-top: 18px;
+    padding: 9px 16px;
+    border: 1px solid #e8bbc1;
+    border-radius: 12px;
+    background: #fff5f5;
+    color: #8d2937;
+    font-size: 15px;
+    font-weight: 700;
+  }
+  #staffApp .staff-profile-logout:focus-visible { outline: 3px solid rgba(141,41,55,.28); outline-offset: 2px; }
+  @media (min-width: 768px) {
+    #patientApp #patientDoctorsList.patient-directory-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #staffApp [data-staff-panel="dashboard"] { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    #staffApp .staff-page-heading,
+    #staffApp #staffDashboardCard { grid-column: 1 / -1; }
+  }
+  @media (min-width: 1440px) {
+    #patientApp #patientDoctorsList.patient-directory-grid { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  }
+  @media (max-width: 640px) {
+    #staffApp .staff-portal-content { width: calc(100% - 24px); }
+    #staffApp .staff-page-heading h1 { font-size: 25px; }
+    #staffApp #staffApprovedAppointmentsCard > div:first-child { align-items: flex-start; }
+    #staffApp .staff-secondary-action { max-width: 100%; white-space: normal; }
+    #staffApp .staff-profile-summary { align-items: flex-start; gap: 12px; padding: 14px; }
+    #staffApp .staff-profile-photo-wrap { width: 68px; height: 68px; flex-basis: 68px; }
+    #staffApp .staff-profile-photo,
+    #staffApp .staff-profile-avatar { width: 68px; height: 68px; }
+  }
+  @media (min-width: 1024px) {
+    #patientApp #patientBottomNav {
+      right: auto !important;
+      left: 50% !important;
+      width: min(1080px, calc(100% - 48px)) !important;
+      border-radius: 22px !important;
+      margin-left: max(-540px, calc(24px - 50vw)) !important;
+      animation: erecpass-hotbar-enter .32s ease-out both;
+    }
+    #staffApp #staffBottomNav {
+      bottom: 16px;
+      animation: erecpass-hotbar-enter .32s ease-out both;
+    }
+  }
+  @media (max-width: 640px) {
+    #patientApp #patientBottomNav {
+      left: max(8px, env(safe-area-inset-left)) !important;
+      right: max(8px, env(safe-area-inset-right)) !important;
+      bottom: max(8px, env(safe-area-inset-bottom)) !important;
+      width: auto !important;
+      border: 1px solid rgba(36,91,53,.2) !important;
+      border-radius: 20px !important;
+      padding-bottom: max(8px, env(safe-area-inset-bottom)) !important;
+      animation: erecpass-hotbar-enter .32s ease-out both;
+    }
+    #patientApp #patientBottomNav .patient-primary-nav { min-height: 54px; }
+    #patientApp #patientBottomNav .patient-primary-nav span { font-size: 10px !important; }
+    #staffApp #staffBottomNav {
+      bottom: 0;
+      min-height: calc(72px + env(safe-area-inset-bottom));
+      border-radius: 20px 20px 0 0;
+      animation: erecpass-hotbar-enter .32s ease-out both;
+    }
+    #staffApp #staffBottomNav button { min-height: 56px; padding: 5px 2px; }
+    #staffApp #staffBottomNav button span { font-size: 11px; line-height: 1.2; }
+    #staffApp main { padding-bottom: calc(128px + env(safe-area-inset-bottom)) !important; }
+    #staffApp #staffAdminChatBox { max-height: 44vh; }
+  }
+  @media (max-width: 380px) {
+    #staffApp #staffBottomNav button span { font-size: 10px; }
+    #patientApp #patientBottomNav .patient-primary-nav span { font-size: 10px !important; }
+    #patientApp #patientBottomNav .patient-primary-nav { gap: 3px; padding-left: 1px; padding-right: 1px; }
+  }
+  html.ep-dark #patientApp #patientBottomNav,
+  html.ep-dark #staffApp #staffBottomNav {
+    border-color: rgba(143,218,160,.28) !important;
+    background: rgba(20,37,27,.88) !important;
+    box-shadow: 0 8px 26px rgba(0,0,0,.32) !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav::before,
+  html.ep-dark #staffApp #staffBottomNav button::before {
+    border-color: rgba(143,218,160,.22);
+    background: rgba(32,59,41,.9);
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav::after,
+  html.ep-dark #staffApp #staffBottomNav button::after { background: #8FDAA0; }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]),
+  html.ep-dark #staffApp #staffBottomNav button:is(:hover,:focus-visible,[aria-current="page"]) { color: #b7e9c1 !important; }
+  html.ep-dark #staffApp #staffAdminChatCard {
+    border-color: #36553d !important;
+    background: #182b20 !important;
+    color: #e5f1e8 !important;
+  }
+  html.ep-dark #staffApp #staffAdminChatBox {
+    border-color: #36553d !important;
+    background: #14251b !important;
+    color: #e5f1e8 !important;
+  }
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-sent {
+    border-color: #34764a;
+    background: #245B35 !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+  }
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-received {
+    border-color: #36553d;
+    background: #203b29 !important;
+    color: #e5f1e8 !important;
+    -webkit-text-fill-color: #e5f1e8 !important;
+  }
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-author-self { color: #b7e9c1 !important; }
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-author-admin,
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-timestamp,
+  html.ep-dark #staffApp #staffAdminChatBox .staff-chat-empty { color: #b7d1bc !important; }
+  html.ep-dark #staffApp #staffAdminChatInput { color: #edf8ef !important; }
+  html.ep-dark #staffApp #staffAdminChatInput::placeholder { color: #b7d1bc !important; }
+  html.ep-dark #staffApp .staff-appointment-name,
+  html.ep-dark #staffApp .staff-announcement-title,
+  html.ep-dark #staffApp .staff-appointment-reason,
+  html.ep-dark #staffApp .staff-announcement-body,
+  html.ep-dark #staffApp .staff-appointment-empty { color: #e5f1e8 !important; }
+  html.ep-dark #staffApp .staff-appointment-meta,
+  html.ep-dark #staffApp .staff-announcement-date,
+  html.ep-dark #patientApp .patient-directory-empty,
+  html.ep-dark #staffApp .staff-appointment-empty,
+  html.ep-dark #staffApp .staff-update-empty { color: #b7d1bc !important; }
+  html.ep-dark #staffApp .staff-appointment-error,
+  html.ep-dark #staffApp .staff-update-error { color: #ffc2ca !important; }
+  html.ep-dark #staffApp .staff-appointments-list .appointment-card,
+  html.ep-dark #staffApp #staffHospitalAnnouncementsList > article.glass-card {
+    border-color: #36553d !important;
+    background: #203b29 !important;
+  }
+  html.ep-dark #patientApp #doctors .page-header h1,
+  html.ep-dark #staffApp .staff-page-heading h1,
+  html.ep-dark #staffApp .staff-panel-heading,
+  html.ep-dark #staffApp #staffDashboardCard h2,
+  html.ep-dark #staffApp #staffApprovedAppointmentsCard h2,
+  html.ep-dark #staffApp #staffHospitalAnnouncementsCard h2,
+  html.ep-dark #staffApp .staff-profile-name { color: #b7e9c1 !important; }
+  html.ep-dark #patientApp #doctors .page-header p,
+  html.ep-dark #staffApp .staff-page-heading p,
+  html.ep-dark #staffApp .staff-panel-heading-wrap p,
+  html.ep-dark #staffApp .staff-profile-label,
+  html.ep-dark #staffApp .staff-profile-note { color: #b7d1bc !important; }
+  html.ep-dark #patientApp .patient-directory-card,
+  html.ep-dark #staffApp .staff-tab-panel > .glass-card {
+    border-color: #36553d !important;
+    background: #182b20 !important;
+    color: #e5f1e8 !important;
+  }
+  html.ep-dark #patientApp .patient-directory-name,
+  html.ep-dark #staffApp .staff-profile-task { color: #e5f1e8 !important; }
+  html.ep-dark #patientApp .patient-directory-role,
+  html.ep-dark #patientApp .patient-directory-schedule { color: #b7d1bc !important; }
+  html.ep-dark #patientApp .patient-directory-avatar,
+  html.ep-dark #staffApp .staff-profile-avatar {
+    border-color: #45694e;
+    background: #203b29;
+    color: #b7e9c1;
+  }
+  html.ep-dark #staffApp .staff-secondary-action {
+    border-color: #45694e;
+    background: #203b29;
+    color: #b7e9c1;
+  }
+  html.ep-dark #staffApp .staff-profile-summary { border-color: #36553d; background: #203b29; }
+  html.ep-dark #staffApp .staff-profile-logout { border-color: #75414b; background: #3a2026; color: #ffc2ca; }
+  #patientApp #patientBottomNav .patient-primary-nav,
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra {
+    box-sizing: border-box;
+    min-width: 0;
+    min-height: 56px;
+    color: #52665A !important;
+    font: 600 11px/1.2 Inter, Arial, sans-serif !important;
+    text-align: center;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav span,
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra span {
+    min-width: 0;
+    max-width: 100%;
+    color: #64748b !important;
+    font-size: inherit !important;
+    line-height: inherit;
+    white-space: normal;
+    overflow-wrap: anywhere;
+    text-wrap: balance;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav i,
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra i {
+    flex: 0 0 auto;
+    font-size: 22px !important;
+    line-height: 1 !important;
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]),
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,.active,[aria-current="page"]) {
+    border-color: rgba(37,123,255,.2) !important;
+    background: #e8f1ff !important;
+    color: #2583ff !important;
+    box-shadow: inset 0 2px 0 rgba(23,105,224,.22);
+  }
+  #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]) span,
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,.active,[aria-current="page"]) span {
+    color: #2583ff !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra[aria-current="page"]::after {
+    width: 18px;
+    height: 3px;
+    border-radius: 999px;
+    background: #2583ff;
+    content: "";
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more { position: relative; }
+  #patientApp #patientBottomNav .patient-nav-see-more.has-active-overflow {
+    border: 1px solid rgba(37,123,255,.25);
+    background: #e8f1ff !important;
+    color: #1769e0 !important;
+  }
+  #patientApp #patientBottomNav .patient-nav-see-more.has-active-overflow::after {
+    position: absolute;
+    top: 4px;
+    right: 4px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: #2583ff;
+    content: "";
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]),
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,.active,[aria-current="page"]),
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more.has-active-overflow {
+    border-color: rgba(80,157,255,.32) !important;
+    background: #1b3550 !important;
+    color: #77b3ff !important;
+    box-shadow: inset 0 2px 0 rgba(37,123,255,.28);
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]) span,
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra:is(:hover,:focus-visible,.active,[aria-current="page"]) span {
+    color: #77b3ff !important;
+  }
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra[aria-current="page"]::after,
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-see-more.has-active-overflow::after {
+    background: #77b3ff;
+  }
+  html.ep-dark #patientApp #patientBottomNav :is(.patient-primary-nav,.patient-nav-extra,.patient-nav-see-more):focus-visible {
+    outline-color: #77b3ff !important;
+  }
+  #patientApp #patientBottomNav #nav-dashboard i { color: #1769e0 !important; -webkit-text-fill-color: #1769e0 !important; }
+  #patientApp #patientBottomNav #nav-hospital-map i { color: #16834b !important; -webkit-text-fill-color: #16834b !important; }
+  #patientApp #patientBottomNav #nav-medicines i { color: #7b2be2 !important; -webkit-text-fill-color: #7b2be2 !important; }
+  #patientApp #patientBottomNav #nav-doctors i { color: #28a9a1 !important; -webkit-text-fill-color: #28a9a1 !important; }
+  #patientApp #patientBottomNav #nav-appointments i { color: #e5a900 !important; -webkit-text-fill-color: #e5a900 !important; }
+  #patientApp #patientBottomNav #nav-medical-records i { color: #e33131 !important; -webkit-text-fill-color: #e33131 !important; }
+  #patientApp #patientBottomNav #nav-qr i { color: #009bd8 !important; -webkit-text-fill-color: #009bd8 !important; }
+  #patientApp #patientBottomNav #nav-help i { color: #f04e23 !important; -webkit-text-fill-color: #f04e23 !important; }
+  #patientApp #patientBottomNav #nav-profile i { color: #ec7cc2 !important; -webkit-text-fill-color: #ec7cc2 !important; }
+  @media (max-width: 1023px) {
+    #patientApp #patientBottomNav.patient-nav-collapsed,
+    #patientApp #patientBottomNav.patient-nav-expanded {
+      grid-template-columns: repeat(5, minmax(0, 1fr)) !important;
+      grid-template-rows: 1fr !important;
+      column-gap: 2px !important;
+    }
+    #patientApp #patientBottomNav .patient-primary-nav {
+      min-width: 44px;
+      min-height: 54px;
+      padding: 4px 2px !important;
+      gap: 3px !important;
+    }
+    #patientApp #patientBottomNav .patient-nav-see-more {
+      display: flex !important;
+      min-width: 44px;
+      min-height: 44px;
+      align-items: center;
+      justify-content: center;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra {
+      min-height: 52px;
+      font-size: 15px !important;
+      text-align: left;
+    }
+    #patientApp .main-content { padding-bottom: calc(112px + env(safe-area-inset-bottom)) !important; }
+  }
+  @media (min-width: 600px) and (max-width: 1023px) {
+    #patientApp #patientBottomNav.patient-nav-collapsed,
+    #patientApp #patientBottomNav.patient-nav-expanded {
+      height: 96px !important;
+      grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+      grid-template-rows: 1fr !important;
+      padding-top: 8px !important;
+    }
+    #patientApp #patientBottomNav .patient-nav-see-more { display: none !important; }
+    #patientApp #patientBottomNav .patient-nav-menu {
+      display: contents !important;
+      position: static !important;
+      opacity: 1 !important;
+      visibility: visible !important;
+      pointer-events: auto !important;
+      transform: none !important;
+    }
+    #patientApp #patientBottomNav.patient-nav-collapsed .patient-nav-menu .patient-nav-extra,
+    #patientApp #patientBottomNav.patient-nav-expanded .patient-nav-menu .patient-nav-extra {
+      display: flex !important;
+      width: 100%;
+      min-height: 56px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 3px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      text-align: center;
+    }
+  }
+  @media (min-width: 1024px) {
+    #patientApp #patientBottomNav {
+      right: auto !important;
+      left: 50% !important;
+      width: min(1080px, calc(100% - 32px)) !important;
+      margin-left: 0 !important;
+      padding: 8px !important;
+      border-radius: 22px !important;
+      transform: translateX(-50%);
+    }
+    #patientApp #patientBottomNav.patient-nav-collapsed,
+    #patientApp #patientBottomNav.patient-nav-expanded {
+      height: 96px !important;
+      grid-template-columns: repeat(9, minmax(0, 1fr)) !important;
+      grid-template-rows: 1fr !important;
+      column-gap: 2px !important;
+    }
+    #patientApp #patientBottomNav .patient-nav-see-more { display: none !important; }
+    #patientApp #patientBottomNav .patient-nav-menu {
+      display: contents !important;
+    }
+    #patientApp #patientBottomNav .patient-nav-menu .patient-nav-extra {
+      display: flex !important;
+      width: 100%;
+      min-height: 56px;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 4px;
+      padding: 6px 3px;
+      border: 1px solid transparent;
+      border-radius: 14px;
+      text-align: center;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #patientApp #patientBottomNav,
+    #staffApp #staffBottomNav,
+    #patientApp #patientBottomNav *,
+    #staffApp #staffBottomNav * {
+      animation: none !important;
+      transition-duration: .01ms !important;
+    }
+    #patientApp #patientBottomNav .patient-primary-nav:is(:hover,:focus-visible,.active,[aria-current="page"]),
+    #staffApp #staffBottomNav button:is(:hover,:focus-visible,[aria-current="page"]) {
+      transform: none !important;
+    }
+  }
+</style>
+
+<script id="erecpass-staff-navigation">
+  window.staffNavigateTo = function (destination) {
+    if (typeof currentSession === 'undefined' || currentSession?.role !== 'staff') {
+      console.warn('[ERecPass] Staff navigation requires an authenticated staff session.');
+      return false;
+    }
+    const nav = document.getElementById('staffBottomNav');
+    const app = document.getElementById('staffApp');
+    const panels = app ? Array.from(app.querySelectorAll('[data-staff-panel]')) : [];
+    const targetPanel = Array.from(panels).find(panel => panel.dataset.staffPanel === destination);
+    if (!targetPanel || !nav) {
+      console.warn('[ERecPass] Staff navigation destination is unavailable:', destination);
+      return false;
+    }
+    const activePanel = panels.find(panel => !panel.hidden);
+    if (activePanel?.dataset.staffPanel === 'scanner' && destination !== 'scanner') {
+      window.stopStaffQrScanner();
+    }
+    panels.forEach(panel => {
+      const active = panel === targetPanel;
+      panel.hidden = !active;
+      panel.setAttribute('aria-hidden', String(!active));
+    });
+    nav.querySelectorAll('button[data-staff-destination]').forEach(button => {
+      const active = button.dataset.staffDestination === destination ||
+        (destination === 'appointments' && button.dataset.staffDestination === 'dashboard');
+      if (active) button.setAttribute('aria-current', 'page');
+      else button.removeAttribute('aria-current');
+    });
+    window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
+    if (destination === 'appointments') renderStaffApprovedAppointments();
+    if (destination === 'chat' && typeof window.renderStaffAdminChat === 'function') window.renderStaffAdminChat();
+    return true;
+  };
+  window.addEventListener('pagehide', function() {
+    if (currentSession?.role === 'staff' && typeof window.stopStaffQrScanner === 'function') {
+      window.stopStaffQrScanner();
+    }
+  }, { once: true });
+</script>
 
 </body>
 </html>

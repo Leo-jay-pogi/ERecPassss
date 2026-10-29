@@ -5,7 +5,7 @@
   let role='anon',user=null,loading=false,channel=null,queue=Promise.resolve();
   const sb=()=>window.erecpassSupabase,putSettings=v=>cache.set(K.T,JSON.stringify(v||{})),parse=(s,d=[])=>{try{return JSON.parse(s||'null')??d}catch{return d}},put=(k,v)=>cache.set(k,typeof v==='string'?v:JSON.stringify(v)),err=(s,e)=>console.error('[ERecPass cloud] '+s,e);
   const patient=p=>({id:p.id,user_id:p.user_id,fullName:p.full_name,email:p.email,sim:p.sim,photo:p.photo,birthDate:p.birth_date||'',birth_date:p.birth_date||'',age:p.age??null,ageCategory:p.age_category,age_category:p.age_category,gender:p.gender||'',bloodType:p.blood_type||'',blood_type:p.blood_type||'',address:p.address||'',guardianName:p.guardian_name||'',guardian_name:p.guardian_name||'',guardianNum:p.guardian_num,guardian_num:p.guardian_num,status:p.status,labResults:p.lab_results||[],lab_results:p.lab_results||[],prescriptions:p.prescriptions||[],doctorNotes:p.doctor_notes||'',doctor_notes:p.doctor_notes||'',online:!!p.online,active:p.active!==false});
-  const staff=s=>({id:s.id,user_id:s.user_id,name:s.name,email:s.email,role:s.role_title,task:s.task,available:s.available,schedule:s.schedule,active:s.active!==false});
+  const staff=s=>({id:s.id,user_id:s.user_id,name:s.name,email:s.email,role:s.role_title,task:s.task,available:s.available,schedule:s.schedule,photo:s.photo||'',active:s.active!==false});
   const appt=a=>({id:a.legacy_id||a.id,patientId:a.patient_id,patientName:a.patient_name,doctor:a.doctor,date:a.appointment_date,reason:a.reason,status:a.status,created_by:a.created_by});
   const ann=a=>({id:a.legacy_id||a.id,text:a.body,photo:a.photo,date:a.published_on});
   const msg=m=>({id:m.legacy_id||m.id,user_id:m.user_id,fullName:m.full_name,email:m.email,message:m.message,reply:m.admin_reply,status:m.status,date:m.created_at});
@@ -120,7 +120,7 @@
           }
         }
       }else if(k===K.S&&role==='admin'){
-        const rows=a.map(s=>({id:String(s.id),user_id:s.user_id||null,name:s.name||s.fullName||'',email:s.email||'',role_title:s.role||s.role_title||'',task:s.task||'',available:s.available!==false,schedule:s.schedule||'',active:s.active!==false}));
+        const rows=a.map(s=>({id:String(s.id),user_id:s.user_id||null,name:s.name||s.fullName||'',email:s.email||'',role_title:s.role||s.role_title||'',task:s.task||'',available:s.available!==false,schedule:s.schedule||'',photo:s.photo||'',active:s.active!==false}));
         if(rows.length){
           const r=await client.from('staff').upsert(rows,{onConflict:'id'});if(r.error)throw r.error;
           const vr=await client.from('staff').select('id').in('id',rows.map(x=>x.id));if(vr.error)throw vr.error;

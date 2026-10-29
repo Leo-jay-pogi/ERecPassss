@@ -34,9 +34,10 @@ If a reset link shows a 404, make sure the GitHub Pages URL is registered in Sup
 
 ## Emergency alerts
 - For a new database, use `supabase/migrations/20261030000100_emergency_alerts.sql`. Existing databases with the verified alert columns do not need a schema migration for the frontend column-name fix.
+- For an existing database that rejects `new` alert rows with `emergency_alerts_status_check`, apply `supabase/migrations/20261030000200_fix_emergency_alert_status_constraint.sql`.
 - The alert workflow uses the existing `user_id`, `message`, `latitude`, `longitude`, `status`, `created_at`, and `updated_at` columns. It does not require a patient foreign key or a `patient_id` column.
 - Enable Supabase Anonymous Sign-Ins so a pre-login alert can be recorded with a temporary authenticated identity. If anonymous sign-in is unavailable, the app reports that the admin alert could not be sent; the phone call options remain available.
-- The emergency gesture is three taps followed by a three-second hold on the third press. After activation, the app requests location permission, records the alert, and opens call options. Call links open the device dialer; the user must confirm the call. The 911 option remains available.
+- The patient emergency gesture is three taps followed by a three-second animated countdown; two taps on the emergency button within one second cancel during that countdown. When it completes, the app sends the admin alert and opens call options. The app requests location permission when sending. Call links open the device dialer; the user must confirm the call. The 911 option remains available.
 - GPS coordinates are optional and visible only to active admins. The Admin Emergency Alert Dashboard refreshes alerts every 15 seconds while the Admin console is open. Admins can optionally enable browser desktop notifications; acknowledging an alert clears its saved coordinates.
 - Verify the Barangay hotline in Admin Settings before relying on it. The built-in example number is disabled; do not treat it as a real emergency contact.
 

@@ -2335,7 +2335,7 @@ Emergency, Records, QR Pass
 <div><span class="block text-xs font-tech text-cyan-200 font-bold uppercase">Before You Enter</span><span class="block text-[10px] text-slate-400">Agreement review required</span></div>
 </div>
 
-<button onclick="viewAgreementModal()" class="text-xs text-teal-300 hover:text-white hover:underline flex items-center gap-1 font-tech">
+<button type="button" aria-controls="agreementModal" onclick="if (typeof window.viewAgreementModal === 'function') window.viewAgreementModal(); else document.getElementById('agreementModal')?.classList.remove('hidden')" class="text-xs text-teal-300 hover:text-white hover:underline flex items-center gap-1 font-tech">
 
 <i class="fa-solid fa-file-contract"></i> Review
 
@@ -2355,7 +2355,7 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 </div>
 
-<button id="enterAppBtn" onclick="viewAgreementModal()" aria-haspopup="dialog" class="w-full py-3 px-6 rounded-xl font-tech font-bold text-xs tracking-widest uppercase text-cyan-950 bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-400 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/70 active:scale-[.99] transition-all flex items-center justify-center gap-2">
+<button type="button" id="enterAppBtn" onclick="if (typeof window.viewAgreementModal === 'function') window.viewAgreementModal(); else document.getElementById('agreementModal')?.classList.remove('hidden')" aria-haspopup="dialog" aria-controls="agreementModal" class="w-full py-3 px-6 rounded-xl font-tech font-bold text-xs tracking-widest uppercase text-cyan-950 bg-gradient-to-r from-cyan-400 via-teal-300 to-cyan-400 shadow-lg shadow-cyan-500/30 hover:shadow-cyan-400/70 active:scale-[.99] transition-all flex items-center justify-center gap-2">
 
 <span>REVIEW AGREEMENT</span>
 
@@ -2382,9 +2382,9 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div class="flex justify-between items-center mb-4 pb-3 border-b border-cyan-500/20">
 
-<button class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-500/50 text-rose-400 text-[11px] font-tech font-bold flex items-center gap-1.5 animate-pulse-red" title="Tap 3 times, then hold the third press for 3 seconds" onclick="openEmergencyModal()">
+<button class="px-2.5 py-1.5 rounded-lg bg-rose-950/60 border border-rose-500/50 text-rose-400 text-[11px] font-tech font-bold flex items-center gap-1.5 animate-pulse-red" title="Tap 3 times to send an emergency alert; tap twice during the 3-second cancel window to cancel" onclick="openEmergencyModal()" aria-label="Tap 3 times to send an emergency alert. Tap twice during the 3-second cancel window to cancel.">
 
-<i class="fa-solid fa-triangle-exclamation"></i> Emergency · 3 taps + hold
+<i class="fa-solid fa-triangle-exclamation"></i> Emergency · tap 3×
 
 </button>
 
@@ -3163,11 +3163,11 @@ Already have an account?
 
 <h2 class="text-base font-bold text-white mt-1">Angono Barangay Dispatch</h2>
 
-  <p id="patientEmergencyGestureStatus" class="text-[11px] text-slate-400">Tap 3 times, then hold the third press for 3 seconds. An alert is sent to admins; choose a call option next.</p>
+  <p id="patientEmergencyGestureStatus" class="text-[11px] text-slate-400">Tap 3 times to start the animated alert. Tap twice during the 3-second countdown to cancel.</p>
 
 </div>
 
-<button id="patientHoldEmergencyBtn" type="button" class="hold-button relative w-16 h-16 rounded-full bg-rose-950 border-2 border-rose-500 text-rose-400 flex flex-col items-center justify-center text-lg font-bold shadow-lg shadow-rose-900/50 active:scale-95 transition-all" aria-label="Press and hold for 3 seconds to activate emergency options">
+<button id="patientHoldEmergencyBtn" type="button" class="hold-button relative w-16 h-16 rounded-full bg-rose-950 border-2 border-rose-500 text-rose-400 flex flex-col items-center justify-center text-lg font-bold shadow-lg shadow-rose-900/50 active:scale-95 transition-all" aria-label="Tap 3 times to activate emergency options">
 
 <i class="fa-solid fa-phone text-rose-400"></i>
 
@@ -4854,7 +4854,7 @@ Already have an account?
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-2">
     <button onclick="closeAgreementModal()" class="agreement-cancel-btn rounded-xl border border-slate-500/40 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-white/5">Not now</button>
-    <button id="agreeContinueBtn" disabled onclick="proceedFromSplash()" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs font-bold disabled:opacity-45 disabled:cursor-not-allowed"><i class="fa-solid fa-check mr-1"></i> I Agree & Continue</button>
+    <button id="agreeContinueBtn" type="button" disabled onclick="if (typeof window.proceedFromSplash === 'function') window.proceedFromSplash(); else { const checkbox = document.getElementById('splashAgreeCheckbox'); if (!checkbox?.checked) { alert('Please check the agreement box to proceed.'); } else { document.getElementById('agreementModal')?.classList.add('hidden'); document.getElementById('splashScreen')?.classList.add('hidden'); document.getElementById('loginPage')?.classList.remove('hidden'); } }" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs font-bold disabled:opacity-45 disabled:cursor-not-allowed"><i class="fa-solid fa-check mr-1"></i> I Agree & Continue</button>
   </div>
 </div>
 
@@ -7195,196 +7195,10 @@ async function submitBookAppointment() {
 }
 /* Patient Chat is Supabase-only. The messaging implementation is loaded below. */
 
-/* Circle: hold 3s. Box: hold 1s to start a separate 3s countdown. */
+/* Emergency gestures are installed by the alert handler near the end of the page. */
 
 function setupHoldEmergencyButtons() {
-
-const btn = document.getElementById('patientHoldEmergencyBtn');
-const card = document.getElementById('patientEmergencyCard');
-
-const ring = document.getElementById('patientProgressRing');
-
-if (!btn || !card || !ring || card.dataset.holdSetup === 'true') return;
-card.dataset.holdSetup = 'true';
-
-let activePointerId = null;
-let activeHoldSource = null;
-let holdFrame = 0;
-let boxCountdownFrame = 0;
-let emergencySequenceRunning = false;
-let lastBoxCancelTapAt = 0;
-let circleHoldStartedAt = 0;
-
-function finishEmergencySequence() {
-  emergencySequenceRunning = false;
-  activePointerId = null;
-  activeHoldSource = null;
-  card.classList.remove('is-processing', 'is-arming');
-  btn.classList.remove('is-pressing');
-  ring.style.strokeDashoffset = '100';
-  openEmergencyModal();
-}
-
-function cancelActiveHold() {
-  if (holdFrame) cancelAnimationFrame(holdFrame);
-  holdFrame = 0;
-  activePointerId = null;
-  activeHoldSource = null;
-  card.classList.remove('is-processing', 'is-arming');
-  btn.classList.remove('is-pressing');
-  ring.style.strokeDashoffset = '100';
-}
-
-// Circle: a 3-second hold activates. After 0.5 seconds, release no longer cancels it.
-btn.addEventListener('pointerdown', event => {
-  if (event.pointerType && event.button !== 0) return;
-  if (emergencySequenceRunning || activePointerId !== null) return;
-  event.preventDefault();
-  activePointerId = event.pointerId;
-  activeHoldSource = 'circle';
-  const startedAt = circleHoldStartedAt = performance.now();
-  card.classList.add('is-processing');
-  btn.classList.add('is-pressing');
-  try { btn.setPointerCapture(event.pointerId); } catch (_) {}
-  const update = () => {
-    if (activeHoldSource !== 'circle' && activeHoldSource !== 'circle-countdown') return;
-    const fraction = Math.min(1, (performance.now() - startedAt) / 3000);
-    ring.style.strokeDashoffset = String(100 * (1 - fraction));
-    if (fraction >= 1) {
-      holdFrame = 0;
-      finishEmergencySequence();
-      return;
-    }
-    holdFrame = requestAnimationFrame(update);
-  };
-  holdFrame = requestAnimationFrame(update);
-});
-
-function endCircleHold(event) {
-  if (activeHoldSource !== 'circle') return;
-  if (event.pointerId !== undefined && activePointerId !== event.pointerId) return;
-  if (performance.now() - circleHoldStartedAt < 500) {
-    cancelActiveHold();
-    return;
-  }
-  // Keep counting toward the original 3-second total after release.
-  activePointerId = null;
-  activeHoldSource = 'circle-countdown';
-  emergencySequenceRunning = true;
-}
-btn.addEventListener('pointerup', endCircleHold);
-btn.addEventListener('pointercancel', endCircleHold);
-
-// Box add-on: hold outside the circle for 1 second to arm its own 3-second countdown.
-card.addEventListener('pointerdown', event => {
-  if (event.pointerType && event.button !== 0) return;
-  if ((activeHoldSource === 'box-countdown' || activeHoldSource === 'circle-countdown') && emergencySequenceRunning) {
-    event.preventDefault();
-    const tapAt = performance.now();
-    if (lastBoxCancelTapAt && tapAt - lastBoxCancelTapAt <= 500) {
-      if (boxCountdownFrame) cancelAnimationFrame(boxCountdownFrame);
-      boxCountdownFrame = 0;
-      if (holdFrame) cancelAnimationFrame(holdFrame);
-      holdFrame = 0;
-      emergencySequenceRunning = false;
-      activeHoldSource = null;
-      lastBoxCancelTapAt = 0;
-      card.classList.remove('is-processing', 'is-arming');
-      btn.classList.remove('is-pressing');
-      ring.style.strokeDashoffset = '100';
-    } else {
-      lastBoxCancelTapAt = tapAt;
-    }
-    return;
-  }
-  if (btn.contains(event.target)) return;
-  if (emergencySequenceRunning || activePointerId !== null) return;
-  event.preventDefault();
-  activePointerId = event.pointerId;
-  activeHoldSource = 'box-arm';
-  const armedAt = performance.now();
-  card.classList.add('is-arming');
-  btn.classList.add('is-pressing');
-  try { card.setPointerCapture(event.pointerId); } catch (_) {}
-
-  const arm = () => {
-    if (activeHoldSource !== 'box-arm') return;
-    const fraction = Math.min(1, (performance.now() - armedAt) / 1000);
-    if (fraction >= 1) {
-      holdFrame = 0;
-      activePointerId = null;
-      activeHoldSource = 'box-countdown';
-      emergencySequenceRunning = true;
-      card.classList.remove('is-arming');
-      card.classList.add('is-processing');
-      btn.classList.add('is-pressing');
-      const countdownAt = performance.now();
-      ring.style.strokeDashoffset = '100';
-      const countdown = () => {
-        if (activeHoldSource !== 'box-countdown') return;
-        const countdownFraction = Math.min(1, (performance.now() - countdownAt) / 3000);
-        ring.style.strokeDashoffset = String(100 * (1 - countdownFraction));
-        if (countdownFraction >= 1) {
-          boxCountdownFrame = 0;
-          finishEmergencySequence();
-          return;
-        }
-        boxCountdownFrame = requestAnimationFrame(countdown);
-      };
-      boxCountdownFrame = requestAnimationFrame(countdown);
-      return;
-    }
-    holdFrame = requestAnimationFrame(arm);
-  };
-  holdFrame = requestAnimationFrame(arm);
-});
-
-function endBoxHold(event) {
-  if (activeHoldSource !== 'box-arm') return;
-  if (event.pointerId !== undefined && activePointerId !== event.pointerId) return;
-  cancelActiveHold();
-}
-card.addEventListener('pointerup', endBoxHold);
-card.addEventListener('pointercancel', endBoxHold);
-card.addEventListener('lostpointercapture', endBoxHold);
-
-// Keep keyboard users able to activate the circular control by holding Space/Enter.
-let keyboardStartedAt = null;
-let keyboardFrame = 0;
-btn.addEventListener('keydown', event => {
-  if (event.key !== ' ' && event.key !== 'Enter') return;
-  event.preventDefault();
-  if (event.repeat || keyboardStartedAt !== null || emergencySequenceRunning || activePointerId !== null) return;
-  keyboardStartedAt = performance.now();
-  card.classList.add('is-processing');
-  btn.classList.add('is-pressing');
-  const updateKeyboardHold = () => {
-    const fraction = Math.min(1, (performance.now() - keyboardStartedAt) / 3000);
-    ring.style.strokeDashoffset = String(100 * (1 - fraction));
-    if (fraction >= 1) {
-      keyboardStartedAt = null;
-      keyboardFrame = 0;
-      emergencySequenceRunning = true;
-      finishEmergencySequence();
-      return;
-    }
-    keyboardFrame = requestAnimationFrame(updateKeyboardHold);
-  };
-  keyboardFrame = requestAnimationFrame(updateKeyboardHold);
-});
-function stopKeyboardHold() {
-  if (keyboardFrame) cancelAnimationFrame(keyboardFrame);
-  keyboardFrame = 0;
-  keyboardStartedAt = null;
-  card.classList.remove('is-processing', 'is-arming');
-  btn.classList.remove('is-pressing');
-  ring.style.strokeDashoffset = '100';
-}
-btn.addEventListener('keyup', event => {
-  if (event.key === ' ' || event.key === 'Enter') stopKeyboardHold();
-});
-btn.addEventListener('blur', stopKeyboardHold);
-
+  // Emergency gestures are installed by installEmergencyAlerts below.
 }
 
 /* ==========================================================================
@@ -13329,7 +13143,8 @@ document.addEventListener('keydown', event => {
   'use strict';
 
   const tapWindowMs = 2000;
-  const holdDurationMs = 3000;
+  const cancelWindowMs = 1000;
+  const emergencyCancelDelayMs = 3000;
   let emergencyAlertRefreshRunning = false;
   let knownEmergencyAlertIds = null;
 
@@ -13345,100 +13160,100 @@ document.addEventListener('keydown', event => {
     const ring = button.querySelector('#patientProgressRing');
     let tapCount = 0;
     let lastTapAt = 0;
-    let holdStartedAt = 0;
-    let animationFrame = 0;
-    let holdActive = false;
+    let pendingActivationTimer = 0;
+    let cancelRingFrame = 0;
+    let lastCancelTapAt = 0;
 
     function resetGesture(resetTaps) {
-      if (animationFrame) cancelAnimationFrame(animationFrame);
-      animationFrame = 0;
-      holdActive = false;
+      if (pendingActivationTimer) clearTimeout(pendingActivationTimer);
+      pendingActivationTimer = 0;
+      if (cancelRingFrame) cancelAnimationFrame(cancelRingFrame);
+      cancelRingFrame = 0;
       if (ring) ring.style.strokeDashoffset = '100';
       button.classList.remove('is-pressing');
       if (resetTaps) {
         tapCount = 0;
         lastTapAt = 0;
-        setEmergencyGestureStatus('Tap 3 times, then hold the third press for 3 seconds. An alert is sent to admins; choose a call option next.');
+        lastCancelTapAt = 0;
+        setEmergencyGestureStatus('Tap 3 times to start the animated alert. Tap twice during the 3-second countdown to cancel.');
       }
     }
 
-    function beginThirdPress() {
-      holdActive = true;
-      holdStartedAt = performance.now();
-      button.classList.add('is-pressing');
-      button.setAttribute('aria-label', 'Keep holding for 3 seconds to send an emergency alert and open call options');
-      setEmergencyGestureStatus('Keep holding the third press for 3 seconds…');
-
-      function updateProgress() {
-        if (!holdActive) return;
-        const fraction = Math.min(1, (performance.now() - holdStartedAt) / holdDurationMs);
-        if (ring) ring.style.strokeDashoffset = String(100 * (1 - fraction));
-        if (fraction >= 1) {
-          resetGesture(true);
-          button.setAttribute('aria-label', 'Tap 3 times, then hold the third press for 3 seconds to activate emergency options');
-          action();
-          return;
-        }
-        animationFrame = requestAnimationFrame(updateProgress);
-      }
-      animationFrame = requestAnimationFrame(updateProgress);
+    function cancelPendingActivation() {
+      resetGesture(true);
+      setEmergencyGestureStatus('Emergency alert canceled. Tap 3 times to start again.');
+      button.setAttribute('aria-label', 'Emergency alert canceled. Tap 3 times to activate.');
     }
 
     function registerPress() {
       const now = performance.now();
+      if (pendingActivationTimer) {
+        if (lastCancelTapAt && now - lastCancelTapAt <= cancelWindowMs) {
+          cancelPendingActivation();
+        } else {
+          lastCancelTapAt = now;
+          setEmergencyGestureStatus('Tap once more within 1 second to cancel the alert.');
+        }
+        return false;
+      }
       if (now - lastTapAt > tapWindowMs) tapCount = 0;
       lastTapAt = now;
       if (tapCount < 2) {
         tapCount += 1;
         const remaining = 3 - tapCount;
-        setEmergencyGestureStatus('Emergency activation: tap ' + remaining + (remaining === 1 ? ' more time, then hold.' : ' more times.'));
-        button.setAttribute('aria-label', 'Tap ' + remaining + ' more time' + (remaining === 1 ? '' : 's') + ', then hold the third press for 3 seconds');
+        setEmergencyGestureStatus('Emergency activation: tap ' + remaining + (remaining === 1 ? ' more time.' : ' more times.'));
+        button.setAttribute('aria-label', 'Tap ' + remaining + ' more time' + (remaining === 1 ? '' : 's') + ' to activate emergency options');
         return false;
       }
-      tapCount = 3;
-      beginThirdPress();
+      tapCount = 0;
+      lastTapAt = 0;
+      lastCancelTapAt = 0;
+      setEmergencyGestureStatus('Alert starting… tap twice during the 3-second countdown to cancel.');
+      button.setAttribute('aria-label', 'Emergency alert starting with animation. Tap twice during the 3-second countdown to cancel.');
+      const ringStartedAt = performance.now();
+      const animateCancelRing = () => {
+        if (!pendingActivationTimer) return;
+        const progress = Math.min(1, (performance.now() - ringStartedAt) / emergencyCancelDelayMs);
+        if (ring) ring.style.strokeDashoffset = String(100 * (1 - progress));
+        if (progress < 1) cancelRingFrame = requestAnimationFrame(animateCancelRing);
+      };
+      cancelRingFrame = requestAnimationFrame(animateCancelRing);
+      pendingActivationTimer = window.setTimeout(() => {
+        pendingActivationTimer = 0;
+        if (cancelRingFrame) cancelAnimationFrame(cancelRingFrame);
+        cancelRingFrame = 0;
+        if (ring) ring.style.strokeDashoffset = '0';
+        action();
+        if (ring) ring.style.strokeDashoffset = '100';
+        button.setAttribute('aria-label', 'Tap 3 times to activate emergency options');
+      }, emergencyCancelDelayMs);
       return true;
     }
 
     button.addEventListener('pointerdown', event => {
       if (event.pointerType === 'mouse' && event.button !== 0) return;
       event.preventDefault();
-      if (holdActive) return;
       const started = registerPress();
-      if (started) {
-        try { button.setPointerCapture(event.pointerId); } catch (_) {}
-      }
+      if (started) button.classList.add('is-pressing');
     });
 
-    button.addEventListener('pointerup', event => {
-      if (!holdActive) return;
-      if (event.pointerId !== undefined && button.hasPointerCapture && !button.hasPointerCapture(event.pointerId)) return;
-      resetGesture(true);
-      button.setAttribute('aria-label', 'Tap 3 times, then hold the third press for 3 seconds to activate emergency options');
-    });
-    button.addEventListener('pointercancel', () => {
-      if (holdActive) resetGesture(true);
-    });
-    button.addEventListener('lostpointercapture', () => {
-      if (holdActive) resetGesture(true);
-    });
-    button.addEventListener('click', event => event.preventDefault());
+    button.addEventListener('pointerup', () => button.classList.remove('is-pressing'));
+    button.addEventListener('pointercancel', () => button.classList.remove('is-pressing'));
+    button.addEventListener('click', event => {
+      event.preventDefault();
+      event.stopImmediatePropagation();
+    }, true);
 
     button.addEventListener('keydown', event => {
       if (event.key !== ' ' && event.key !== 'Enter') return;
       event.preventDefault();
-      if (event.repeat || holdActive) return;
+      if (event.repeat) return;
       registerPress();
     });
     button.addEventListener('keyup', event => {
-      if ((event.key === ' ' || event.key === 'Enter') && holdActive) {
-        resetGesture(true);
-        button.setAttribute('aria-label', 'Tap 3 times, then hold the third press for 3 seconds to activate emergency options');
-      }
+      if (event.key === ' ' || event.key === 'Enter') button.classList.remove('is-pressing');
     });
-    button.addEventListener('blur', () => {
-      if (holdActive) resetGesture(true);
-    });
+    button.addEventListener('blur', () => button.classList.remove('is-pressing'));
   }
 
   function requestEmergencyLocation() {

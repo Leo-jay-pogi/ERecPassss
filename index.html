@@ -3560,7 +3560,8 @@ Already have an account?
           <li>To change your photo, choose the camera icon on the profile photo and select an image.</li>
           <li>For an editable detail, enter or select the value and choose the <strong>Save</strong> button beside that field. Wait for the confirmation message.</li>
           <li>Review the Digital ID. Choose <strong>Flip Digital ID (Front / Back)</strong> to see its emergency-information side, then choose it again to flip back.</li>
-          <li>Choose <strong>Log Out</strong> when finished, especially on a shared device.</li>
+          <li>Choose <strong>Download / Print Wallet ID</strong> to open the card preview, then choose <strong>Download / Print</strong> to print it or save it as a PDF.</li>
+          <li>Use the account menu to log out when finished, especially on a shared device.</li>
         </ol>
         <h4>Example</h4>
         <p>To update your address, enter it in the Address field and choose the Save button beside it. Confirm the page reports that it was saved.</p>
@@ -4000,12 +4001,6 @@ Already have an account?
   <button type="button" onclick="printPatientDigitalID()" class="w-full mt-2 py-2.5 rounded-xl border border-green-600/40 bg-green-50 text-green-800 font-tech text-xs font-bold"><i class="fa-solid fa-print mr-1"></i> Download / Print Wallet ID</button>
 </div>
 
-<button onclick="logout()" class="w-full py-3 bg-rose-950/60 border border-rose-500/40 text-rose-400 rounded-xl font-tech font-bold text-xs tracking-wider hover:bg-rose-900/40 transition-all mt-4">
-
-<i class="fa-solid fa-right-from-bracket mr-1"></i> Log Out
-
-</button>
-
 </div>
 
 </section>
@@ -4194,6 +4189,46 @@ Already have an account?
 </section>
 
 <section class="staff-tab-panel space-y-6" data-staff-panel="appointments" aria-label="Staff appointments" hidden>
+<section id="staffMedicationWorkflow" class="glass-card p-5 rounded-2xl space-y-4" hidden>
+  <div>
+    <h2 class="staff-panel-heading"><i class="fa-solid fa-pills mr-1" aria-hidden="true"></i> Medication Orders</h2>
+    <p class="text-sm text-slate-500 mt-1">Nurses send medication requests to a Doctor. Only Doctor-approved prescriptions appear in the patient’s Meds page.</p>
+  </div>
+  <div id="nurseMedicationCompose" class="space-y-3" hidden>
+    <h3 class="text-sm font-bold text-cyan-300">Send a medication request for Doctor review</h3>
+    <div class="grid grid-cols-1 sm:grid-cols-2 gap-3">
+      <label class="text-xs text-slate-400">Patient
+        <select id="nurseMedicationPatient" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white"><option value="">Loading patients…</option></select>
+      </label>
+      <label class="text-xs text-slate-400">Reviewing Doctor
+        <select id="nurseMedicationDoctor" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white"><option value="">Choose Doctor</option></select>
+      </label>
+      <label class="text-xs text-slate-400">Medication name
+        <input id="nurseMedicationName" maxlength="160" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" placeholder="Medication name and strength">
+      </label>
+      <label class="text-xs text-slate-400">Dosage
+        <input id="nurseMedicationDosage" maxlength="120" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" placeholder="Dose as proposed for Doctor review">
+      </label>
+      <label class="text-xs text-slate-400">Frequency
+        <input id="nurseMedicationFrequency" maxlength="120" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" placeholder="e.g. frequency for Doctor review">
+      </label>
+      <label class="text-xs text-slate-400">Duration
+        <input id="nurseMedicationDuration" maxlength="120" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" placeholder="e.g. duration for Doctor review">
+      </label>
+      <label class="text-xs text-slate-400 sm:col-span-2">Instructions / note for Doctor
+        <textarea id="nurseMedicationInstructions" rows="2" maxlength="500" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" placeholder="Relevant instructions for the Doctor"></textarea>
+      </label>
+    </div>
+    <div id="nurseMedicationCurrentList" class="text-xs text-slate-400 rounded-lg bg-slate-900/50 p-3">Select a patient to view current prescriptions.</div>
+    <button type="button" class="staff-primary-action" onclick="submitNurseMedicationOrder(this)">Send to Doctor for Review</button>
+    <p id="nurseMedicationStatus" class="text-xs text-slate-400" role="status" aria-live="polite"></p>
+  </div>
+  <div id="doctorMedicationReview" hidden>
+    <h3 class="text-sm font-bold text-cyan-300 mb-3">Medication requests awaiting your review</h3>
+    <div id="doctorMedicationOrdersList" class="space-y-3"><p class="staff-appointment-empty">Loading medication requests…</p></div>
+  </div>
+</section>
+
 <div class="glass-card p-5 rounded-2xl" id="nurseSharedQueueCard" hidden>
   <div class="flex items-center justify-between gap-3 mb-3">
     <div><h1 class="staff-panel-heading"><i class="fa-solid fa-people-arrows-left-right mr-1" aria-hidden="true"></i> Shared Nurse Queue</h1>
@@ -4207,7 +4242,6 @@ Already have an account?
       <h1 class="staff-panel-heading"><i class="fa-solid fa-inbox mr-1" aria-hidden="true"></i> Appointment Requests</h1>
       <p class="text-sm text-slate-500 mt-1">Pending requests assigned to your account.</p>
     </div>
-    <button type="button" class="staff-secondary-action" onclick="staffNavigateTo('dashboard')">Back to Dashboard</button>
   </div>
   <div id="staffAllPendingAppointmentsList" class="staff-appointments-list space-y-3">
     <p class="staff-appointment-empty">Loading appointment requests...</p>
@@ -4375,7 +4409,7 @@ Already have an account?
       <label class="text-xs text-slate-400">Specialty
         <input id="staffDoctorSpecialty" type="text" maxlength="100" required class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" placeholder="Required, e.g. Pediatrics or Family Medicine">
       </label>
-      <label class="text-xs text-slate-400">Doctor ID
+      <label class="text-xs text-slate-400">Short Doctor Code
         <input id="staffDoctorIdentifier" type="text" readonly class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-slate-400">
       </label>
       <label class="text-xs text-slate-400">Department
@@ -4570,6 +4604,10 @@ Already have an account?
 <button onclick="switchAdminTab('agreement')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-file-signature" aria-hidden="true"></i><span>Upload Agreement</span></button>
 
 <button onclick="switchAdminTab('appointments')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Manage Appointments</span></button>
+
+<button onclick="switchAdminTab('medications')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-pills" aria-hidden="true"></i><span>Medication Review</span></button>
+
+<button onclick="switchAdminTab('backups')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i><span>Backup Data</span></button>
 
 <button onclick="switchAdminTab('chat')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Patient Messages</span></button>
 
@@ -4768,10 +4806,35 @@ Already have an account?
 </div>
 
 <div class="glass-card p-4 rounded-xl space-y-2">
-  <h3 class="text-sm font-bold text-white">Appointment Audit History</h3>
+  <h3 class="text-sm font-bold text-white">Latest Appointment Changes</h3>
   <div id="adminAppointmentAuditList" class="space-y-2"><p class="text-xs text-slate-400">Loading appointment history...</p></div>
 </div>
 
+</div>
+
+<div id="adminTabBackups" class="admin-tab-content hidden space-y-4">
+  <div class="glass-card p-4 rounded-xl space-y-2">
+    <h2 class="text-sm font-tech text-white font-bold"><i class="fa-solid fa-box-archive mr-1" aria-hidden="true"></i>Deleted Appointment Backups</h2>
+    <p class="text-xs text-slate-400">Deleted appointments are saved here. Restore a backup to return the appointment to the active list.</p>
+    <div id="adminAppointmentBackupsStatus" class="text-xs text-slate-400" role="status" aria-live="polite">Loading backups…</div>
+    <div id="adminAppointmentBackupsList" class="space-y-2"></div>
+  </div>
+  <div class="glass-card p-4 rounded-xl space-y-2">
+    <h2 class="text-sm font-tech text-white font-bold"><i class="fa-solid fa-location-dot mr-1" aria-hidden="true"></i>Deleted GPS Alert Backups</h2>
+    <div id="adminGpsBackupsStatus" class="text-xs text-slate-400" role="status" aria-live="polite">Loading backups…</div>
+    <div id="adminGpsBackupsList" class="space-y-2"></div>
+  </div>
+</div>
+
+<div id="adminTabMedications" class="admin-tab-content hidden space-y-4">
+  <div class="glass-card p-4 rounded-xl space-y-3">
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <div><h2 class="text-sm font-tech text-white font-bold"><i class="fa-solid fa-pills mr-1" aria-hidden="true"></i>Medication Review</h2>
+      <p class="text-xs text-slate-400 mt-1">Review, edit, approve, or reject pending Nurse requests. Approved medications are added to the patient’s existing prescriptions.</p></div>
+      <button type="button" class="staff-secondary-action px-3 py-2 text-xs" onclick="renderAdminMedicationReviewQueue()"><i class="fa-solid fa-rotate mr-1" aria-hidden="true"></i>Refresh</button>
+    </div>
+    <div id="adminMedicationOrdersList" class="space-y-3"><p class="staff-appointment-empty">Open this tab to load pending medication requests.</p></div>
+  </div>
 </div>
 
 <!-- ADMIN TAB 6: CHAT CENTER -->
@@ -5395,7 +5458,8 @@ document.getElementById('loginPage').classList.remove('hidden');
 function loadAgreementData() {
 
 const agree = JSON.parse(epStore.getItem(DB_KEYS.AGREEMENT) || '{}');
-const agreementPhoto = agree.photo || 'assets/erecpass-user-agreement.png';
+const defaultAgreementPhoto = new URL('./assets/erecpass-user-agreement.png', document.baseURI).href;
+const agreementPhoto = agree.photo || defaultAgreementPhoto;
 const defaultAgreementText = 'Welcome to ERecPass. Please keep your account secure and use this portal only for authorized hospital services.';
 const hasCustomAgreementText = !!agree.text && agree.text.trim() !== defaultAgreementText;
 
@@ -5404,8 +5468,8 @@ document.getElementById('splashAgreementPreview').innerText = hasCustomAgreement
   : 'Please review the ERecPass User Agreement before continuing. Open the full document to read and accept its terms.';
 
 const agreementTextDisplay = document.getElementById('fullAgreementTextDisplay');
-agreementTextDisplay.innerText = hasCustomAgreementText ? agree.text : '';
-agreementTextDisplay.classList.toggle('hidden', !hasCustomAgreementText);
+agreementTextDisplay.innerText = hasCustomAgreementText ? agree.text : defaultAgreementText;
+agreementTextDisplay.classList.remove('hidden');
 document.getElementById('agreementReviewIntro').innerText = hasCustomAgreementText
   ? 'Review the agreement document and the additional details below before continuing.'
   : 'Please review the ERecPass User Agreement below before continuing.';
@@ -5418,10 +5482,18 @@ const modalPhotoImg = document.getElementById('agreementPhotoDisplayImg');
 if (agreementPhoto) {
   if (splashPhotoContainer && splashPhotoImg) {
     splashPhotoContainer.classList.remove('hidden');
+    splashPhotoImg.onerror = function() {
+      if (this.src !== defaultAgreementPhoto) this.src = defaultAgreementPhoto;
+      else splashPhotoContainer.classList.add('hidden');
+    };
     splashPhotoImg.src = agreementPhoto;
   }
   if (modalPhotoContainer && modalPhotoImg) {
     modalPhotoContainer.classList.remove('hidden');
+    modalPhotoImg.onerror = function() {
+      if (this.src !== defaultAgreementPhoto) this.src = defaultAgreementPhoto;
+      else modalPhotoContainer.classList.add('hidden');
+    };
     modalPhotoImg.src = agreementPhoto;
   }
 } else {
@@ -5430,6 +5502,10 @@ if (agreementPhoto) {
   if (splashPhotoImg) splashPhotoImg.removeAttribute('src');
   if (modalPhotoImg) modalPhotoImg.removeAttribute('src');
 }
+
+const agreementCheckbox = document.getElementById('splashAgreeCheckbox');
+const continueButton = document.getElementById('agreeContinueBtn');
+if (agreementCheckbox && continueButton) continueButton.disabled = !agreementCheckbox.checked;
 
 }
 
@@ -6964,20 +7040,7 @@ function printPatientDigitalID() {
   const photoMarkup = photoSource
     ? `<img class="photo" src="${escapeHtml(photoSource)}" alt="">`
     : `<div class="photo initials">${escapeHtml(initials)}</div>`;
-  const printWindow = window.open('', '_blank');
-  if (!printWindow) {
-    alert('Allow pop-ups for this site to download or print your wallet ID.');
-    return;
-  }
-  printWindow.opener = null;
-  printWindow.addEventListener('load', function() {
-    window.setTimeout(function() {
-      printWindow.focus();
-      printWindow.print();
-    }, 300);
-  }, { once: true });
-  printWindow.document.open();
-  printWindow.document.write(`<!doctype html>
+  const printableDocument = `<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -7014,7 +7077,10 @@ function printPatientDigitalID() {
     .qr { width: 21mm; height: 21mm; flex: 0 0 21mm; image-rendering: pixelated; }
     .disclaimer { margin: 1mm 0 0; color: #59665f; font-size: 4.5pt; line-height: 1.25; }
     @media print { .sheet { min-height: 0; padding-top: 0; } .card { box-shadow: none; print-color-adjust: exact; -webkit-print-color-adjust: exact; } }
-    @media screen { body { padding: 12mm; background: #eef2ef; } }
+    @media screen {
+      body { padding: 12px; background: #eef2ef; }
+      .sheet { min-height: 0; flex-wrap: wrap; gap: 12px; padding-top: 0; }
+    }
   </style>
 </head>
 <body>
@@ -7037,8 +7103,64 @@ function printPatientDigitalID() {
     </article>
   </main>
 </body>
-</html>`);
-  printWindow.document.close();
+</html>`;
+  let preview = document.getElementById('patientDigitalIDPreview');
+  if (!preview) {
+    const style = document.createElement('style');
+    style.id = 'patientDigitalIDPreviewStyles';
+    style.textContent = `
+      #patientDigitalIDPreview { position: fixed; inset: 0; z-index: 1000010; display: flex; align-items: center; justify-content: center; padding: 16px; background: rgba(15, 23, 42, .68); }
+      #patientDigitalIDPreview[hidden] { display: none; }
+      #patientDigitalIDPreview .patient-id-preview-panel { display: flex; flex-direction: column; width: min(940px, 100%); max-height: min(760px, 92vh); overflow: hidden; border: 1px solid #cbd5e1; border-radius: 16px; background: #fff; box-shadow: 0 24px 70px rgba(0, 0, 0, .35); }
+      #patientDigitalIDPreview .patient-id-preview-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 18px; border-bottom: 1px solid #e2e8f0; color: #17324f; font: 700 15px Inter, Arial, sans-serif; }
+      #patientDigitalIDPreview .patient-id-preview-actions { display: flex; flex-wrap: wrap; justify-content: flex-end; gap: 8px; padding: 12px 16px; border-top: 1px solid #e2e8f0; }
+      #patientDigitalIDPreview button { min-height: 40px; padding: 8px 14px; border: 1px solid #147344; border-radius: 9px; color: #147344; background: #fff; font: 700 13px Inter, Arial, sans-serif; cursor: pointer; }
+      #patientDigitalIDPreview button.patient-id-preview-print { color: #fff; background: #147344; }
+      #patientDigitalIDPreview button:disabled { cursor: wait; opacity: .55; }
+      #patientDigitalIDPreview iframe { display: block; width: 100%; min-height: 360px; flex: 1 1 auto; border: 0; background: #eef2ef; }
+      html.ep-dark #patientDigitalIDPreview .patient-id-preview-panel { border-color: #40566a; }
+      html.ep-dark #patientDigitalIDPreview .patient-id-preview-header,
+      html.ep-dark #patientDigitalIDPreview .patient-id-preview-actions { border-color: #34495b; }
+      html.ep-dark #patientDigitalIDPreview .patient-id-preview-header { color: #edf4fb; background: #182532; }
+      html.ep-dark #patientDigitalIDPreview .patient-id-preview-actions { background: #14202b; }
+      html.ep-dark #patientDigitalIDPreview button:not(.patient-id-preview-print) { border-color: #526b80; color: #e2eaf1; background: #293a49; }
+      @media (max-width: 520px) {
+        #patientDigitalIDPreview { padding: 8px; }
+        #patientDigitalIDPreview .patient-id-preview-panel { max-height: 94vh; }
+        #patientDigitalIDPreview .patient-id-preview-header { padding: 12px; }
+        #patientDigitalIDPreview iframe { min-height: 300px; }
+      }
+    `;
+    document.head.appendChild(style);
+    preview = document.createElement('div');
+    preview.id = 'patientDigitalIDPreview';
+    preview.hidden = true;
+    preview.innerHTML = '<section class="patient-id-preview-panel" role="dialog" aria-modal="true" aria-labelledby="patientDigitalIDPreviewTitle"><header class="patient-id-preview-header"><span id="patientDigitalIDPreviewTitle">Patient Digital ID</span><button type="button" class="patient-id-preview-close" aria-label="Close preview">Close</button></header><iframe title="Printable patient wallet ID"></iframe><footer class="patient-id-preview-actions"><button type="button" class="patient-id-preview-close">Close</button><button type="button" class="patient-id-preview-print" disabled>Download / Print</button></footer></section>';
+    document.body.appendChild(preview);
+    preview.querySelectorAll('.patient-id-preview-close').forEach(button => button.addEventListener('click', () => {
+      preview.hidden = true;
+      preview.querySelector('iframe').srcdoc = '';
+      preview.returnFocus?.focus();
+    }));
+    preview.addEventListener('click', event => {
+      if (event.target === preview) preview.querySelector('.patient-id-preview-close').click();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !preview.hidden) preview.querySelector('.patient-id-preview-close').click();
+    });
+    preview.querySelector('.patient-id-preview-print').addEventListener('click', () => {
+      const frame = preview.querySelector('iframe');
+      if (frame.contentWindow) frame.contentWindow.print();
+    });
+  }
+  preview.returnFocus = document.activeElement;
+  const previewFrame = preview.querySelector('iframe');
+  const printButton = preview.querySelector('.patient-id-preview-print');
+  printButton.disabled = true;
+  previewFrame.onload = () => { printButton.disabled = false; };
+  preview.hidden = false;
+  previewFrame.srcdoc = printableDocument;
+  preview.querySelector('.patient-id-preview-close').focus();
 }
 
 function generatePatientQR() {
@@ -7870,8 +7992,11 @@ async function renderStaffApprovedAppointments() {
       const reasonNote = a.rejection_reason
         ? '<p class="staff-appointment-meta mt-2"><strong>Rejection reason:</strong> ' + escapeStaffDashboardText(a.rejection_reason) + '</p>' : '';
       const doctorDecision = normalizedStatus === 'assigned';
+      const visitTimeLabel = String(currentSession?.data?.account_type || '').toLowerCase() === 'doctor'
+        ? 'Review or change proposed time (Manila)'
+        : 'Set the confirmed visit time (Manila)';
       const staffTimeChoice = allowDecision
-        ? '<label class="block mt-3 text-xs text-slate-400">Set the confirmed visit time (Manila)<select data-appointment-id="' + id + '" data-appointment-date="' + escapeStaffDashboardText(datePart) + '" data-staff-appointment-time data-preferred-time="' + escapeStaffDashboardText(timeMatch ? timeMatch[1] : preferredTimeMatch ? preferredTimeMatch[1] : '') + '" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" required><option value="">Loading available times…</option></select></label>'
+        ? '<label class="block mt-3 text-xs text-slate-400">' + visitTimeLabel + '<select data-appointment-id="' + id + '" data-appointment-date="' + escapeStaffDashboardText(datePart) + '" data-staff-appointment-time data-preferred-time="' + escapeStaffDashboardText(timeMatch ? timeMatch[1] : preferredTimeMatch ? preferredTimeMatch[1] : '') + '" class="input-box w-full p-2 mt-1 rounded-xl text-sm bg-slate-900 text-white" required><option value="">Loading available times…</option></select></label>'
         : '';
       const buttons = allowDecision
         ? staffTimeChoice + '<label class="block mt-3 text-xs text-slate-400">Optional internal note<textarea data-appointment-id="' + id + '" data-staff-appointment-note rows="2" maxlength="500" class="block w-full mt-1 px-3 py-2 rounded-lg border border-slate-600 bg-slate-900/60 text-sm text-slate-100" placeholder="Add a note for the appointment record"></textarea></label>' +
@@ -7879,13 +8004,20 @@ async function renderStaffApprovedAppointments() {
           '<button type="button" class="erecpass-action-approved px-3 py-1.5 rounded-lg font-bold text-xs" data-appointment-id="' + id + '" onclick="staffDecideAppointment(this.dataset.appointmentId, \'approve\', this)"><i class="fa-solid fa-check mr-1" aria-hidden="true"></i>Approve</button>' +
           '<button type="button" class="erecpass-action-cancel px-3 py-1.5 rounded-lg font-bold text-xs" data-appointment-id="' + id + '" onclick="staffDecideAppointment(this.dataset.appointmentId, \'reject\', this)"><i class="fa-solid fa-xmark mr-1" aria-hidden="true"></i>Reject</button>' +
           '</div>' : '';
+      const canDelete = !['rejected', 'cancelled', 'completed'].includes(normalizedStatus);
+      const deleteButton = canDelete
+        ? '<button type="button" class="erecpass-action-delete px-3 py-1.5 rounded-lg font-bold text-xs" data-appointment-id="' + id + '" onclick="staffDeleteAppointment(this.dataset.appointmentId, this)"><i class="fa-solid fa-trash mr-1" aria-hidden="true"></i>Delete</button>'
+        : '';
+      const actionButtons = allowDecision
+        ? buttons.replace('</div>', deleteButton + '</div>')
+        : deleteButton ? '<div class="flex flex-wrap gap-2 mt-3">' + deleteButton + '</div>' : '';
       return '<div class="appointment-card p-3 rounded-xl border border-emerald-400/25 bg-emerald-950/20" data-doctor-decision="' + (doctorDecision ? 'true' : 'false') + '">' +
         '<div class="staff-appointment-layout"><div class="staff-appointment-details min-w-0 flex-1">' +
         '<strong class="staff-appointment-name block break-words">' + patientName + '</strong>' +
         '<p class="staff-appointment-reason mt-1">' + reason + '</p>' +
         '<p class="staff-appointment-meta mt-1"><i class="fa-solid fa-user-doctor mr-1" aria-hidden="true"></i>' + doctor + '</p>' +
         '<p class="staff-appointment-meta mt-1"><i class="fa-regular fa-calendar mr-1" aria-hidden="true"></i>' + date + '</p>' +
-        '<p class="staff-appointment-meta mt-1"><i class="fa-regular fa-clock mr-1" aria-hidden="true"></i>' + time + '</p>' + reasonNote + buttons +
+        '<p class="staff-appointment-meta mt-1"><i class="fa-regular fa-clock mr-1" aria-hidden="true"></i>' + time + '</p>' + reasonNote + actionButtons +
         '</div><span class="staff-appointment-status' + statusClass + ' px-2 py-1 rounded-full font-bold shrink-0">' + status + '</span></div></div>';
     };
 
@@ -7954,6 +8086,26 @@ async function renderStaffApprovedAppointments() {
     setError(error.message || 'Unable to load assigned appointments. Please refresh.');
   }
 }
+
+async function staffDeleteAppointment(appointmentId, button) {
+  const id = String(appointmentId || '').trim();
+  if (!/^\d+$/.test(id) || currentSession?.role !== 'staff' || !window.erecpassSupabase?.rpc) {
+    alert('Sign in with your Staff account before deleting an appointment.');
+    return;
+  }
+  if (!window.confirm('Delete this appointment? A copy will be saved in Admin > Backup Data.')) return;
+  if (button) { button.disabled = true; button.setAttribute('aria-busy', 'true'); }
+  try {
+    const result = await window.erecpassSupabase.rpc('staff_delete_assigned_appointment', { p_appointment_id: Number(id) });
+    if (result.error) throw result.error;
+    await renderStaffApprovedAppointments();
+  } catch (error) {
+    console.error('[ERecPass] Staff appointment deletion failed:', error);
+    alert('Could not delete appointment: ' + (error.message || 'Apply the staff appointment deletion migration in Supabase.'));
+    if (button) { button.disabled = false; button.removeAttribute('aria-busy'); }
+  }
+}
+window.staffDeleteAppointment = staffDeleteAppointment;
 
 async function staffDecideAppointment(appointmentId, decision, button) {
   const id = String(appointmentId || '').trim();
@@ -8029,6 +8181,7 @@ async function renderStaffRoutingWorkspace() {
     if (nurseResult.error || doctorResult.error) throw nurseResult.error || doctorResult.error;
     const isNurse = nurseResult.data === true;
     const isDoctor = doctorResult.data === true;
+    await renderStaffMedicationWorkflow(isNurse, isDoctor);
     const staffApp=document.getElementById('staffApp');
     if(staffApp)staffApp.dataset.accountType=isDoctor?'doctor':isNurse?'nurse':'staff';
     ['nurseSharedQueueCard','nurseSharedQueuePreviewCard'].forEach(id => { const el=document.getElementById(id); if(el) el.hidden=!isNurse; });
@@ -8076,6 +8229,10 @@ async function renderStaffRoutingWorkspace() {
         })
         .on('postgres_changes', { event: '*', schema: 'public', table: 'appointment_actor_notifications', filter: 'recipient_user_id=eq.' + userId }, () => {
           if (currentSession?.role === 'staff') renderStaffAppointmentActorNotifications();
+        })
+        .on('postgres_changes', { event: '*', schema: 'public', table: 'medication_review_orders' }, () => {
+          const medicationList = document.getElementById('doctorMedicationOrdersList');
+          if (currentSession?.role === 'staff' && !medicationList?.querySelector('[data-review-dirty="true"]')) renderStaffMedicationWorkflow(isNurse, isDoctor);
         }).subscribe();
     }
   } catch (error) {
@@ -8090,6 +8247,183 @@ async function renderStaffRoutingWorkspace() {
       ? 'Shared Nurse and Doctor routing needs the new Supabase migration.' : (error.message || 'Could not load appointment routing.');
   }
 }
+
+async function renderStaffMedicationWorkflow(isNurse, isDoctor) {
+  const panel = document.getElementById('staffMedicationWorkflow');
+  const nursePanel = document.getElementById('nurseMedicationCompose');
+  const doctorPanel = document.getElementById('doctorMedicationReview');
+  if (!panel) return;
+  panel.hidden = !isNurse && !isDoctor;
+  if (!isNurse && !isDoctor) return;
+  nursePanel.hidden = !isNurse;
+  doctorPanel.hidden = !isDoctor;
+  const client = window.erecpassSupabase;
+
+  if (isNurse) {
+    const patientSelect = document.getElementById('nurseMedicationPatient');
+    const doctorSelect = document.getElementById('nurseMedicationDoctor');
+    const status = document.getElementById('nurseMedicationStatus');
+    try {
+      const [patientsResult, doctorsResult] = await Promise.all([
+        client.rpc('nurse_list_medication_patients'),
+        client.rpc('nurse_list_medication_doctors')
+      ]);
+      if (patientsResult.error || doctorsResult.error) throw patientsResult.error || doctorsResult.error;
+      const patients = patientsResult.data || [];
+      const doctors = doctorsResult.data || [];
+      const previousPatient = patientSelect.value;
+      const previousDoctor = doctorSelect.value;
+      patientSelect.innerHTML = '<option value="">Choose a patient</option>' + patients.map(patient =>
+        '<option value="' + escapeStaffDashboardText(patient.patient_id) + '" data-doctor-staff-id="' + escapeStaffDashboardText(patient.assigned_doctor_staff_id || '') + '">' +
+        escapeStaffDashboardText(patient.full_name || 'Patient') + ' · ID ' + escapeStaffDashboardText(patient.patient_id) + '</option>'
+      ).join('');
+      doctorSelect.innerHTML = '<option value="">Choose a Doctor</option>' + doctors.map(doctor =>
+        '<option value="' + escapeStaffDashboardText(doctor.staff_id) + '">' + escapeStaffDashboardText(doctor.full_name) +
+        (doctor.specialty ? ' · ' + escapeStaffDashboardText(doctor.specialty) : '') + '</option>'
+      ).join('');
+      if (patients.some(patient => String(patient.patient_id) === previousPatient)) patientSelect.value = previousPatient;
+      if (doctors.some(doctor => String(doctor.staff_id) === previousDoctor)) doctorSelect.value = previousDoctor;
+      else if (patientSelect.value) {
+        const assignedDoctorId = patientSelect.selectedOptions[0]?.dataset.doctorStaffId;
+        if (assignedDoctorId && doctors.some(doctor => String(doctor.staff_id) === assignedDoctorId)) doctorSelect.value = assignedDoctorId;
+      }
+      patientSelect.onchange = () => {
+        const selected = patients.find(patient => String(patient.patient_id) === patientSelect.value);
+        if (selected?.assigned_doctor_staff_id && doctors.some(doctor => String(doctor.staff_id) === String(selected.assigned_doctor_staff_id))) {
+          doctorSelect.value = selected.assigned_doctor_staff_id;
+        }
+        const existing = Array.isArray(selected?.current_prescriptions) ? selected.current_prescriptions : [];
+        const active = existing.filter(med => med && typeof med === 'object' && med.active !== false && String(med.status || '').toLowerCase() !== 'inactive');
+        document.getElementById('nurseMedicationCurrentList').innerHTML = '<strong class="block text-slate-300 mb-1">Current active prescriptions</strong>' +
+          (active.length ? active.map(med => '<p>' + escapeStaffDashboardText(med.medicine || med.name || 'Medication') + ' · ' +
+            escapeStaffDashboardText(med.dosage || med.dose || '') + (med.frequency ? ' · ' + escapeStaffDashboardText(med.frequency) : '') + '</p>').join('') : '<p>None recorded.</p>');
+      };
+      if (patientSelect.value) patientSelect.dispatchEvent(new Event('change'));
+      if (status && !status.textContent) status.textContent = 'Requests are saved for Doctor review. Patients only see prescriptions after approval.';
+    } catch (error) {
+      if (status) status.textContent = 'Could not load patient or Doctor data: ' + (error.message || 'Apply the medication review migration in Supabase.');
+    }
+  }
+
+  if (isDoctor) {
+    const list = document.getElementById('doctorMedicationOrdersList');
+    try {
+      const result = await client.rpc('doctor_list_medication_review_orders');
+      if (result.error) throw result.error;
+      const orders = result.data || [];
+      list.innerHTML = orders.length ? orders.map(order => {
+        const meds = Array.isArray(order.medications) ? order.medications : [];
+        const entries = meds.map((med, index) => medicationReviewEntryHtml(med, index)).join('');
+        const existing = Array.isArray(order.current_prescriptions) ? order.current_prescriptions : [];
+        const currentMeds = existing.filter(med => med && typeof med === 'object' && med.active !== false && String(med.status || '').toLowerCase() !== 'inactive');
+        const currentList = currentMeds.length ? currentMeds.map(med => '<li>' + escapeStaffDashboardText(med.medicine || med.name || 'Medication') + ' · ' + escapeStaffDashboardText(med.dosage || med.dose || '') + '</li>').join('') : '<li>None recorded.</li>';
+        return '<article class="appointment-card p-4 rounded-xl border border-cyan-400/25 space-y-3" data-medication-review-order="' + escapeStaffDashboardText(order.id) + '">' +
+          '<div class="flex flex-wrap justify-between gap-2"><div><strong class="text-sm">' + escapeStaffDashboardText(order.patient_name || 'Patient') + '</strong><p class="text-xs text-slate-400">Patient ID ' + escapeStaffDashboardText(order.patient_id) + ' · Nurse: ' + escapeStaffDashboardText(order.nurse_name || 'Staff') + '</p></div><time class="text-[10px] text-slate-500">' + escapeStaffDashboardText(new Date(order.created_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' })) + '</time></div>' +
+          (order.nurse_note ? '<p class="text-xs text-slate-400">Nurse note: ' + escapeStaffDashboardText(order.nurse_note) + '</p>' : '') +
+          '<details class="text-xs text-slate-400"><summary>Current active prescriptions</summary><ul class="list-disc pl-5 mt-1">' + currentList + '</ul></details>' +
+          '<div data-doctor-medication-items class="space-y-2">' + entries + '</div>' +
+          '<button type="button" class="staff-secondary-action px-3 py-2 text-xs" data-order-id="' + escapeStaffDashboardText(order.id) + '" onclick="addDoctorMedicationItem(this.dataset.orderId)"><i class="fa-solid fa-plus mr-1"></i>Add medication</button>' +
+          '<label class="block text-xs text-slate-400">Doctor note for patient / record<textarea data-doctor-medication-note rows="2" maxlength="500" class="input-box w-full p-2 mt-1 rounded-xl" placeholder="Optional instructions or note"></textarea></label>' +
+          '<div class="flex flex-wrap gap-2"><button type="button" class="staff-primary-action" data-order-id="' + escapeStaffDashboardText(order.id) + '" onclick="reviewDoctorMedicationOrder(this.dataset.orderId, \'approve\', this)">Approve and send to patient</button>' +
+          '<button type="button" class="erecpass-action-cancel px-3 py-2 rounded-lg text-xs" data-order-id="' + escapeStaffDashboardText(order.id) + '" onclick="reviewDoctorMedicationOrder(this.dataset.orderId, \'reject\', this)">Reject request</button></div></article>';
+      }).join('') : '<p class="staff-appointment-empty">No medication requests are waiting for your review.</p>';
+      list.querySelectorAll('[data-doctor-medication-entry]').forEach(entry => entry.addEventListener('input', () => {
+        entry.closest('[data-medication-review-order]')?.setAttribute('data-review-dirty', 'true');
+      }));
+    } catch (error) {
+      console.error('[ERecPass] Doctor medication review queue:', error);
+      list.innerHTML = '<p class="staff-appointment-error">Could not load medication requests: ' + escapeStaffDashboardText(error.message || 'Apply the medication review migration in Supabase.') + '</p>';
+    }
+  }
+}
+window.renderStaffMedicationWorkflow = renderStaffMedicationWorkflow;
+
+function medicationReviewEntryHtml(medication, index) {
+  const med = medication && typeof medication === 'object' ? medication : {};
+  const field = (name, label, value, placeholder) => '<label class="block text-xs text-slate-400">' + label +
+    '<input data-med-field="' + name + '" maxlength="' + (name === 'instructions' ? '500' : '160') + '" value="' + escapeStaffDashboardText(value || '') +
+    '" class="input-box w-full p-2 mt-1 rounded-lg" placeholder="' + placeholder + '"></label>';
+  return '<div data-doctor-medication-entry class="grid grid-cols-1 sm:grid-cols-2 gap-2 rounded-lg border border-slate-600/50 p-3">' +
+    field('medicine', 'Medication name', med.medicine, 'Name and strength') + field('dosage', 'Dosage', med.dosage, 'Doctor-confirmed dose') +
+    field('frequency', 'Frequency', med.frequency, 'Doctor-confirmed frequency') + field('duration', 'Duration', med.duration || med.days, 'Duration or days') +
+    '<label class="block text-xs text-slate-400 sm:col-span-2">Instructions<input data-med-field="instructions" maxlength="500" value="' + escapeStaffDashboardText(med.instructions || '') + '" class="input-box w-full p-2 mt-1 rounded-lg" placeholder="Optional instructions"></label></div>';
+}
+
+function addDoctorMedicationItem(orderId) {
+  const card = document.querySelector('[data-medication-review-order="' + CSS.escape(String(orderId)) + '"]');
+  const list = card?.querySelector('[data-doctor-medication-items]');
+  if (!list) return;
+  list.insertAdjacentHTML('beforeend', medicationReviewEntryHtml({}, list.children.length));
+  card.setAttribute('data-review-dirty', 'true');
+  list.lastElementChild?.querySelector('[data-med-field="medicine"]')?.focus();
+}
+window.addDoctorMedicationItem = addDoctorMedicationItem;
+
+async function submitNurseMedicationOrder(button) {
+  if (currentSession?.role !== 'staff') return;
+  const patientId = document.getElementById('nurseMedicationPatient')?.value || '';
+  const doctorStaffId = document.getElementById('nurseMedicationDoctor')?.value || '';
+  const medication = {
+    medicine: String(document.getElementById('nurseMedicationName')?.value || '').trim(),
+    dosage: String(document.getElementById('nurseMedicationDosage')?.value || '').trim(),
+    frequency: String(document.getElementById('nurseMedicationFrequency')?.value || '').trim(),
+    duration: String(document.getElementById('nurseMedicationDuration')?.value || '').trim(),
+    instructions: String(document.getElementById('nurseMedicationInstructions')?.value || '').trim()
+  };
+  const status = document.getElementById('nurseMedicationStatus');
+  if (!patientId || !doctorStaffId) { status.textContent = 'Choose a patient and reviewing Doctor.'; return; }
+  if (!medication.medicine || !medication.dosage) { status.textContent = 'Enter a medication name and proposed dosage.'; return; }
+  button.disabled = true;
+  try {
+    const result = await window.erecpassSupabase.rpc('nurse_submit_medication_order', {
+      p_patient_id: patientId, p_doctor_staff_id: doctorStaffId,
+      p_medications: [medication], p_nurse_note: ''
+    });
+    if (result.error) throw result.error;
+    document.getElementById('nurseMedicationName').value = '';
+    document.getElementById('nurseMedicationDosage').value = '';
+    document.getElementById('nurseMedicationFrequency').value = '';
+    document.getElementById('nurseMedicationDuration').value = '';
+    document.getElementById('nurseMedicationInstructions').value = '';
+    status.textContent = 'Sent to the selected Doctor. The patient will see the prescription after the Doctor approves it.';
+  } catch (error) {
+    console.error('[ERecPass] Nurse medication request:', error);
+    status.textContent = 'Could not send the request: ' + (error.message || 'Apply the medication review migration in Supabase.');
+  } finally { button.disabled = false; }
+}
+window.submitNurseMedicationOrder = submitNurseMedicationOrder;
+
+async function reviewDoctorMedicationOrder(orderId, decision, button) {
+  if (currentSession?.role !== 'staff' || !['approve', 'reject'].includes(decision)) return;
+  const card = document.querySelector('[data-medication-review-order="' + CSS.escape(String(orderId)) + '"]');
+  if (!card) return;
+  const medications = decision === 'approve' ? Array.from(card.querySelectorAll('[data-doctor-medication-entry]')).map(entry => {
+    const value = field => String(entry.querySelector('[data-med-field="' + field + '"]')?.value || '').trim();
+    return { medicine: value('medicine'), dosage: value('dosage'), frequency: value('frequency'), duration: value('duration'), instructions: value('instructions') };
+  }) : [];
+  if (decision === 'approve' && (!medications.length || medications.some(med => !med.medicine || !med.dosage))) {
+    alert('Every medication needs a name and a confirmed dosage before approval.');
+    return;
+  }
+  const promptText = decision === 'approve'
+    ? 'Approve these Doctor-reviewed prescriptions and send them to the patient?'
+    : 'Reject this medication request?';
+  if (!window.confirm(promptText)) return;
+  button.disabled = true;
+  try {
+    const result = await window.erecpassSupabase.rpc('doctor_review_medication_order', {
+      p_order_id: Number(orderId), p_decision: decision, p_medications: medications,
+      p_doctor_note: String(card.querySelector('[data-doctor-medication-note]')?.value || '').trim()
+    });
+    if (result.error) throw result.error;
+    await renderStaffMedicationWorkflow(false, true);
+  } catch (error) {
+    console.error('[ERecPass] Doctor medication review:', error);
+    alert('Could not ' + (decision === 'approve' ? 'approve' : 'reject') + ' the medication request: ' + (error.message || 'Please try again.'));
+    button.disabled = false;
+  }
+}
+window.reviewDoctorMedicationOrder = reviewDoctorMedicationOrder;
 
 async function renderNurseSharedQueue() {
   const containers = ['nurseSharedQueueList'].map(id => document.getElementById(id)).filter(Boolean);
@@ -8151,8 +8485,10 @@ async function renderNurseSharedQueue() {
       });
       const decisionHistory=auditRows.filter(item=>String(item.appointment_id)===String(row.id)&&['doctor_reject','doctor_approve','nurse_override_approve'].includes(String(item.action||''))).map(item=>'<li>'+escapeStaffDashboardText(item.action==='doctor_reject'?'Doctor rejected':item.action==='nurse_override_approve'?'Nurse approval override':'Doctor approved')+': '+escapeStaffDashboardText(item.reason||'')+' · '+escapeStaffDashboardText(new Date(item.created_at).toLocaleString('en-PH',{timeZone:'Asia/Manila'}))+'</li>');
       const historyHtml=[...history,...decisionHistory].join('');
-      const pref=String(row.preferred_time||row.appointment_time||'').slice(0,5);
-      const timeText=pref ? new Date('1970-01-01T'+pref+':00Z').toLocaleTimeString('en-PH',{timeZone:'UTC',hour:'numeric',minute:'2-digit'})+' Manila (patient preference)' : 'Time preference not set';
+      const proposed=String(row.appointment_time||'').slice(0,5);
+      const pref=String(row.preferred_time||'').slice(0,5);
+      const showTime=value=>new Date('1970-01-01T'+value+':00Z').toLocaleTimeString('en-PH',{timeZone:'UTC',hour:'numeric',minute:'2-digit'});
+      const timeText=proposed ? showTime(proposed)+' Manila (nurse proposed)'+(pref&&pref!==proposed?' · patient prefers '+showTime(pref):'') : pref ? showTime(pref)+' Manila (patient preference)' : 'Time preference not set';
       const canNurseApprove=Boolean(row.provider_staff_id)&&['assigned','pending','pending approval','rejected'].includes(statusOf(row));
       return '<article class="staff-nurse-queue-item">'+
         '<div class="staff-nurse-queue-main">'+
@@ -8264,17 +8600,23 @@ function filterNurseDoctorOptions() {
   list.innerHTML=rows.length?rows.map(d=>{
     const slots=d.available_slots||[];
     const slotsText=slots.length?slots.map(v=>{const t=String(v).slice(0,5);return new Date('1970-01-01T'+t+':00Z').toLocaleTimeString('en-PH',{timeZone:'UTC',hour:'numeric',minute:'2-digit'});}).join(', '):'No available slots on this date';
-    const scheduleNote=slots.length?'':'<p class="staff-doctor-choice-note"><i class="fa-regular fa-circle-info" aria-hidden="true"></i><span>Doctor availability is not set for this date. You can assign now; the Doctor must confirm a visit time before approval.</span></p>';
-    return '<article class="staff-doctor-choice-card"><div class="staff-doctor-choice-main"><strong>'+escapeStaffDashboardText(d.full_name)+'</strong><p class="staff-doctor-choice-specialty">'+escapeStaffDashboardText(d.specialization)+' <span>·</span> '+escapeStaffDashboardText(d.department||'Department not set')+'</p><p class="staff-doctor-choice-slots"><i class="fa-regular fa-clock" aria-hidden="true"></i> '+escapeStaffDashboardText(slotsText)+' <span>Manila time</span></p>'+scheduleNote+'</div><button type="button" class="staff-doctor-assign-action" data-doctor-staff-id="'+escapeStaffDashboardText(d.staff_id)+'" onclick="nurseAssignDoctor(this.dataset.doctorStaffId)"><span>Assign Doctor</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></article>';
+    const slotOptions=slots.length?'<label class="staff-doctor-choice-slots block mt-2">Proposed visit time<select data-nurse-proposed-time class="input-box w-full p-2 mt-1 rounded-lg"><option value="">Choose a time</option>'+slots.map(value=>{const time=String(value).slice(0,5),label=new Date('1970-01-01T'+time+':00Z').toLocaleTimeString('en-PH',{timeZone:'UTC',hour:'numeric',minute:'2-digit'});return '<option value="'+escapeStaffDashboardText(time)+'">'+escapeStaffDashboardText(label)+' Manila time</option>';}).join('')+'</select></label>':'';
+    const scheduleNote=slots.length?'':'<p class="staff-doctor-choice-note"><i class="fa-regular fa-circle-info" aria-hidden="true"></i><span>No time slots are available to propose. You can assign the Doctor; they must set a visit time before approval.</span></p>';
+    return '<article class="staff-doctor-choice-card"><div class="staff-doctor-choice-main"><strong>'+escapeStaffDashboardText(d.full_name)+'</strong><p class="staff-doctor-choice-specialty">'+escapeStaffDashboardText(d.specialization)+' <span>·</span> '+escapeStaffDashboardText(d.department||'Department not set')+'</p><p class="staff-doctor-choice-slots"><i class="fa-regular fa-clock" aria-hidden="true"></i> Available: '+escapeStaffDashboardText(slotsText)+' <span>Manila time</span></p>'+slotOptions+scheduleNote+'</div><button type="button" class="staff-doctor-assign-action" data-doctor-staff-id="'+escapeStaffDashboardText(d.staff_id)+'" onclick="nurseAssignDoctor(this.dataset.doctorStaffId, this)"><span>Assign Doctor</span><i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button></article>';
   }).join(''):'<p class="staff-appointment-empty">No active Doctors match this search. Check the search text or specialty filter.</p>';
 }
 
-async function nurseAssignDoctor(doctorStaffId) {
+async function nurseAssignDoctor(doctorStaffId, button) {
   if(!nurseAssignAppointmentId||!doctorStaffId) return;
+  const card=button?.closest('.staff-doctor-choice-card');
+  const selectedTime=String(card?.querySelector('[data-nurse-proposed-time]')?.value||'').trim()||null;
+  const doctor=nurseDoctorDirectory.find(item=>String(item.staff_id)===String(doctorStaffId));
+  if((doctor?.available_slots||[]).length&&!selectedTime){alert('Choose a proposed visit time for this Doctor.');return;}
+  if(button){button.disabled=true;button.setAttribute('aria-busy','true');}
   try {
-    const result=await window.erecpassSupabase.rpc('nurse_assign_appointment',{
+    const result=await window.erecpassSupabase.rpc('nurse_assign_appointment_with_time',{
       p_appointment_id:nurseAssignAppointmentId,p_doctor_staff_id:doctorStaffId,
-      p_reason:String(document.getElementById('nurseAssignmentReason')?.value||'').trim()
+      p_proposed_time:selectedTime,p_reason:String(document.getElementById('nurseAssignmentReason')?.value||'').trim()
     });
     if(result.error) throw result.error;
     closeNurseAssignDoctor(); await renderNurseSharedQueue();
@@ -8283,7 +8625,7 @@ async function nurseAssignDoctor(doctorStaffId) {
     console.error('[ERecPass] Nurse assignment failed:',error);
     alert('Assignment was not saved: '+(error.message||'Refresh the queue and try again.'));
     await renderNurseSharedQueue();
-  }
+  } finally { if(button){button.disabled=false;button.removeAttribute('aria-busy');} }
 }
 function closeNurseAssignDoctor(){document.getElementById('nurseDoctorAssignModal')?.remove();nurseAssignAppointmentId=null;}
 window.openNurseAssignDoctor=openNurseAssignDoctor;
@@ -8302,7 +8644,7 @@ async function renderDoctorProfessionalProfile(staffId) {
     if(profileResult.error) throw profileResult.error;
     const profile=profileResult.data||{};
     document.getElementById('staffDoctorSpecialty').value=profile.specialty||'';
-    document.getElementById('staffDoctorIdentifier').value=profile.doctor_identifier||staffId;
+    document.getElementById('staffDoctorIdentifier').value=profile.short_code||('DOC-'+staffId.replace(/[^a-z0-9]/gi,'').slice(0,8).toUpperCase());
     document.getElementById('staffDoctorDepartment').value=profile.department||'';
     document.getElementById('staffDoctorCredentials').value=profile.professional_credentials||profile.professional_title||'';
     document.getElementById('staffDoctorDescription').value=profile.professional_description||'';
@@ -9261,6 +9603,12 @@ if (tabName === 'agreement') document.getElementById('adminTabAgreement').classL
 
 if (tabName === 'appointments') document.getElementById('adminTabAppointments').classList.remove('hidden');
 
+if (tabName === 'backups') {
+  document.getElementById('adminTabBackups').classList.remove('hidden');
+  if (typeof renderAdminAppointmentBackups === 'function') renderAdminAppointmentBackups();
+  if (typeof renderAdminGpsBackups === 'function') renderAdminGpsBackups();
+}
+
 if (tabName === 'chat') document.getElementById('adminTabChat').classList.remove('hidden');
 
 if (tabName === 'logs') document.getElementById('adminTabLogs').classList.remove('hidden');
@@ -9819,18 +10167,18 @@ try {
     const normalizedStatus = String(status).trim().toLowerCase();
     const id = escapeStaffDashboardText(a.id);
     return `
-      <div class="glass-card p-3 rounded-xl flex justify-between items-center text-xs" data-appointment-id="${id}">
-        <div>
-          <strong class="text-white block">${escapeStaffDashboardText(a.patient_name || 'Patient')} - ${escapeStaffDashboardText(a.reason || 'Appointment')}</strong>
-          <p class="text-slate-400">Doctor: ${escapeStaffDashboardText(a.doctor || 'Unassigned')} · Date: ${escapeStaffDashboardText(a.appointment_date || '—')} · Preferred: ${escapeStaffDashboardText(String(a.preferred_time||'').slice(0,5)||'—')}</p>
+      <div class="glass-card admin-appointment-row p-3 rounded-xl text-xs" data-appointment-id="${id}">
+        <div class="admin-appointment-details">
+          <strong class="admin-appointment-title">${escapeStaffDashboardText(a.patient_name || 'Patient')} - ${escapeStaffDashboardText(a.reason || 'Appointment')}</strong>
+          <p class="admin-appointment-meta">Doctor: ${escapeStaffDashboardText(a.doctor || 'Unassigned')} · Date: ${escapeStaffDashboardText(a.appointment_date || '—')} · Preferred: ${escapeStaffDashboardText(String(a.preferred_time||'').slice(0,5)||'—')}</p>
           <span class="erecpass-appointment-status inline-block mt-1 px-2 py-0.5 rounded-full text-[9px] font-tech" data-appointment-status="${escapeStaffDashboardText(status)}">${escapeStaffDashboardText(status)}</span>
         </div>
-        <div class="flex gap-1 flex-wrap justify-end">
+        <div class="admin-appointment-actions">
           ${!['approved', 'cancelled', 'completed'].includes(normalizedStatus) ? '<button type="button" data-appointment-id="'+id+'" onclick="updateApptStatus(this.dataset.appointmentId, \'Approved\')" class="erecpass-action-approved px-2 py-1 rounded font-tech text-[10px]">Approve</button>' : ''}
           ${['pending', 'pending approval'].includes(normalizedStatus) ? '<button type="button" data-appointment-id="'+id+'" onclick="updateApptStatus(this.dataset.appointmentId, \'Rejected\')" class="erecpass-action-cancel px-2 py-1 rounded font-tech text-[10px]">Reject</button>' : ''}
           ${['pending', 'pending approval', 'approved'].includes(normalizedStatus) ? '<button type="button" data-appointment-id="'+id+'" onclick="updateApptStatus(this.dataset.appointmentId, \'Cancelled\')" class="erecpass-action-cancel px-2 py-1 rounded font-tech text-[10px]">Cancel</button>' : ''}
-          <select class="input-box p-1 rounded text-[10px]" data-admin-doctor-select="${id}" aria-label="Assign Doctor"><option value="">Choose Doctor to assign</option>${doctors.map(d=>'<option value="'+escapeStaffDashboardText(d.id)+'" '+(String(a.provider_staff_id||'')===String(d.id)?'selected':'')+'>'+escapeStaffDashboardText(d.name)+(d.specialty?' · '+escapeStaffDashboardText(d.specialty):'')+'</option>').join('')}</select>
-          <button type="button" data-appointment-id="${id}" onclick="updateApptStatus(this.dataset.appointmentId, 'Assigned', this)" class="staff-secondary-action px-2 py-1 text-[10px]">Assign / Reassign</button>
+          <select class="input-box admin-appointment-doctor p-1 rounded text-[10px]" data-admin-doctor-select="${id}" aria-label="Assign Doctor"><option value="">Choose Doctor to assign</option>${doctors.map(d=>'<option value="'+escapeStaffDashboardText(d.id)+'" '+(String(a.provider_staff_id||'')===String(d.id)?'selected':'')+'>'+escapeStaffDashboardText(d.name)+(d.specialty?' · '+escapeStaffDashboardText(d.specialty):'')+'</option>').join('')}</select>
+          <button type="button" data-appointment-id="${id}" onclick="updateApptStatus(this.dataset.appointmentId, 'Assigned', this)" class="staff-secondary-action admin-appointment-assign px-2 py-1">Assign / Reassign</button>
         </div>
       </div>`;
   }).join('');
@@ -9840,6 +10188,76 @@ try {
 }
 
 }
+
+async function renderAdminAppointmentBackups() {
+  const list = document.getElementById('adminAppointmentBackupsList');
+  const status = document.getElementById('adminAppointmentBackupsStatus');
+  if (!list || currentSession?.role !== 'admin') return;
+  const client = window.erecpassSupabase;
+  if (!client) { status.textContent = 'Supabase is not ready.'; return; }
+  status.textContent = 'Loading deleted appointment backups…';
+  list.replaceChildren();
+  try {
+    const result = await client.from('backup_data')
+      .select('id,record_id,snapshot,deleted_at,restored_at')
+      .eq('record_type', 'appointment').order('deleted_at', { ascending: false }).limit(100);
+    if (result.error) throw result.error;
+    const rows = result.data || [];
+    const pending = rows.filter(row => !row.restored_at);
+    status.textContent = rows.length + ' backup(s) · ' + pending.length + ' available to restore.';
+    if (!rows.length) {
+      list.innerHTML = '<p class="text-xs text-slate-400">No deleted appointments have been backed up.</p>';
+      return;
+    }
+    list.innerHTML = rows.map(row => {
+      const a = row.snapshot || {};
+      const when = row.deleted_at ? new Date(row.deleted_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) : 'Unknown date';
+      return '<article class="appointment-card p-3 rounded-xl border border-cyan-400/20 flex flex-wrap items-center justify-between gap-3">' +
+        '<div><strong class="text-sm">' + escapeStaffDashboardText(a.patient_name || 'Patient') + ' · ' + escapeStaffDashboardText(a.reason || 'Appointment') + '</strong>' +
+        '<p class="text-xs text-slate-400">Doctor: ' + escapeStaffDashboardText(a.doctor || 'Unassigned') + ' · Date: ' + escapeStaffDashboardText(a.appointment_date || '—') + ' · Status: ' + escapeStaffDashboardText(a.status || '—') + '</p>' +
+        '<p class="text-[10px] text-slate-500">Deleted ' + escapeStaffDashboardText(when) + ' · Backup #' + escapeStaffDashboardText(row.id) + '</p></div>' +
+        '<div class="flex flex-wrap gap-2 items-center">' +
+        (row.restored_at ? '<span class="text-xs text-emerald-300">Restored</span>' : '<button type="button" class="staff-secondary-action px-3 py-2 text-xs" data-backup-id="' + escapeStaffDashboardText(row.id) + '" onclick="restoreAdminAppointmentBackup(this.dataset.backupId, this)">Restore</button>') +
+        '<button type="button" class="erecpass-action-delete px-3 py-2 rounded-lg text-xs" data-backup-id="' + escapeStaffDashboardText(row.id) + '" onclick="permanentlyDeleteAppointmentBackup(this.dataset.backupId, this)">Permanently delete</button></div>' +
+        '</article>';
+    }).join('');
+  } catch (error) {
+    console.error('[ERecPass] Appointment backups:', error);
+    status.textContent = 'Could not load backups: ' + (error.message || 'Please apply the appointment backup migration in Supabase.');
+  }
+}
+window.renderAdminAppointmentBackups = renderAdminAppointmentBackups;
+
+async function restoreAdminAppointmentBackup(backupId, button) {
+  if (currentSession?.role !== 'admin' || !backupId) return;
+  button.disabled = true;
+  try {
+    const result = await window.erecpassSupabase.rpc('restore_deleted_appointment', { p_backup_id: Number(backupId) });
+    if (result.error) throw result.error;
+    await Promise.all([renderAdminAppointmentBackups(), renderAdminAppointmentsList()]);
+  } catch (error) {
+    console.error('[ERecPass] Appointment restore:', error);
+    alert('Could not restore appointment: ' + (error.message || 'Please try again.'));
+    button.disabled = false;
+  }
+}
+window.restoreAdminAppointmentBackup = restoreAdminAppointmentBackup;
+
+async function permanentlyDeleteAppointmentBackup(backupId, button) {
+  if (currentSession?.role !== 'admin' || !backupId) return;
+  if (!window.confirm('Permanently delete this appointment backup? It cannot be restored afterward.')) return;
+  button.disabled = true;
+  try {
+    const result = await window.erecpassSupabase.rpc('permanently_delete_appointment_backup', { p_backup_id: Number(backupId) });
+    if (result.error) throw result.error;
+    await renderAdminAppointmentBackups();
+  } catch (error) {
+    console.error('[ERecPass] Permanent appointment backup deletion:', error);
+    alert('Could not permanently delete this backup: ' + (error.message || 'Apply the backup deletion migration in Supabase.'));
+    button.disabled = false;
+  }
+}
+window.permanentlyDeleteAppointmentBackup = permanentlyDeleteAppointmentBackup;
 
 async function renderAdminDoctorProfileOverrides() {
   const container=document.getElementById('adminDoctorProfileList');
@@ -9943,12 +10361,12 @@ try {
     throw new Error('Invalid appointment status.');
   }
 
-  const reason = window.prompt(status === 'Approved' ? 'Reason for this approval or override:' : 'Reason for this appointment change:');
+  const reason = await window.erecpassPrompt(status === 'Approved' ? 'Reason for this approval or override:' : 'Reason for this appointment change:');
   if (reason === null) return;
   if (!reason.trim()) { alert('A reason is required for appointment decisions.'); return; }
   let appointmentTime = null;
   if (status === 'Approved') {
-    appointmentTime = window.prompt('Set the confirmed visit time in Manila time (HH:MM, 24-hour format):', '09:00');
+    appointmentTime = await window.erecpassPrompt('Set the confirmed visit time in Manila time (HH:MM, 24-hour format):', '09:00');
     if (appointmentTime === null) return;
     appointmentTime = appointmentTime.trim();
     if (!/^([01]\d|2[0-3]):[0-5]\d$/.test(appointmentTime)) {
@@ -13673,6 +14091,11 @@ document.addEventListener('keydown', event => {
 .patient-digital-id-field { min-width:0; }
 .patient-digital-id-qr { width:120px; height:120px; padding:4px; background:#fff; border:1px solid #cbd5e1; border-radius:8px; display:flex; align-items:center; justify-content:center; }
 .patient-digital-id-qr canvas,.patient-digital-id-qr img { display:block; width:100% !important; height:100% !important; object-fit:contain; }
+html.ep-dark #patientApp .patient-digital-id-face { background:#fff !important; color:#0f172a !important; }
+html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content :is(span,strong,p) { color:#1e293b !important; -webkit-text-fill-color:#1e293b !important; }
+html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content .patient-digital-id-label { color:#536579 !important; -webkit-text-fill-color:#536579 !important; }
+html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #digitalIDPatientId,
+html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #digitalIDPatientIdBack { color:#166534 !important; -webkit-text-fill-color:#166534 !important; }
 @media (max-width:360px) { .patient-digital-id-wrapper,.patient-digital-id-face { min-height:390px; } .patient-digital-id-content { padding:9px; } .patient-digital-id-value { font-size:11px; } }
 </style>
 <!-- END ERECPASS APPOINTMENT STATUS COLORS -->
@@ -13795,7 +14218,7 @@ document.addEventListener('keydown', event => {
   'use strict';
   const queue = [];
   let active = null;
-  let overlay, panel, title, message, icon, cancelButton, acceptButton;
+  let overlay, panel, title, message, icon, input, cancelButton, acceptButton;
 
   function buildDialog() {
     if (overlay) return;
@@ -13811,32 +14234,39 @@ document.addEventListener('keydown', event => {
       #erecpassDialog[data-kind="success"] .epd-icon{background:#e9fbf4;color:#09835b}
       #erecpassDialog .epd-title{margin:0;color:#17324f;font-size:16px;font-weight:750}
       #erecpassDialog .epd-message{padding:4px 22px 20px;margin:0;color:#52677f;font-size:14px;line-height:1.6;white-space:pre-wrap;overflow-wrap:anywhere}
+      #erecpassDialog .epd-input{display:block;width:calc(100% - 44px);min-height:44px;margin:0 22px 20px;padding:10px 12px;border:1px solid #b9c9d8;border-radius:10px;background:#fff;color:#17324f;font:14px/1.45 Inter,Arial,sans-serif}
+      #erecpassDialog .epd-input[hidden]{display:none}
+      #erecpassDialog .epd-input:focus{border-color:#3182ce;outline:3px solid rgba(49,130,206,.2)}
       #erecpassDialog .epd-actions{display:flex;justify-content:flex-end;gap:10px;padding:14px 20px 18px;border-top:1px solid #edf2f8;background:#fbfdff}
       #erecpassDialog button{min-width:86px;border:0;border-radius:10px;padding:10px 17px;font-size:13px;font-weight:700;cursor:pointer}
       #erecpassDialog .epd-cancel{background:#eef3f9;color:#52677f}
       #erecpassDialog .epd-accept{background:linear-gradient(120deg,#176fe5,#11a6ad);color:#fff;box-shadow:0 5px 12px rgba(23,111,229,.18)}
       #erecpassDialog button:focus-visible{outline:3px solid #7cb8ff;outline-offset:2px}
+      html.ep-dark #erecpassDialog .epd-input{border-color:#506477;background:#101820;color:#edf4fb}
+      html.ep-dark #erecpassDialog .epd-input:focus{border-color:#7dd3fc;outline-color:rgba(125,211,252,.22)}
       @keyframes erecpassDialogIn{from{opacity:0;transform:translateY(8px) scale(.985)}to{opacity:1;transform:translateY(0) scale(1)}}
       @media(prefers-reduced-motion:reduce){#erecpassDialog{animation:none}}
     `;
     document.head.appendChild(style);
     overlay = document.createElement('div');
     overlay.id = 'erecpassDialogOverlay';
-    overlay.innerHTML = '<section id="erecpassDialog" role="alertdialog" aria-modal="true" aria-labelledby="erecpassDialogTitle" aria-describedby="erecpassDialogMessage"><div class="epd-top"></div><div class="epd-head"><div class="epd-icon" aria-hidden="true"></div><h2 class="epd-title" id="erecpassDialogTitle">ERecPass</h2></div><p class="epd-message" id="erecpassDialogMessage"></p><div class="epd-actions"><button type="button" class="epd-cancel">Cancel</button><button type="button" class="epd-accept">OK</button></div></section>';
+    overlay.innerHTML = '<section id="erecpassDialog" role="alertdialog" aria-modal="true" aria-labelledby="erecpassDialogTitle" aria-describedby="erecpassDialogMessage"><div class="epd-top"></div><div class="epd-head"><div class="epd-icon" aria-hidden="true"></div><h2 class="epd-title" id="erecpassDialogTitle">ERecPass</h2></div><p class="epd-message" id="erecpassDialogMessage"></p><input class="epd-input" type="text" aria-label="Your response" hidden><div class="epd-actions"><button type="button" class="epd-cancel">Cancel</button><button type="button" class="epd-accept">OK</button></div></section>';
     document.body.appendChild(overlay);
     panel = overlay.querySelector('#erecpassDialog');
     title = overlay.querySelector('.epd-title');
     message = overlay.querySelector('.epd-message');
     icon = overlay.querySelector('.epd-icon');
+    input = overlay.querySelector('.epd-input');
     cancelButton = overlay.querySelector('.epd-cancel');
     acceptButton = overlay.querySelector('.epd-accept');
-    acceptButton.addEventListener('click', () => finish(active?.kind === 'confirm'));
+    acceptButton.addEventListener('click', () => finish(active?.kind === 'prompt' ? input.value : active?.kind === 'confirm'));
     cancelButton.addEventListener('click', () => finish(false));
     overlay.addEventListener('click', event => { if (event.target === overlay) finish(false); });
     document.addEventListener('keydown', event => {
       if (!active || !overlay.classList.contains('is-open')) return;
       if (event.key === 'Escape') { event.preventDefault(); finish(false); }
       if (event.key === 'Enter' && active.kind === 'alert') { event.preventDefault(); finish(true); }
+      if (event.key === 'Enter' && active.kind === 'prompt') { event.preventDefault(); finish(input.value); }
     });
   }
 
@@ -13846,7 +14276,7 @@ document.addEventListener('keydown', event => {
     active = null;
     overlay.classList.remove('is-open');
     panel.removeAttribute('data-kind');
-    current.resolve(current.kind === 'confirm' ? !!result : undefined);
+    current.resolve(current.kind === 'confirm' ? !!result : current.kind === 'prompt' ? (result === false ? null : String(result ?? '')) : undefined);
     setTimeout(showNext, 0);
   }
 
@@ -13858,24 +14288,28 @@ document.addEventListener('keydown', event => {
     const isError = /\b(failed|error|invalid|unable|could not|not saved|not available|cannot)\b/i.test(text);
     const isSuccess = /\b(saved|success|created|updated|deleted|sent|verified|submitted)\b/i.test(text);
     panel.dataset.kind = isError ? 'error' : isSuccess ? 'success' : 'info';
-    title.textContent = active.kind === 'confirm' ? 'Please confirm' : (isError ? 'Something needs attention' : isSuccess ? 'Done' : 'ERecPass');
+    title.textContent = active.kind === 'confirm' ? 'Please confirm' : active.kind === 'prompt' ? 'Appointment update' : (isError ? 'Something needs attention' : isSuccess ? 'Done' : 'ERecPass');
     icon.textContent = isError ? '!' : isSuccess ? '✓' : active.kind === 'confirm' ? '?' : 'i';
+    panel.setAttribute('role', active.kind === 'prompt' ? 'dialog' : 'alertdialog');
     message.textContent = text;
-    cancelButton.hidden = active.kind !== 'confirm';
-    acceptButton.textContent = active.kind === 'confirm' ? 'Confirm' : 'OK';
+    input.hidden = active.kind !== 'prompt';
+    input.value = active.kind === 'prompt' ? String(active.defaultValue ?? '') : '';
+    cancelButton.hidden = active.kind === 'alert';
+    acceptButton.textContent = active.kind === 'confirm' ? 'Confirm' : active.kind === 'prompt' ? 'Continue' : 'OK';
     overlay.classList.add('is-open');
-    acceptButton.focus();
+    (active.kind === 'prompt' ? input : acceptButton).focus();
   }
 
-  function enqueue(kind, text) {
+  function enqueue(kind, text, defaultValue) {
     return new Promise(resolve => {
-      queue.push({ kind, message: text, resolve });
+      queue.push({ kind, message: text, defaultValue, resolve });
       showNext();
     });
   }
 
   window.alert = function (text) { enqueue('alert', text); };
   window.erecpassConfirm = function (text) { return enqueue('confirm', text); };
+  window.erecpassPrompt = function (text, defaultValue = '') { return enqueue('prompt', text, defaultValue); };
 })();
 </script>
 
@@ -14770,9 +15204,21 @@ document.addEventListener('keydown', event => {
     const anonymousUser = signedInAnonymously || user.is_anonymous === true || user.app_metadata?.provider === 'anonymous';
     const role = currentSession?.role;
     const source = anonymousUser ? 'pre_login' : sourceHint || (role === 'patient' ? 'patient_portal' : role === 'staff' ? 'staff_portal' : role === 'admin' ? 'admin_portal' : 'pre_login');
+    let reporterDetails = '';
+    if (!anonymousUser) {
+      try {
+        const patientResult = await client.from('patients').select('id,full_name').eq('user_id', user.id).maybeSingle();
+        if (!patientResult.error && patientResult.data) {
+          reporterDetails = ' Patient: ' + String(patientResult.data.full_name || 'Patient') +
+            ' (Patient ID: ' + String(patientResult.data.id) + ').';
+        }
+      } catch (profileError) {
+        console.warn('[ERecPass] Could not attach patient identity to emergency alert:', profileError);
+      }
+    }
     const alert = {
       user_id: user.id,
-      message: 'Emergency alert from ' + source.replaceAll('_', ' ') + '.',
+      message: 'Emergency alert from ' + source.replaceAll('_', ' ') + '.' + reporterDetails,
       status: 'new',
       latitude: location?.latitude ?? null,
       longitude: location?.longitude ?? null,
@@ -14879,7 +15325,11 @@ document.addEventListener('keydown', event => {
         heading.className = 'flex flex-wrap items-center justify-between gap-2';
         const title = document.createElement('strong');
         title.className = 'text-sm text-white';
-        title.textContent = alert.user_id ? 'Reporter: ' + alert.user_id : 'Reporter unavailable';
+        const messageText = String(alert.message || '');
+        const verifiedPatient = messageText.match(/Patient: (.*?) \(Patient ID: (.*?)\)\./);
+        if (verifiedPatient) title.textContent = 'Patient: ' + verifiedPatient[1] + ' · ID: ' + verifiedPatient[2];
+        else if (messageText.includes('pre login')) title.textContent = 'Pre-login anonymous caller';
+        else title.textContent = alert.user_id ? 'Reporter: ' + alert.user_id : 'Reporter unavailable';
         const state = document.createElement('span');
         state.className = 'text-[10px] uppercase font-bold ' + (alert.status === 'new' ? 'text-rose-300' : 'text-emerald-300');
         state.textContent = alert.status === 'new' ? 'NEW' : 'ACKNOWLEDGED';
@@ -14917,6 +15367,12 @@ document.addEventListener('keydown', event => {
           acknowledge.addEventListener('click', () => window.acknowledgeEmergencyAlert(alert.id));
           item.appendChild(acknowledge);
         }
+        const deleteAlert = document.createElement('button');
+        deleteAlert.type = 'button';
+        deleteAlert.className = 'ml-2 px-3 py-1.5 rounded-lg border border-rose-500/40 bg-rose-950/40 text-rose-200 text-xs font-bold';
+        deleteAlert.textContent = 'Delete alert';
+        deleteAlert.addEventListener('click', () => window.deleteEmergencyAlert(alert.id));
+        item.appendChild(deleteAlert);
         list.appendChild(item);
       });
     } catch (error) {
@@ -14951,6 +15407,73 @@ document.addEventListener('keydown', event => {
     } catch (error) {
       console.error('[ERecPass] Emergency alert acknowledgement failed:', error);
       if (status) status.textContent = 'Could not acknowledge this alert: ' + (error.message || 'unknown error');
+    }
+  };
+
+  window.deleteEmergencyAlert = async function(alertId) {
+    if (currentSession?.role !== 'admin' || !alertId) return;
+    if (!window.confirm('Delete this GPS alert? It will be saved in Admin > Backup Data.')) return;
+    const status = document.getElementById('adminEmergencyAlertsStatus');
+    try {
+      const result = await window.erecpassSupabase.rpc('admin_delete_emergency_alert', { p_alert_id: alertId });
+      if (result.error) throw result.error;
+      await window.refreshEmergencyAlerts();
+      if (typeof window.renderAdminGpsBackups === 'function') await window.renderAdminGpsBackups();
+    } catch (error) {
+      console.error('[ERecPass] Emergency alert deletion failed:', error);
+      if (status) status.textContent = 'Could not delete alert: ' + (error.message || 'Apply the GPS alert backup migration in Supabase.');
+    }
+  };
+
+  window.renderAdminGpsBackups = async function() {
+    const list = document.getElementById('adminGpsBackupsList');
+    const status = document.getElementById('adminGpsBackupsStatus');
+    if (!list || currentSession?.role !== 'admin') return;
+    list.replaceChildren();
+    try {
+      const result = await window.erecpassSupabase.from('backup_data')
+        .select('id,record_id,snapshot,deleted_at,restored_at').eq('record_type', 'emergency_alert').order('deleted_at', { ascending: false }).limit(100);
+      if (result.error) throw result.error;
+      const rows = result.data || [];
+      status.textContent = rows.length + ' deleted GPS alert backup(s).';
+      list.innerHTML = rows.length ? rows.map(row => {
+        const a = row.snapshot || {};
+        const when = a.created_at ? new Date(a.created_at).toLocaleString('en-PH', { timeZone: 'Asia/Manila' }) : 'Time unavailable';
+        return '<article class="appointment-card p-3 rounded-xl border border-rose-400/20 flex flex-wrap items-center justify-between gap-3"><div><strong class="text-xs">' + escapeStaffDashboardText(a.message || 'Emergency alert') + '</strong><p class="text-[10px] text-slate-400">' + escapeStaffDashboardText(when) + ' · ' + escapeStaffDashboardText(a.latitude ?? 'No latitude') + ', ' + escapeStaffDashboardText(a.longitude ?? 'no longitude') + '</p></div><div class="flex flex-wrap gap-2 items-center">' + (row.restored_at ? '<span class="text-xs text-emerald-300">Restored</span>' : '<button type="button" class="staff-secondary-action px-3 py-2 text-xs" data-gps-backup-id="' + escapeStaffDashboardText(row.id) + '" onclick="restoreAdminGpsBackup(this.dataset.gpsBackupId, this)">Restore</button>') + '<button type="button" class="erecpass-action-delete px-3 py-2 rounded-lg text-xs" data-gps-backup-id="' + escapeStaffDashboardText(row.id) + '" onclick="permanentlyDeleteGpsBackup(this.dataset.gpsBackupId, this)">Permanently delete</button></div></article>';
+      }).join('') : '<p class="text-xs text-slate-400">No deleted GPS alerts.</p>';
+    } catch (error) {
+      status.textContent = 'Could not load GPS backups: ' + (error.message || 'Apply the GPS alert backup migration in Supabase.');
+    }
+  };
+
+  window.restoreAdminGpsBackup = async function(backupId, button) {
+    if (currentSession?.role !== 'admin' || !backupId) return;
+    button.disabled = true;
+    try {
+      const result = await window.erecpassSupabase.rpc('restore_deleted_emergency_alert', { p_backup_id: Number(backupId) });
+      if (result.error) throw result.error;
+      await Promise.all([window.renderAdminGpsBackups(), window.refreshEmergencyAlerts()]);
+    } catch (error) {
+      alert('Could not restore GPS alert: ' + (error.message || 'Please try again.'));
+      button.disabled = false;
+    }
+  };
+
+  window.permanentlyDeleteGpsBackup = async function(backupId, button) {
+    if (currentSession?.role !== 'admin' || !backupId) return;
+    const confirmed = await window.erecpassConfirm(
+      'Permanently delete this GPS alert backup? It cannot be restored afterward.'
+    );
+    if (!confirmed) return;
+    button.disabled = true;
+    try {
+      const result = await window.erecpassSupabase.rpc('permanently_delete_emergency_alert_backup', { p_backup_id: Number(backupId) });
+      if (result.error) throw result.error;
+      await window.renderAdminGpsBackups();
+    } catch (error) {
+      console.error('[ERecPass] Permanent GPS backup deletion:', error);
+      alert('Could not permanently delete this backup: ' + (error.message || 'Apply the backup deletion migration in Supabase.'));
+      button.disabled = false;
     }
   };
 
@@ -19262,6 +19785,458 @@ document.addEventListener('keydown', event => {
     #patientAppointmentNotifications .patient-appointment-notification { gap: 8px; padding: 10px; }
     #patientAppointmentNotifications .patient-appointment-notification-actions { gap: 5px; }
     #patientAppointmentNotifications .patient-notification-mark-read { max-width: 62px; white-space: normal; line-height: 1.1; }
+  }
+</style>
+
+<style>
+  #patientApp #patientBottomNav {
+    border-top-color: transparent !important;
+  }
+  @media (min-width: 1024px) {
+    #patientApp #patientBottomNav,
+    html.ep-dark #patientApp #patientBottomNav {
+      border-top: 0 !important;
+    }
+  }
+</style>
+
+<style>
+  .auth-submit-loading {
+    position: relative;
+    overflow: hidden;
+    animation: auth-submit-pulse 1.2s ease-in-out infinite;
+  }
+  .auth-submit-loading::after {
+    display: inline-block;
+    width: 14px;
+    height: 14px;
+    margin-left: .65rem;
+    border: 2px solid currentColor;
+    border-right-color: transparent;
+    border-radius: 50%;
+    vertical-align: -2px;
+    content: "";
+    animation: auth-submit-spin .7s linear infinite;
+  }
+  @keyframes auth-submit-spin { to { transform: rotate(360deg); } }
+  @keyframes auth-submit-pulse {
+    50% { filter: brightness(1.12); box-shadow: 0 0 18px rgba(36, 166, 83, .35); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .auth-submit-loading { animation: none; }
+    .auth-submit-loading::after {
+      border-right-color: currentColor;
+      animation: none;
+    }
+  }
+</style>
+
+<script>
+  (() => {
+    const loadingButtons = [
+      { formId: 'loginForm', handler: 'handleLogin', label: 'SIGNING IN...' },
+      { formId: 'staffLoginForm', handler: 'handleStaffLogin', label: 'SIGNING IN...' },
+      { formId: 'registerForm', handler: 'handleRegister', label: 'CREATING ACCOUNT...' }
+    ];
+
+    loadingButtons.forEach(({ formId, handler, label }) => {
+      const originalHandler = window[handler];
+      if (typeof originalHandler !== 'function') {
+        console.error(`[ERecPass] Cannot add loading animation: ${handler} is unavailable.`);
+        return;
+      }
+
+      window[handler] = function (event) {
+        const button = document.querySelector(`#${formId} button[type="submit"]`);
+        const originalMarkup = button?.innerHTML;
+        const originalBusy = button?.getAttribute('aria-busy');
+        if (button) {
+          button.classList.add('auth-submit-loading');
+          button.setAttribute('aria-busy', 'true');
+          button.textContent = label;
+        }
+
+        const restoreButton = () => {
+          if (!button) return;
+          button.classList.remove('auth-submit-loading');
+          if (originalMarkup !== undefined) button.innerHTML = originalMarkup;
+          if (originalBusy === null) button.removeAttribute('aria-busy');
+          else if (originalBusy !== undefined) button.setAttribute('aria-busy', originalBusy);
+        };
+
+        let result;
+        try {
+          result = originalHandler.apply(this, arguments);
+        } catch (error) {
+          restoreButton();
+          throw error;
+        }
+
+        return Promise.resolve(result).finally(restoreButton);
+      };
+    });
+  })();
+</script>
+
+<style>
+  #adminApp {
+    font-family: Inter, Arial, sans-serif !important;
+    font-size: 15px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+    text-rendering: optimizeLegibility;
+  }
+  #adminApp .font-tech,
+  #adminApp :is(h1, h2, h3, h4, p, span, label, li, td, th, strong, small, button, input, select, textarea) {
+    font-family: Inter, Arial, sans-serif !important;
+    letter-spacing: normal;
+  }
+  #adminApp :is(p, span, label, li, td, th, small, button) {
+    font-size: max(13px, 1em) !important;
+    line-height: 1.45;
+  }
+  #adminApp :is(input, select, textarea) {
+    font-size: 14px !important;
+    line-height: 1.4;
+  }
+  #adminApp :is(h1, h2, h3, h4) {
+    line-height: 1.3;
+    text-shadow: none !important;
+  }
+  #adminApp .admin-appointment-row {
+    display: grid !important;
+    grid-template-columns: minmax(0, 1fr) minmax(330px, auto);
+    align-items: center;
+    gap: 16px;
+    padding: 16px !important;
+  }
+  #adminApp .admin-appointment-details { min-width: 0; }
+  #adminApp .admin-appointment-title {
+    display: block;
+    color: #17324b !important;
+    -webkit-text-fill-color: #17324b !important;
+    font-size: 15px !important;
+    font-weight: 700;
+    line-height: 1.4;
+    overflow-wrap: anywhere;
+  }
+  #adminApp .admin-appointment-meta {
+    margin: 4px 0 0;
+    color: #526579 !important;
+    -webkit-text-fill-color: #526579 !important;
+    font-size: 13px !important;
+    line-height: 1.5;
+    overflow-wrap: anywhere;
+  }
+  #adminApp .admin-appointment-actions {
+    display: flex;
+    min-width: 0;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: flex-end;
+    gap: 8px;
+  }
+  #adminApp .admin-appointment-actions > button {
+    min-height: 36px;
+    padding: 7px 10px !important;
+    font-family: Inter, Arial, sans-serif !important;
+    font-size: 13px !important;
+    line-height: 1.25;
+  }
+  #adminApp .admin-appointment-doctor {
+    flex: 1 1 190px;
+    width: auto;
+    min-width: 160px;
+    min-height: 36px;
+    padding: 6px 9px !important;
+    border: 1px solid #bdcddd !important;
+    border-radius: 9px !important;
+    background: #fff !important;
+    color: #17324b !important;
+    -webkit-text-fill-color: #17324b !important;
+    font: 500 13px/1.35 Inter, Arial, sans-serif !important;
+  }
+  #adminApp .admin-appointment-assign {
+    border: 1px solid #bdcddd !important;
+    border-radius: 9px !important;
+    background: #f3f7fb !important;
+    color: #1d4e75 !important;
+    -webkit-text-fill-color: #1d4e75 !important;
+    font-weight: 650;
+  }
+  #adminApp .admin-appointment-assign:hover { background: #e7f0f8 !important; }
+  @media (max-width: 760px) {
+    #adminApp .admin-appointment-row {
+      grid-template-columns: minmax(0, 1fr);
+      gap: 12px;
+    }
+    #adminApp .admin-appointment-actions { justify-content: flex-start; }
+    #adminApp .admin-appointment-doctor { flex-basis: 200px; }
+  }
+  #adminApp [class*="text-slate-"],
+  #adminApp [class*="text-gray-"] {
+    color: #526579 !important;
+    -webkit-text-fill-color: #526579 !important;
+  }
+  #adminApp .glass-card,
+  #adminApp .admin-staff-card,
+  #adminApp .appointment-card,
+  #adminApp .record-card,
+  #adminApp .list-card {
+    transition: border-color .2s ease, box-shadow .2s ease, background-color .2s ease;
+  }
+  #adminApp button:not(:disabled) {
+    transition: filter .16s ease, box-shadow .16s ease, transform .16s ease;
+  }
+  #adminApp button:not(:disabled):focus-visible,
+  #adminApp input:focus-visible,
+  #adminApp select:focus-visible,
+  #adminApp textarea:focus-visible {
+    outline: 3px solid rgba(37, 99, 235, .45);
+    outline-offset: 2px;
+  }
+  #adminApp :is(input, select, textarea)::placeholder {
+    color: #64748b !important;
+    opacity: 1;
+  }
+  #adminApp tbody tr { transition: background-color .16s ease; }
+  #adminApp tbody tr:hover { background-color: #f1f6fb; }
+  @media (hover: hover) and (pointer: fine) {
+    #adminApp .glass-card:hover,
+    #adminApp .admin-staff-card:hover,
+    #adminApp .appointment-card:hover,
+    #adminApp .record-card:hover,
+    #adminApp .list-card:hover {
+      border-color: #a9bfd3 !important;
+      box-shadow: 0 8px 22px rgba(22, 50, 79, .12) !important;
+    }
+    #adminApp button:not(:disabled):hover { filter: brightness(1.04); }
+  }
+  html.ep-dark #adminApp [class*="text-slate-"],
+  html.ep-dark #adminApp [class*="text-gray-"] {
+    color: #b7c8d6 !important;
+    -webkit-text-fill-color: #b7c8d6 !important;
+  }
+  html.ep-dark #adminApp .admin-appointment-title {
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+  }
+  html.ep-dark #adminApp .admin-appointment-meta {
+    color: #b7c8d6 !important;
+    -webkit-text-fill-color: #b7c8d6 !important;
+  }
+  html.ep-dark #adminApp .admin-appointment-doctor {
+    border-color: #506477 !important;
+    background: #101820 !important;
+    color: #edf4fb !important;
+    -webkit-text-fill-color: #edf4fb !important;
+  }
+  html.ep-dark #adminApp .admin-appointment-doctor option {
+    background: #182532;
+    color: #edf4fb;
+  }
+  html.ep-dark #adminApp .admin-appointment-assign {
+    border-color: #526b80 !important;
+    background: #243746 !important;
+    color: #d7e9f6 !important;
+    -webkit-text-fill-color: #d7e9f6 !important;
+  }
+  html.ep-dark #adminApp .admin-appointment-assign:hover { background: #2e485b !important; }
+  html.ep-dark #adminApp :is(input, select, textarea)::placeholder { color: #aabac8 !important; }
+  html.ep-dark #adminApp tbody tr:hover { background-color: #203243; }
+  html.ep-dark #adminApp button:not(:disabled):focus-visible,
+  html.ep-dark #adminApp input:focus-visible,
+  html.ep-dark #adminApp select:focus-visible,
+  html.ep-dark #adminApp textarea:focus-visible {
+    outline-color: rgba(125, 211, 252, .75);
+  }
+  @media (hover: hover) and (pointer: fine) {
+    html.ep-dark #adminApp .glass-card:hover,
+    html.ep-dark #adminApp .admin-staff-card:hover,
+    html.ep-dark #adminApp .appointment-card:hover,
+    html.ep-dark #adminApp .record-card:hover,
+    html.ep-dark #adminApp .list-card:hover {
+      border-color: #54718a !important;
+      box-shadow: 0 8px 24px rgba(0, 0, 0, .28) !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #adminApp .glass-card,
+    #adminApp .admin-staff-card,
+    #adminApp .appointment-card,
+    #adminApp .record-card,
+    #adminApp .list-card,
+    #adminApp button:not(:disabled),
+    #adminApp tbody tr {
+      transition: none !important;
+    }
+  }
+  @media (min-width: 1024px) {
+    #adminApp .admin-function-nav-wrap {
+      max-width: 1320px;
+      margin-right: auto;
+      margin-left: auto;
+    }
+    #adminApp .admin-function-nav {
+      grid-template-columns: repeat(5, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 641px) and (max-width: 1023px) {
+    #adminApp main > .grid:first-child {
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+  }
+  @media (min-width: 481px) and (max-width: 640px) {
+    #adminApp main > .grid:first-child {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 480px) {
+    #adminApp main > .grid:first-child {
+      grid-template-columns: 1fr;
+    }
+  }
+  #staffApp,
+  #staffApp main,
+  #staffApp .staff-tab-panel,
+  #staffApp .staff-tab-panel > *,
+  #staffApp .glass-card {
+    min-width: 0;
+  }
+  #staffApp .staff-portal-content {
+    width: min(calc(100% - 32px), 1180px);
+    max-width: 1180px;
+    box-sizing: border-box;
+    padding-right: clamp(12px, 2.4vw, 24px) !important;
+    padding-left: clamp(12px, 2.4vw, 24px) !important;
+  }
+  #staffApp .staff-panel-heading-wrap,
+  #staffApp .staff-tab-panel > .glass-card > div:first-child {
+    min-width: 0;
+  }
+  #staffApp .staff-panel-heading {
+    overflow-wrap: anywhere;
+    line-height: 1.2;
+  }
+  #staffApp .staff-appointment-layout {
+    flex-wrap: wrap;
+  }
+  #staffApp .staff-appointment-details {
+    flex: 1 1 260px;
+    overflow-wrap: anywhere;
+  }
+  #staffApp .staff-appointment-status {
+    max-width: 100%;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+  #staffApp .staff-profile-summary > .min-w-0,
+  #staffApp .staff-nurse-queue-main {
+    overflow-wrap: anywhere;
+  }
+  #staffApp :is(input, select, textarea, button) {
+    max-width: 100%;
+  }
+  #staffApp .staff-availability-day-picker label {
+    overflow-wrap: anywhere;
+  }
+  @media (min-width: 768px) and (max-width: 1100px) {
+    #staffApp .staff-portal-content,
+    #staffApp[data-account-type="doctor"] .staff-portal-content {
+      width: calc(100% - 24px);
+      max-width: 100%;
+      padding-right: 12px !important;
+      padding-left: 12px !important;
+    }
+    #staffApp #staffDashboardCard { padding: 20px !important; }
+    #staffApp #nurseSharedQueueList .staff-nurse-queue-item { gap: 14px; padding: 16px; }
+    #staffApp[data-account-type="doctor"] #staffAvailabilityList {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+  }
+  @media (max-width: 767px) {
+    #staffApp .staff-portal-content,
+    #staffApp[data-account-type="doctor"] .staff-portal-content {
+      width: calc(100% - 16px);
+      max-width: 100%;
+      padding-right: 8px !important;
+      padding-left: 8px !important;
+      padding-bottom: 112px !important;
+    }
+    #staffApp .staff-profile-summary,
+    #staffApp[data-account-type="doctor"] .staff-profile-summary {
+      align-items: flex-start;
+    }
+    #staffApp #staffAllPendingAppointmentsCard > div:first-child,
+    #staffApp #staffPendingAppointmentsCard > div:first-child,
+    #staffApp #staffApprovedAppointmentsCard > div:first-child,
+    #staffApp #staffAllAppointmentsCard > div:first-child {
+      flex-wrap: wrap;
+      align-items: flex-start;
+    }
+    #staffApp #staffAllPendingAppointmentsCard > div:first-child > *,
+    #staffApp #staffPendingAppointmentsCard > div:first-child > *,
+    #staffApp #staffApprovedAppointmentsCard > div:first-child > *,
+    #staffApp #staffAllAppointmentsCard > div:first-child > * {
+      min-width: 0;
+    }
+    #staffApp #staffBottomNav {
+      width: calc(100% - 16px);
+      max-width: 760px;
+      padding-right: max(6px, env(safe-area-inset-right));
+      padding-left: max(6px, env(safe-area-inset-left));
+      padding-bottom: env(safe-area-inset-bottom);
+    }
+  }
+  @media (max-width: 520px) {
+    #staffApp .staff-portal-content,
+    #staffApp[data-account-type="doctor"] .staff-portal-content {
+      width: calc(100% - 12px);
+      padding-right: 6px !important;
+      padding-left: 6px !important;
+    }
+    #staffApp .staff-tab-panel { gap: 14px; }
+    #staffApp .staff-tab-panel > .glass-card,
+    #staffApp[data-account-type="doctor"] [data-staff-panel="dashboard"] > .glass-card,
+    #staffApp[data-account-type="doctor"] [data-staff-panel="appointments"] > .glass-card {
+      padding: 14px !important;
+    }
+    #staffApp .staff-profile-summary,
+    #staffApp[data-account-type="doctor"] .staff-profile-summary {
+      flex-direction: column;
+      gap: 12px;
+      padding: 13px;
+    }
+    #staffApp .staff-appointment-layout,
+    #staffApp[data-account-type="doctor"] .staff-appointment-layout {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    #staffApp .staff-appointment-status,
+    #staffApp[data-account-type="doctor"] .staff-appointment-status {
+      align-self: flex-start;
+    }
+    #staffApp .staff-secondary-action,
+    #staffApp .staff-nurse-queue-actions {
+      width: 100%;
+    }
+    #staffApp .staff-nurse-queue-actions { flex-direction: column; }
+    #staffApp .staff-nurse-queue-action { width: 100%; }
+    #staffApp .staff-availability-day-picker,
+    #staffApp[data-account-type="doctor"] .staff-availability-day-picker {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+    #staffApp #staffAdminChatCard .chat-input { flex-wrap: wrap; }
+    #staffApp #staffAdminChatInput { min-width: 0; flex: 1 1 180px; }
+    #staffApp #staffAdminChatCard .chat-input button { flex: 0 0 auto; }
+    #staffApp #staffBottomNav button { min-width: 0; padding-right: 1px; padding-left: 1px; font-size: 10px; }
+    #staffApp #staffBottomNav button span { white-space: normal; }
+  }
+  @media (max-width: 380px) {
+    #staffApp #staffBottomNav { width: calc(100% - 8px); gap: 0; }
+    #staffApp #staffBottomNav button { font-size: 9px; }
+    #staffApp #staffBottomNav button i { font-size: 17px; }
+    #staffApp .staff-panel-heading { font-size: 19px !important; }
   }
 </style>
 

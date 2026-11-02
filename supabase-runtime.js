@@ -120,7 +120,14 @@
           }
         }
       }else if(k===K.S&&role==='admin'){
-        const rows=a.map(s=>({id:String(s.id),user_id:s.user_id||null,name:s.name||s.fullName||'',email:s.email||'',role_title:s.role_title||s.role||'',account_type:s.account_type||'other',professional_title:s.professional_title||'',task:s.task||'',available:s.available!==false,schedule:s.schedule||'',photo:s.photo||'',active:s.active!==false}));
+        const rows=a.map(s=>{
+          const row={id:String(s.id),user_id:s.user_id||null,name:s.name||s.fullName||'',email:s.email||'',role_title:s.role_title||s.role||'',account_type:s.account_type||'other',professional_title:s.professional_title||'',task:s.task||'',available:s.available!==false,schedule:s.schedule||'',active:s.active!==false};
+          // Staff profile photos are saved through the owner RPC. Omit photo
+          // from admin upserts when an older/incomplete cached row lacks it,
+          // so unrelated staff edits cannot erase an existing photo.
+          if(Object.prototype.hasOwnProperty.call(s,'photo')) row.photo=s.photo||'';
+          return row;
+        });
         if(rows.length){
           const r=await client.from('staff').upsert(rows,{onConflict:'id'});if(r.error)throw r.error;
           const vr=await client.from('staff').select('id').in('id',rows.map(x=>x.id));if(vr.error)throw vr.error;

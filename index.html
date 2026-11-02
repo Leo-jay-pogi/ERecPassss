@@ -9519,7 +9519,7 @@ if (currentSession?.role === 'admin') {
     else staffList = (staffResult.data || []).map(s => ({
       id: s.id, user_id: s.user_id, name: s.name || s.email || 'Staff', email: s.email || '',
       role: s.account_type || s.role_title || 'Staff', account_type: s.account_type || '',
-      professional_title: s.professional_title || '', task: s.task || '', available: s.available !== false,
+      professional_title: s.professional_title || '', task: s.task || '', photo: s.photo || '', available: s.available !== false,
       schedule: s.schedule || '', active: s.active !== false
     }));
 

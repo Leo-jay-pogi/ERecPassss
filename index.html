@@ -21200,15 +21200,24 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   }
   html.ep-dark .staff-admin-auth-slider {
     background:
-      radial-gradient(ellipse at 12% 18%, rgba(43,149,88,.22), transparent 38%),
-      radial-gradient(ellipse at 88% 82%, rgba(54,133,153,.19), transparent 40%),
-      linear-gradient(140deg,#101e17 0%,#14211e 55%,#14231c 100%);
+      radial-gradient(ellipse at 12% 18%, rgba(55,177,96,.42), transparent 38%),
+      radial-gradient(ellipse at 88% 82%, rgba(72,170,102,.34), transparent 40%),
+      radial-gradient(ellipse at 50% 50%, rgba(42,112,68,.22), transparent 62%),
+      linear-gradient(140deg,#10251a 0%,#14251b 55%,#102218 100%);
   }
   html.ep-dark .staff-admin-auth-slider .auth-medical-decor {
-    opacity: .38;
+    opacity: .88;
     background-image:
-      linear-gradient(rgba(88,211,130,.1) 1px, transparent 1px),
-      linear-gradient(90deg, rgba(88,211,130,.1) 1px, transparent 1px);
+      radial-gradient(circle at 16% 28%, transparent 0 86px, rgba(130,232,158,.2) 87px 88px, transparent 89px 130px, rgba(130,232,158,.12) 131px 132px, transparent 133px),
+      radial-gradient(circle at 84% 72%, transparent 0 108px, rgba(130,232,158,.18) 109px 110px, transparent 111px 158px, rgba(130,232,158,.1) 159px 160px, transparent 161px),
+      radial-gradient(rgba(166,238,183,.22) .8px, transparent 1px),
+      linear-gradient(rgba(111,206,145,.085) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(111,206,145,.085) 1px, transparent 1px);
+    background-size: auto, auto, 26px 26px, 42px 42px, 42px 42px;
+  }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage {
+    background: transparent !important;
   }
   html.ep-dark .staff-admin-auth-slider .auth-medical-ecg path { stroke: #54b878; }
   html.ep-dark .staff-admin-auth-slider .auth-medical-ecg .auth-ecg-pulse { stroke: #8be0a5; }
@@ -21557,6 +21566,36 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
 </style>
 
 <style id="patient-glassmorphism">
+  html,
+  body {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  html::-webkit-scrollbar,
+  body::-webkit-scrollbar,
+  #patientApp::-webkit-scrollbar,
+  #patientApp *::-webkit-scrollbar {
+    display: none !important;
+    width: 0 !important;
+    height: 0 !important;
+  }
+  #patientApp,
+  #patientApp * {
+    scrollbar-width: none !important;
+    -ms-overflow-style: none !important;
+  }
+  #patientApp #dashboard {
+    background-color: #edf7ef !important;
+    background-image:
+      radial-gradient(ellipse at 8% 8%, rgba(52,151,91,.3), transparent 34%),
+      radial-gradient(ellipse at 94% 24%, rgba(105,185,119,.3), transparent 33%),
+      radial-gradient(ellipse at 72% 92%, rgba(72,156,111,.22), transparent 36%),
+      radial-gradient(circle at 84% 18%, transparent 0 104px, rgba(42,126,77,.14) 105px 106px, transparent 107px 154px, rgba(42,126,77,.08) 155px 156px, transparent 157px),
+      radial-gradient(rgba(42,126,77,.18) .8px, transparent .9px),
+      linear-gradient(140deg, rgba(230,246,233,.72), rgba(235,246,238,.5)) !important;
+    background-size: auto, auto, auto, auto, 24px 24px, 100% 100% !important;
+    background-attachment: fixed !important;
+  }
   html:not(.ep-dark) #patientApp {
     background:
       radial-gradient(circle at 84% 18%, transparent 0 104px, rgba(45,150,143,.075) 105px 106px, transparent 107px 154px, rgba(45,150,143,.045) 155px 156px, transparent 157px),
@@ -21578,7 +21617,7 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   }
   #patientApp #dashboard .glass-card,
   #patientApp #patientAnnouncementsArea .glass-card {
-    background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(240,249,250,.58)) !important;
+    background: linear-gradient(145deg, rgba(248,255,249,.7), rgba(231,246,235,.52)) !important;
     backdrop-filter: blur(18px) saturate(145%) !important;
     -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
     border: 1px solid rgba(45,150,143,.22) !important;
@@ -21615,6 +21654,18 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
       linear-gradient(140deg, #101c24 0%, #14232d 55%, #101820 100%) !important;
     background-size: auto, auto, auto, auto, 28px 28px, auto, auto, auto !important;
   }
+  html.ep-dark #patientApp #dashboard {
+    background-color: #13231a !important;
+    background-image:
+      radial-gradient(ellipse at 8% 8%, rgba(54,151,91,.28), transparent 34%),
+      radial-gradient(ellipse at 94% 24%, rgba(74,152,91,.25), transparent 33%),
+      radial-gradient(ellipse at 72% 92%, rgba(49,132,88,.2), transparent 36%),
+      radial-gradient(circle at 84% 18%, transparent 0 104px, rgba(125,207,146,.13) 105px 106px, transparent 107px 154px, rgba(125,207,146,.07) 155px 156px, transparent 157px),
+      radial-gradient(rgba(145,220,164,.15) .8px, transparent .9px),
+      linear-gradient(140deg, rgba(24,54,35,.76), rgba(18,42,30,.56)) !important;
+    background-size: auto, auto, auto, auto, 24px 24px, 100% 100% !important;
+    background-attachment: fixed !important;
+  }
   html.ep-dark #patientApp :is(.glass-card,.health-card,.appointment-card,.list-card,.record-card,.medicine-card,.doctor-card,.hospital-card,.profile-card,.help-card,.chat-card,.qr-card) {
     background: linear-gradient(145deg, rgba(31,53,64,.78), rgba(19,38,47,.68)) !important;
     border-color: rgba(106,202,183,.22) !important;
@@ -21622,7 +21673,7 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   }
   html.ep-dark #patientApp #dashboard .glass-card,
   html.ep-dark #patientApp #patientAnnouncementsArea .glass-card {
-    background: linear-gradient(145deg, rgba(31,53,64,.78), rgba(19,38,47,.68)) !important;
+    background: linear-gradient(145deg, rgba(29,57,38,.72), rgba(20,46,31,.54)) !important;
     border-color: rgba(106,202,183,.22) !important;
     box-shadow: 0 12px 32px rgba(0,0,0,.2), inset 0 1px 0 rgba(220,255,247,.06) !important;
   }

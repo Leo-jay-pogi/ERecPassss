@@ -3118,7 +3118,8 @@ Review the user agreement before continuing. You can enlarge the document in the
   }
   html.ep-dark #patientApp .main-content { color: #edf4fb !important; }
   html.ep-dark #patientApp .top-header .brand strong { color: #edf4fb !important; -webkit-text-fill-color: #edf4fb !important; }
-  html.ep-dark #patientApp #dashboard .glass-card {
+  html.ep-dark #patientApp #dashboard .glass-card,
+  html.ep-dark #patientApp #patientAnnouncementsArea .glass-card {
     background: #182532 !important;
     color: #edf4fb !important;
     border-color: #334b60 !important;
@@ -11800,6 +11801,23 @@ html.ep-dark #staffApp .staff-header #epSettingsPanel #staffSettingsLogout{backg
 html.ep-dark #staffApp .staff-header #epSettingsToggle:focus-visible,
 html.ep-dark #staffApp .staff-header #epSettingsPanel button:focus-visible{outline-color:#8FDAA0}
 html.ep-dark #adminApp .admin-header-actions #epSettingsPanel :is(#adminSettingsEmergency,#adminSettingsApp){background:#48232b!important;color:#ffd8dd!important;border-color:#87414d!important}
+#epThemeTransition{
+  position:fixed;
+  inset:0;
+  z-index:2147483647;
+  pointer-events:none;
+  clip-path:circle(0 at var(--ep-theme-origin-x) var(--ep-theme-origin-y));
+  animation:ep-theme-fill 1.1s cubic-bezier(.4,0,.2,1) forwards;
+}
+@keyframes ep-theme-fill{
+  0%{clip-path:circle(0 at var(--ep-theme-origin-x) var(--ep-theme-origin-y));opacity:0}
+  15%{opacity:1}
+  72%{opacity:1}
+  100%{clip-path:circle(150vmax at var(--ep-theme-origin-x) var(--ep-theme-origin-y));opacity:0}
+}
+@media(prefers-reduced-motion:reduce){
+  #epThemeTransition{display:none}
+}
 </style>
 <div id="epSettings" aria-label="Settings">
 <button type="button" id="epSettingsToggle" aria-label="Open settings" aria-expanded="false">⚙️</button>
@@ -11905,8 +11923,34 @@ function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore
 function writeSetting(key,value){try{if(window.epStore)window.epStore.setItem(key,value)}catch(e){}}
 if(readSetting('erecpass_theme','light')==='dark')root.classList.add('ep-dark');else root.classList.remove('ep-dark');
 function paintTheme(){const dark=root.classList.contains('ep-dark');themeBtn.textContent=dark?'☀️ Light':'🌙 Dark';themeBtn.setAttribute('aria-pressed',String(dark));themeBtn.setAttribute('title',dark?'Switch to light mode':'Switch to dark mode');root.style.colorScheme=dark?'dark':'light'}
-function toggleTheme(){const dark=!root.classList.contains('ep-dark');root.classList.toggle('ep-dark',dark);writeSetting('erecpass_theme',dark?'dark':'light');paintTheme()}
-themeBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleTheme()});paintTheme();
+let themeTransitionLayer;
+function toggleTheme(event){
+  const dark=!root.classList.contains('ep-dark');
+  if(themeTransitionLayer)themeTransitionLayer.remove();
+  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    const bounds=themeBtn.getBoundingClientRect();
+    const fromPointer=event.detail>0;
+    const originX=fromPointer?event.clientX:bounds.left+bounds.width/2;
+    const originY=fromPointer?event.clientY:bounds.top+bounds.height/2;
+    const layer=document.createElement('div');
+    themeTransitionLayer=layer;
+    layer.id='epThemeTransition';
+    layer.setAttribute('aria-hidden','true');
+    const tint=dark?'16, 24, 32':'255, 255, 255';
+    layer.style.backgroundImage='radial-gradient(circle 150vmax at '+originX+'px '+originY+'px, rgba('+tint+', .28) 0%, rgba('+tint+', .18) 68%, transparent 100%)';
+    layer.style.setProperty('--ep-theme-origin-x',originX+'px');
+    layer.style.setProperty('--ep-theme-origin-y',originY+'px');
+    layer.addEventListener('animationend',function(){
+      layer.remove();
+      if(themeTransitionLayer===layer)themeTransitionLayer=null;
+    },{once:true});
+    document.body.appendChild(layer);
+  }
+  root.classList.toggle('ep-dark',dark);
+  writeSetting('erecpass_theme',dark?'dark':'light');
+  paintTheme();
+}
+themeBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleTheme(e)});paintTheme();
 })();
 </script>
 <!-- IMPORTANT: Supabase client configuration exists elsewhere in this source, but this app still
@@ -21509,6 +21553,94 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     #splashStatusBar { gap: 8px; }
     #splashStatusBar .splash-security-label { display: none; }
     #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn { min-height: 32px; padding: 0 9px; font-size: 9px; }
+  }
+</style>
+
+<style id="patient-glassmorphism">
+  html:not(.ep-dark) #patientApp {
+    background:
+      radial-gradient(circle at 84% 18%, transparent 0 104px, rgba(45,150,143,.075) 105px 106px, transparent 107px 154px, rgba(45,150,143,.045) 155px 156px, transparent 157px),
+      radial-gradient(circle at 12% 72%, transparent 0 72px, rgba(52,211,153,.075) 73px 74px, transparent 75px 116px, rgba(52,211,153,.045) 117px 118px, transparent 119px),
+      radial-gradient(ellipse at 10% 12%, rgba(52,211,153,.16), transparent 32%),
+      radial-gradient(ellipse at 90% 4%, rgba(45,212,191,.16), transparent 34%),
+      radial-gradient(rgba(45,150,143,.12) .7px, transparent .8px),
+      repeating-linear-gradient(0deg, rgba(45,150,143,.025) 0 1px, transparent 1px 48px),
+      repeating-linear-gradient(90deg, rgba(45,150,143,.025) 0 1px, transparent 1px 48px),
+      linear-gradient(140deg, #eff9f7 0%, #edf4fa 55%, #f5f8fc 100%) !important;
+    background-size: auto, auto, auto, auto, 28px 28px, auto, auto, auto !important;
+  }
+  #patientApp :is(.glass-card,.health-card,.appointment-card,.list-card,.record-card,.medicine-card,.doctor-card,.hospital-card,.profile-card,.help-card,.chat-card,.qr-card) {
+    background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(240,249,250,.58)) !important;
+    backdrop-filter: blur(18px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+    border-color: rgba(45,150,143,.22) !important;
+    box-shadow: 0 12px 32px rgba(34,74,89,.09), inset 0 1px 0 rgba(255,255,255,.7) !important;
+  }
+  #patientApp #dashboard .glass-card,
+  #patientApp #patientAnnouncementsArea .glass-card {
+    background: linear-gradient(145deg, rgba(255,255,255,.76), rgba(240,249,250,.58)) !important;
+    backdrop-filter: blur(18px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+    border: 1px solid rgba(45,150,143,.22) !important;
+    box-shadow: 0 12px 32px rgba(34,74,89,.09), inset 0 1px 0 rgba(255,255,255,.7) !important;
+  }
+  #patientApp #patientEmergencyCard {
+    background: linear-gradient(135deg, rgba(255,239,241,.88), rgba(255,255,255,.58)) !important;
+    backdrop-filter: blur(18px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+  }
+  #patientApp .top-header,
+  #patientApp .bottom-nav,
+  #patientApp #patientBottomNav .patient-nav-menu {
+    background: rgba(255,255,255,.68) !important;
+    backdrop-filter: blur(20px) saturate(150%) !important;
+    -webkit-backdrop-filter: blur(20px) saturate(150%) !important;
+    border-color: rgba(45,150,143,.2) !important;
+    box-shadow: 0 8px 26px rgba(34,74,89,.1) !important;
+  }
+  #patientApp #patientWelcomeCard {
+    background: linear-gradient(125deg, rgba(255,255,255,.8), rgba(240,249,250,.62)) !important;
+    backdrop-filter: blur(18px) saturate(145%) !important;
+    -webkit-backdrop-filter: blur(18px) saturate(145%) !important;
+  }
+  html.ep-dark #patientApp {
+    background:
+      radial-gradient(circle at 84% 18%, transparent 0 104px, rgba(106,202,183,.09) 105px 106px, transparent 107px 154px, rgba(106,202,183,.05) 155px 156px, transparent 157px),
+      radial-gradient(circle at 12% 72%, transparent 0 72px, rgba(76,195,156,.085) 73px 74px, transparent 75px 116px, rgba(76,195,156,.05) 117px 118px, transparent 119px),
+      radial-gradient(ellipse at 10% 12%, rgba(52,211,153,.14), transparent 32%),
+      radial-gradient(ellipse at 90% 4%, rgba(45,212,191,.12), transparent 34%),
+      radial-gradient(rgba(145,220,204,.14) .7px, transparent .8px),
+      repeating-linear-gradient(0deg, rgba(145,220,204,.025) 0 1px, transparent 1px 48px),
+      repeating-linear-gradient(90deg, rgba(145,220,204,.025) 0 1px, transparent 1px 48px),
+      linear-gradient(140deg, #101c24 0%, #14232d 55%, #101820 100%) !important;
+    background-size: auto, auto, auto, auto, 28px 28px, auto, auto, auto !important;
+  }
+  html.ep-dark #patientApp :is(.glass-card,.health-card,.appointment-card,.list-card,.record-card,.medicine-card,.doctor-card,.hospital-card,.profile-card,.help-card,.chat-card,.qr-card) {
+    background: linear-gradient(145deg, rgba(31,53,64,.78), rgba(19,38,47,.68)) !important;
+    border-color: rgba(106,202,183,.22) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,.2), inset 0 1px 0 rgba(220,255,247,.06) !important;
+  }
+  html.ep-dark #patientApp #dashboard .glass-card,
+  html.ep-dark #patientApp #patientAnnouncementsArea .glass-card {
+    background: linear-gradient(145deg, rgba(31,53,64,.78), rgba(19,38,47,.68)) !important;
+    border-color: rgba(106,202,183,.22) !important;
+    box-shadow: 0 12px 32px rgba(0,0,0,.2), inset 0 1px 0 rgba(220,255,247,.06) !important;
+  }
+  html.ep-dark #patientApp #patientEmergencyCard {
+    background: linear-gradient(135deg, rgba(83,39,48,.72), rgba(38,31,42,.68)) !important;
+  }
+  html.ep-dark #patientApp #dashboard > #patientEmergencyCard {
+    background: linear-gradient(135deg, rgba(83,39,48,.72), rgba(38,31,42,.68)) !important;
+  }
+  html.ep-dark #patientApp .top-header,
+  html.ep-dark #patientApp .bottom-nav,
+  html.ep-dark #patientApp #patientBottomNav .patient-nav-menu {
+    background: rgba(20,37,46,.76) !important;
+    border-color: rgba(106,202,183,.2) !important;
+    box-shadow: 0 8px 26px rgba(0,0,0,.22) !important;
+  }
+  html.ep-dark #patientApp #patientWelcomeCard {
+    background: linear-gradient(125deg, rgba(31,53,64,.82), rgba(19,38,47,.72)) !important;
   }
 </style>
 

@@ -11758,6 +11758,25 @@ window.requestErecPassCameraPermission = function () {
 #epSettingsPanel button{pointer-events:auto;border:1px solid #1769e0;border-radius:9px;padding:7px 9px;background:#fff;color:#16324f;box-shadow:none;cursor:pointer}
 #epSettingsPanel{min-width:148px;flex-direction:column;align-items:stretch}
 #epSettingsPanel button{display:flex;width:100%;align-items:center;justify-content:flex-start;gap:8px}
+#epThemeBtn{justify-content:space-between!important}
+#epThemeBtn .ep-theme-switch-label{font:inherit}
+#epThemeBtn .ep-theme-switch-frame{position:relative;display:inline-block;width:62px;height:36px;flex:0 0 62px}
+#epThemeBtn .ep-theme-switch-track{position:absolute;top:0;left:0;box-sizing:border-box;width:62px;height:36px;border:2px solid #d5d5d5;border-radius:999px;background:#fff;transition:background 500ms,border-color 500ms}
+#epThemeBtn .ep-theme-switch-thumb{position:absolute;top:3px;left:3px;display:grid;width:26px;height:26px;place-items:center;border-radius:50%;background:#111;color:#16834b;transform:translateX(0);transition:transform 550ms cubic-bezier(.2,.8,.2,1),background 450ms,color 450ms}
+#epThemeBtn .ep-theme-switch-icon{--theme-icon-size:18px;position:absolute;width:var(--theme-icon-size);height:var(--theme-icon-size);border-radius:999px;background:transparent;color:#16834b;box-shadow:inset calc(var(--theme-icon-size)*.33) calc(var(--theme-icon-size)*-.25) 0 0 currentColor;transform:scale(1);transition:all 500ms}
+#epThemeBtn[data-theme="light"] .ep-theme-switch-icon{--ray-size:calc(var(--theme-icon-size)*-.4);--offset-orthogonal:calc(var(--theme-icon-size)*.65);--offset-diagonal:calc(var(--theme-icon-size)*.45);background:currentColor;color:#f5b932;box-shadow:0 calc(var(--offset-orthogonal)*-1) 0 var(--ray-size) currentColor,var(--offset-orthogonal) 0 0 var(--ray-size) currentColor,0 var(--offset-orthogonal) 0 var(--ray-size) currentColor,calc(var(--offset-orthogonal)*-1) 0 0 var(--ray-size) currentColor,var(--offset-diagonal) calc(var(--offset-diagonal)*-1) 0 var(--ray-size) currentColor,var(--offset-diagonal) var(--offset-diagonal) 0 var(--ray-size) currentColor,calc(var(--offset-diagonal)*-1) var(--offset-diagonal) 0 var(--ray-size) currentColor,calc(var(--offset-diagonal)*-1) calc(var(--offset-diagonal)*-1) 0 var(--ray-size) currentColor;transform:scale(.75)}
+#epThemeBtn[data-theme="dark"] .ep-theme-switch-track{border-color:#72bd82;background:#203b29}
+#epThemeBtn[data-theme="dark"] .ep-theme-switch-thumb{background:#fff;color:#16834b;transform:translateX(28px)}
+#epThemeBtn[data-theme="dark"] .ep-theme-switch-icon{color:#16834b}
+#epSettings.ep-splash-settings #epThemeBtn .ep-theme-switch-frame{width:54px;height:32px;flex-basis:54px}
+#epSettings.ep-splash-settings #epThemeBtn .ep-theme-switch-track{top:0;left:0;width:54px;height:32px}
+#epSettings.ep-splash-settings #epThemeBtn .ep-theme-switch-thumb{top:2px;left:2px;width:24px;height:24px}
+#epSettings.ep-splash-settings #epThemeBtn[data-theme="dark"] .ep-theme-switch-thumb{transform:translateX(22px)}
+html.ep-dark #epThemeBtn[data-theme="dark"] .ep-theme-switch-thumb{background:#fff!important;color:#16834b!important}
+html.ep-dark #epThemeBtn[data-theme="dark"] .ep-theme-switch-icon{color:#16834b!important}
+@media(prefers-reduced-motion:reduce){#epThemeBtn .ep-theme-switch-track,#epThemeBtn .ep-theme-switch-thumb,#epThemeBtn .ep-theme-switch-icon{transition:none}}
+html.ep-theme-animating,html.ep-theme-animating *{transition:background-color 450ms ease,color 450ms ease,border-color 450ms ease,box-shadow 450ms ease,transform 550ms cubic-bezier(.2,.8,.2,1)!important}
+@media(prefers-reduced-motion:reduce){html.ep-theme-animating,html.ep-theme-animating *{transition:none!important}}
 #adminSettingsLogout{background:#fff1f2!important;color:#a7192a!important;border-color:#f0c0c6!important;font-weight:700!important}
 html.ep-dark,html.ep-dark body,html.ep-dark #splashScreen{background:#101820!important;background-color:#101820!important;color:#edf4fb!important;color-scheme:dark}
 html.ep-dark body{background-image:none!important}
@@ -11801,28 +11820,11 @@ html.ep-dark #staffApp .staff-header #epSettingsPanel #staffSettingsLogout{backg
 html.ep-dark #staffApp .staff-header #epSettingsToggle:focus-visible,
 html.ep-dark #staffApp .staff-header #epSettingsPanel button:focus-visible{outline-color:#8FDAA0}
 html.ep-dark #adminApp .admin-header-actions #epSettingsPanel :is(#adminSettingsEmergency,#adminSettingsApp){background:#48232b!important;color:#ffd8dd!important;border-color:#87414d!important}
-#epThemeTransition{
-  position:fixed;
-  inset:0;
-  z-index:2147483647;
-  pointer-events:none;
-  clip-path:circle(0 at var(--ep-theme-origin-x) var(--ep-theme-origin-y));
-  animation:ep-theme-fill 1.1s cubic-bezier(.4,0,.2,1) forwards;
-}
-@keyframes ep-theme-fill{
-  0%{clip-path:circle(0 at var(--ep-theme-origin-x) var(--ep-theme-origin-y));opacity:0}
-  15%{opacity:1}
-  72%{opacity:1}
-  100%{clip-path:circle(150vmax at var(--ep-theme-origin-x) var(--ep-theme-origin-y));opacity:0}
-}
-@media(prefers-reduced-motion:reduce){
-  #epThemeTransition{display:none}
-}
 </style>
 <div id="epSettings" aria-label="Settings">
 <button type="button" id="epSettingsToggle" aria-label="Open settings" aria-expanded="false">⚙️</button>
 <div id="epSettingsPanel" role="menu" aria-label="Settings">
-<button type="button" id="epThemeBtn" role="menuitem">🌙 Dark</button>
+<button type="button" id="epThemeBtn" role="menuitem" aria-pressed="false"><span class="ep-theme-switch-label">Light mode</span><span class="ep-theme-switch-frame" aria-hidden="true"><span class="ep-theme-switch-track"><span class="ep-theme-switch-thumb"><span class="ep-theme-switch-icon"></span></span></span></span></button>
 <button type="button" id="staffSettingsLogout" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
 <button type="button" id="patientSettingsEmergency" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); openEmergencyModal()"><i class="fa-solid fa-triangle-exclamation" aria-hidden="true"></i> Emergency</button>
 <button type="button" id="patientSettingsLogout" class="hidden" role="menuitem" onclick="document.getElementById('epSettings').classList.remove('ep-open'); document.getElementById('epSettingsToggle').setAttribute('aria-expanded','false'); logout()"><i class="fa-solid fa-right-from-bracket" aria-hidden="true"></i> Log out</button>
@@ -11922,35 +11924,22 @@ document.addEventListener('click',function(e){if(!settings.contains(e.target)){s
 function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore.getItem(key);if(v!==null)return v}}catch(e){}return fallback}
 function writeSetting(key,value){try{if(window.epStore)window.epStore.setItem(key,value)}catch(e){}}
 if(readSetting('erecpass_theme','light')==='dark')root.classList.add('ep-dark');else root.classList.remove('ep-dark');
-function paintTheme(){const dark=root.classList.contains('ep-dark');themeBtn.textContent=dark?'☀️ Light':'🌙 Dark';themeBtn.setAttribute('aria-pressed',String(dark));themeBtn.setAttribute('title',dark?'Switch to light mode':'Switch to dark mode');root.style.colorScheme=dark?'dark':'light'}
-let themeTransitionLayer;
-function toggleTheme(event){
+function paintTheme(){const dark=root.classList.contains('ep-dark');themeBtn.dataset.theme=dark?'dark':'light';themeBtn.querySelector('.ep-theme-switch-label').textContent=dark?'Dark mode':'Light mode';themeBtn.setAttribute('aria-pressed',String(dark));themeBtn.setAttribute('title',dark?'Switch to light mode':'Switch to dark mode');themeBtn.setAttribute('aria-label',dark?'Dark mode enabled; switch to light mode':'Light mode enabled; switch to dark mode');root.style.colorScheme=dark?'dark':'light'}
+function applyTheme(dark){root.classList.toggle('ep-dark',dark);writeSetting('erecpass_theme',dark?'dark':'light');paintTheme()}
+let themeAnimationTimer;
+function toggleTheme(){
   const dark=!root.classList.contains('ep-dark');
-  if(themeTransitionLayer)themeTransitionLayer.remove();
-  if(!window.matchMedia('(prefers-reduced-motion: reduce)').matches){
-    const bounds=themeBtn.getBoundingClientRect();
-    const fromPointer=event.detail>0;
-    const originX=fromPointer?event.clientX:bounds.left+bounds.width/2;
-    const originY=fromPointer?event.clientY:bounds.top+bounds.height/2;
-    const layer=document.createElement('div');
-    themeTransitionLayer=layer;
-    layer.id='epThemeTransition';
-    layer.setAttribute('aria-hidden','true');
-    const tint=dark?'16, 24, 32':'255, 255, 255';
-    layer.style.backgroundImage='radial-gradient(circle 150vmax at '+originX+'px '+originY+'px, rgba('+tint+', .28) 0%, rgba('+tint+', .18) 68%, transparent 100%)';
-    layer.style.setProperty('--ep-theme-origin-x',originX+'px');
-    layer.style.setProperty('--ep-theme-origin-y',originY+'px');
-    layer.addEventListener('animationend',function(){
-      layer.remove();
-      if(themeTransitionLayer===layer)themeTransitionLayer=null;
-    },{once:true});
-    document.body.appendChild(layer);
+  if(window.matchMedia('(prefers-reduced-motion: reduce)').matches){
+    root.classList.remove('ep-theme-animating');
+    applyTheme(dark);
+    return;
   }
-  root.classList.toggle('ep-dark',dark);
-  writeSetting('erecpass_theme',dark?'dark':'light');
-  paintTheme();
+  if(themeAnimationTimer)clearTimeout(themeAnimationTimer);
+  root.classList.add('ep-theme-animating');
+  applyTheme(dark);
+  themeAnimationTimer=setTimeout(()=>root.classList.remove('ep-theme-animating'),600);
 }
-themeBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleTheme(e)});paintTheme();
+themeBtn.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();toggleTheme()});paintTheme();
 })();
 </script>
 <!-- IMPORTANT: Supabase client configuration exists elsewhere in this source, but this app still

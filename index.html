@@ -15617,7 +15617,7 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
 
   window.deleteEmergencyAlert = async function(alertId) {
     if (currentSession?.role !== 'admin' || !alertId) return;
-    if (!window.confirm('Delete this GPS alert? It will be saved in Admin > Backup Data.')) return;
+    if (!await window.erecpassConfirm('Delete this emergency alert? A copy will be saved in Admin > Backup Data.')) return;
     const status = document.getElementById('adminEmergencyAlertsStatus');
     try {
       const result = await window.erecpassSupabase.rpc('admin_delete_emergency_alert', { p_alert_id: alertId });

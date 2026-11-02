@@ -2277,7 +2277,7 @@ html.ep-dark #staffApp [class*="text-gray-"], html.ep-dark #adminApp [class*="te
   </svg>
 </div>
 
-<div class="w-full max-w-md flex justify-between items-center text-xs text-cyan-400/70 tracking-widest font-tech pt-2">
+<div id="splashStatusBar" class="w-full max-w-md flex justify-between items-center text-xs text-cyan-400/70 tracking-widest font-tech pt-2">
 
 <div class="flex items-center gap-2">
 
@@ -2287,7 +2287,7 @@ SYS.ONLINE v4.0.2
 
 </div>
 
-<div>SECURE ENCRYPTION</div>
+<div class="splash-security-label">SECURE ENCRYPTION</div>
 
 </div>
 
@@ -2326,7 +2326,7 @@ Emergency, Records, QR Pass
 
 <!-- Entrance Agreement Section -->
 
-<div class="w-full max-w-md z-10 pb-4 glass-card p-4 rounded-2xl border border-cyan-400/25 shadow-xl shadow-cyan-950/30">
+<div class="splash-agreement-card w-full max-w-md z-10 pb-4 glass-card p-4 rounded-2xl border border-cyan-400/25 shadow-xl shadow-cyan-950/30">
 
 <div class="flex items-center justify-between mb-2">
 
@@ -2368,6 +2368,27 @@ Review the user agreement before continuing. You can enlarge the document in the
 </div>
 
 <!-- 2. LOGIN PAGE -->
+
+<div id="patientAuthSlider" class="patient-auth-slider hidden" data-mode="login" aria-hidden="true">
+  <div class="auth-slider-backdrop" aria-hidden="true"></div>
+  <div class="auth-slider-stage">
+    <div class="auth-slider-forms"></div>
+    <section class="auth-slider-overlay" aria-live="polite">
+      <div class="auth-slider-message" data-mode="login">
+        <span class="auth-slider-eyebrow">NEW TO ERECPASS?</span>
+        <h2>Create your patient account</h2>
+        <p>Register securely to keep your hospital records and services in one place.</p>
+        <button type="button" class="auth-slider-toggle" onclick="showRegister()">Create account <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      </div>
+      <div class="auth-slider-message" data-mode="register">
+        <span class="auth-slider-eyebrow">WELCOME BACK</span>
+        <h2>Already have an account?</h2>
+        <p>Sign in to continue to your ERecPass patient portal.</p>
+        <button type="button" class="auth-slider-toggle" onclick="showLogin()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Go to login</button>
+      </div>
+    </section>
+  </div>
+</div>
 
 <div id="loginPage" class="auth-page hidden min-h-screen flex items-center justify-center p-4 relative z-10">
 
@@ -2452,28 +2473,12 @@ Review the user agreement before continuing. You can enlarge the document in the
   Forgot Password?
 </button>
 
-<p class="text-center text-xs text-slate-400 mt-4">
-
-Don't have an account?
-
-<button onclick="showRegister()" class="text-rose-400 font-bold ml-1 hover:underline">Create Account</button>
-
-</p>
-
-<div class="mt-4 pt-3 border-t border-cyan-500/20 flex gap-2">
-
-<button class="w-1/2 py-2 bg-slate-900 border border-cyan-400/40 text-cyan-300 rounded-xl font-tech text-[11px] font-semibold flex items-center justify-center gap-1 hover:bg-cyan-950 transition-all" onclick="showStaffLogin()">
-
-<i class="fa-solid fa-user-doctor"></i> Staff Login
-
-</button>
-
-<button class="w-1/2 py-2 bg-slate-900 border border-rose-400/40 text-rose-300 rounded-xl font-tech text-[11px] font-semibold flex items-center justify-center gap-1 hover:bg-rose-950 transition-all" onclick="showAdminLogin()">
-
-<i class="fa-solid fa-user-gear"></i> Admin Login
-
-</button>
-
+<div class="mt-4 pt-3 border-t border-cyan-500/20">
+  <button id="staffAdminLoginEntry" type="button" class="w-full py-2.5 bg-slate-900 border border-cyan-400/40 text-cyan-300 rounded-xl font-tech text-xs font-semibold flex items-center justify-center gap-2 hover:bg-cyan-950 transition-all" onclick="showStaffLogin()">
+    <i class="fa-solid fa-user-doctor" aria-hidden="true"></i>
+    <span>Staff / Admin Login</span>
+    <i class="fa-solid fa-arrow-right text-[10px]" aria-hidden="true"></i>
+  </button>
 </div>
 
 </div>
@@ -2481,6 +2486,33 @@ Don't have an account?
 </div>
 
 <!-- 3. STAFF LOGIN PAGE -->
+
+<div id="staffAdminAuthSlider" class="staff-admin-auth-slider hidden" data-mode="staff" aria-hidden="true">
+  <div class="auth-slider-backdrop" aria-hidden="true"></div>
+  <div class="auth-slider-stage">
+    <div class="auth-medical-decor" aria-hidden="true">
+      <svg class="auth-medical-ecg" viewBox="0 0 1440 180" preserveAspectRatio="none">
+        <path class="auth-ecg-base" pathLength="1000" d="M0 102h300l34-2 24-8 22 15 25-8 28-2 20-7 20 12 18-4 17-43 18 83 22-54 20 15 24 2h320l28-2 22-8 20 14 22-7 27-2 18-7 19 12 19-4 18-42 18 81 23-51 20 14 22 2h320" />
+        <path class="auth-ecg-pulse" pathLength="1000" d="M0 102h300l34-2 24-8 22 15 25-8 28-2 20-7 20 12 18-4 17-43 18 83 22-54 20 15 24 2h320l28-2 22-8 20 14 22-7 27-2 18-7 19 12 19-4 18-42 18 81 23-51 20 14 22 2h320" />
+      </svg>
+    </div>
+    <div class="staff-admin-auth-forms"></div>
+    <section class="auth-slider-overlay" aria-live="polite">
+      <div class="auth-slider-message" data-mode="staff">
+        <span class="auth-slider-eyebrow">STAFF ACCESS</span>
+        <h2>Hospital team login</h2>
+        <p>Sign in with the staff credentials assigned by your administrator.</p>
+        <button type="button" class="auth-slider-toggle" onclick="showAdminLogin()">Switch to Admin <i class="fa-solid fa-arrow-right" aria-hidden="true"></i></button>
+      </div>
+      <div class="auth-slider-message" data-mode="admin">
+        <span class="auth-slider-eyebrow">ADMIN ACCESS</span>
+        <h2>System administration</h2>
+        <p>Sign in to manage ERecPass and hospital portal settings.</p>
+        <button type="button" class="auth-slider-toggle" onclick="showStaffLogin()"><i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Switch to Staff</button>
+      </div>
+    </section>
+  </div>
+</div>
 
 <div id="staffLoginPage" class="auth-page hidden min-h-screen flex items-center justify-center p-4 relative z-10">
 
@@ -2767,14 +2799,6 @@ Don't have an account?
 <button type="submit" class="primary-btn w-full py-3 rounded-xl font-tech font-bold text-xs tracking-wider mt-2">CREATE ACCOUNT</button>
 
 </form>
-
-<p class="text-center text-xs text-slate-400 mt-4">
-
-Already have an account?
-
-<button onclick="showLogin()" class="text-cyan-400 font-bold ml-1 hover:underline">Login</button>
-
-</p>
 
 </div>
 
@@ -5130,7 +5154,7 @@ Already have an account?
   </div>
   <div class="grid grid-cols-1 sm:grid-cols-[auto_1fr] gap-2">
     <button onclick="closeAgreementModal()" class="agreement-cancel-btn rounded-xl border border-slate-500/40 px-4 py-2.5 text-xs font-semibold text-slate-300 hover:bg-white/5">Not now</button>
-    <button id="agreeContinueBtn" type="button" disabled onclick="if (typeof window.proceedFromSplash === 'function') window.proceedFromSplash(); else { const checkbox = document.getElementById('splashAgreeCheckbox'); if (!checkbox?.checked) { alert('Please check the agreement box to proceed.'); } else { document.getElementById('agreementModal')?.classList.add('hidden'); document.getElementById('splashScreen')?.classList.add('hidden'); document.getElementById('loginPage')?.classList.remove('hidden'); } }" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs font-bold disabled:opacity-45 disabled:cursor-not-allowed"><i class="fa-solid fa-check mr-1"></i> I Agree & Continue</button>
+    <button id="agreeContinueBtn" type="button" disabled onclick="if (typeof window.proceedFromSplash === 'function') window.proceedFromSplash(); else { const checkbox = document.getElementById('splashAgreeCheckbox'); if (!checkbox?.checked) { alert('Please check the agreement box to proceed.'); } else { document.getElementById('agreementModal')?.classList.add('hidden'); document.getElementById('splashScreen')?.classList.add('hidden'); if (typeof window.showLogin === 'function') window.showLogin(); else document.getElementById('loginPage')?.classList.remove('hidden'); } }" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs font-bold disabled:opacity-45 disabled:cursor-not-allowed"><i class="fa-solid fa-check mr-1"></i> I Agree & Continue</button>
   </div>
 </div>
 
@@ -5451,7 +5475,7 @@ return;
 closeAgreementModal();
 document.getElementById('splashScreen').classList.add('hidden');
 
-document.getElementById('loginPage').classList.remove('hidden');
+showLogin();
 
 }
 
@@ -5584,38 +5608,143 @@ window.open('https://www.google.com/maps/search/?api=1&query=14.5266831%2C121.15
 
 function showRegister() {
 
-hideAuthPages();
-
-document.getElementById('registerPage').classList.remove('hidden');
+showPatientAuthSlider('register');
 
 }
 
 function showLogin() {
 
-hideAuthPages();
+showPatientAuthSlider('login');
 
-document.getElementById('loginPage').classList.remove('hidden');
+}
+
+function showPatientAuthSlider(mode) {
+  const slider = document.getElementById('patientAuthSlider');
+  const loginPage = document.getElementById('loginPage');
+  const registerPage = document.getElementById('registerPage');
+  if (!slider || !loginPage || !registerPage) {
+    console.error('Patient authentication slider is missing required markup.');
+    return;
+  }
+
+  hideAuthPages();
+  slider.dataset.mode = mode === 'register' ? 'register' : 'login';
+  slider.classList.remove('hidden');
+  slider.setAttribute('aria-hidden', 'false');
+
+  const activePage = slider.dataset.mode === 'register' ? registerPage : loginPage;
+  [loginPage, registerPage].forEach(page => {
+    page.classList.remove('hidden');
+    const inactive = page !== activePage;
+    page.toggleAttribute('inert', inactive);
+    page.setAttribute('aria-hidden', String(inactive));
+  });
+  let mobileToggle = document.getElementById('patientAuthMobileToggle');
+  if (!mobileToggle) {
+    mobileToggle = document.createElement('button');
+    mobileToggle.id = 'patientAuthMobileToggle';
+    mobileToggle.type = 'button';
+    mobileToggle.className = 'patient-auth-mobile-toggle';
+  }
+  const activeCard = activePage.querySelector('.auth-card');
+  if (!activeCard) {
+    console.error('Patient authentication card is missing.');
+    return;
+  }
+  if (slider.dataset.mode === 'register') {
+    mobileToggle.innerHTML = '<i class="fa-solid fa-arrow-left" aria-hidden="true"></i> Already have an account? Login';
+    mobileToggle.onclick = showLogin;
+    const registerForm = activeCard.querySelector('#registerForm');
+    if (registerForm) registerForm.insertAdjacentElement('afterend', mobileToggle);
+    else activeCard.appendChild(mobileToggle);
+  } else {
+    mobileToggle.innerHTML = 'Create account <i class="fa-solid fa-arrow-right" aria-hidden="true"></i>';
+    mobileToggle.onclick = showRegister;
+    const helpButton = activeCard.querySelector('#guestHelpLoginBtn');
+    if (helpButton) helpButton.insertAdjacentElement('beforebegin', mobileToggle);
+    else activeCard.appendChild(mobileToggle);
+  }
 
 }
 
 function showStaffLogin() {
 
-hideAuthPages();
-document.getElementById('staffLoginPage').classList.remove('hidden');
+showStaffAdminAuthSlider('staff');
 
 }
 
 function showAdminLogin() {
 
-hideAuthPages();
-
-document.getElementById('adminLoginPage').classList.remove('hidden');
+showStaffAdminAuthSlider('admin');
 
 }
+
+function showStaffAdminAuthSlider(mode) {
+  const slider = document.getElementById('staffAdminAuthSlider');
+  const staffPage = document.getElementById('staffLoginPage');
+  const adminPage = document.getElementById('adminLoginPage');
+  if (!slider || !staffPage || !adminPage) {
+    console.error('Staff/Admin authentication slider is missing required markup.');
+    return;
+  }
+
+  hideAuthPages();
+  slider.dataset.mode = mode === 'admin' ? 'admin' : 'staff';
+  slider.classList.remove('hidden');
+  slider.setAttribute('aria-hidden', 'false');
+
+  const activePage = slider.dataset.mode === 'admin' ? adminPage : staffPage;
+  [staffPage, adminPage].forEach(page => {
+    page.classList.remove('hidden');
+    const inactive = page !== activePage;
+    page.toggleAttribute('inert', inactive);
+    page.setAttribute('aria-hidden', String(inactive));
+  });
+  positionStaffAdminSliderToggle();
+
+}
+
+function positionStaffAdminSliderToggle() {
+  const slider = document.getElementById('staffAdminAuthSlider');
+  if (!slider) return;
+  const staffMessage = slider.querySelector('.auth-slider-message[data-mode="staff"]');
+  const adminMessage = slider.querySelector('.auth-slider-message[data-mode="admin"]');
+  const staffToggle = staffMessage?.querySelector('.auth-slider-toggle') ||
+    document.querySelector('#staffLoginPage .staff-admin-mobile-toggle');
+  const adminToggle = adminMessage?.querySelector('.auth-slider-toggle') ||
+    document.querySelector('#adminLoginPage .staff-admin-mobile-toggle');
+  if (staffToggle && staffMessage && staffToggle.parentElement !== staffMessage) {
+    staffToggle.classList.remove('staff-admin-mobile-toggle');
+    staffMessage.appendChild(staffToggle);
+  }
+  if (adminToggle && adminMessage && adminToggle.parentElement !== adminMessage) {
+    adminToggle.classList.remove('staff-admin-mobile-toggle');
+    adminMessage.appendChild(adminToggle);
+  }
+
+  if (slider.classList.contains('hidden') || !window.matchMedia('(max-width: 700px)').matches) return;
+  const mode = slider.dataset.mode === 'admin' ? 'admin' : 'staff';
+  const activePage = document.getElementById(mode === 'admin' ? 'adminLoginPage' : 'staffLoginPage');
+  const activeForm = activePage?.querySelector('form');
+  const activeToggle = mode === 'admin' ? adminToggle : staffToggle;
+  if (!activeForm || !activeToggle) {
+    console.error('Staff/Admin mobile slider control could not be positioned.');
+    return;
+  }
+  activeToggle.classList.add('staff-admin-mobile-toggle');
+  activeForm.insertAdjacentElement('afterend', activeToggle);
+}
+
+window.addEventListener('resize', positionStaffAdminSliderToggle);
+window.matchMedia('(max-width: 700px)').addEventListener('change', positionStaffAdminSliderToggle);
 
 function hideAuthPages() {
 
 document.querySelectorAll('.auth-page').forEach(p => p.classList.add('hidden'));
+document.getElementById('patientAuthSlider')?.classList.add('hidden');
+document.getElementById('patientAuthSlider')?.setAttribute('aria-hidden', 'true');
+document.getElementById('staffAdminAuthSlider')?.classList.add('hidden');
+document.getElementById('staffAdminAuthSlider')?.setAttribute('aria-hidden', 'true');
 
 }
 
@@ -11051,36 +11180,36 @@ overscroll-behavior: contain;
     wrap.id='guestHelpCenterModal';
     wrap.className='fixed inset-0 z-[70] bg-black/80 hidden items-center justify-center p-4';
     wrap.innerHTML=`
-      <div class="glass-card w-full max-w-lg rounded-3xl p-5 max-h-[92vh] overflow-y-auto">
-        <div class="flex items-center justify-between mb-4">
+      <div class="guest-help-dialog glass-card">
+        <div class="guest-help-header">
           <div>
-            <h2 class="text-lg font-tech font-bold text-cyan-300">Help Center</h2>
-            <p class="text-xs text-slate-400">Need help? Send us a message and our support team will assist you.</p>
+            <h2 class="guest-help-title font-tech font-bold text-cyan-300">Help Center</h2>
+            <p class="guest-help-description text-slate-400">Need help? Send us a message and our support team will assist you.</p>
           </div>
-          <button type="button" onclick="closeGuestHelpCenter()" class="text-slate-400 hover:text-white text-lg">✕</button>
+          <button type="button" aria-label="Close Help Center" onclick="closeGuestHelpCenter()" class="guest-help-close">✕</button>
         </div>
 
         <div id="guestHelpStartView">
-          <form id="guestHelpForm" class="space-y-3">
-            <div>
+          <form id="guestHelpForm" class="guest-help-form">
+            <div class="guest-help-field">
               <label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Full Name</label>
               <div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
                 <i class="fa-solid fa-user text-cyan-400 text-xs"></i>
-                <input id="guestHelpName" type="text" required placeholder="Your full name" class="w-full bg-transparent outline-none text-xs">
+                <input id="guestHelpName" type="text" autocomplete="name" required placeholder="Your full name" class="bg-transparent outline-none">
               </div>
             </div>
-            <div>
+            <div class="guest-help-field">
               <label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Email Address</label>
               <div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
                 <i class="fa-solid fa-envelope text-cyan-400 text-xs"></i>
-                <input id="guestHelpEmail" type="email" required placeholder="you@example.com" class="w-full bg-transparent outline-none text-xs">
+                <input id="guestHelpEmail" type="email" autocomplete="email" required placeholder="you@example.com" class="bg-transparent outline-none">
               </div>
             </div>
-            <div>
+            <div class="guest-help-field">
               <label class="block text-xs font-tech font-bold text-cyan-300 uppercase mb-1">Message</label>
-              <textarea id="guestHelpMessage" required placeholder="How can we help you?" class="input-box w-full p-3 rounded-xl text-xs h-28"></textarea>
+              <textarea id="guestHelpMessage" required placeholder="How can we help you?" class="input-box"></textarea>
             </div>
-            <button type="submit" class="primary-btn w-full py-3 rounded-xl font-tech font-bold text-xs tracking-wider">SEND MESSAGE</button>
+            <button type="submit" class="guest-help-send primary-btn w-full py-3 rounded-xl font-tech font-bold text-xs tracking-wider">SEND MESSAGE</button>
           </form>
         </div>
 
@@ -11105,7 +11234,7 @@ overscroll-behavior: contain;
           <button type="button" onclick="backToGuestHelpStart()" class="w-full mt-3 py-2 text-xs text-slate-400 hover:text-white font-tech">← Back to Help Center</button>
         </div>
 
-        <button type="button" onclick="closeGuestHelpCenter()" class="w-full mt-3 py-2 text-xs text-slate-400 hover:text-white font-tech">Back to Login</button>
+        <button type="button" onclick="closeGuestHelpCenter()" class="guest-help-back">Back to Login</button>
       </div>`;
     document.body.appendChild(wrap);
     document.getElementById('guestHelpForm').addEventListener('submit', submitGuestHelp);
@@ -11122,8 +11251,8 @@ overscroll-behavior: contain;
     btn.onclick=openGuestHelpCenter;
     btn.className='w-full mt-3 py-2.5 rounded-xl bg-slate-900 border border-cyan-400/40 text-cyan-300 font-tech text-xs font-bold hover:bg-cyan-950 transition-all';
     btn.innerHTML='<i class="fa-solid fa-circle-question mr-1"></i> Help Center';
-    const createText=card.querySelector('p.text-center');
-    if(createText) createText.insertAdjacentElement('afterend',btn);
+    const mobileAuthToggle=card.querySelector('#patientAuthMobileToggle');
+    if(mobileAuthToggle) mobileAuthToggle.insertAdjacentElement('afterend',btn);
     else card.appendChild(btn);
   }
 
@@ -11697,6 +11826,8 @@ const adminHeaderActions=document.querySelector('#adminApp .admin-header-actions
 const adminSettingsLogout=document.getElementById('adminSettingsLogout');
 const adminSettingsEmergency=document.getElementById('adminSettingsEmergency');
 const adminSettingsApp=document.getElementById('adminSettingsApp');
+const splashRoot=document.getElementById('splashScreen');
+const splashStatusBar=document.getElementById('splashStatusBar');
 const patientSettingsActions=['patientSettingsEmergency','patientSettingsLogout']
   .map(id=>document.getElementById(id));
 function updateAdminSettingsAction(){
@@ -11710,14 +11841,25 @@ function placeAppearanceControl(){
   const patientVisible=patientRoot && !patientRoot.classList.contains('hidden') && getComputedStyle(patientRoot).display!=='none';
   const staffVisible=staffRoot && !staffRoot.classList.contains('hidden') && getComputedStyle(staffRoot).display!=='none';
   const adminVisible=adminRoot && !adminRoot.classList.contains('hidden') && getComputedStyle(adminRoot).display!=='none';
+  const authSlider=document.getElementById('patientAuthSlider');
+  const authVisible=authSlider && !authSlider.classList.contains('hidden');
+  const staffAdminSlider=document.getElementById('staffAdminAuthSlider');
+  const staffAdminAuthVisible=staffAdminSlider && !staffAdminSlider.classList.contains('hidden');
+  const splashVisible=splashRoot && !splashRoot.classList.contains('hidden') && getComputedStyle(splashRoot).display!=='none';
   patientSettingsActions.forEach(action=>action?.classList.toggle('hidden',!patientVisible));
   staffSettingsLogout?.classList.toggle('hidden',!staffVisible);
   adminSettingsLogout?.classList.toggle('hidden',!adminVisible);
   adminSettingsEmergency?.classList.toggle('hidden',!adminVisible);
   adminSettingsApp?.classList.toggle('hidden',!adminVisible);
   settings.classList.remove('hidden');
+  settings.classList.remove('ep-splash-settings');
   settings.removeAttribute('aria-hidden');
-  if(patientVisible && patientHeaderActions){
+  if(splashVisible && splashStatusBar){
+    settings.classList.remove('ep-global-settings','ep-auth-global-settings','ep-open');
+    settingsToggle?.setAttribute('aria-expanded','false');
+    settings.classList.add('ep-splash-settings');
+    if(settings.parentElement!==splashStatusBar) splashStatusBar.appendChild(settings);
+  }else if(patientVisible && patientHeaderActions){
     settings.classList.remove('ep-global-settings');
     if(settings.parentElement!==patientHeaderActions || settings!==patientHeaderActions.lastElementChild) patientHeaderActions.appendChild(settings);
   }else if(staffVisible && staffHeader){
@@ -11726,18 +11868,37 @@ function placeAppearanceControl(){
   }else if(adminVisible && adminHeaderActions){
     settings.classList.remove('ep-global-settings','ep-auth-global-settings');
     if(settings.parentElement!==adminHeaderActions) adminHeaderActions.appendChild(settings);
+  }else if(authVisible){
+    const activeAuthPage=authSlider.dataset.mode==='register'
+      ? document.getElementById('registerPage')
+      : document.getElementById('loginPage');
+    const authBrand=activeAuthPage?.querySelector('.logo');
+    settings.classList.remove('ep-global-settings','ep-auth-global-settings');
+    if(authBrand && settings.parentElement!==authBrand) authBrand.appendChild(settings);
+  }else if(staffAdminAuthVisible){
+    const activeAuthPage=staffAdminSlider.dataset.mode==='admin'
+      ? document.getElementById('adminLoginPage')
+      : document.getElementById('staffLoginPage');
+    const authBrand=activeAuthPage?.querySelector('.logo');
+    settings.classList.remove('ep-global-settings','ep-auth-global-settings');
+    if(authBrand && settings.parentElement!==authBrand) authBrand.appendChild(settings);
   }else{
     settings.classList.add('ep-global-settings');
     if(settings.parentElement!==document.body) document.body.appendChild(settings);
   }
 }
 placeAppearanceControl();
+if(splashRoot)new MutationObserver(placeAppearanceControl).observe(splashRoot,{attributes:true,attributeFilter:['class','style']});
 if(patientRoot)new MutationObserver(placeAppearanceControl).observe(patientRoot,{attributes:true,attributeFilter:['class','style']});
 if(staffRoot)new MutationObserver(placeAppearanceControl).observe(staffRoot,{attributes:true,attributeFilter:['class','style']});
 document.querySelectorAll('#patientApp .page').forEach(patientPage=>{
   new MutationObserver(placeAppearanceControl).observe(patientPage,{attributes:true,attributeFilter:['class']});
 });
 if(adminRoot)new MutationObserver(placeAppearanceControl).observe(adminRoot,{attributes:true,attributeFilter:['class','style']});
+const authSlider=document.getElementById('patientAuthSlider');
+if(authSlider)new MutationObserver(placeAppearanceControl).observe(authSlider,{attributes:true,attributeFilter:['class','data-mode']});
+const staffAdminAuthSlider=document.getElementById('staffAdminAuthSlider');
+if(staffAdminAuthSlider)new MutationObserver(placeAppearanceControl).observe(staffAdminAuthSlider,{attributes:true,attributeFilter:['class','data-mode']});
 settingsToggle.addEventListener('click',function(e){e.preventDefault();e.stopPropagation();const open=settings.classList.toggle('ep-open');settingsToggle.setAttribute('aria-expanded',String(open));});
 document.addEventListener('click',function(e){if(!settings.contains(e.target)){settings.classList.remove('ep-open');settingsToggle.setAttribute('aria-expanded','false');}});
 function readSetting(key,fallback){try{if(window.epStore){const v=window.epStore.getItem(key);if(v!==null)return v}}catch(e){}return fallback}
@@ -16770,6 +16931,117 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   html.ep-dark #adminLoginPage button[onclick="showLogin()"] { color: #c3d2c7 !important; }
   html.ep-dark #adminLoginPage button[onclick="showLogin()"]:is(:hover,:focus-visible) { color: #ffd1d8 !important; }
   html.ep-dark #registerPage button[onclick="showLogin()"] { color: #8FDAA0 !important; }
+  #guestHelpCenterModal {
+    position: fixed;
+    inset: 0;
+    z-index: 1000;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(14, 25, 19, .62);
+    -webkit-backdrop-filter: blur(8px);
+    backdrop-filter: blur(8px);
+  }
+  #guestHelpCenterModal.flex { display: flex; }
+  #guestHelpCenterModal.hidden { display: none !important; }
+  #guestHelpCenterModal .guest-help-dialog {
+    width: min(100%, 460px);
+    max-height: min(700px, calc(100dvh - 48px));
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: clamp(20px, 5vw, 30px);
+    border: 1px solid rgba(255,255,255,.82);
+    border-radius: 24px;
+    background: rgba(255,255,255,.96);
+    box-shadow: 0 24px 70px rgba(8, 24, 15, .28), inset 0 1px 0 #fff;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(36,91,53,.28) transparent;
+  }
+  #guestHelpCenterModal .guest-help-header {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 16px;
+    margin-bottom: 22px;
+  }
+  #guestHelpCenterModal .guest-help-title {
+    margin: 0 0 5px;
+    font-size: 22px;
+    line-height: 1.2;
+  }
+  #guestHelpCenterModal .guest-help-description {
+    max-width: 340px;
+    margin: 0;
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  #guestHelpCenterModal .guest-help-close {
+    display: inline-flex;
+    width: 36px;
+    height: 36px;
+    flex: 0 0 36px;
+    align-items: center;
+    justify-content: center;
+    margin: -4px -4px 0 0;
+    border: 1px solid #dce9df;
+    border-radius: 50%;
+    background: #f5faf6;
+    color: #52665a;
+    font-size: 17px;
+    cursor: pointer;
+    transition: background .18s ease, border-color .18s ease, color .18s ease;
+  }
+  #guestHelpCenterModal .guest-help-form {
+    display: grid;
+    gap: 16px;
+  }
+  #guestHelpCenterModal .guest-help-field label {
+    display: block;
+    margin-bottom: 7px;
+    font-size: 11px;
+    letter-spacing: .06em;
+  }
+  #guestHelpCenterModal .guest-help-field .input-box {
+    min-height: 46px;
+    padding: 0 14px;
+    border-radius: 13px;
+  }
+  #guestHelpCenterModal .guest-help-field input,
+  #guestHelpCenterModal .guest-help-field textarea {
+    width: 100%;
+    font: 400 13px/1.5 'Inter', sans-serif;
+  }
+  #guestHelpCenterModal .guest-help-field textarea {
+    display: block;
+    min-height: 120px;
+    padding: 12px 14px;
+    border-radius: 13px;
+    resize: vertical;
+  }
+  #guestHelpCenterModal .guest-help-send {
+    min-height: 48px;
+    margin-top: 2px;
+    border-radius: 13px;
+    font-size: 12px;
+    letter-spacing: .06em;
+  }
+  #guestHelpCenterModal .guest-help-back {
+    width: 100%;
+    min-height: 42px;
+    margin-top: 10px;
+    border: 0;
+    border-radius: 12px;
+    background: transparent;
+    font: 600 12px/1.3 'Inter', sans-serif;
+    cursor: pointer;
+  }
+  #guestHelpCenterModal :is(.guest-help-close,.guest-help-back):is(:hover,:focus-visible) {
+    outline: none;
+    border-color: #9dcfac;
+    background: #eaf6ed;
+    color: #245b35;
+  }
   html:not(.ep-dark) #loginPage #guestHelpLoginBtn {
     background: #EAF8ED !important;
     border-color: #D5E8D9 !important;
@@ -16781,8 +17053,8 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     border-color: #76C98A !important;
     box-shadow: 0 0 0 2px rgba(36,91,53,.12) !important;
   }
-  html:not(.ep-dark) #guestHelpCenterModal .glass-card {
-    background: #fff !important;
+  html:not(.ep-dark) #guestHelpCenterModal .guest-help-dialog {
+    background: rgba(255,255,255,.97) !important;
     border-color: #D5E8D9 !important;
     color: #52665A !important;
   }
@@ -16873,10 +17145,14 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     border-color: #c87382 !important;
     box-shadow: 0 0 0 2px rgba(255,185,197,.2) !important;
   }
-  html.ep-dark #guestHelpCenterModal .glass-card {
-    background: #182b20 !important;
+  html.ep-dark #guestHelpCenterModal {
+    background: rgba(2, 10, 6, .76);
+  }
+  html.ep-dark #guestHelpCenterModal .guest-help-dialog {
+    background: rgba(24,43,32,.98) !important;
     border-color: #36553d !important;
     color: #edf8ef !important;
+    box-shadow: 0 24px 70px rgba(0,0,0,.42), inset 0 1px 0 rgba(255,255,255,.06);
   }
   html.ep-dark #guestHelpCenterModal :is(h2,label) {
     color: #b7e9c1 !important;
@@ -16928,6 +17204,16 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     color: #e2f1e5 !important;
   }
   html.ep-dark #guestHelpCenterModal .help-meta { color: #a9c2ae !important; }
+  html.ep-dark #guestHelpCenterModal .guest-help-close {
+    border-color: #3d6048;
+    background: #203b29;
+  }
+  html.ep-dark #guestHelpCenterModal :is(.guest-help-close,.guest-help-back):is(:hover,:focus-visible) {
+    border-color: #72bd82 !important;
+    background: #244c31 !important;
+    color: #d3f0da !important;
+    -webkit-text-fill-color: #d3f0da !important;
+  }
   html.ep-dark #loginPage .primary-btn,
   html.ep-dark #registerPage .primary-btn,
   html.ep-dark #staffLoginPage .primary-btn,
@@ -20238,7 +20524,1019 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     #staffApp #staffBottomNav button i { font-size: 17px; }
     #staffApp .staff-panel-heading { font-size: 19px !important; }
   }
+  #staffApp #staffMedicationWorkflow {
+    --medication-accent: #218353;
+    --medication-accent-strong: #176b43;
+    background: rgba(255, 255, 255, .96) !important;
+    border: 1px solid #d5e5dc !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 28px rgba(27, 74, 51, .08) !important;
+    color: #173c2a !important;
+    animation: medication-workflow-enter .32s ease-out both;
+  }
+  #staffApp #staffMedicationWorkflow :is(h2,h3,p,label,strong,li,time,summary) {
+    color: #294b39 !important;
+    -webkit-text-fill-color: #294b39 !important;
+  }
+  #staffApp #staffMedicationWorkflow .staff-panel-heading {
+    color: #173c2a !important;
+    -webkit-text-fill-color: #173c2a !important;
+  }
+  #staffApp #staffMedicationWorkflow h3 {
+    color: var(--medication-accent-strong) !important;
+    -webkit-text-fill-color: var(--medication-accent-strong) !important;
+  }
+  #staffApp #staffMedicationWorkflow label { display: block; font-weight: 600; }
+  #staffApp #staffMedicationWorkflow :is(input,select,textarea) {
+    min-height: 42px;
+    border: 1px solid #c9d9cf !important;
+    border-radius: 12px !important;
+    background: #fff !important;
+    color: #193b2b !important;
+    -webkit-text-fill-color: #193b2b !important;
+    box-shadow: 0 1px 2px rgba(26, 64, 42, .04);
+    transition: border-color .18s ease, box-shadow .18s ease, background-color .18s ease, transform .18s ease;
+  }
+  #staffApp #staffMedicationWorkflow :is(input,select,textarea)::placeholder {
+    color: #718477 !important;
+    -webkit-text-fill-color: #718477 !important;
+    opacity: 1;
+  }
+  #staffApp #staffMedicationWorkflow :is(input,select,textarea):focus {
+    border-color: #319766 !important;
+    outline: none;
+    box-shadow: 0 0 0 3px rgba(49, 151, 102, .16) !important;
+  }
+  #staffApp #nurseMedicationCurrentList {
+    border: 1px solid #d8e6dc;
+    background: #f3f8f4 !important;
+    color: #385b46 !important;
+    -webkit-text-fill-color: #385b46 !important;
+    line-height: 1.55;
+  }
+  #staffApp #nurseMedicationCurrentList strong {
+    color: #206540 !important;
+    -webkit-text-fill-color: #206540 !important;
+  }
+  #staffApp #nurseMedicationStatus { min-height: 1.25em; }
+  #staffApp #staffMedicationWorkflow [data-medication-review-order] {
+    border-color: #d4e4da !important;
+    border-radius: 16px !important;
+    background: #fbfdfb !important;
+    color: #294b39 !important;
+    box-shadow: 0 3px 12px rgba(27, 74, 51, .06) !important;
+    animation: medication-order-enter .28s ease-out both;
+    transition: border-color .18s ease, box-shadow .18s ease, transform .18s ease;
+  }
+  #staffApp #staffMedicationWorkflow details > summary {
+    width: fit-content;
+    cursor: pointer;
+    transition: color .18s ease;
+  }
+  #staffApp #staffMedicationWorkflow details > summary:hover {
+    color: var(--medication-accent-strong) !important;
+    -webkit-text-fill-color: var(--medication-accent-strong) !important;
+  }
+  #staffApp #staffMedicationWorkflow .staff-primary-action,
+  #staffApp #staffMedicationWorkflow .staff-secondary-action,
+  #staffApp #staffMedicationWorkflow .erecpass-action-cancel {
+    border-radius: 11px !important;
+    transition: background-color .18s ease, border-color .18s ease, box-shadow .18s ease, color .18s ease, transform .18s ease, filter .18s ease;
+  }
+  #staffApp #staffMedicationWorkflow .staff-primary-action {
+    background: var(--medication-accent) !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    box-shadow: 0 4px 12px rgba(33, 131, 83, .2);
+  }
+  #staffApp #staffMedicationWorkflow .staff-primary-action:is(:hover,:focus-visible) {
+    background: var(--medication-accent-strong) !important;
+    box-shadow: 0 6px 16px rgba(33, 131, 83, .28) !important;
+    transform: translateY(-1px);
+  }
+  #staffApp #staffMedicationWorkflow .staff-secondary-action {
+    border-color: #c9d9cf !important;
+    background: #f3f8f4 !important;
+    color: #24563a !important;
+    -webkit-text-fill-color: #24563a !important;
+  }
+  #staffApp #staffMedicationWorkflow .staff-secondary-action:is(:hover,:focus-visible) {
+    border-color: #65a982 !important;
+    background: #e8f4eb !important;
+    box-shadow: 0 4px 12px rgba(33, 131, 83, .12) !important;
+    transform: translateY(-1px);
+  }
+  #staffApp #staffMedicationWorkflow :is(button,input,select,textarea,summary):focus-visible {
+    outline: 3px solid rgba(49, 151, 102, .38);
+    outline-offset: 2px;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    #staffApp #staffMedicationWorkflow [data-medication-review-order]:hover {
+      border-color: #8dbfa0 !important;
+      box-shadow: 0 8px 20px rgba(27, 74, 51, .12) !important;
+      transform: translateY(-2px);
+    }
+  }
+  @keyframes medication-workflow-enter {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  @keyframes medication-order-enter {
+    from { opacity: 0; transform: translateY(6px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow {
+    --medication-accent: #39a975;
+    --medication-accent-strong: #62c891;
+    background: #182820 !important;
+    border-color: #355342 !important;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, .22) !important;
+    color: #e4f1e8 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow :is(h2,h3,p,label,strong,li,time,summary) {
+    color: #c7ddce !important;
+    -webkit-text-fill-color: #c7ddce !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow .staff-panel-heading {
+    color: #eff8f1 !important;
+    -webkit-text-fill-color: #eff8f1 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow h3,
+  html.ep-dark #staffApp #nurseMedicationCurrentList strong {
+    color: #78d6a0 !important;
+    -webkit-text-fill-color: #78d6a0 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow :is(input,select,textarea) {
+    border-color: #496653 !important;
+    background: #142119 !important;
+    color: #edf8ef !important;
+    -webkit-text-fill-color: #edf8ef !important;
+    box-shadow: none;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow :is(input,select,textarea)::placeholder {
+    color: #9ab4a1 !important;
+    -webkit-text-fill-color: #9ab4a1 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow :is(input,select,textarea):focus {
+    border-color: #66c58e !important;
+    box-shadow: 0 0 0 3px rgba(102, 197, 142, .2) !important;
+  }
+  html.ep-dark #staffApp #nurseMedicationCurrentList {
+    border-color: #395641;
+    background: #203328 !important;
+    color: #c3d8c9 !important;
+    -webkit-text-fill-color: #c3d8c9 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow [data-medication-review-order] {
+    border-color: #3d5a47 !important;
+    background: #1d3024 !important;
+    color: #d2e5d7 !important;
+    box-shadow: 0 3px 12px rgba(0, 0, 0, .16) !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow .staff-primary-action {
+    background: #287c50 !important;
+    color: #f3fff6 !important;
+    -webkit-text-fill-color: #f3fff6 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow .staff-primary-action:is(:hover,:focus-visible) {
+    background: #32905f !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow .staff-secondary-action {
+    border-color: #4a6954 !important;
+    background: #24392a !important;
+    color: #c7ebd2 !important;
+    -webkit-text-fill-color: #c7ebd2 !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow .staff-secondary-action:is(:hover,:focus-visible) {
+    border-color: #70bd8b !important;
+    background: #2b4934 !important;
+  }
+  @media (hover: hover) and (pointer: fine) {
+    html.ep-dark #staffApp #staffMedicationWorkflow [data-medication-review-order]:hover {
+      border-color: #6aa77c !important;
+      box-shadow: 0 8px 22px rgba(0, 0, 0, .24) !important;
+    }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #staffApp #staffMedicationWorkflow,
+    #staffApp #staffMedicationWorkflow *,
+    #staffApp #staffMedicationWorkflow [data-medication-review-order] {
+      animation: none !important;
+      scroll-behavior: auto !important;
+      transition-duration: .01ms !important;
+    }
+    #staffApp #staffMedicationWorkflow :is(button,input,select,textarea,summary):hover,
+    #staffApp #staffMedicationWorkflow [data-medication-review-order]:hover {
+      transform: none !important;
+    }
+  }
 </style>
+
+<style id="patient-auth-slider-styles">
+  body:has(#patientAuthSlider:not(.hidden)) #epSettings { display: block !important; }
+  body:has(#staffAdminAuthSlider:not(.hidden)) #epSettings { display: block !important; }
+  body:has(#patientAuthSlider:not(.hidden)) #epSettingsPanel button:not(#epThemeBtn) { display: none !important; }
+  body:has(#staffAdminAuthSlider:not(.hidden)) #epSettingsPanel button:not(#epThemeBtn) { display: none !important; }
+  .patient-auth-slider {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(35, 177, 108, .22), transparent 38%),
+      radial-gradient(ellipse at 88% 82%, rgba(54, 153, 191, .20), transparent 40%),
+      linear-gradient(140deg, #edf8f1 0%, #edf5f8 55%, #eef7f3 100%);
+  }
+  .auth-slider-backdrop {
+    position: absolute;
+    inset: 0;
+    background:
+      radial-gradient(circle at 18% 24%, rgba(255,255,255,.55), transparent 28%),
+      radial-gradient(circle at 80% 75%, rgba(255,255,255,.42), transparent 30%);
+    pointer-events: none;
+  }
+  .auth-slider-backdrop::before {
+    position: absolute;
+    inset: 0;
+    content: "";
+    background-image:
+      linear-gradient(rgba(25, 117, 76, .07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(25, 117, 76, .07) 1px, transparent 1px);
+    background-size: 38px 38px;
+    mask-image: radial-gradient(ellipse at center, #000 10%, transparent 82%);
+  }
+  .auth-slider-stage {
+    position: relative;
+    isolation: isolate;
+    width: min(1120px, 100%);
+    height: min(850px, calc(100dvh - 36px));
+    min-height: 580px;
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.78);
+    border-radius: 32px;
+    background: rgba(255,255,255,.39);
+    box-shadow: 0 28px 90px rgba(27, 74, 54, .19), inset 0 1px 0 rgba(255,255,255,.7);
+    -webkit-backdrop-filter: blur(26px);
+    backdrop-filter: blur(26px);
+  }
+  .auth-slider-forms {
+    position: absolute;
+    inset: 0;
+  }
+  #patientAuthSlider #loginPage,
+  #patientAuthSlider #registerPage {
+    position: absolute !important;
+    z-index: 1 !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    width: 50% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    transition: opacity .55s ease, visibility .55s ease !important;
+  }
+  #patientAuthSlider #registerPage { left: 50% !important; }
+  #patientAuthSlider .auth-medical-decor {
+    display: block !important;
+    opacity: .58;
+  }
+  #patientAuthSlider #loginPage .auth-card,
+  #patientAuthSlider #registerPage .auth-card {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100% !important;
+    max-width: 470px !important;
+    max-height: calc(100% - 8px);
+    min-height: 0 !important;
+    padding: clamp(20px, 3vw, 36px) !important;
+    overflow: auto;
+    overscroll-behavior: contain;
+    border: 1px solid rgba(255,255,255,.82) !important;
+    border-radius: 24px !important;
+    background: rgba(255,255,255,.52) !important;
+    box-shadow: 0 20px 55px rgba(35, 75, 55, .14), inset 0 1px 0 rgba(255,255,255,.9) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+    backdrop-filter: blur(28px) saturate(145%) !important;
+    scrollbar-color: rgba(39, 121, 76, .35) transparent;
+    scrollbar-width: thin;
+  }
+  #patientAuthSlider .auth-card .logo #epSettings {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    z-index: 20;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  #patientAuthSlider .auth-card .logo #epSettingsToggle { display: none !important; }
+  #patientAuthSlider .auth-card .logo #epSettingsPanel {
+    position: static !important;
+    display: flex !important;
+    min-width: 0 !important;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  #patientAuthSlider .auth-card .logo #epSettingsPanel #epThemeBtn {
+    width: auto;
+    min-height: 36px;
+    padding: 0 11px;
+    border: 1px solid rgba(47, 123, 75, .24) !important;
+    border-radius: 999px;
+    background: rgba(255,255,255,.54) !important;
+    color: #245b3a !important;
+    font: 700 10px/1 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .patient-auth-mobile-toggle { display: none; }
+  .staff-admin-auth-slider {
+    position: fixed;
+    inset: 0;
+    z-index: 30;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 18px;
+    overflow: hidden;
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(35, 177, 108, .22), transparent 38%),
+      radial-gradient(ellipse at 88% 82%, rgba(54, 153, 191, .20), transparent 40%),
+      linear-gradient(140deg, #edf8f1 0%, #edf5f8 55%, #eef7f3 100%);
+  }
+  .staff-admin-auth-slider .auth-medical-decor {
+    position: absolute;
+    inset: 0;
+    z-index: 0;
+    overflow: hidden;
+    pointer-events: none;
+    opacity: .58;
+    background-image:
+      linear-gradient(rgba(20,103,133,.07) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(20,103,133,.07) 1px, transparent 1px);
+    background-size: 42px 42px;
+  }
+  .staff-admin-auth-slider .auth-medical-ecg {
+    position: absolute;
+    left: -2%;
+    top: 4%;
+    width: 104%;
+    height: clamp(100px, 20vh, 170px);
+    opacity: .7;
+  }
+  .staff-admin-auth-slider .auth-medical-ecg path {
+    fill: none;
+    stroke: #70b8c5;
+    stroke-width: 2.8;
+    vector-effect: non-scaling-stroke;
+  }
+  .staff-admin-auth-slider .auth-medical-ecg .auth-ecg-pulse {
+    stroke: #08798e;
+    stroke-width: 4;
+    stroke-dasharray: 95 905;
+    stroke-dashoffset: 1000;
+    stroke-linecap: round;
+    opacity: .95;
+    filter: drop-shadow(0 0 4px rgba(15,151,170,.35));
+    animation: ecg-line-travel 6s linear infinite;
+  }
+  .staff-admin-auth-forms { position: absolute; inset: 0; }
+  .staff-admin-auth-slider #staffLoginPage,
+  .staff-admin-auth-slider #adminLoginPage {
+    position: absolute !important;
+    z-index: 1 !important;
+    top: 0 !important;
+    left: 0 !important;
+    display: flex !important;
+    width: 50% !important;
+    height: 100% !important;
+    min-height: 0 !important;
+    align-items: center !important;
+    justify-content: center !important;
+    padding: 24px !important;
+    overflow: hidden !important;
+    background: transparent !important;
+    transition: opacity .55s ease, visibility .55s ease !important;
+  }
+  .staff-admin-auth-slider #adminLoginPage { left: 50% !important; }
+  .staff-admin-auth-slider #staffLoginPage .auth-card,
+  .staff-admin-auth-slider #adminLoginPage .auth-card {
+    position: relative;
+    z-index: 1;
+    display: block;
+    width: 100% !important;
+    max-width: 470px !important;
+    max-height: calc(100% - 8px);
+    min-height: 0 !important;
+    padding: clamp(22px, 3vw, 38px) !important;
+    overflow: auto;
+    border: 1px solid rgba(255,255,255,.82) !important;
+    border-radius: 24px !important;
+    background: rgba(255,255,255,.52) !important;
+    box-shadow: 0 20px 55px rgba(35,75,55,.14), inset 0 1px 0 rgba(255,255,255,.9) !important;
+    -webkit-backdrop-filter: blur(28px) saturate(145%) !important;
+    backdrop-filter: blur(28px) saturate(145%) !important;
+  }
+  .staff-admin-auth-slider #staffLoginPage .auth-card .logo #epSettings,
+  .staff-admin-auth-slider #adminLoginPage .auth-card .logo #epSettings {
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    z-index: 20;
+    flex: 0 0 auto;
+    margin-left: auto;
+  }
+  .staff-admin-auth-slider .auth-card .logo #epSettingsToggle { display: none !important; }
+  .staff-admin-auth-slider .auth-card .logo #epSettingsPanel {
+    position: static !important;
+    display: flex !important;
+    min-width: 0 !important;
+    margin: 0;
+    padding: 0;
+    border: 0;
+    background: transparent !important;
+    box-shadow: none !important;
+  }
+  .staff-admin-auth-slider .auth-card .logo #epSettingsPanel #epThemeBtn {
+    width: auto;
+    min-height: 36px;
+    padding: 0 11px;
+    border: 1px solid rgba(47,123,75,.24) !important;
+    border-radius: 999px;
+    background: rgba(255,255,255,.54) !important;
+    color: #245b3a !important;
+    font: 700 10px/1 'Inter', sans-serif;
+    white-space: nowrap;
+  }
+  .staff-admin-auth-slider #staffLoginPage .auth-card h1,
+  .staff-admin-auth-slider #adminLoginPage .auth-card h1 {
+    color: #205b3b !important;
+    text-shadow: none !important;
+  }
+  .staff-admin-auth-slider #staffLoginPage .auth-card p,
+  .staff-admin-auth-slider #adminLoginPage .auth-card p { color: #647a6d !important; }
+  .staff-admin-auth-slider #staffLoginPage .auth-card label,
+  .staff-admin-auth-slider #adminLoginPage .auth-card label { color: #376348 !important; }
+  .staff-admin-auth-slider #staffLoginPage .input-box,
+  .staff-admin-auth-slider #adminLoginPage .input-box {
+    border: 1px solid rgba(60,130,82,.18) !important;
+    background: rgba(248,252,249,.78) !important;
+  }
+  .staff-admin-auth-slider #staffLoginPage .input-box input,
+  .staff-admin-auth-slider #adminLoginPage .input-box input { color: #244a34 !important; }
+  .staff-admin-auth-slider #adminLoginPage .primary-btn {
+    background: linear-gradient(110deg,#16834b,#22a653) !important;
+    color: #fff !important;
+    box-shadow: 0 8px 20px rgba(22,131,75,.2) !important;
+  }
+  .staff-admin-auth-slider .auth-slider-overlay { z-index: 4; }
+  .staff-admin-auth-slider[data-mode="admin"] .auth-slider-overlay { transform: translateX(-100%); }
+  .staff-admin-auth-slider[data-mode="staff"] #staffLoginPage,
+  .staff-admin-auth-slider[data-mode="admin"] #adminLoginPage { opacity: 1; visibility: visible; }
+  .staff-admin-auth-slider[data-mode="staff"] #adminLoginPage,
+  .staff-admin-auth-slider[data-mode="admin"] #staffLoginPage { opacity: 1; visibility: visible; }
+  #patientAuthSlider #loginPage .auth-card h1,
+  #patientAuthSlider #registerPage .auth-card h1 {
+    color: #205b3b !important;
+    text-shadow: none !important;
+  }
+  #patientAuthSlider #loginPage .auth-card p,
+  #patientAuthSlider #registerPage .auth-card p {
+    color: #647a6d !important;
+  }
+  #patientAuthSlider #loginPage .auth-card label,
+  #patientAuthSlider #registerPage .auth-card label {
+    color: #376348 !important;
+  }
+  #patientAuthSlider #loginPage .input-box,
+  #patientAuthSlider #registerPage .input-box {
+    border: 1px solid rgba(60, 130, 82, .18) !important;
+    background: rgba(248, 252, 249, .78) !important;
+    box-shadow: inset 0 1px 2px rgba(25, 70, 43, .035) !important;
+  }
+  #patientAuthSlider #loginPage .input-box:focus-within,
+  #patientAuthSlider #registerPage .input-box:focus-within {
+    border-color: rgba(34, 145, 78, .56) !important;
+    box-shadow: 0 0 0 3px rgba(34, 145, 78, .11) !important;
+  }
+  #patientAuthSlider #loginPage .input-box input,
+  #patientAuthSlider #registerPage .input-box input {
+    color: #244a34 !important;
+  }
+  .auth-slider-overlay {
+    position: absolute;
+    z-index: 4;
+    top: 0;
+    right: 0;
+    width: 50%;
+    height: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: clamp(24px, 5vw, 64px);
+    overflow: hidden;
+    border: 1px solid rgba(255,255,255,.57);
+    border-radius: 30px;
+    background:
+      radial-gradient(circle at 15% 10%, rgba(255,255,255,.56), transparent 42%),
+      linear-gradient(145deg, rgba(226, 248, 233, .83), rgba(212, 239, 226, .71) 52%, rgba(221, 240, 247, .77));
+    box-shadow: 0 14px 40px rgba(28, 91, 55, .13), inset 0 1px 0 rgba(255,255,255,.76);
+    -webkit-backdrop-filter: blur(28px);
+    backdrop-filter: blur(28px);
+    transform: translateX(0);
+    transition: transform .72s cubic-bezier(.76, 0, .24, 1), background .4s ease;
+  }
+  #patientAuthSlider[data-mode="register"] .auth-slider-overlay {
+    transform: translateX(-100%);
+  }
+  .auth-slider-message {
+    width: min(100%, 390px);
+    display: none;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 16px;
+    animation: auth-slider-message-in .45s ease both;
+  }
+  #patientAuthSlider[data-mode="login"] .auth-slider-message[data-mode="login"],
+  #patientAuthSlider[data-mode="register"] .auth-slider-message[data-mode="register"],
+  .staff-admin-auth-slider[data-mode="staff"] .auth-slider-message[data-mode="staff"],
+  .staff-admin-auth-slider[data-mode="admin"] .auth-slider-message[data-mode="admin"] {
+    display: flex;
+  }
+  .auth-slider-eyebrow {
+    color: #368457;
+    font: 800 11px/1.2 'Inter', sans-serif;
+    letter-spacing: .18em;
+  }
+  .auth-slider-message h2 {
+    max-width: 360px;
+    color: #194b31 !important;
+    font: 700 clamp(28px, 3.5vw, 42px)/1.1 'Inter', sans-serif;
+    letter-spacing: -.04em;
+  }
+  .auth-slider-message p {
+    max-width: 340px;
+    color: #506d5c !important;
+    font: 500 14px/1.7 'Inter', sans-serif;
+  }
+  .auth-slider-toggle {
+    display: inline-flex;
+    min-height: 46px;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 6px;
+    padding: 0 20px;
+    border: 1px solid rgba(32, 111, 63, .28);
+    border-radius: 999px;
+    background: rgba(255,255,255,.44);
+    color: #205b3b;
+    font: 700 12px/1 'Inter', sans-serif;
+    letter-spacing: .04em;
+    cursor: pointer;
+    transition: transform .2s ease, background .2s ease, box-shadow .2s ease;
+  }
+  .auth-slider-toggle:hover,
+  .auth-slider-toggle:focus-visible {
+    transform: translateY(-2px);
+    background: rgba(255,255,255,.78);
+    box-shadow: 0 8px 20px rgba(32, 91, 59, .12);
+  }
+  .auth-slider-toggle:focus-visible {
+    outline: 3px solid rgba(34, 145, 78, .3);
+    outline-offset: 3px;
+  }
+  @keyframes auth-slider-message-in {
+    from { opacity: 0; transform: translateY(8px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+  html.ep-dark .patient-auth-slider {
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(43, 149, 88, .22), transparent 38%),
+      radial-gradient(ellipse at 88% 82%, rgba(54, 133, 153, .19), transparent 40%),
+      linear-gradient(140deg, #101e17 0%, #14211e 55%, #14231c 100%);
+  }
+  html.ep-dark .auth-slider-stage {
+    border-color: rgba(153, 197, 163, .19);
+    background: rgba(21, 40, 29, .45);
+    box-shadow: 0 28px 90px rgba(0,0,0,.32), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  html.ep-dark #patientAuthSlider #loginPage .auth-card,
+  html.ep-dark #patientAuthSlider #registerPage .auth-card {
+    border-color: rgba(145, 196, 154, .22) !important;
+    background: rgba(24, 43, 32, .58) !important;
+    box-shadow: 0 20px 55px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.09) !important;
+  }
+  html.ep-dark .auth-slider-backdrop::before {
+    background-image:
+      linear-gradient(rgba(111, 206, 145, .09) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(111, 206, 145, .09) 1px, transparent 1px);
+  }
+  html.ep-dark #patientAuthSlider .auth-medical-decor { opacity: .38; }
+  html.ep-dark #patientAuthSlider .auth-card .logo #epSettingsPanel #epThemeBtn {
+    border-color: rgba(158, 218, 172, .36) !important;
+    background: rgba(15, 42, 25, .48) !important;
+    color: #d3f0da !important;
+  }
+  html.ep-dark #patientAuthSlider .patient-auth-mobile-toggle {
+    border-color: rgba(158,218,172,.3);
+    background: rgba(30,59,39,.72);
+    color: #d3f0da;
+  }
+  html.ep-dark .staff-admin-auth-slider {
+    background:
+      radial-gradient(ellipse at 12% 18%, rgba(43,149,88,.22), transparent 38%),
+      radial-gradient(ellipse at 88% 82%, rgba(54,133,153,.19), transparent 40%),
+      linear-gradient(140deg,#101e17 0%,#14211e 55%,#14231c 100%);
+  }
+  html.ep-dark .staff-admin-auth-slider .auth-medical-decor {
+    opacity: .38;
+    background-image:
+      linear-gradient(rgba(88,211,130,.1) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(88,211,130,.1) 1px, transparent 1px);
+  }
+  html.ep-dark .staff-admin-auth-slider .auth-medical-ecg path { stroke: #54b878; }
+  html.ep-dark .staff-admin-auth-slider .auth-medical-ecg .auth-ecg-pulse { stroke: #8be0a5; }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage .auth-card,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage .auth-card {
+    border-color: rgba(145,196,154,.22) !important;
+    background: rgba(24,43,32,.58) !important;
+    box-shadow: 0 20px 55px rgba(0,0,0,.26),inset 0 1px 0 rgba(255,255,255,.09) !important;
+  }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage .auth-card h1,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage .auth-card h1 { color: #c5edcf !important; }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage .auth-card p,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage .auth-card p { color: #adc5b3 !important; }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage .auth-card label,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage .auth-card label { color: #a7d5b1 !important; }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage .input-box,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage .input-box {
+    border-color: rgba(120,177,133,.28) !important;
+    background: rgba(17,34,24,.82) !important;
+  }
+  html.ep-dark .staff-admin-auth-slider #staffLoginPage .input-box input,
+  html.ep-dark .staff-admin-auth-slider #adminLoginPage .input-box input { color: #edf8ef !important; }
+  html.ep-dark .staff-admin-auth-slider .auth-card .logo #epSettingsPanel #epThemeBtn {
+    border-color: rgba(158,218,172,.36) !important;
+    background: rgba(15,42,25,.48) !important;
+    color: #d3f0da !important;
+  }
+  html.ep-dark #patientAuthSlider #loginPage .auth-card h1,
+  html.ep-dark #patientAuthSlider #registerPage .auth-card h1 { color: #c5edcf !important; }
+  html.ep-dark #patientAuthSlider #loginPage .auth-card p,
+  html.ep-dark #patientAuthSlider #registerPage .auth-card p { color: #adc5b3 !important; }
+  html.ep-dark #patientAuthSlider #loginPage .auth-card label,
+  html.ep-dark #patientAuthSlider #registerPage .auth-card label { color: #a7d5b1 !important; }
+  html.ep-dark #patientAuthSlider #loginPage .input-box,
+  html.ep-dark #patientAuthSlider #registerPage .input-box {
+    border-color: rgba(120, 177, 133, .28) !important;
+    background: rgba(17, 34, 24, .82) !important;
+  }
+  html.ep-dark #patientAuthSlider #loginPage .input-box input,
+  html.ep-dark #patientAuthSlider #registerPage .input-box input { color: #edf8ef !important; }
+  html.ep-dark .auth-slider-overlay {
+    border-color: rgba(161, 206, 170, .22);
+    background:
+      radial-gradient(circle at 15% 10%, rgba(150,207,160,.12), transparent 42%),
+      linear-gradient(145deg, rgba(33, 72, 46, .91), rgba(29, 61, 43, .89) 52%, rgba(28, 57, 57, .91));
+    box-shadow: 0 14px 40px rgba(0,0,0,.18), inset 0 1px 0 rgba(255,255,255,.08);
+  }
+  html.ep-dark .auth-slider-eyebrow { color: #9cdbad; }
+  html.ep-dark .auth-slider-message h2 { color: #e0f5e5 !important; }
+  html.ep-dark .auth-slider-message p { color: #c0d8c6 !important; }
+  html.ep-dark .auth-slider-toggle,
+  html.ep-dark .staff-admin-auth-slider .auth-slider-toggle {
+    border-color: rgba(158, 218, 172, .36);
+    background: rgba(15, 42, 25, .48);
+    color: #d3f0da;
+  }
+  html.ep-dark .auth-slider-toggle:hover,
+  html.ep-dark .staff-admin-auth-slider .auth-slider-toggle:hover,
+  html.ep-dark .auth-slider-toggle:focus-visible { background: rgba(34, 83, 47, .78); }
+  @media (max-width: 700px) {
+    .patient-auth-slider,
+    .staff-admin-auth-slider { padding: 10px; }
+    .auth-slider-stage {
+      width: 100%;
+      height: calc(100dvh - 20px);
+      min-height: 0;
+      border-radius: 24px;
+    }
+    #patientAuthSlider .auth-slider-overlay { display: none; }
+    .staff-admin-auth-slider .auth-slider-overlay { display: none; }
+    .auth-slider-overlay {
+      top: 0;
+      right: 0;
+      left: 0;
+      width: 100%;
+      height: 72px;
+      justify-content: flex-start;
+      padding: 10px 18px;
+      border-radius: 23px 23px 15px 15px;
+      transform: none !important;
+    }
+    .auth-slider-message {
+      width: 100%;
+      display: none;
+      flex-direction: row;
+      align-items: center;
+      justify-content: space-between;
+      gap: 10px;
+      animation-duration: .25s;
+    }
+    .auth-slider-eyebrow {
+      max-width: 130px;
+      font-size: 9px;
+      line-height: 1.5;
+    }
+    .auth-slider-message h2,
+    .auth-slider-message p { display: none; }
+    .auth-slider-toggle {
+      flex: 0 0 auto;
+      min-height: 38px;
+      margin: 0;
+      padding: 0 14px;
+      font-size: 10px;
+    }
+    #patientAuthSlider #loginPage,
+    #patientAuthSlider #registerPage {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      padding: 8px !important;
+    }
+    .staff-admin-auth-slider #staffLoginPage,
+    .staff-admin-auth-slider #adminLoginPage {
+      top: 0 !important;
+      left: 0 !important;
+      width: 100% !important;
+      height: 100% !important;
+      padding: 8px !important;
+    }
+    #patientAuthSlider #loginPage .auth-card,
+    #patientAuthSlider #registerPage .auth-card {
+      width: 100% !important;
+      max-width: 440px !important;
+      max-height: 100%;
+      padding: clamp(16px, 4vw, 22px) !important;
+      border-radius: 20px !important;
+    }
+    .staff-admin-auth-slider #staffLoginPage .auth-card,
+    .staff-admin-auth-slider #adminLoginPage .auth-card {
+      width: 100% !important;
+      max-width: 440px !important;
+      max-height: 100%;
+      padding: clamp(18px, 4vw, 24px) !important;
+      border-radius: 20px !important;
+    }
+    #patientAuthSlider .auth-card .logo #epSettingsPanel #epThemeBtn {
+      min-height: 34px;
+      padding: 0 9px;
+      font-size: 9px;
+    }
+    #patientAuthSlider .patient-auth-mobile-toggle {
+      display: flex;
+      width: 100%;
+      min-height: 42px;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      margin-top: 12px;
+      padding: 8px 12px;
+      border: 1px solid rgba(47, 123, 75, .24);
+      border-radius: 12px;
+      background: rgba(232, 247, 237, .72);
+      color: #245b3a;
+      font: 700 11px/1.3 'Inter', sans-serif;
+      cursor: pointer;
+    }
+    #patientAuthSlider .patient-auth-mobile-toggle:is(:hover,:focus-visible) {
+      border-color: rgba(47, 123, 75, .42);
+      background: rgba(218, 241, 225, .9);
+    }
+    .staff-admin-auth-slider .auth-card .logo #epSettingsPanel #epThemeBtn {
+      min-height: 34px;
+      padding: 0 9px;
+      font-size: 9px;
+    }
+    .staff-admin-auth-slider .staff-admin-mobile-toggle {
+      display: flex;
+      width: 100%;
+      min-height: 42px;
+      margin: 12px 0 0;
+      padding: 8px 12px;
+      font-size: 11px;
+    }
+    #patientAuthSlider[data-mode="login"] #registerPage,
+    #patientAuthSlider[data-mode="register"] #loginPage {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+    .staff-admin-auth-slider[data-mode="staff"] #adminLoginPage,
+    .staff-admin-auth-slider[data-mode="admin"] #staffLoginPage {
+      visibility: hidden !important;
+      opacity: 0 !important;
+      pointer-events: none !important;
+    }
+  }
+  @media (max-width: 380px) {
+    .auth-slider-eyebrow { max-width: 112px; font-size: 8px; }
+    .auth-slider-toggle { min-height: 36px; padding: 0 11px; font-size: 9px; }
+    #patientAuthSlider #loginPage .auth-card,
+    #patientAuthSlider #registerPage .auth-card { padding: 16px !important; }
+    .staff-admin-auth-slider #staffLoginPage .auth-card,
+    .staff-admin-auth-slider #adminLoginPage .auth-card { padding: 16px !important; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .auth-slider-overlay,
+    #patientAuthSlider #loginPage,
+    #patientAuthSlider #registerPage,
+    .staff-admin-auth-slider .auth-slider-overlay,
+    .staff-admin-auth-slider #staffLoginPage,
+    .staff-admin-auth-slider #adminLoginPage,
+    .auth-slider-toggle,
+    .auth-slider-message { transition-duration: .01ms !important; animation-duration: .01ms !important; }
+  }
+  #splashStatusBar {
+    display: grid;
+    grid-template-columns: minmax(0, 1fr) auto auto;
+    gap: 12px;
+    align-items: center;
+  }
+  #splashStatusBar .splash-security-label { text-align: right; white-space: nowrap; }
+  #epSettings.ep-splash-settings {
+    position: static;
+    top: auto;
+    right: auto;
+    z-index: 2;
+    width: auto;
+    flex: 0 0 auto;
+    font: 600 12px/1 'Inter', sans-serif;
+  }
+  #epSettings.ep-splash-settings #epSettingsToggle { display: none !important; }
+  #epSettings.ep-splash-settings #epSettingsPanel {
+    position: static;
+    display: flex !important;
+    min-width: 0;
+    margin: 0;
+    padding: 0;
+    flex-direction: row;
+    align-items: center;
+    border: 0;
+    background: transparent;
+    box-shadow: none;
+  }
+  #epSettings.ep-splash-settings #epSettingsPanel button:not(#epThemeBtn) { display: none !important; }
+  #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn {
+    display: inline-flex;
+    width: auto;
+    min-height: 34px;
+    align-items: center;
+    justify-content: center;
+    padding: 0 12px;
+    border: 1px solid rgba(36, 91, 53, .2);
+    border-radius: 999px;
+    background: rgba(255,255,255,.52);
+    color: #245b35;
+    box-shadow: 0 5px 16px rgba(36,91,53,.08);
+    font: 700 10px/1 'Inter', sans-serif;
+    white-space: nowrap;
+    backdrop-filter: blur(16px);
+    -webkit-backdrop-filter: blur(16px);
+  }
+  #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn:hover,
+  #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn:focus-visible {
+    border-color: rgba(36,91,53,.4);
+    background: rgba(255,255,255,.78);
+    outline: 2px solid rgba(36,91,53,.18);
+    outline-offset: 2px;
+  }
+  #splashScreen > .splash-agreement-card {
+    border: 1px solid rgba(255,255,255,.72) !important;
+    background: rgba(255,255,255,.58) !important;
+    box-shadow: 0 24px 64px rgba(27,74,54,.14), inset 0 1px 0 rgba(255,255,255,.78) !important;
+    -webkit-backdrop-filter: blur(26px) saturate(145%) !important;
+    backdrop-filter: blur(26px) saturate(145%) !important;
+  }
+  #splashScreen #splashAgreementPreview {
+    border-color: rgba(255,255,255,.72) !important;
+    background: rgba(255,255,255,.4) !important;
+    color: #536b5c !important;
+  }
+  #splashScreen #splashAgreementPhotoImg {
+    border-color: rgba(255,255,255,.8) !important;
+    background: rgba(255,255,255,.72) !important;
+    box-shadow: 0 5px 18px rgba(36,91,53,.08);
+  }
+  #splashScreen #enterAppBtn {
+    min-height: 48px;
+    border: 1px solid rgba(255,255,255,.44) !important;
+    background: linear-gradient(110deg, #16834b, #22a653) !important;
+    color: #fff !important;
+    -webkit-text-fill-color: #fff !important;
+    box-shadow: 0 10px 24px rgba(22,131,75,.22) !important;
+  }
+  #splashScreen #enterAppBtn:hover { filter: brightness(1.05); }
+  html.ep-dark #splashScreen {
+    background:
+      radial-gradient(ellipse at 50% 16%, rgba(32,171,184,.16), transparent 42%),
+      radial-gradient(ellipse at 4% 88%, rgba(36,116,205,.12), transparent 34%),
+      radial-gradient(ellipse at 96% 45%, rgba(30,166,163,.1), transparent 28%),
+      linear-gradient(140deg, #101e17 0%, #14211e 52%, #14231c 100%) !important;
+  }
+  html.ep-dark #splashScreen > .splash-agreement-card {
+    border-color: rgba(190,224,202,.2) !important;
+    background: rgba(20,37,28,.62) !important;
+    box-shadow: 0 24px 64px rgba(0,0,0,.3), inset 0 1px 0 rgba(255,255,255,.08) !important;
+  }
+  html.ep-dark #splashScreen #splashAgreementPreview {
+    border-color: rgba(190,224,202,.2) !important;
+    background: rgba(10,24,16,.48) !important;
+    color: #c2d7c7 !important;
+    -webkit-text-fill-color: #c2d7c7 !important;
+  }
+  html.ep-dark #splashScreen > .splash-agreement-card :is(span,div,p) {
+    color: #d4e5d7 !important;
+    -webkit-text-fill-color: #d4e5d7 !important;
+  }
+  html.ep-dark #splashScreen > .splash-agreement-card :is(.text-cyan-200,.text-cyan-300,.text-teal-300) {
+    color: #b7e9c1 !important;
+    -webkit-text-fill-color: #b7e9c1 !important;
+  }
+  html.ep-dark #splashScreen > .splash-agreement-card .text-slate-400 {
+    color: #b6c8bc !important;
+    -webkit-text-fill-color: #b6c8bc !important;
+  }
+  html.ep-dark #splashScreen #splashStatusBar,
+  html.ep-dark #splashScreen #splashStatusBar :is(div,span) {
+    color: #a8e7ea !important;
+    -webkit-text-fill-color: #a8e7ea !important;
+  }
+  html.ep-dark #splashScreen .text-cyan-300\/80 {
+    color: #a8e7ea !important;
+    -webkit-text-fill-color: #a8e7ea !important;
+  }
+  html.ep-dark #splashScreen h1.text-transparent {
+    background-image: linear-gradient(90deg, #b8edc4, #68d891, #b8edc4) !important;
+    color: transparent !important;
+    -webkit-text-fill-color: transparent !important;
+  }
+  html.ep-dark #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn {
+    border-color: rgba(158,218,172,.3) !important;
+    background: rgba(20,43,29,.62) !important;
+    color: #d3f0da !important;
+    box-shadow: 0 5px 16px rgba(0,0,0,.16) !important;
+  }
+  html.ep-dark #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn:hover,
+  html.ep-dark #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn:focus-visible {
+    border-color: rgba(158,218,172,.5) !important;
+    background: rgba(32,66,43,.78) !important;
+  }
+  @media (max-width: 380px) {
+    #splashStatusBar { gap: 8px; }
+    #splashStatusBar .splash-security-label { display: none; }
+    #epSettings.ep-splash-settings #epSettingsPanel #epThemeBtn { min-height: 32px; padding: 0 9px; font-size: 9px; }
+  }
+</style>
+
+<script>
+(function initializePatientAuthSlider() {
+  const slider = document.getElementById('patientAuthSlider');
+  const panels = slider?.querySelector('.auth-slider-forms');
+  const loginPage = document.getElementById('loginPage');
+  const registerPage = document.getElementById('registerPage');
+  if (!slider || !panels || !loginPage || !registerPage) {
+    console.error('Patient authentication slider could not initialize: required markup is missing.');
+    return;
+  }
+  panels.append(loginPage, registerPage);
+})();
+
+(function initializeStaffAdminAuthSlider() {
+  const slider = document.getElementById('staffAdminAuthSlider');
+  const panels = slider?.querySelector('.staff-admin-auth-forms');
+  const staffPage = document.getElementById('staffLoginPage');
+  const adminPage = document.getElementById('adminLoginPage');
+  if (!slider || !panels || !staffPage || !adminPage) {
+    console.error('Staff/Admin authentication slider could not initialize: required markup is missing.');
+    return;
+  }
+  panels.append(staffPage, adminPage);
+})();
+</script>
 
 </body>
 </html>

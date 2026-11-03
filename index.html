@@ -4547,6 +4547,68 @@ Review the user agreement before continuing. You can enlarge the document in the
 </div>
 </section>
 
+
+<section class="staff-tab-panel space-y-6" data-staff-panel="patients" aria-label="Staff patient management" hidden>
+  <div class="glass-card p-5 rounded-2xl space-y-4">
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h2 class="staff-panel-heading"><i class="fa-solid fa-hospital-user mr-1" aria-hidden="true"></i> Patient Management</h2>
+        <p class="text-sm text-slate-500 mt-1">Find a patient and update the permitted patient record fields.</p>
+      </div>
+      <button type="button" class="staff-secondary-action" onclick="renderStaffPatients()">Refresh Patients <i class="fa-solid fa-rotate" aria-hidden="true"></i></button>
+    </div>
+    <label class="block text-xs text-slate-400" for="staffPatientSearch">Search patients by name, ID, email, status, or guardian contact</label>
+    <input id="staffPatientSearch" type="search" class="input-box w-full p-3 rounded-xl text-sm" placeholder="Search patient records..." oninput="renderStaffPatients()">
+    <p id="staffPatientManagementStatus" class="text-xs text-slate-400" role="status" aria-live="polite"></p>
+    <div id="staffPatientManagementList" class="staff-patient-list space-y-3">
+      <p class="staff-patient-empty">Open Patient Management to load patient records.</p>
+    </div>
+  </div>
+
+  <div id="staffPatientEditModal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="staffPatientEditTitle" aria-hidden="true">
+    <div class="glass-card p-5 rounded-2xl w-full max-w-lg space-y-3 max-h-[90vh] overflow-y-auto">
+      <div class="flex items-center justify-between gap-3">
+        <h2 id="staffPatientEditTitle" class="text-base font-tech font-bold text-cyan-300">Edit Patient Record</h2>
+        <button type="button" class="staff-secondary-action" onclick="closeStaffPatientEditor()" aria-label="Close patient editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <p class="text-xs text-slate-400">Patient: <strong id="staffPatientEditName">Patient</strong></p>
+      <input type="hidden" id="staffPatientEditId">
+      <label class="block text-xs text-slate-400">Health Status
+        <select id="staffPatientEditStatus" class="input-box w-full p-2 mt-1 rounded-xl text-xs">
+          <option value="Green">Green</option><option value="Yellow">Yellow</option><option value="Red">Red</option>
+        </select>
+      </label>
+      <label class="block text-xs text-slate-400">Birthday / Date of Birth
+        <input type="date" id="staffPatientEditBirthDate" class="input-box w-full p-2 mt-1 rounded-xl text-xs">
+      </label>
+      <div>
+        <label class="block text-xs text-slate-400" for="staffPatientEditLabText">Add Laboratory Result (Text Notes)</label>
+        <textarea id="staffPatientEditLabText" maxlength="4000" class="input-box w-full p-2 mt-1 rounded-xl text-xs h-20" placeholder="Laboratory analysis notes..."></textarea>
+      </div>
+      <label class="block text-xs text-slate-400">Attach Lab Result Photo (max 2 MB)
+        <input type="file" id="staffPatientEditLabPhoto" accept="image/*" class="block w-full mt-1 text-xs text-slate-300">
+      </label>
+      <div>
+        <p class="block text-xs text-slate-400 mb-2">Existing Laboratory Results</p>
+        <div id="staffPatientExistingLabs" class="space-y-2"></div>
+      </div>
+      <label class="block text-xs text-slate-400">Prescription & Medication Reminder
+        <input type="text" id="staffPatientEditPrescription" maxlength="500" class="input-box w-full p-2 mt-1 rounded-xl text-xs" placeholder="Medication and dosage as prescribed">
+      </label>
+      <label class="block text-xs text-slate-400">Doctor's Notes & Next Steps
+        <textarea id="staffPatientEditDoctorNote" maxlength="4000" class="input-box w-full p-2 mt-1 rounded-xl text-xs h-20" placeholder="Doctor's instructions..."></textarea>
+      </label>
+      <label class="block text-xs text-slate-400">Guardian Emergency Contact Number
+        <input type="text" id="staffPatientEditGuardianNum" maxlength="40" class="input-box w-full p-2 mt-1 rounded-xl text-xs" placeholder="Guardian contact number">
+      </label>
+      <div class="flex gap-2 pt-2">
+        <button id="staffPatientSaveButton" type="button" onclick="saveStaffPatientEdit()" class="staff-primary-action flex-1">Save Changes</button>
+        <button type="button" onclick="closeStaffPatientEditor()" class="staff-secondary-action">Cancel</button>
+      </div>
+    </div>
+  </div>
+</section>
+
 <section class="staff-tab-panel space-y-6" data-staff-panel="appointments" aria-label="Staff appointments" hidden>
 <section id="staffMedicationWorkflow" class="glass-card p-5 rounded-2xl space-y-4" hidden>
   <div>
@@ -4862,6 +4924,11 @@ Review the user agreement before continuing. You can enlarge the document in the
   <button type="button" data-staff-destination="dashboard" aria-current="page" onclick="staffNavigateTo('dashboard')">
     <i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span>
   </button>
+
+  <button type="button" data-staff-destination="patients" onclick="staffNavigateTo('patients')">
+    <i class="fa-solid fa-hospital-user" aria-hidden="true"></i><span>Patients</span>
+  </button>
+
   <button type="button" data-staff-destination="appointments" onclick="staffNavigateTo('appointments')">
     <i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Appointments</span>
   </button>
@@ -7583,6 +7650,27 @@ function printPatientDigitalID() {
       </div>
     </article>
   </main>
+
+<style id="staff-patient-management-styles">
+  #staffApp .staff-patient-card { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px; border:1px solid rgba(45,224,208,.22); border-radius:14px; background:rgba(3,25,29,.66); }
+  #staffApp .staff-patient-card-copy { min-width:0; }
+  #staffApp .staff-patient-card-copy strong { display:block; color:#e6fffb; font-size:14px; overflow-wrap:anywhere; }
+  #staffApp .staff-patient-card-copy p { color:#9bbab7; font-size:11px; margin-top:3px; overflow-wrap:anywhere; }
+  #staffApp .staff-patient-card-actions { display:flex; align-items:flex-end; flex-direction:column; gap:8px; flex-shrink:0; }
+  #staffApp .staff-patient-status { font-size:10px; font-weight:700; padding:3px 8px; border-radius:999px; }
+  #staffApp .staff-patient-status.status-green { color:#bbf7d0; background:rgba(22,163,74,.2); }
+  #staffApp .staff-patient-status.status-yellow { color:#fde68a; background:rgba(217,119,6,.2); }
+  #staffApp .staff-patient-status.status-red { color:#fecaca; background:rgba(220,38,38,.2); }
+  #staffApp .staff-patient-empty { color:#9bbab7; font-size:12px; padding:10px; }
+  #staffApp .staff-patient-error { color:#fecaca; font-size:12px; padding:10px; }
+  #staffApp .staff-patient-lab-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px; border:1px solid rgba(45,224,208,.18); border-radius:10px; color:#c8e5e1; font-size:11px; }
+  #staffApp .staff-patient-lab-row span { min-width:0; overflow-wrap:anywhere; }
+  #staffApp .staff-patient-remove-lab { flex-shrink:0; border:1px solid rgba(248,113,113,.35); border-radius:8px; padding:5px 8px; color:#fecaca; font-size:10px; }
+  #staffApp #staffPatientManagementStatus[data-state="error"] { color:#fecaca; }
+  @media(max-width:560px) { #staffApp .staff-patient-card { align-items:flex-start; flex-direction:column; } #staffApp .staff-patient-card-actions { align-items:center; flex-direction:row; } }
+</style>
+
+<script src="./staff-patient-management.js"></script>
 </body>
 </html>`;
   let preview = document.getElementById('patientDigitalIDPreview');

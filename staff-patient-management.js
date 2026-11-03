@@ -167,7 +167,8 @@
       byId('staffPatientEditName').textContent = patient.full_name || 'Patient';
       byId('staffPatientEditStatus').value = patient.status || 'Green';
       byId('staffPatientEditBirthDate').value = patient.birth_date || '';
-      byId('staffPatientEditBirthDate').max = new Date().toISOString().slice(0, 10);
+      const today = new Date();
+      byId('staffPatientEditBirthDate').max = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, '0'), String(today.getDate()).padStart(2, '0')].join('-');
       byId('staffPatientEditPrescription').value = patient.prescriptions?.[0]?.medicine || '';
       byId('staffPatientEditDoctorNote').value = patient.doctor_notes || '';
       byId('staffPatientEditGuardianNum').value = patient.guardian_num || '';

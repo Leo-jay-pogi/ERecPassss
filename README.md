@@ -56,3 +56,9 @@ Supabase's leaked-password protection should also be enabled in Authentication s
 
 
 <!-- ERecPass deployment refresh: 2026-10-07T16:45:35.740Z -->
+
+## Staff patient management
+- The Staff Dashboard includes a Patients section for searching patient records and editing health status, date of birth, laboratory results, prescriptions, doctor notes, and guardian emergency contact details.
+- Staff edits use the role-checked `staff_update_patient_record` RPC; it requires an active Staff profile and active Staff database row and does not grant direct table-wide update permissions.
+- Apply `supabase/migrations/20261103000100_staff_patient_management.sql` to the active Supabase project before using the new Staff editor.
+- Run the focused browser-script validation tests with `node --test tests/staff-patient-management.test.cjs`.

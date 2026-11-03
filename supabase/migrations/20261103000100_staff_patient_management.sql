@@ -37,7 +37,7 @@ begin
   if p_patient_id is null then
     raise exception 'Patient ID is required.' using errcode = '22023';
   end if;
-  if p_status not in ('Green', 'Yellow', 'Red') then
+  if p_status is null or p_status not in ('Green', 'Yellow', 'Red') then
     raise exception 'Invalid patient health status.' using errcode = '22023';
   end if;
   if p_birth_date is not null and p_birth_date > current_date then

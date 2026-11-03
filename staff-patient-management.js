@@ -6,6 +6,8 @@
     '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
   })[ch]);
 
+  const isClinicalStaff = accountType => ['doctor', 'nurse'].includes(String(accountType || '').toLowerCase());
+
   function validateEdit(values) {
     const status = String(values.status || '');
     if (!['Green', 'Yellow', 'Red'].includes(status)) return 'Choose a valid patient health status.';
@@ -51,6 +53,14 @@
     if (profile.error) throw profile.error;
     if (String(profile.data?.role || '').toLowerCase() !== 'staff' || profile.data?.active !== true) {
       throw new Error('An active Staff account is required to manage patients.');
+    }
+    const staff = await client.from('staff')
+      .select('account_type,active')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (staff.error) throw staff.error;
+    if (staff.data?.active !== true || !isClinicalStaff(staff.data?.account_type)) {
+      throw new Error('Patient-record management is available only to active Doctors and Nurses.');
     }
     return client;
   }
@@ -313,7 +323,7 @@
     }
   }
 
-  window.ERecPassStaffPatients = { escapeHTML, validateEdit };
+  window.ERecPassStaffPatients = { escapeHTML, isClinicalStaff, validateEdit };
   window.renderStaffPatients = renderStaffPatients;
   window.openStaffPatientEditor = openPatientEditor;
   window.saveStaffPatientEdit = savePatientEdit;

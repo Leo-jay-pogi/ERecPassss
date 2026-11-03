@@ -16,7 +16,7 @@
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 
-<link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Bodoni+Moda:wght@600;700&family=Orbitron:wght@500;700;900&family=Rajdhani:wght@400;500;600;700&family=Inter:wght@400;500;600;700;800&family=Poppins:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700;800&family=Montserrat:wght@500;600;700;800;900&display=swap" rel="stylesheet">
 
 <!-- Font Awesome Icons -->
 
@@ -159,6 +159,283 @@ text-shadow: 0 0 10px rgba(255, 42, 85, 0.8);
 
 50% { box-shadow: 0 0 30px rgba(0, 240, 255, 0.8), inset 0 0 20px rgba(0, 240, 255, 0.4); }
 
+}
+
+#adminLoginPage {
+  background: #FAF7F5 !important;
+  font-family: 'Poppins', 'Segoe UI', sans-serif;
+}
+
+#adminLoginPage * {
+  font-family: inherit;
+}
+
+#adminLoginPage .auth-card {
+  width: min(100%, 560px);
+  max-width: 560px;
+  background: rgba(255, 255, 255, 0.72) !important;
+  border: 1.5px solid #B8848E !important;
+  border-radius: 26px !important;
+  box-shadow: none !important;
+  padding: 1.4rem 1.4rem 1.1rem !important;
+}
+
+#adminLoginPage .logo {
+  margin-bottom: 1.25rem;
+}
+
+#adminLoginPage .logo > div:first-child {
+  width: 2.7rem;
+  height: 2.7rem;
+  border-radius: 0.8rem;
+  background: #F4E5E8 !important;
+  border: 1px solid #B8848E !important;
+  color: #7A2E3B !important;
+  box-shadow: inset 0 0 0 1px rgba(255, 255, 255, 0.45);
+}
+
+#adminLoginPage .logo h1 {
+  color: #7A2E3B !important;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  font-size: clamp(2.2rem, 4vw, 2.9rem) !important;
+  font-weight: 700 !important;
+  line-height: 1.08;
+  letter-spacing: -0.05em;
+  text-shadow: none !important;
+}
+
+#adminLoginPage .logo p {
+  color: #3D262B !important;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+}
+
+#adminLoginPage form {
+  margin-top: 0.5rem;
+}
+
+#adminLoginPage label {
+  display: block;
+  color: #3D262B !important;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  font-size: 0.72rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.09em;
+  margin-bottom: 0.65rem !important;
+}
+
+#adminLoginPage .input-box {
+  background: rgba(244, 229, 232, 0.75) !important;
+  border: 1px solid #B8848E !important;
+  border-radius: 0.85rem !important;
+  min-height: 3rem;
+  padding: 0.8rem 0.85rem !important;
+  box-shadow: inset 0 0 0 1px rgba(255,255,255,0.15);
+}
+
+#adminLoginPage .input-box i,
+#adminLoginPage .logo > div:first-child i {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  visibility: visible !important;
+  opacity: 1 !important;
+  color: #7A2E3B !important;
+  line-height: 1 !important;
+}
+
+#adminLoginPage i.fa-solid {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  font-style: normal !important;
+}
+
+#adminLoginPage i.fa-regular {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 400 !important;
+  font-style: normal !important;
+}
+
+#adminLoginPage .input-box i {
+  width: 1.25rem;
+  min-width: 1.25rem;
+  text-align: center;
+  font-size: 0.9rem;
+}
+
+#adminLoginPage .logo > div:first-child i {
+  font-size: 1.15rem;
+}
+
+#adminLoginPage .admin-password-icon,
+#adminLoginPage .admin-email-icon {
+  display: block;
+  width: 1rem;
+  height: 1rem;
+  min-width: 1rem;
+  color: #7A2E3B;
+  opacity: 0.88;
+}
+
+#adminLoginPage .input-box input {
+  color: #3D262B !important;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  font-size: 0.96rem !important;
+  font-weight: 500;
+  background: transparent !important;
+}
+
+#adminLoginPage .input-box input::placeholder {
+  color: rgba(61, 38, 43, 0.72);
+}
+
+#adminLoginPage .input-box button {
+  background: transparent !important;
+  border: 0 !important;
+  color: #B8848E !important;
+  padding: 0 !important;
+}
+
+#adminLoginPage .password-toggle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 1.25rem;
+  height: 1.25rem;
+  color: #7A2E3B !important;
+  opacity: 0.9;
+}
+
+#adminLoginPage .erecpass-eye-btn {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 0 0 1.25rem !important;
+  width: 1.25rem !important;
+  min-width: 1.25rem !important;
+  height: 1.5rem !important;
+  padding: 0 !important;
+  border: 0 !important;
+  background: transparent !important;
+  color: #7A2E3B !important;
+  cursor: pointer !important;
+}
+
+#adminLoginPage .erecpass-eye-btn i {
+  font-family: "Font Awesome 6 Free" !important;
+  font-weight: 900 !important;
+  color: inherit !important;
+  -webkit-text-fill-color: currentColor !important;
+}
+
+#adminLoginPage .admin-login-btn {
+  background: linear-gradient(180deg, #7A2E3B 0%, #6A2233 100%) !important;
+  border: 1px solid rgba(122, 46, 59, 0.9) !important;
+  box-shadow: none !important;
+  color: #F7BEBF !important;
+  border-radius: 0.9rem !important;
+  padding: 0.9rem 1rem !important;
+  margin-top: 0.1rem;
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+  font-size: 0.8rem !important;
+  font-weight: 700 !important;
+  letter-spacing: 0.12em !important;
+  cursor: pointer !important;
+  transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(107, 35, 50, 0.12) !important;
+}
+
+#adminLoginPage .admin-login-btn:hover {
+  opacity: 1;
+  background: #551B27 !important;
+  border-color: #551B27 !important;
+  box-shadow: 0 8px 20px rgba(107, 35, 50, 0.22) !important;
+  transform: translateY(-2px);
+}
+
+#adminLoginPage .admin-login-btn:active {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 10px rgba(107, 35, 50, 0.1) !important;
+}
+
+#adminLoginPage .admin-login-btn:focus-visible {
+  outline: 3px solid rgba(107, 35, 50, 0.28);
+  outline-offset: 3px;
+}
+
+#adminLoginPage .back-link {
+  color: #3D262B !important;
+  text-decoration: none;
+  font-size: 0.82rem !important;
+  margin-top: 0.9rem;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 0.35rem;
+}
+
+#adminLoginPage .back-link:hover {
+  color: #7A2E3B !important;
+}
+
+#adminApp .flex.flex-wrap.gap-2.border-b,
+#adminApp .flex.flex-wrap.gap-2.border-b button,
+#adminApp .flex.flex-wrap.gap-2.border-b * {
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+}
+
+#adminApp .font-tech {
+  font-family: 'Poppins', 'Segoe UI', sans-serif !important;
+}
+
+#adminApp .flex.flex-wrap.gap-2.border-b {
+  padding: 0.35rem 0.4rem 0.25rem;
+  border-bottom: 1px solid rgba(184, 132, 142, 0.45) !important;
+  background: #FAF7F5;
+  border-radius: 18px 18px 0 0;
+}
+
+#adminApp .flex.flex-wrap.gap-2.border-b button {
+  font-family: 'Poppins', sans-serif !important;
+  font-size: 0.9rem !important;
+  font-weight: 500 !important;
+  padding: 20px 24px !important;
+  border-radius: 16px !important;
+  border: 1.5px solid #D8C2C8 !important;
+  background-color: #FFFFFF !important;
+  color: #6B2332 !important;
+  cursor: pointer !important;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  box-shadow: 0 4px 12px rgba(107, 35, 50, 0.04) !important;
+}
+
+#adminApp .flex.flex-wrap.gap-2.border-b button:hover {
+  background-color: #FDF0F2 !important;
+  color: #6B2332 !important;
+  border-color: #6B2332 !important;
+  transform: translateY(-4px) !important;
+  box-shadow: 0 10px 24px rgba(107, 35, 50, 0.15) !important;
+}
+
+#adminApp .flex.flex-wrap.gap-2.border-b button.admin-function-active,
+#adminApp .flex.flex-wrap.gap-2.border-b button[aria-pressed="true"] {
+  background-color: #6B2332 !important;
+  color: #FFFFFF !important;
+  -webkit-text-fill-color: #FFFFFF !important;
+  border-color: #6B2332 !important;
+  font-weight: 700 !important;
+  transform: translateY(-1px) !important;
+  box-shadow: 0 6px 16px rgba(107, 35, 50, 0.25) !important;
+}
+
+#adminApp .flex.flex-wrap.gap-2.border-b button.admin-function-active:hover,
+#adminApp .flex.flex-wrap.gap-2.border-b button[aria-pressed="true"]:hover {
+  background-color: #FDF0F2 !important;
+  color: #6B2332 !important;
+  -webkit-text-fill-color: #6B2332 !important;
+  border-color: #6B2332 !important;
 }
 
 .animate-pulse-glow {
@@ -2253,6 +2530,52 @@ html.ep-dark #staffApp [class*="text-slate-"], html.ep-dark #adminApp [class*="t
 html.ep-dark #staffApp [class*="text-gray-"], html.ep-dark #adminApp [class*="text-gray-"] {
  color:#edf4fb!important; -webkit-text-fill-color:#edf4fb!important;
 }
+#adminApp #adminEmergencyAlertsList article {
+ background:#fff7f7!important; color:#16324f!important; border-color:#e6aeb5!important;
+}
+#adminApp #adminEmergencyAlertsList article strong {
+ color:#16324f!important; -webkit-text-fill-color:#16324f!important;
+}
+#adminApp #adminEmergencyAlertsList article p {
+ color:#536579!important; -webkit-text-fill-color:#536579!important;
+}
+#adminApp #adminEmergencyAlertsList article span.text-rose-300 {
+ color:#a7192a!important; -webkit-text-fill-color:#a7192a!important;
+}
+#adminApp #adminEmergencyAlertsList article a {
+ color:#075e9b!important; -webkit-text-fill-color:#075e9b!important;
+}
+#adminApp #adminEmergencyAlertsList article button[class*="text-emerald-"] {
+ background:#e8f7ef!important; border-color:#86d4aa!important;
+ color:#17653f!important; -webkit-text-fill-color:#17653f!important;
+}
+#adminApp #adminEmergencyAlertsList article button[class*="text-rose-"] {
+ background:#fff1f2!important; border-color:#fecdd3!important;
+ color:#a7192a!important; -webkit-text-fill-color:#a7192a!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article {
+ background:#202d3b!important; color:#edf4fb!important; border-color:#59414a!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article strong {
+ color:#edf4fb!important; -webkit-text-fill-color:#edf4fb!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article p {
+ color:#b5c3d0!important; -webkit-text-fill-color:#b5c3d0!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article span.text-rose-300 {
+ color:#fda4af!important; -webkit-text-fill-color:#fda4af!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article a {
+ color:#67e8f9!important; -webkit-text-fill-color:#67e8f9!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article button[class*="text-emerald-"] {
+ background:#12392e!important; border-color:#2b765a!important;
+ color:#a7f3d0!important; -webkit-text-fill-color:#a7f3d0!important;
+}
+html.ep-dark #adminApp #adminEmergencyAlertsList article button[class*="text-rose-"] {
+ background:#48232b!important; border-color:#87414d!important;
+ color:#ffd8dd!important; -webkit-text-fill-color:#ffd8dd!important;
+}
 </style>
 </head>
 
@@ -2586,17 +2909,17 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div class="logo flex items-center gap-3 mb-4">
 
-<div class="w-10 h-10 rounded-2xl bg-rose-950 border border-rose-400/60 flex items-center justify-center text-rose-400">
+<div class="w-10 h-10 rounded-2xl bg-rose-950 border border-rose-400/60 flex items-center justify-center text-rose-400" style="background: rgba(255, 214, 220, 0.45); border: 1px solid rgba(176, 62, 76, 0.6); color: #b13d49; box-shadow: inset 0 0 0 1px rgba(255,255,255,0.5); width: 2.6rem; height: 2.6rem; min-width: 2.6rem;">
 
-<i class="fa-solid fa-user-gear text-xl"></i>
+<i class="fa-solid fa-user-shield" style="display:inline-flex; align-items:center; justify-content:center; font-size:1.25rem; line-height:1; transform:translateY(-1px); color:#b13d49;"></i>
 
 </div>
 
 <div>
 
-<h1 class="text-xl font-bold font-tech text-rose-300">Admin Portal</h1>
+<h1 class="text-xl font-bold font-tech">Admin Portal</h1>
 
-<p class="text-[10px] tracking-wider text-slate-400 font-tech">System Administration</p>
+<p class="text-[10px] tracking-wider font-tech">System Administration</p>
 
 </div>
 
@@ -2606,13 +2929,16 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div>
 
-<label class="block text-xs font-tech font-bold text-rose-300 uppercase mb-1">Admin Email / Username</label>
+<label class="block text-xs font-tech font-bold uppercase mb-1">ADMIN EMAIL / USERNAME</label>
 
 <div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
 
-<i class="fa-solid fa-user-shield text-rose-400 text-xs"></i>
+<svg class="admin-email-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+  <rect x="2.75" y="4.25" width="14.5" height="11.5" rx="2.25" stroke="currentColor" stroke-width="1.5"/>
+  <path d="m3.5 5.25 6.5 5.25 6.5-5.25" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/>
+</svg>
 
-<input type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" id="adminLoginUser" placeholder="admin@hospital.com or admin2@gmail.com" required class="w-full bg-transparent outline-none text-xs">
+<input type="email" inputmode="email" autocomplete="username" autocapitalize="none" spellcheck="false" id="adminLoginUser" placeholder="admin2@gmail.com" required class="w-full bg-transparent outline-none text-xs">
 
 </div>
 
@@ -2620,23 +2946,31 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div>
 
-<label class="block text-xs font-tech font-bold text-rose-300 uppercase mb-1">Admin Password</label>
+<label class="block text-xs font-tech font-bold uppercase mb-1">ADMIN PASSWORD</label>
 
 <div class="input-box flex items-center gap-3 px-3.5 py-2.5 rounded-xl">
 
-<i class="fa-solid fa-lock text-rose-400 text-xs"></i>
+<svg class="admin-password-icon" viewBox="0 0 20 20" fill="none" aria-hidden="true">
+  <rect x="4.25" y="8.5" width="11.5" height="8.25" rx="2" stroke="currentColor" stroke-width="1.5"/>
+  <path d="M6.75 8.5V6.25a3.25 3.25 0 0 1 6.5 0V8.5" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/>
+  <circle cx="10" cy="12.5" r=".85" fill="currentColor"/>
+</svg>
 
-<input type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" id="adminLoginPassword" placeholder="Enter password" required class="w-full bg-transparent outline-none text-xs">
+<input type="password" autocomplete="current-password" autocapitalize="none" autocorrect="off" spellcheck="false" id="adminLoginPassword" placeholder="••••••••" required class="w-full bg-transparent outline-none text-xs" aria-label="Admin password">
 
 </div>
 
 </div>
 
-<button type="submit" class="w-full py-3 rounded-xl font-tech font-bold text-xs tracking-wider bg-gradient-to-r from-rose-500 to-amber-500 text-slate-950 hover:opacity-90 transition-all">ADMIN LOGIN</button>
+<button type="submit" class="admin-login-btn w-full py-3 rounded-xl font-tech font-bold text-xs tracking-wider">ADMIN LOGIN</button>
 
 </form>
 
-<button onclick="showLogin()" class="w-full mt-3 py-2 text-xs text-slate-400 hover:text-white font-tech">← Back to Patient Login</button>
+<div class="text-center">
+
+<button onclick="showLogin()" class="back-link w-full mt-3 py-2 font-tech">← Back to Patient Login</button>
+
+</div>
 
 </div>
 
@@ -4573,27 +4907,27 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div class="grid grid-cols-1 sm:grid-cols-3 gap-4">
 
-<div class="glass-card p-4 rounded-2xl border-cyan-500/30">
+<div class="glass-card metric-card">
 
-<span class="text-xs font-tech text-cyan-300">Total Patients</span>
+<span class="metric-label">Total Patients</span>
 
-<h2 id="adminTotalPatients" class="text-2xl font-bold font-tech text-white mt-1">0</h2>
-
-</div>
-
-<div class="glass-card p-4 rounded-2xl border-amber-500/30">
-
-<span class="text-xs font-tech text-amber-300">Pending Results</span>
-
-<h2 id="adminPendingCount" class="text-2xl font-bold font-tech text-white mt-1">0</h2>
+<h2 id="adminTotalPatients" class="metric-value mt-1">0</h2>
 
 </div>
 
-<div class="glass-card p-4 rounded-2xl border-rose-500/30">
+<div class="glass-card metric-card">
 
-<span class="text-xs font-tech text-rose-300">High Risk Count</span>
+<span class="metric-label">Pending Results</span>
 
-<h2 id="adminHighRiskCount" class="text-2xl font-bold font-tech text-white mt-1">0</h2>
+<h2 id="adminPendingCount" class="metric-value mt-1">0</h2>
+
+</div>
+
+<div class="glass-card metric-card">
+
+<span class="metric-label">High Risk Count</span>
+
+<h2 id="adminHighRiskCount" class="metric-value mt-1">0</h2>
 
 </div>
 
@@ -4620,26 +4954,26 @@ Review the user agreement before continuing. You can enlarge the document in the
 <button type="button" class="admin-function-scroll-arrow admin-function-scroll-left" aria-label="Scroll functions left">‹</button>
 <div class="admin-function-nav flex flex-wrap gap-2 border-b border-cyan-500/20 pb-3 font-tech text-xs">
 
-<button onclick="switchAdminTab('patients')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-400/40 font-bold admin-function-active" aria-pressed="true"><i class="fa-solid fa-hospital-user" aria-hidden="true"></i><span>Patient Management</span></button>
+<button id="adminDashboardPatientsBtn" type="button" onclick="switchAdminTab('patients')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-400/40 font-bold admin-function-active" aria-pressed="true"><i class="fa-solid fa-hospital-user" aria-hidden="true"></i><span>Patient Management</span></button>
 
-<button onclick="switchAdminTab('staff')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-user-doctor" aria-hidden="true"></i><span>Staff Accounts & Tasks</span></button>
+<button id="adminDashboardStaffBtn" type="button" onclick="switchAdminTab('staff')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-user-doctor" aria-hidden="true"></i><span>Staff Accounts & Tasks</span></button>
 
-<button onclick="switchAdminTab('announcements')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i><span>Announcements</span></button>
+<button id="adminDashboardAnnouncementsBtn" type="button" onclick="switchAdminTab('announcements')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-bullhorn" aria-hidden="true"></i><span>Announcements</span></button>
 
-<button onclick="switchAdminTab('agreement')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-file-signature" aria-hidden="true"></i><span>Upload Agreement</span></button>
+<button id="adminDashboardAgreementBtn" type="button" onclick="switchAdminTab('agreement')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-file-signature" aria-hidden="true"></i><span>Upload Agreement</span></button>
 
-<button onclick="switchAdminTab('appointments')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Manage Appointments</span></button>
+<button id="adminDashboardAppointmentsBtn" type="button" onclick="switchAdminTab('appointments')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Manage Appointments</span></button>
 
-<button onclick="switchAdminTab('medications')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-pills" aria-hidden="true"></i><span>Medication Review</span></button>
+<button id="adminDashboardMedicationBtn" type="button" onclick="switchAdminTab('medications')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-pills" aria-hidden="true"></i><span>Medication Review</span></button>
 
-<button onclick="switchAdminTab('backups')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i><span>Backup Data</span></button>
+<button id="adminDashboardBackupBtn" type="button" onclick="switchAdminTab('backups')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-box-archive" aria-hidden="true"></i><span>Backup Data</span></button>
 
-<button onclick="switchAdminTab('chat')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Patient Messages</span></button>
+<button id="adminDashboardChatBtn" type="button" onclick="switchAdminTab('chat')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-comments" aria-hidden="true"></i><span>Patient Messages</span></button>
 
-<button onclick="switchAdminTab('logs')" class="admin-function-tab hidden px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><span>Activity Logs</span></button>
+<button id="adminDashboardLogsBtn" type="button" onclick="switchAdminTab('logs')" class="admin-function-tab hidden px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-clipboard-list" aria-hidden="true"></i><span>Activity Logs</span></button>
 
 
-<button onclick="switchAdminTab('settings')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>System Settings</span></button>
+<button id="adminDashboardSettingsBtn" type="button" onclick="switchAdminTab('settings')" class="admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300"><i class="fa-solid fa-gear" aria-hidden="true"></i><span>System Settings</span></button>
 
 </div>
 <button type="button" class="admin-function-scroll-arrow admin-function-scroll-right" aria-label="Scroll functions right">›</button>
@@ -4674,9 +5008,9 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div id="adminTabStaff" class="admin-tab-content hidden space-y-4">
 
-<div class="glass-card p-5 rounded-2xl max-w-lg space-y-3">
+<div class="glass-card admin-staff-create-card p-5 rounded-2xl max-w-lg space-y-3">
 
-<h2 class="text-sm font-tech text-cyan-300 font-bold uppercase">Create Staff Account</h2>
+<h2 class="admin-staff-title text-sm font-tech text-cyan-300 font-bold uppercase">Create Staff Account</h2>
 
 <div>
 
@@ -4731,11 +5065,11 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 </div>
 
-<button onclick="adminCreateStaffAccount()" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs">Create Staff Account</button>
+<button onclick="adminCreateStaffAccount()" class="admin-staff-submit-btn primary-btn w-full py-2.5 rounded-xl font-tech text-xs">Create Staff Account</button>
 
 </div>
 
-<h2 class="text-sm font-tech text-white font-bold">Current Staff Members</h2>
+<h2 class="admin-staff-section-title text-sm font-tech text-white font-bold">Current Staff Members</h2>
 
 <div id="adminStaffList" class="space-y-2">
 
@@ -4757,9 +5091,9 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div id="adminTabAnnouncements" class="admin-tab-content hidden space-y-4">
 
-<div class="glass-card p-5 rounded-2xl max-w-lg space-y-3">
+<div class="glass-card announcement-card max-w-lg space-y-3">
 
-<h2 class="text-sm font-tech text-cyan-300 font-bold uppercase">Post Hospital Announcement</h2>
+<h2 class="announcement-title">Post Hospital Announcement</h2>
 
 <div>
 
@@ -4777,7 +5111,7 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 </div>
 
-<button onclick="adminPostAnnouncement()" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs">Post Announcement</button>
+<button onclick="adminPostAnnouncement()" class="submit-btn">Post Announcement</button>
 
 </div>
 
@@ -4792,9 +5126,9 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div id="adminTabAgreement" class="admin-tab-content hidden space-y-4">
 
-<div class="glass-card p-5 rounded-2xl max-w-lg space-y-3">
+<div class="glass-card agreement-card max-w-lg space-y-3">
 
-<h2 class="text-sm font-tech text-cyan-300 font-bold uppercase">Update Entrance Agreement Document</h2>
+<h2 class="announcement-title agreement-title">Update Entrance Agreement Document</h2>
 
 <div>
 
@@ -4812,7 +5146,7 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 </div>
 
-<button onclick="adminSaveAgreement()" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs">Save Agreement</button>
+<button onclick="adminSaveAgreement()" class="submit-btn">Save Agreement</button>
 
 </div>
 
@@ -4839,7 +5173,10 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div id="adminTabBackups" class="admin-tab-content hidden space-y-4">
   <div class="glass-card p-4 rounded-xl space-y-2">
-    <h2 class="text-sm font-tech text-white font-bold"><i class="fa-solid fa-box-archive mr-1" aria-hidden="true"></i>Deleted Appointment Backups</h2>
+    <div class="flex flex-wrap items-center justify-between gap-2">
+      <h2 class="text-sm font-tech text-white font-bold"><i class="fa-solid fa-box-archive mr-1" aria-hidden="true"></i>Deleted Appointment Backups</h2>
+      <button type="button" class="staff-secondary-action px-3 py-2 text-xs" onclick="downloadAdminDataBackup()"><i class="fa-solid fa-download mr-1" aria-hidden="true"></i>Download Data Backup</button>
+    </div>
     <p class="text-xs text-slate-400">Deleted appointments are saved here. Restore a backup to return the appointment to the active list.</p>
     <div id="adminAppointmentBackupsStatus" class="text-xs text-slate-400" role="status" aria-live="polite">Loading backups…</div>
     <div id="adminAppointmentBackupsList" class="space-y-2"></div>
@@ -4866,17 +5203,17 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <div id="adminTabChat" class="admin-tab-content hidden grid grid-cols-1 md:grid-cols-3 gap-4">
 
-<div class="glass-card p-3 rounded-2xl h-96 overflow-y-auto space-y-3">
+<div class="glass-card message-card p-3 rounded-2xl h-96 overflow-y-auto space-y-3">
 
 <div>
-<h3 class="text-xs font-tech text-cyan-300 font-bold mb-2">Patient Chats</h3>
+<h3 class="message-title">Patient Chats</h3>
 <div id="adminPatientChatList" class="space-y-1">
 <!-- Patient chat accounts are loaded from Supabase -->
 </div>
 </div>
 
 <div class="border-t border-cyan-500/20 pt-3">
-<h3 class="text-xs font-tech text-rose-300 font-bold mb-2">Staff Chats</h3>
+<h3 class="message-title">Staff Chats</h3>
 <div id="adminStaffChatList" class="space-y-1">
 <!-- Staff chat accounts are loaded from Supabase -->
 </div>
@@ -4884,17 +5221,17 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 </div>
 
-<div class="glass-card p-4 rounded-2xl md:col-span-2 h-96 flex flex-col">
+<div class="glass-card message-card p-4 rounded-2xl md:col-span-2 h-96 flex flex-col">
 
-<div id="adminSelectedChatHeader" class="text-xs font-tech font-bold text-white pb-2 border-b border-cyan-500/20">Select a patient to chat</div>
+<div id="adminSelectedChatHeader" class="message-chat-header pb-2 border-b border-cyan-500/20">Select a patient to chat</div>
 
 <div id="adminChatMessagesBox" class="flex-1 overflow-y-auto my-2 space-y-2 text-xs"></div>
 
-<div class="chat-input p-2 rounded-xl flex items-center gap-2">
+<div class="chat-input message-composer p-2 rounded-xl flex items-center gap-2">
 
 <input type="text" id="adminChatInput" placeholder="Reply to patient..." class="w-full text-xs outline-none bg-transparent">
 
-<button onclick="sendAdminChatMessage()" class="px-3 py-1.5 bg-rose-500 text-slate-950 font-bold rounded-lg text-xs font-tech"><i class="fa-solid fa-paper-plane"></i></button>
+<button onclick="sendAdminChatMessage()" class="message-submit-btn" aria-label="Send message"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
 
 </div>
 
@@ -4930,7 +5267,21 @@ Review the user agreement before continuing. You can enlarge the document in the
     </div>
     <p class="text-[11px] text-slate-500">The selected logo is saved to the shared Supabase settings so other devices can receive it.</p>
   </div>
+  <div class="glass-card p-5 rounded-2xl max-w-lg space-y-3">
+    <h2 class="text-sm font-tech text-rose-500 font-bold uppercase">Emergency Call Number</h2>
+    <p class="text-xs text-slate-400">Admin can edit the Barangay emergency number. 911 remains available.</p>
+    <input id="uipaquibsBarangayNumber" type="tel" placeholder="09XXXXXXXXX"
+      class="input-box w-full p-2 rounded-xl text-xs">
+    <button type="button" onclick="uipaquibsSaveEmergencyNumber()" class="w-full py-2.5 rounded-xl font-tech text-xs bg-rose-500 text-slate-950 font-bold">
+      Save Emergency Number
+    </button>
+  </div>
 </div>
+
+<footer class="footer-bar" aria-label="ERecPass admin dashboard footer">
+  <i class="fa-solid fa-shield-heart" aria-hidden="true"></i>
+  <span>ERecPass Admin Dashboard</span>
+</footer>
 
 </main>
 
@@ -9716,6 +10067,116 @@ async function resetSystemLogo() {
   }
 }
 
+function renderAdminMedicationReview() {
+  const container = document.getElementById('adminMedicationReviewList');
+  if (!container) return;
+  container.replaceChildren();
+
+  let patients;
+  try {
+    patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]');
+  } catch (error) {
+    console.error('[ERecPass] Could not load medication review data.', error);
+    container.textContent = 'Medication records could not be loaded.';
+    return;
+  }
+  if (!Array.isArray(patients)) {
+    container.textContent = 'Medication records could not be loaded.';
+    return;
+  }
+
+  let medicationCount = 0;
+  patients.forEach(patient => {
+    if (!patient || typeof patient !== 'object') return;
+    const prescriptions = Array.isArray(patient.prescriptions) ? patient.prescriptions :
+      Array.isArray(patient.prescriptions_list) ? patient.prescriptions_list : [];
+    if (!prescriptions.length) return;
+
+    const card = document.createElement('section');
+    card.className = 'glass-card p-4 rounded-2xl';
+    const name = document.createElement('h3');
+    name.className = 'text-sm font-bold text-white';
+    name.textContent = patient.fullName || patient.name || 'Patient';
+    card.appendChild(name);
+
+    const list = document.createElement('ul');
+    list.className = 'mt-2 space-y-2';
+    prescriptions.forEach(prescription => {
+      medicationCount += 1;
+      const item = document.createElement('li');
+      item.className = 'rounded-xl border border-rose-200/60 bg-white/70 px-3 py-2 text-xs text-slate-800';
+      if (typeof prescription === 'string') {
+        item.textContent = prescription;
+      } else {
+        const medicine = prescription && (
+          prescription.medicine || prescription.medication_name || prescription.medicationName ||
+          prescription.name || prescription.drug_name || prescription.drugName
+        );
+        const dosage = prescription && (prescription.dosage || prescription.dose);
+        const days = prescription && (prescription.days || prescription.duration);
+        item.textContent = [medicine || 'Medication', dosage, days].filter(Boolean).join(' · ');
+      }
+      list.appendChild(item);
+    });
+    card.appendChild(list);
+    container.appendChild(card);
+  });
+
+  if (!medicationCount) {
+    const empty = document.createElement('div');
+    empty.className = 'glass-card p-4 rounded-2xl text-sm text-slate-500';
+    empty.textContent = 'No medication instructions are currently saved.';
+    container.appendChild(empty);
+  }
+}
+
+function downloadAdminDataBackup() {
+  if (!currentSession || currentSession.role !== 'admin') {
+    alert('Admin access only.');
+    return;
+  }
+  if (!confirm('Download a local backup of patient, staff, and app data? This file may contain sensitive health information. Passwords and the current login session are excluded.')) return;
+
+  const backupKeys = [
+    'PATIENTS', 'STAFF', 'AGREEMENT', 'EMERGENCY_NUMS',
+    'ANNOUNCEMENTS', 'APPOINTMENTS', 'CHATS', 'LOGS'
+  ];
+  const redactCredentials = value => {
+    if (Array.isArray(value)) return value.map(redactCredentials);
+    if (!value || typeof value !== 'object') return value;
+    return Object.keys(value).reduce((result, key) => {
+      if (!/password|token|secret/i.test(key)) result[key] = redactCredentials(value[key]);
+      return result;
+    }, {});
+  };
+
+  try {
+    const data = {};
+    backupKeys.forEach(keyName => {
+      const key = DB_KEYS[keyName];
+      const stored = key ? epStore.getItem(key) : null;
+      if (stored !== null) data[keyName] = redactCredentials(JSON.parse(stored));
+    });
+    const file = new Blob([JSON.stringify({
+      format: 'ERecPass admin backup',
+      createdAt: new Date().toISOString(),
+      credentialsExcluded: true,
+      data
+    }, null, 2)], { type: 'application/json' });
+    const url = URL.createObjectURL(file);
+    const link = document.createElement('a');
+    link.href = url;
+    link.download = `erecpass-backup-${new Date().toISOString().slice(0, 10)}.json`;
+    document.body.appendChild(link);
+    link.click();
+    link.remove();
+    setTimeout(() => URL.revokeObjectURL(url), 1000);
+  } catch (error) {
+    console.error('[ERecPass] Admin data backup failed.', error);
+    alert('Could not create the backup. Check the browser console and try again.');
+  }
+}
+
 function switchAdminTab(tabName) {
 
 document.querySelectorAll('.admin-tab-content').forEach(c => c.classList.add('hidden'));
@@ -9733,6 +10194,11 @@ if (tabName === 'agreement') document.getElementById('adminTabAgreement').classL
 
 if (tabName === 'appointments') document.getElementById('adminTabAppointments').classList.remove('hidden');
 
+if (tabName === 'medications') {
+  document.getElementById('adminTabMedications').classList.remove('hidden');
+  renderAdminMedicationReview();
+}
+
 if (tabName === 'backups') {
   document.getElementById('adminTabBackups').classList.remove('hidden');
   if (typeof renderAdminAppointmentBackups === 'function') renderAdminAppointmentBackups();
@@ -9743,7 +10209,10 @@ if (tabName === 'chat') document.getElementById('adminTabChat').classList.remove
 
 if (tabName === 'logs') document.getElementById('adminTabLogs').classList.remove('hidden');
 
-if (tabName === 'settings') document.getElementById('adminTabSettings').classList.remove('hidden');
+if (tabName === 'settings') {
+  document.getElementById('adminTabSettings').classList.remove('hidden');
+  if (typeof window.uipaquibsLoadSettings === 'function') window.uipaquibsLoadSettings();
+}
 
 }
 
@@ -10724,55 +11193,20 @@ implement the remaining requirements from UIPAQUIBS:
 - Admin Settings tab
 ================================================================ -->
 
-<!-- UIPAQUIBS: Admin Settings UI -->
-<div id="uipaquibsAdminSettingsModal" class="fixed inset-0 z-[60] bg-black/80 hidden flex items-center justify-center p-4">
-<div class="glass-card p-5 rounded-2xl w-full max-w-lg space-y-4 max-h-[90vh] overflow-y-auto">
-<div class="flex items-center justify-between">
-<h2 class="text-base font-tech font-bold text-cyan-300">App Settings</h2>
-<button onclick="uipaquibsCloseSettings()" class="text-slate-400 hover:text-white">✕</button>
-</div>
-
-<div class="p-4 rounded-xl border border-cyan-500/20 bg-slate-950/50 space-y-2">
-<h3 class="text-sm font-tech font-bold text-white">Update Logos</h3>
-<p class="text-xs text-slate-400">Admin only. Upload a new app logo photo.</p>
-<input id="uipaquibsLogoInput" type="file" accept="image/*" class="text-xs text-slate-300 w-full">
-<button onclick="uipaquibsSaveLogo()" class="primary-btn w-full py-2.5 rounded-xl font-tech text-xs">
-Upload Logo Photo
-</button>
-</div>
-
-<div class="p-4 rounded-xl border border-rose-500/20 bg-slate-950/50 space-y-2">
-<h3 class="text-sm font-tech font-bold text-white">Emergency Call Number</h3>
-<p class="text-xs text-slate-400">Admin can edit the Barangay emergency number. 911 remains available.</p>
-<input id="uipaquibsBarangayNumber" type="tel" placeholder="09XXXXXXXXX"
-class="input-box w-full p-2 rounded-xl text-xs">
-<button onclick="uipaquibsSaveEmergencyNumber()" class="w-full py-2.5 rounded-xl font-tech text-xs bg-rose-500 text-slate-950 font-bold">
-Save Emergency Number
-</button>
-</div>
-
-<button onclick="uipaquibsCloseSettings()" class="w-full py-2.5 rounded-xl bg-slate-900 border border-cyan-500/20 text-slate-300 font-tech text-xs">
-Close
-</button>
-</div>
-</div>
-
-<!-- UIPAQUIBS: Admin settings are available from the header gear menu. -->
 <script>
-function uipaquibsOpenSettings() {
-if (!currentSession || currentSession.role !== 'admin') {
-alert('Admin access only.');
-return;
-}
+window.uipaquibsLoadSettings = function() {
 const nums = JSON.parse(epStore.getItem(DB_KEYS.EMERGENCY_NUMS) || '{}');
 const input = document.getElementById('uipaquibsBarangayNumber');
 if (input) input.value = nums.barangay || '';
-document.getElementById('uipaquibsAdminSettingsModal').classList.remove('hidden');
-}
+};
 
-function uipaquibsCloseSettings() {
-document.getElementById('uipaquibsAdminSettingsModal').classList.add('hidden');
-}
+window.uipaquibsOpenSettings = function() {
+  if (!currentSession || currentSession.role !== 'admin') {
+    alert('Admin access only.');
+    return;
+  }
+  switchAdminTab('settings');
+};
 
 async function uipaquibsSaveEmergencyNumber() {
 if (!currentSession || currentSession.role !== 'admin') {
@@ -10798,25 +11232,6 @@ try {
   console.error('Emergency number save failed:', error);
   alert('Emergency number changed on screen, but Supabase save failed. Please try again.');
 }
-}
-
-function uipaquibsSaveLogo() {
-if (!currentSession || currentSession.role !== 'admin') {
-alert('Admin access only.');
-return;
-}
-
-const input = document.getElementById('uipaquibsLogoInput');
-const file = input && input.files ? input.files[0] : null;
-if (!file) {
-alert('Select a logo image first.');
-return;
-}
-
-// Route this legacy Settings upload through the verified Supabase Storage saver.
-handleAdminLogoUpload({ target: input }).catch(function(error) {
-  console.error('Admin logo save failed:', error);
-});
 }
 
 </script>
@@ -11345,45 +11760,45 @@ overscroll-behavior: contain;
       b.type='button';
       b.className='admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300';
       b.innerHTML='<i class="fa-solid fa-life-ring" aria-hidden="true"></i><span>Help Center</span>';
-      b.onclick=()=>switchAdminTab('helpcenter');
+      b.setAttribute('onclick',"switchAdminTab('helpcenter')");
       tabBar.appendChild(b);
     }
     const anchor=document.getElementById('adminTabLogs');
     if(anchor && !document.getElementById('adminTabHelpCenter')){
       const sec=document.createElement('div');
       sec.id='adminTabHelpCenter';
-      sec.className='admin-tab-content hidden space-y-4';
+      sec.className='admin-tab-content admin-help-center hidden space-y-4';
       sec.innerHTML=`
         <div class="flex items-center justify-between">
           <div>
-            <h2 class="text-base font-tech text-white font-bold">Help Center</h2>
-            <p class="text-xs text-slate-400">Guest and patient support conversations</p>
+            <h2 class="admin-help-title text-base font-tech text-white font-bold">Help Center</h2>
+            <p class="admin-help-subtitle text-xs text-slate-400">Guest and patient support conversations</p>
           </div>
-          <button onclick="renderAdminHelpConversations()" class="px-3 py-2 bg-slate-900 text-cyan-300 rounded-xl border border-cyan-500/20 text-xs font-tech">Refresh</button>
+          <button onclick="renderAdminHelpConversations()" class="help-action-button px-3 py-2 bg-slate-900 text-cyan-300 rounded-xl border border-cyan-500/20 text-xs font-tech">Refresh</button>
         </div>
         <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
-          <div class="glass-card p-3 rounded-2xl">
-            <div class="grid grid-cols-2 gap-2 mb-3 text-center text-[10px] font-tech">
-              <div class="p-2 rounded-xl bg-slate-900"><b id="hcNewCount">0</b><br>New</div>
-              <div class="p-2 rounded-xl bg-slate-900"><b id="hcOpenCount">0</b><br>Open</div>
-              <div class="p-2 rounded-xl bg-slate-900"><b id="hcRepliedCount">0</b><br>Replied</div>
-              <div class="p-2 rounded-xl bg-slate-900"><b id="hcClosedCount">0</b><br>Closed</div>
+          <div class="glass-card help-center-card p-3 rounded-2xl">
+            <div class="help-summary-grid grid grid-cols-2 gap-2 mb-3 text-center text-[10px] font-tech">
+              <div class="help-summary-tile p-2 rounded-xl bg-slate-900"><b id="hcNewCount">0</b><br>New</div>
+              <div class="help-summary-tile p-2 rounded-xl bg-slate-900"><b id="hcOpenCount">0</b><br>Open</div>
+              <div class="help-summary-tile p-2 rounded-xl bg-slate-900"><b id="hcRepliedCount">0</b><br>Replied</div>
+              <div class="help-summary-tile p-2 rounded-xl bg-slate-900"><b id="hcClosedCount">0</b><br>Closed</div>
             </div>
             <div id="adminHelpConversationList" class="space-y-2 max-h-[520px] overflow-y-auto"></div>
           </div>
-          <div class="glass-card p-4 rounded-2xl md:col-span-2 min-h-[520px] flex flex-col">
-            <div id="adminHelpSelectedHeader" class="pb-3 border-b border-cyan-500/20 text-xs text-slate-400">Select a conversation</div>
+          <div class="glass-card help-center-card p-4 rounded-2xl md:col-span-2 min-h-[520px] flex flex-col">
+            <div id="adminHelpSelectedHeader" class="help-selected-header pb-3 border-b border-cyan-500/20 text-xs text-slate-400">Select a conversation</div>
             <div id="adminHelpMessages" class="flex-1 overflow-y-auto my-3 space-y-2"></div>
             <div id="adminHelpReplyArea" class="hidden">
-              <div class="chat-input p-2 rounded-xl flex items-center gap-2">
+              <div class="chat-input help-reply-composer p-2 rounded-xl flex items-center gap-2">
                 <input id="adminHelpReplyInput" type="text" placeholder="Reply to guest..." class="w-full text-xs outline-none bg-transparent">
-                <button onclick="sendAdminHelpReply()" class="px-3 py-1.5 bg-rose-500 text-slate-950 font-bold rounded-lg text-xs font-tech"><i class="fa-solid fa-paper-plane"></i></button>
+                <button onclick="sendAdminHelpReply()" class="help-action-button help-send-button px-3 py-1.5 bg-rose-500 text-slate-950 font-bold rounded-lg text-xs font-tech" aria-label="Send reply"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i></button>
               </div>
               <div class="flex gap-2 mt-2">
                 <select id="adminHelpStatus" class="input-box flex-1 p-2 rounded-xl text-xs">
                   <option>New</option><option>Open</option><option>Replied</option><option>Closed</option>
                 </select>
-                <button onclick="updateAdminHelpStatus()" class="px-3 py-2 bg-slate-900 border border-cyan-400/30 text-cyan-300 rounded-xl text-xs font-tech">Update Status</button>
+                <button onclick="updateAdminHelpStatus()" class="help-action-button px-3 py-2 bg-slate-900 border border-cyan-400/30 text-cyan-300 rounded-xl text-xs font-tech">Update Status</button>
               </div>
             </div>
           </div>
@@ -11465,6 +11880,7 @@ overscroll-behavior: contain;
     document.querySelectorAll('#adminApp .admin-function-nav .admin-function-tab').forEach(button=>{
       const isSelected=(button.getAttribute('onclick')||'').includes(`'${tabName}'`);
       button.classList.toggle('admin-function-active',isSelected);
+      button.classList.toggle('active',isSelected);
       button.setAttribute('aria-pressed',isSelected?'true':'false');
     });
     if(tabName==='helpcenter'){
@@ -14314,6 +14730,53 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     </div>
   </div>
 </div>
+<script>
+(function() {
+  // Store email for both screens
+  window._erecpassPendingEmail = '';
+  window._erecpassPendingPass = '';
+
+  window.showFirebaseConfirmModal = function(email, pass) {
+    window._erecpassPendingEmail = email || '';
+    window._erecpassPendingPass = pass || '';
+    var modal = document.getElementById('firebaseConfirmModal');
+    var emailEl = document.getElementById('firebaseConfirmEmail');
+    if (emailEl) emailEl.textContent = email || '';
+    if (modal) modal.style.display = 'flex';
+  };
+
+  window.showWaitingConfirmation = function() {
+    // Hide modal
+    var modal = document.getElementById('firebaseConfirmModal');
+    if (modal) modal.style.display = 'none';
+
+    // Hide all auth pages and show waiting screen
+    document.querySelectorAll('.auth-page').forEach(function(p) { p.classList.add('hidden'); });
+    var waiting = document.getElementById('waitingConfirmPage');
+    var emailEl = document.getElementById('waitingConfirmEmail');
+    if (emailEl) emailEl.textContent = window._erecpassPendingEmail || '';
+    if (waiting) {
+      waiting.classList.remove('hidden');
+      waiting.style.display = 'flex';
+    }
+  };
+
+  window.resendConfirmEmailFromWaiting = function() {
+    var email = window._erecpassPendingEmail;
+    var pass = window._erecpassPendingPass;
+    if (!email || !pass) { alert('No pending account found. Please register again.'); return; }
+    if (window.ERecPassFirebase && window.ERecPassFirebase.isConfigured()) {
+      window.ERecPassFirebase.resendVerificationEmail(email, pass)
+        .then(function() { alert('Confirmation email resent to ' + email + '.\nPlease check your inbox and Spam folder.'); })
+        .catch(function(e) { alert('Could not resend: ' + (e.message || e)); });
+    } else {
+      alert('Firebase is not available. Please check your internet connection.');
+    }
+  };
+
+})();
+</script>
+
 <style>
   #waitingConfirmPage .waiting-confirm-card {
     border: 1px solid #D5E8D9 !important;
@@ -14670,8 +15133,7 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     #adminApp .admin-tab-content { overflow-x: auto; }
     #adminApp .admin-tab-content > .flex { flex-wrap: wrap; }
     #emergencyModal > div, #agreementModal > div,
-    #adminEditPatientModal > div, #bookAppointmentModal > div,
-    #uipaquibsAdminSettingsModal > div {
+    #adminEditPatientModal > div, #bookAppointmentModal > div {
       width: min(100%, 560px) !important;
       max-height: calc(100dvh - 24px);
       overflow-y: auto;
@@ -15161,6 +15623,842 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   }
   html.ep-dark #adminApp .admin-function-tab.admin-function-active i { color: #a4f4fa; }
 </style>
+
+<style id="admin-metric-card-palette">
+  #adminApp .announcement-card {
+    background-color: #FFFFFF !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 20px !important;
+    padding: 28px 32px !important;
+    box-shadow: 0 10px 30px rgba(107, 35, 50, 0.06) !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp .announcement-card h2,
+  #adminApp .announcement-card .announcement-title,
+  #adminApp #adminTabAgreement .agreement-card .agreement-title {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-family: 'Bodoni Moda', 'Bodoni MT', 'Didot', 'Times New Roman', serif !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 20px !important;
+  }
+  #adminApp .announcement-card label {
+    display: block !important;
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    margin-bottom: 6px !important;
+  }
+  #adminApp .announcement-card textarea {
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    font-family: 'Poppins', sans-serif !important;
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    background-color: #FAF7F5 !important;
+    transition: all 0.2s ease !important;
+  }
+  #adminApp .announcement-card textarea:focus {
+    border-color: #6B2332 !important;
+    outline: none !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 0 0 4px rgba(107, 35, 50, 0.1) !important;
+  }
+  #adminApp .announcement-card input[type="file"] {
+    color: #3D262B !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp .announcement-card input[type="file"]::file-selector-button {
+    background-color: #FDF0F2 !important;
+    color: #6B2332 !important;
+    border: 1px solid #B8848E !important;
+    padding: 8px 14px !important;
+    border-radius: 8px !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: background 0.2s !important;
+  }
+  #adminApp .announcement-card input[type="file"]::file-selector-button:hover {
+    background-color: #F4E5E8 !important;
+  }
+  #adminApp .announcement-card button.submit-btn {
+    background: linear-gradient(135deg, #6B2332 0%, #551B27 100%) !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 14px 24px !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    box-shadow: 0 6px 16px rgba(107, 35, 50, 0.2) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #adminApp .announcement-card button.submit-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 22px rgba(107, 35, 50, 0.3) !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card {
+    background-color: #FFFFFF !important;
+    color: #3D262B !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 20px !important;
+    padding: 28px 32px !important;
+    box-shadow: 0 10px 30px rgba(107, 35, 50, 0.06) !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card h2,
+  #adminApp #adminTabAgreement .agreement-card .agreement-title {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-family: 'Bodoni Moda', 'Bodoni MT', 'Didot', 'Times New Roman', serif !important;
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 20px !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card label {
+    display: block !important;
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    margin-bottom: 6px !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card textarea {
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 12px !important;
+    padding: 14px !important;
+    font-family: 'Poppins', sans-serif !important;
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    background-color: #FAF7F5 !important;
+    transition: all 0.2s ease !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card textarea:focus {
+    border-color: #6B2332 !important;
+    outline: none !important;
+    background-color: #FFFFFF !important;
+    box-shadow: 0 0 0 4px rgba(107, 35, 50, 0.1) !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card input[type="file"] {
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card input[type="file"]::file-selector-button {
+    background-color: #FDF0F2 !important;
+    color: #6B2332 !important;
+    border: 1px solid #B8848E !important;
+    padding: 8px 14px !important;
+    border-radius: 8px !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 500 !important;
+    cursor: pointer !important;
+    transition: background 0.2s ease !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card input[type="file"]::file-selector-button:hover {
+    background-color: #F4E5E8 !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card button.submit-btn {
+    background: linear-gradient(135deg, #6B2332 0%, #551B27 100%) !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border: none !important;
+    border-radius: 12px !important;
+    padding: 14px 24px !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    cursor: pointer !important;
+    width: 100% !important;
+    box-shadow: 0 6px 16px rgba(107, 35, 50, 0.2) !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #adminApp #adminTabAgreement .agreement-card button.submit-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 10px 22px rgba(107, 35, 50, 0.3) !important;
+  }
+  @media (max-width: 640px) {
+    #adminApp #adminTabAgreement .agreement-card {
+      padding: 22px 18px !important;
+    }
+  }
+  #adminApp .message-card,
+  html.ep-dark #adminApp .message-card {
+    background-color: #FFFFFF !important;
+    color: #3D262B !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 20px !important;
+    box-shadow: 0 10px 30px rgba(107, 35, 50, 0.06) !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp .message-title,
+  #adminApp .message-chat-header,
+  html.ep-dark #adminApp .message-title,
+  html.ep-dark #adminApp .message-chat-header {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-weight: 600 !important;
+  }
+  #adminApp .message-title {
+    font-size: 0.95rem !important;
+    letter-spacing: 0.04em !important;
+    margin-bottom: 0.75rem !important;
+  }
+  #adminApp .message-chat-header {
+    font-size: 0.9rem !important;
+    border-color: #D8C2C8 !important;
+  }
+  #adminApp .message-card [data-chat-account],
+  html.ep-dark #adminApp .message-card [data-chat-account] {
+    background: #FAF7F5 !important;
+    color: #3D262B !important;
+    border: 1px solid #D8C2C8 !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp .message-card [data-chat-account]:hover,
+  #adminApp .message-card [data-chat-account]:focus-visible,
+  html.ep-dark #adminApp .message-card [data-chat-account]:hover,
+  html.ep-dark #adminApp .message-card [data-chat-account]:focus-visible {
+    background: #F4E5E8 !important;
+    border-color: #6B2332 !important;
+    color: #6B2332 !important;
+  }
+  #adminApp .message-composer,
+  html.ep-dark #adminApp .message-composer {
+    background: #FAF7F5 !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 12px !important;
+    font-family: 'Poppins', sans-serif !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease !important;
+  }
+  #adminApp .message-composer:focus-within,
+  html.ep-dark #adminApp .message-composer:focus-within {
+    background: #FFFFFF !important;
+    border-color: #6B2332 !important;
+    box-shadow: 0 0 0 4px rgba(107, 35, 50, 0.1) !important;
+  }
+  #adminApp .message-composer #adminChatInput,
+  html.ep-dark #adminApp .message-composer #adminChatInput {
+    background: transparent !important;
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    font-family: 'Poppins', sans-serif !important;
+  }
+  #adminApp .message-composer #adminChatInput::placeholder,
+  html.ep-dark #adminApp .message-composer #adminChatInput::placeholder {
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+  }
+  #adminApp .message-submit-btn,
+  html.ep-dark #adminApp .message-submit-btn {
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    width: 2.5rem !important;
+    min-width: 2.5rem !important;
+    height: 2.5rem !important;
+    border: 0 !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, #6B2332 0%, #551B27 100%) !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    box-shadow: 0 4px 12px rgba(107, 35, 50, 0.16) !important;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #adminApp .message-submit-btn:hover,
+  html.ep-dark #adminApp .message-submit-btn:hover {
+    transform: translateY(-2px) !important;
+    box-shadow: 0 8px 18px rgba(107, 35, 50, 0.24) !important;
+  }
+  #adminApp .message-submit-btn:active,
+  html.ep-dark #adminApp .message-submit-btn:active {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 10px rgba(107, 35, 50, 0.14) !important;
+  }
+  #adminApp .message-submit-btn i,
+  html.ep-dark #adminApp .message-submit-btn i {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  #adminApp .footer-bar {
+    background: linear-gradient(135deg, #6B2332 0%, #551B27 100%) !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 500 !important;
+    padding: 16px 24px !important;
+    border-radius: 16px !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 10px !important;
+    box-shadow: 0 8px 24px rgba(107, 35, 50, 0.2) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    letter-spacing: 0.03em !important;
+    transition: all 0.3s ease !important;
+  }
+  #adminApp .footer-bar:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 12px 28px rgba(107, 35, 50, 0.3) !important;
+  }
+  #adminApp .footer-bar i,
+  #adminApp .footer-bar svg {
+    color: #FDF0F2 !important;
+    -webkit-text-fill-color: #FDF0F2 !important;
+    font-size: 1rem !important;
+  }
+  #adminApp .footer-bar i {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+  }
+  #erecpassAdminAccountManagementBtn {
+    background: #6B2332 !important;
+    background-image: none !important;
+    border: 1.5px solid #6B2332 !important;
+    border-radius: 12px !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.9rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(107, 35, 50, 0.12) !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #erecpassAdminAccountManagementBtn:hover {
+    background: #551B27 !important;
+    background-image: none !important;
+    border-color: #551B27 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    box-shadow: 0 8px 20px rgba(107, 35, 50, 0.2) !important;
+    transform: translateY(-2px);
+  }
+  #erecpassAdminAccountManagementBtn i {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  #adminApp .glass-card.metric-card,
+  html.ep-dark #adminApp .glass-card.metric-card {
+    background-color: #FFFFFF !important;
+    color: #6B2332 !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 16px !important;
+    padding: 20px 24px !important;
+    box-shadow: 0 4px 12px rgba(107, 35, 50, 0.04) !important;
+    font-family: 'Poppins', sans-serif !important;
+    cursor: pointer !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #adminApp .glass-card.metric-card:hover,
+  html.ep-dark #adminApp .glass-card.metric-card:hover {
+    transform: translateY(-4px) !important;
+    background-color: #FDF0F2 !important;
+    border-color: #6B2332 !important;
+    box-shadow: 0 10px 24px rgba(107, 35, 50, 0.15) !important;
+  }
+  #adminApp .metric-label,
+  html.ep-dark #adminApp .metric-label {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.85rem !important;
+    font-weight: 500 !important;
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    text-transform: none !important;
+    letter-spacing: 0.05em !important;
+    margin-bottom: 8px !important;
+  }
+  #adminApp .metric-value,
+  html.ep-dark #adminApp .metric-value {
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 2rem !important;
+    font-weight: 600 !important;
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    line-height: 1 !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button,
+  #adminApp .glass-card.metric-card {
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    cursor: pointer !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button {
+    text-align: center !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button > i {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+    font-weight: 900 !important;
+    line-height: 1 !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+    display: inline-block !important;
+    flex: 0 0 auto !important;
+    margin-right: 0.55rem !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button:hover,
+  #adminApp .glass-card.metric-card:hover {
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 18px rgba(107, 35, 50, 0.15) !important;
+    background-color: #FDF0F2 !important;
+    border-color: #6B2332 !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button:not(.admin-function-active):not([aria-pressed="true"]):hover {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    border-color: #6B2332 !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button.admin-function-active:hover,
+  #adminApp .flex.flex-wrap.gap-2.border-b button[aria-pressed="true"]:hover {
+    background-color: #551B27 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border-color: #551B27 !important;
+    transform: translateY(-3px) !important;
+    box-shadow: 0 8px 18px rgba(107, 35, 50, 0.15) !important;
+  }
+  #adminApp .flex.flex-wrap.gap-2.border-b button:active {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 10px rgba(107, 35, 50, 0.1) !important;
+  }
+  #adminApp .glass-card.metric-card:active {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 10px rgba(107, 35, 50, 0.1) !important;
+  }
+  #adminApp .nav-container {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: flex-start !important;
+    gap: 12px !important;
+    padding: 16px 20px !important;
+    background-color: #FAF7F5 !important;
+    border: 0 !important;
+    border-radius: 16px !important;
+  }
+  #adminApp .nav-container .nav-button:not(.hidden) {
+    box-sizing: border-box !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 8px !important;
+    height: 42px !important;
+    padding: 10px 18px !important;
+    white-space: nowrap !important;
+    font-family: 'Poppins', sans-serif !important;
+    font-size: 0.875rem !important;
+    font-weight: 500 !important;
+    background-color: #FFFFFF !important;
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 12px !important;
+    cursor: pointer !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    box-shadow: 0 2px 6px rgba(107, 35, 50, 0.04) !important;
+  }
+  #adminApp .nav-container .nav-button > i,
+  #adminApp .nav-container .nav-button > svg {
+    flex: 0 0 auto !important;
+    margin: 0 !important;
+    font-size: 1rem !important;
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    transition: color 0.2s ease !important;
+  }
+  #adminApp .nav-container .nav-button > i {
+    font-family: "Font Awesome 6 Free" !important;
+    font-style: normal !important;
+    font-weight: 900 !important;
+  }
+  #adminApp .nav-container .nav-button:hover {
+    transform: translateY(-2px) !important;
+    background-color: #FDF0F2 !important;
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    border-color: #6B2332 !important;
+    box-shadow: 0 6px 14px rgba(107, 35, 50, 0.12) !important;
+  }
+  #adminApp .nav-container .nav-button.active,
+  #adminApp .nav-container .nav-button.admin-function-active,
+  #adminApp .nav-container .nav-button[aria-pressed="true"] {
+    background-color: #6B2332 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border-color: #6B2332 !important;
+    font-weight: 600 !important;
+    box-shadow: 0 6px 16px rgba(107, 35, 50, 0.22) !important;
+  }
+  #adminApp .nav-container .nav-button.active > i,
+  #adminApp .nav-container .nav-button.active > svg,
+  #adminApp .nav-container .nav-button.admin-function-active > i,
+  #adminApp .nav-container .nav-button.admin-function-active > svg,
+  #adminApp .nav-container .nav-button[aria-pressed="true"] > i,
+  #adminApp .nav-container .nav-button[aria-pressed="true"] > svg {
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+  }
+  #adminApp .nav-container .nav-button.active:hover,
+  #adminApp .nav-container .nav-button.admin-function-active:hover,
+  #adminApp .nav-container .nav-button[aria-pressed="true"]:hover {
+    transform: translateY(-2px) !important;
+    background-color: #551B27 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border-color: #551B27 !important;
+  }
+  #adminApp .nav-container .nav-button:active {
+    transform: translateY(-1px) !important;
+    box-shadow: 0 4px 10px rgba(107, 35, 50, 0.1) !important;
+  }
+  @media (max-width: 640px) {
+    #adminApp .nav-container {
+      padding: 12px !important;
+      gap: 8px !important;
+    }
+    #adminApp .nav-container .nav-button {
+      flex: 1 1 auto !important;
+    }
+  }
+  #adminApp .admin-staff-create-card {
+    background: #FFFFFF !important;
+    color: #3D262B !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 20px !important;
+    padding: 28px 20px !important;
+    box-shadow: none !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+  }
+  #adminApp .admin-staff-title,
+  #adminApp .admin-staff-section-title,
+  #adminApp #adminTabHelpCenter .admin-help-title {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-family: 'Bodoni Moda', 'Bodoni MT', 'Didot', 'Times New Roman', serif !important;
+    font-size: 1.15rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.035em !important;
+  }
+  #adminApp .admin-staff-title {
+    display: block !important;
+    margin: 0 0 18px !important;
+    padding: 0 0 12px !important;
+    border-bottom: 1px solid #E8D8DC !important;
+    color: #551B27 !important;
+    -webkit-text-fill-color: #551B27 !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 1.2rem !important;
+    font-weight: 800 !important;
+    line-height: 1.25 !important;
+    letter-spacing: 0.025em !important;
+  }
+  #adminApp .admin-staff-section-title {
+    font-size: 1.05rem !important;
+  }
+  #adminApp .admin-staff-create-card label {
+    display: block !important;
+    margin-bottom: 6px !important;
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.82rem !important;
+    font-weight: 500 !important;
+  }
+  #adminApp .admin-staff-create-card input {
+    box-sizing: border-box !important;
+    min-height: 42px !important;
+    padding: 10px 12px !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 12px !important;
+    background: #FFFFFF !important;
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.85rem !important;
+    transition: border-color 0.2s ease, box-shadow 0.2s ease, background-color 0.2s ease !important;
+  }
+  #adminApp .admin-staff-create-card input::placeholder {
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    opacity: 0.85 !important;
+  }
+  #adminApp .admin-staff-create-card input:focus {
+    outline: none !important;
+    border-color: #6B2332 !important;
+    background: #FAF7F5 !important;
+    box-shadow: 0 0 0 4px rgba(107, 35, 50, 0.1) !important;
+  }
+  #adminApp .admin-staff-create-card .admin-staff-submit-btn {
+    min-height: 44px !important;
+    margin-top: 4px !important;
+    border: 1px solid rgba(122, 46, 59, 0.9) !important;
+    border-radius: 0.9rem !important;
+    background: linear-gradient(180deg, #7A2E3B 0%, #6A2233 100%) !important;
+    color: #F7BEBF !important;
+    -webkit-text-fill-color: #F7BEBF !important;
+    padding: 0.9rem 1rem !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 700 !important;
+    letter-spacing: 0.12em !important;
+    box-shadow: none !important;
+    transition: all 0.25s cubic-bezier(0.4, 0, 0.2, 1) !important;
+  }
+  #adminApp .admin-staff-create-card .admin-staff-submit-btn:hover {
+    transform: translateY(-2px) !important;
+    background: #551B27 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    border-color: #551B27 !important;
+    box-shadow: none !important;
+  }
+  #adminApp .admin-staff-create-card .admin-staff-submit-btn:active {
+    transform: translateY(-1px) !important;
+    box-shadow: none !important;
+  }
+  #adminApp .admin-staff-create-card .admin-staff-submit-btn:focus-visible {
+    outline: 3px solid rgba(107, 35, 50, 0.3) !important;
+    outline-offset: 3px !important;
+  }
+  #adminApp #adminTabHelpCenter {
+    color: #3D262B !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+  }
+  #adminApp #adminTabHelpCenter .admin-help-title {
+    margin: 0 0 4px !important;
+  }
+  #adminApp #adminTabHelpCenter .admin-help-subtitle {
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.82rem !important;
+  }
+  #adminApp #adminTabHelpCenter .help-center-card {
+    background: #FFFFFF !important;
+    color: #3D262B !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 18px !important;
+    box-shadow: 0 8px 24px rgba(107, 35, 50, 0.06) !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+  }
+  #adminApp #adminTabHelpCenter .help-summary-tile {
+    background: #FAF7F5 !important;
+    color: #7A525B !important;
+    border: 1px solid #E8D8DC !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.75rem !important;
+  }
+  #adminApp #adminTabHelpCenter .help-summary-tile b {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-size: 1rem !important;
+    font-weight: 700 !important;
+  }
+  #adminApp #adminTabHelpCenter .help-selected-header {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    border-color: #E8D8DC !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+  }
+  #adminApp #adminTabHelpCenter .help-selected-header strong {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    font-size: 0.95rem !important;
+    font-weight: 700 !important;
+  }
+  #adminApp #adminTabHelpCenter .help-selected-header div,
+  #adminApp #adminTabHelpCenter .help-conversation-item .text-slate-400,
+  #adminApp #adminTabHelpCenter .help-conversation-item .text-slate-500,
+  #adminApp #adminTabHelpCenter .help-conversation-item .text-slate-300 {
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+  }
+  #adminApp #adminTabHelpCenter .help-conversation-item {
+    background: #FAF7F5 !important;
+    color: #3D262B !important;
+    border: 1px solid #E2CDD2 !important;
+    border-radius: 12px !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    transition: all 0.22s ease !important;
+  }
+  #adminApp #adminTabHelpCenter .help-conversation-item:hover,
+  #adminApp #adminTabHelpCenter .help-conversation-item:focus-visible {
+    background: #FDF0F2 !important;
+    border-color: #6B2332 !important;
+    box-shadow: 0 5px 14px rgba(107, 35, 50, 0.1) !important;
+    transform: translateY(-1px) !important;
+  }
+  #adminApp #adminTabHelpCenter .help-conversation-item strong {
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    font-size: 0.82rem !important;
+    font-weight: 700 !important;
+  }
+  #adminApp #adminTabHelpCenter .help-status {
+    color: #6B2332 !important;
+    -webkit-text-fill-color: #6B2332 !important;
+    background: #F4E5E8 !important;
+    border: 1px solid #D8C2C8 !important;
+    border-radius: 999px !important;
+    padding: 2px 8px !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.68rem !important;
+    font-weight: 600 !important;
+  }
+  #adminApp #adminTabHelpCenter .help-msg {
+    max-width: 82% !important;
+    padding: 9px 12px !important;
+    border-radius: 12px !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.82rem !important;
+    line-height: 1.5 !important;
+  }
+  #adminApp #adminTabHelpCenter .help-msg.help-user {
+    background: #6B2332 !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+  }
+  #adminApp #adminTabHelpCenter .help-msg.help-admin {
+    background: #F4E5E8 !important;
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+  }
+  #adminApp #adminTabHelpCenter .help-meta {
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.68rem !important;
+  }
+  #adminApp #adminTabHelpCenter .help-reply-composer {
+    background: #FAF7F5 !important;
+    border: 1.5px solid #D8C2C8 !important;
+    border-radius: 12px !important;
+  }
+  #adminApp #adminTabHelpCenter #adminHelpReplyInput,
+  #adminApp #adminTabHelpCenter #adminHelpStatus {
+    color: #3D262B !important;
+    -webkit-text-fill-color: #3D262B !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.82rem !important;
+  }
+  #adminApp #adminTabHelpCenter #adminHelpReplyInput::placeholder {
+    color: #7A525B !important;
+    -webkit-text-fill-color: #7A525B !important;
+  }
+  #adminApp #adminTabHelpCenter .help-action-button {
+    border: 1.5px solid #6B2332 !important;
+    border-radius: 10px !important;
+    background: linear-gradient(135deg, #6B2332 0%, #551B27 100%) !important;
+    color: #FFFFFF !important;
+    -webkit-text-fill-color: #FFFFFF !important;
+    font-family: 'Inter', 'SF Pro Display', 'Plus Jakarta Sans', Roboto, sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    box-shadow: 0 4px 12px rgba(107, 35, 50, 0.14) !important;
+    transition: all 0.22s ease !important;
+  }
+  #adminApp #adminTabHelpCenter .help-action-button:hover,
+  #adminApp #adminTabHelpCenter .help-action-button:focus-visible {
+    background: #551B27 !important;
+    border-color: #551B27 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: 0 7px 16px rgba(107, 35, 50, 0.22) !important;
+  }
+  #adminApp #adminTabHelpCenter .help-send-button {
+    min-width: 38px !important;
+    min-height: 36px !important;
+    padding: 8px 12px !important;
+  }
+  #adminApp #adminTabHelpCenter .help-send-button i {
+    font-family: "Font Awesome 6 Free" !important;
+    font-weight: 900 !important;
+    color: inherit !important;
+    -webkit-text-fill-color: currentColor !important;
+  }
+  @media (max-width: 640px) {
+    #adminApp .admin-staff-create-card {
+      padding: 22px 18px !important;
+    }
+    #adminApp #adminTabHelpCenter .help-msg {
+      max-width: 94% !important;
+    }
+  }
+</style>
+
+<script>
+(function installAdminDashboardTabRecovery() {
+  const tabDefinitions = [
+    { id: 'adminDashboardPatientsBtn', tab: 'patients', icon: 'fa-hospital-user', label: 'Patient Management' },
+    { id: 'adminDashboardStaffBtn', tab: 'staff', icon: 'fa-user-gear', label: 'Staff Accounts & Tasks' },
+    { id: 'adminDashboardAnnouncementsBtn', tab: 'announcements', icon: 'fa-bullhorn', label: 'Announcements' },
+    { id: 'adminDashboardAgreementBtn', tab: 'agreement', icon: 'fa-file-arrow-up', label: 'Upload Agreement' },
+    { id: 'adminDashboardAppointmentsBtn', tab: 'appointments', icon: 'fa-calendar-check', label: 'Manage Appointments' },
+    { id: 'adminDashboardMedicationBtn', tab: 'medications', icon: 'fa-pills', label: 'Medication Review' },
+    { id: 'adminDashboardBackupBtn', tab: 'backups', icon: 'fa-box-archive', label: 'Backup Data' },
+    { id: 'adminDashboardChatBtn', tab: 'chat', icon: 'fa-comments', label: 'Patient Messages' },
+    { id: 'adminDashboardSettingsBtn', tab: 'settings', icon: 'fa-gear', label: 'System Settings' },
+    { id: 'adminHelpCenterTabBtn', tab: 'helpcenter', icon: 'fa-circle-question', label: 'Help Center' }
+  ];
+
+  function ensureAdminDashboardTabs() {
+    const adminApp = document.getElementById('adminApp');
+    const tabBar = adminApp && adminApp.querySelector('.admin-function-nav');
+    if (!tabBar) return;
+
+    tabDefinitions.forEach(definition => {
+      if (document.getElementById(definition.id)) return;
+      const button = document.createElement('button');
+      button.id = definition.id;
+      button.type = 'button';
+      button.className = 'admin-function-tab px-3 py-2 bg-slate-900 text-slate-300 rounded-xl border border-cyan-500/20 hover:text-cyan-300';
+      button.innerHTML = `<i class="fa-solid ${definition.icon}" aria-hidden="true"></i><span>${definition.label}</span>`;
+      button.setAttribute('aria-pressed', 'false');
+      button.setAttribute('onclick', `switchAdminTab('${definition.tab}')`);
+      tabBar.appendChild(button);
+    });
+
+    const orderedButtons = tabDefinitions.map(definition => document.getElementById(definition.id));
+    const actualOrder = Array.from(tabBar.querySelectorAll('button'))
+      .filter(button => tabDefinitions.some(definition => definition.id === button.id))
+      .map(button => button.id);
+    if (actualOrder.some((id, index) => id !== tabDefinitions[index].id)) {
+      orderedButtons.forEach(button => tabBar.appendChild(button));
+    }
+  }
+
+  function start() {
+    ensureAdminDashboardTabs();
+    const tabBar = document.querySelector('#adminApp .admin-function-nav');
+    if (tabBar) {
+      new MutationObserver(ensureAdminDashboardTabs).observe(tabBar, { childList: true });
+    }
+  }
+
+  if (document.readyState === 'loading') {
+    document.addEventListener('DOMContentLoaded', start, { once: true });
+  } else {
+    start();
+  }
+})();
+</script>
 
 <script>
 (function enableAdminTabStripDragging() {

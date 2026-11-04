@@ -75,7 +75,24 @@
     }
     const auth = await client.auth.getUser();
     if (auth.error) throw auth.error;
-    if (!auth.data?.user?.id) throw new Error('Your Staff session has expired. Sign in again.');
+    const userId = auth.data?.user?.id;
+    if (!userId) throw new Error('Your Staff session has expired. Sign in again.');
+    const profile = await client.from('profiles')
+      .select('role,active')
+      .eq('id', userId)
+      .maybeSingle();
+    if (profile.error) throw profile.error;
+    if (String(profile.data?.role || '').toLowerCase() !== 'staff' || profile.data?.active !== true) {
+      throw new Error('An active Staff account is required to manage patients.');
+    }
+    const staff = await client.from('staff')
+      .select('account_type,active')
+      .eq('user_id', userId)
+      .maybeSingle();
+    if (staff.error) throw staff.error;
+    if (staff.data?.active !== true || !isClinicalStaff(staff.data?.account_type)) {
+      throw new Error('Patient-record management is available only to active Doctors and Nurses.');
+    }
     return client;
   }
 

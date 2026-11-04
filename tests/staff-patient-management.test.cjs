@@ -6,6 +6,7 @@ const vm = require('node:vm');
 
 const source = fs.readFileSync(path.join(__dirname, '..', 'staff-patient-management.js'), 'utf8');
 const migration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103000300_shared_admin_staff_patient_update.sql'), 'utf8');
+const baseMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103000100_staff_patient_management.sql'), 'utf8');
 const accessMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103000200_staff_patient_management_access.sql'), 'utf8');
 const accountMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103000400_staff_patient_account_status.sql'), 'utf8');
 const guardianMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103000500_fix_patient_guardian_empty_contact_update.sql'), 'utf8');
@@ -17,6 +18,7 @@ const staffProfileMigration = fs.readFileSync(path.join(__dirname, '..', 'supaba
 const clinicalStaffAccessMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103230338_clinical_staff_patient_access.sql'), 'utf8');
 const indexHtml = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const context = { window: {}, document: { getElementById: () => null }, console };
+const updatePolicyMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261104000600_patient_staff_update_via_rpc.sql'), 'utf8');
 vm.runInNewContext(source, context);
 const api = context.window.ERecPassStaffPatients;
 
@@ -26,6 +28,22 @@ test('staff patient helper API initializes', () => {
   assert.equal(api.isClinicalStaff('nurse'), true);
   assert.equal(api.isClinicalStaff('other'), false);
   assert.equal(api.isClinicalStaff(''), false);
+});
+
+test('staff patient management module is loaded by the main document', () => {
+  assert.equal([...indexHtml.matchAll(/<script src="\.\/staff-patient-management\.js"><\/script>/g)].length, 1);
+  assert.match(indexHtml, /<script src="\.\/staff-patient-management\.js"><\/script>\s*<\/body>\s*<\/html>\s*$/);
+});
+
+test('database migration uses text patient IDs and limits patient access to clinical Staff', () => {
+  assert.match(baseMigration, /staff_update_patient_record\(\s*p_patient_id text/i);
+  assert.match(clinicalStaffAccessMigration, /app_private\.is_clinical_staff\(\)/i);
+  assert.match(clinicalStaffAccessMigration, /account_type[^;]*in\s*\('doctor',\s*'nurse'\)/is);
+  assert.match(clinicalStaffAccessMigration, /create policy patients_select_owner_or_staff[\s\S]*app_private\.is_clinical_staff\(\)/i);
+  assert.match(clinicalStaffAccessMigration, /create policy patients_update_staff_admin[\s\S]*app_private\.is_clinical_staff\(\)/i);
+  assert.match(baseMigration, /Only an active Doctor can update patient prescriptions/i);
+  assert.match(updatePolicyMigration, /using \(app_private\.has_role\('admin'\)\)/i);
+  assert.match(updatePolicyMigration, /with check \(app_private\.has_role\('admin'\)\)/i);
 });
 
 test('valid patient edits pass validation', () => {
@@ -113,6 +131,18 @@ test('active Staff can load a patient and save edits without discarding a newer 
   const calls = [];
   const client = {
     auth: { getUser: async () => ({ data: { user: { id: 'staff-1' } }, error: null }) },
+    from: table => ({
+      select: () => ({
+        eq: () => ({
+          maybeSingle: async () => ({
+            data: table === 'profiles'
+              ? { role: 'staff', active: true }
+              : { account_type: 'nurse', active: true },
+            error: null
+          })
+        })
+      })
+    }),
     rpc: async (name, args) => {
       calls.push({ name, args });
       if (name === 'staff_list_patients') {
@@ -221,6 +251,18 @@ test('active Staff can view linked patient account status but cannot mutate acco
   const calls = [];
   const client = {
     auth: { getUser: async () => ({ data: { user: { id: 'staff-1' } }, error: null }) },
+    from: table => ({
+      select: () => ({
+        eq: () => ({
+          maybeSingle: async () => ({
+            data: table === 'profiles'
+              ? { role: 'staff', active: true }
+              : { account_type: 'doctor', active: true },
+            error: null
+          })
+        })
+      })
+    }),
     rpc: async (name, args) => {
       calls.push({ name, args });
       if (name === 'staff_list_patient_accounts') return { data: accounts, error: null };

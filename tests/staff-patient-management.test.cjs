@@ -5,6 +5,7 @@ const vm = require('node:vm');
 
 const path = require('node:path');
 const source = fs.readFileSync(path.join(__dirname, '..', 'staff-patient-management.js'), 'utf8');
+const index = fs.readFileSync(path.join(__dirname, '..', 'index.html'), 'utf8');
 const migration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261103000100_staff_patient_management.sql'), 'utf8');
 const updatePolicyMigration = fs.readFileSync(path.join(__dirname, '..', 'supabase', 'migrations', '20261104000600_patient_staff_update_via_rpc.sql'), 'utf8');
 const context = {
@@ -27,6 +28,10 @@ test('staff patient helper API initializes', () => {
   assert.equal(api.isClinicalStaff('nurse'), true);
   assert.equal(api.isClinicalStaff('other'), false);
   assert.equal(api.isClinicalStaff(''), false);
+});
+
+test('staff patient management module is loaded by the main document', () => {
+  assert.match(index, /<script src="\.\/staff-patient-management\.js"><\/script>\s*<\/body>\s*<\/html>\s*$/);
 });
 
 test('database migration uses text patient IDs and limits patient access to clinical Staff', () => {

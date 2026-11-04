@@ -31,6 +31,7 @@ test('staff patient helper API initializes', () => {
 });
 
 test('staff patient management module is loaded by the main document', () => {
+  assert.equal([...index.matchAll(/<script src="\.\/staff-patient-management\.js"><\/script>/g)].length, 1);
   assert.match(index, /<script src="\.\/staff-patient-management\.js"><\/script>\s*<\/body>\s*<\/html>\s*$/);
 });
 

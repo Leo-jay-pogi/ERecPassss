@@ -58,7 +58,13 @@ Supabase's leaked-password protection should also be enabled in Authentication s
 <!-- ERecPass deployment refresh: 2026-10-07T16:45:35.740Z -->
 
 ## Staff patient management
-- The Staff Dashboard includes a Patients section for searching patient records and editing health status, date of birth, laboratory results, prescriptions, doctor notes, and guardian emergency contact details.
-- Staff edits use the role-checked `staff_update_patient_record` RPC; it requires an active Staff profile and active Staff database row and does not grant direct table-wide update permissions.
-- Apply `supabase/migrations/20261103000100_staff_patient_management.sql` to the active Supabase project before using the new Staff editor.
-- Run the focused browser-script validation tests with `node --test tests/staff-patient-management.test.cjs`.
+- Active Doctors and Nurses can search patient records and edit health status, date of birth, laboratory results, doctor notes, and guardian contact details. Prescription edits remain Doctor-only.
+- Patient reads and writes use role-checked Supabase RPCs and RLS. The database verifies the active Staff profile and Staff row, and denies patient-record access to Other Staff.
+- Doctors and Nurses can view patient account linkage, active state, and email-verification status. Account edits, password changes, activation/deactivation, and deletion remain Admin-only.
+- Apply `supabase/migrations/20261103000100_staff_patient_management.sql`, `supabase/migrations/20261103000200_staff_patient_management_access.sql`, `supabase/migrations/20261103000300_shared_admin_staff_patient_update.sql`, `supabase/migrations/20261103000400_staff_patient_account_status.sql`, `supabase/migrations/20261103000500_fix_patient_guardian_empty_contact_update.sql`, and `supabase/migrations/20261103230338_clinical_staff_patient_access.sql` before deployment.
+- Active Staff accounts can post patient-visible hospital updates and set an expiration date or choose no expiration. Updates disappear from patient and Staff views after expiration. Staff can edit or delete their own posts; Admins retain announcement management.
+- Apply `supabase/migrations/20261104000200_announcement_expiration_and_staff_delete.sql` to add expiry dates and secure author-only Staff deletion.
+- Apply `supabase/migrations/20261104000300_staff_announcement_update_own.sql` to allow active Staff to edit only their own announcements.
+- Staff profile actions let a Staff member update their own name, role / department, and assigned task, change their photo, or delete only their photo. Contact email is displayed read-only; Admin-managed account access and login details are not editable by Staff.
+- Apply `supabase/migrations/20261104000400_staff_self_profile_management.sql` to enable active Staff self-profile updates and photo removal through role-checked Supabase RPCs.
+- Run the focused validation tests with `node --test tests/staff-patient-management.test.cjs`.

@@ -2,119 +2,240 @@
   'use strict';
 
   const byId = id => document.getElementById(id);
-  const escapeHTML = value => String(value == null ? '' : value).replace(/[&<>"']/g, ch => ({
-    '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;'
-  })[ch]);
+  const MAX_LAB_PHOTO_BYTES = 2 * 1024 * 1024;
+  const isClinicalStaff = accountType => ['doctor', 'nurse'].includes(String(
+    accountType ?? window.currentSession?.data?.account_type ?? ''
+  ).toLowerCase());
+  let activePatient = null;
+  let listRequest = 0;
+  let accountRequest = 0;
+  let patientAccounts = [];
 
-  function validateEdit(values) {
-    const status = String(values.status || '');
-    if (!['Green', 'Yellow', 'Red'].includes(status)) return 'Choose a valid patient health status.';
+  function switchPatientSection(section) {
+    const showAccounts = section === 'accounts';
+    const records = byId('staffPatientRecordsSection');
+    const accounts = byId('staffPatientAccountsSection');
+    const recordsTab = byId('staffPatientRecordsTab');
+    const accountsTab = byId('staffPatientAccountsTab');
+    if (!records || !accounts || !recordsTab || !accountsTab) return;
+    records.hidden = showAccounts;
+    accounts.hidden = !showAccounts;
+    recordsTab.setAttribute('aria-pressed', String(!showAccounts));
+    accountsTab.setAttribute('aria-pressed', String(showAccounts));
+    return showAccounts ? loadStaffPatientAccounts() : renderStaffPatients();
+  }
+
+  function localDateString(date) {
+    return [date.getFullYear(), String(date.getMonth() + 1).padStart(2, '0'), String(date.getDate()).padStart(2, '0')].join('-');
+  }
+
+  function validateEdit(values, today = localDateString(new Date())) {
+    if (!['Green', 'Yellow', 'Red'].includes(String(values.status || ''))) {
+      return 'Choose a valid patient health status.';
+    }
+
     const birthDate = String(values.birthDate || '').trim();
     if (birthDate) {
-      const parsed = new Date(birthDate + 'T00:00:00');
-      if (Number.isNaN(parsed.getTime())) return 'Enter a valid date of birth.';
-      const today = new Date();
-      today.setHours(0, 0, 0, 0);
-      if (parsed > today) return 'Date of birth cannot be in the future.';
+      const parsed = new Date(birthDate + 'T00:00:00.000Z');
+      if (!/^\d{4}-\d{2}-\d{2}$/.test(birthDate) ||
+          Number.isNaN(parsed.getTime()) ||
+          parsed.toISOString().slice(0, 10) !== birthDate) {
+        return 'Enter a valid date of birth.';
+      }
+      if (birthDate > today) return 'Date of birth cannot be in the future.';
     }
-    if (String(values.guardianNum || '').length > 40) return 'Guardian contact number is too long.';
+
+    if (String(values.guardianNum || '').length > 40) return 'Guardian contact number must be 40 characters or fewer.';
     if (String(values.doctorNotes || '').length > 4000) return 'Doctor notes must be 4,000 characters or fewer.';
+    if (String(values.labText || '').length > 4000) return 'Laboratory notes must be 4,000 characters or fewer.';
+    if (String(values.prescription || '').length > 500) return 'Prescription must be 500 characters or fewer.';
     return '';
   }
 
-  let activePatient = null;
-  let removedLabEntries = [];
-
-  function setStatus(message, isError) {
-    const node = byId('staffPatientManagementStatus');
-    if (!node) return;
-    node.textContent = message || '';
-    node.dataset.state = isError ? 'error' : 'success';
+  function setStatus(message, state) {
+    const modal = byId('staffPatientEditModal');
+    const status = modal && !modal.classList.contains('hidden')
+      ? byId('staffPatientEditorStatus')
+      : byId('staffPatientManagementStatus');
+    if (!status) return;
+    status.textContent = message || '';
+    status.dataset.state = state || '';
   }
 
   async function assertActiveStaff() {
     if (window.currentSession?.role !== 'staff') {
       throw new Error('Only signed-in Staff accounts can manage patient records.');
     }
+    if (!isClinicalStaff()) {
+      throw new Error('Patient-record management is available only to active Doctors and Nurses.');
+    }
     const client = window.erecpassSupabase;
-    if (!client?.auth || !client?.from || !client?.rpc) {
+    if (!client?.auth?.getUser || !client?.rpc) {
       throw new Error('Supabase is not ready. Refresh the app and sign in again.');
     }
     const auth = await client.auth.getUser();
     if (auth.error) throw auth.error;
-    const userId = auth.data?.user?.id;
-    if (!userId) throw new Error('Your Staff session has expired. Sign in again.');
-    const profile = await client.from('profiles')
-      .select('role,active')
-      .eq('id', userId)
-      .maybeSingle();
-    if (profile.error) throw profile.error;
-    if (String(profile.data?.role || '').toLowerCase() !== 'staff' || profile.data?.active !== true) {
-      throw new Error('An active Staff account is required to manage patients.');
-    }
+    if (!auth.data?.user?.id) throw new Error('Your Staff session has expired. Sign in again.');
     return client;
   }
 
   function patientCard(patient) {
     const card = document.createElement('article');
     card.className = 'staff-patient-card';
-    const copy = document.createElement('div');
-    copy.className = 'staff-patient-card-copy';
-    const heading = document.createElement('strong');
-    heading.textContent = patient.full_name || 'Unnamed Patient';
-    const details = document.createElement('p');
-    details.textContent = 'ID: ' + patient.id + ' · ' + (patient.email || 'No email');
+
+    const details = document.createElement('div');
+    details.className = 'staff-patient-card-copy';
+    const name = document.createElement('strong');
+    name.textContent = patient.full_name || 'Unnamed Patient';
+    const identity = document.createElement('p');
+    identity.textContent = 'ID: ' + patient.id + ' · ' + (patient.email || 'No email');
     const guardian = document.createElement('p');
     guardian.textContent = 'Guardian: ' + (patient.guardian_num || 'Not provided');
-    const badge = document.createElement('span');
-    badge.className = 'staff-patient-status status-' + String(patient.status || 'Green').toLowerCase();
-    badge.textContent = patient.status || 'Green';
-    copy.append(heading, details, guardian);
+    details.append(name, identity, guardian);
+
+    const actions = document.createElement('div');
+    actions.className = 'staff-patient-card-actions';
+    const status = document.createElement('span');
+    const statusName = ['Green', 'Yellow', 'Red'].includes(patient.status) ? patient.status : 'Green';
+    status.className = 'staff-patient-status status-' + statusName.toLowerCase();
+    status.textContent = statusName;
     const edit = document.createElement('button');
     edit.type = 'button';
     edit.className = 'staff-primary-action';
     edit.textContent = 'Edit Patient File';
     edit.addEventListener('click', () => openPatientEditor(patient.id));
-    const right = document.createElement('div');
-    right.className = 'staff-patient-card-actions';
-    right.append(badge, edit);
-    card.append(copy, right);
+    actions.append(status, edit);
+    card.append(details, actions);
     return card;
   }
 
   async function renderStaffPatients() {
     const container = byId('staffPatientManagementList');
     if (!container) return;
+    const request = ++listRequest;
+    const search = String(byId('staffPatientSearch')?.value || '').trim();
     container.replaceChildren();
-    setStatus('Loading patient records from Supabase…', false);
+    setStatus('Loading patient records…', 'loading');
+
     try {
       const client = await assertActiveStaff();
-      const result = await client.from('patients')
-        .select('id,full_name,email,guardian_num,status,birth_date,age,age_category')
-        .order('full_name', { ascending: true });
+      const result = await client.rpc('staff_list_patients', { p_search: search });
       if (result.error) throw result.error;
-      const search = String(byId('staffPatientSearch')?.value || '').trim().toLowerCase();
-      const patients = (result.data || []).filter(patient => {
-        const haystack = [patient.full_name, patient.id, patient.email, patient.status, patient.guardian_num]
-          .map(value => String(value || '').toLowerCase()).join(' ');
-        return haystack.includes(search);
-      });
-      if (!patients.length) {
+      if (!Array.isArray(result.data)) throw new Error('Patient list response was invalid.');
+      if (request !== listRequest) return;
+
+      if (!result.data.length) {
         const empty = document.createElement('p');
         empty.className = 'staff-patient-empty';
-        empty.textContent = search ? 'No patient records match your search.' : 'No patient records are available to this Staff account.';
+        empty.textContent = search ? 'No patient records match your search.' : 'No patient records are available.';
         container.append(empty);
       } else {
-        patients.forEach(patient => container.append(patientCard(patient)));
+        result.data.forEach(patient => container.append(patientCard(patient)));
       }
-      setStatus(patients.length + ' patient record(s) loaded.', false);
+      setStatus(result.data.length + ' patient record(s) loaded.', 'success');
     } catch (error) {
+      if (request !== listRequest) return;
       console.error('[ERecPass] Staff patient list failed:', error);
       const message = document.createElement('p');
       message.className = 'staff-patient-error';
       message.textContent = error?.message || 'Could not load patient records.';
       container.append(message);
-      setStatus(message.textContent, true);
+      setStatus(message.textContent, 'error');
+    }
+  }
+
+  function renderPatientAccounts() {
+    const container = byId('staffPatientAccountsList');
+    if (!container) return;
+    const search = String(byId('staffPatientAccountSearch')?.value || '').trim().toLowerCase();
+    const statusFilter = byId('staffPatientAccountStatusFilter')?.value || 'all';
+    const verificationFilter = byId('staffPatientAccountVerificationFilter')?.value || 'all';
+    const rows = patientAccounts.filter(account => {
+      const linked = account.account_linked === true;
+      const active = linked && account.account_active === true;
+      const verified = linked && account.email_verified === true;
+      const searchText = [account.patient_id, account.full_name, account.email].join(' ').toLowerCase();
+      const statusMatches = statusFilter === 'all' ||
+        (statusFilter === 'active' && active) ||
+        (statusFilter === 'deactivated' && linked && !active) ||
+        (statusFilter === 'unlinked' && !linked);
+      const verificationMatches = verificationFilter === 'all' ||
+        (verificationFilter === 'verified' && verified) ||
+        (verificationFilter === 'unverified' && linked && account.email_verified === false) ||
+        (verificationFilter === 'unlinked' && !linked);
+      return statusMatches && verificationMatches && (!search || searchText.includes(search));
+    });
+
+    container.replaceChildren();
+    if (!rows.length) {
+      const empty = document.createElement('p');
+      empty.className = 'staff-patient-empty';
+      empty.textContent = patientAccounts.length
+        ? 'No patient accounts match these filters.'
+        : 'No patient accounts are available.';
+      container.append(empty);
+      return;
+    }
+
+    rows.forEach(account => {
+      const linked = account.account_linked === true;
+      const card = document.createElement('article');
+      card.className = 'staff-patient-card';
+      const details = document.createElement('div');
+      details.className = 'staff-patient-card-copy';
+      const name = document.createElement('strong');
+      name.textContent = account.full_name || 'Unnamed Patient';
+      const identity = document.createElement('p');
+      identity.textContent = 'Patient ID: ' + (account.patient_id || 'Unavailable') + ' · ' + (account.email || 'No email');
+      details.append(name, identity);
+
+      const status = document.createElement('span');
+      const isActive = linked && account.account_active === true;
+      status.className = 'staff-patient-status ' + (isActive ? 'status-green' : 'status-red');
+      status.textContent = !linked ? 'Not linked' : isActive ? 'Active' : 'Deactivated';
+      const verified = document.createElement('span');
+      verified.className = 'staff-patient-status ' +
+        (account.email_verified === true ? 'status-green' : 'status-yellow');
+      verified.textContent = !linked ? 'Unlinked' : account.email_verified === true ? 'Verified' : 'Unverified';
+      const statusContainer = document.createElement('div');
+      statusContainer.className = 'staff-patient-account-badges';
+      statusContainer.append(status, verified);
+      card.append(details, statusContainer);
+      container.append(card);
+    });
+  }
+
+  async function loadStaffPatientAccounts() {
+    const container = byId('staffPatientAccountsList');
+    const status = byId('staffPatientAccountsStatus');
+    if (!container || !status) return;
+    const request = ++accountRequest;
+    container.replaceChildren();
+    status.textContent = 'Loading patient accounts…';
+    status.dataset.state = 'loading';
+
+    try {
+      const client = await assertActiveStaff();
+      const result = await client.rpc('staff_list_patient_accounts');
+      if (result.error) throw result.error;
+      if (!Array.isArray(result.data) ||
+          result.data.some(account => !account || typeof account.patient_id !== 'string')) {
+        throw new Error('Patient account list response was invalid.');
+      }
+      if (request !== accountRequest) return;
+      patientAccounts = result.data;
+      renderPatientAccounts();
+      status.textContent = patientAccounts.length + ' patient account record(s) loaded.';
+      status.dataset.state = 'success';
+    } catch (error) {
+      if (request !== accountRequest) return;
+      console.error('[ERecPass] Staff patient accounts failed:', error);
+      const message = document.createElement('p');
+      message.className = 'staff-patient-error';
+      message.textContent = error?.message || 'Could not load patient accounts.';
+      container.append(message);
+      status.textContent = message.textContent;
+      status.dataset.state = 'error';
     }
   }
 
@@ -129,6 +250,7 @@
       container.append(empty);
       return;
     }
+
     labs.forEach((lab, index) => {
       const row = document.createElement('div');
       row.className = 'staff-patient-lab-row';
@@ -141,8 +263,7 @@
       remove.textContent = 'Remove';
       remove.addEventListener('click', () => {
         if (!activePatient) return;
-        const entry = activePatient.labResults[index];
-        if (entry) removedLabEntries.push(JSON.stringify(entry));
+        activePatient.removedLabEntries.push(stableJSON(activePatient.labResults[index]));
         activePatient.labResults.splice(index, 1);
         renderLabEntries(activePatient.labResults);
       });
@@ -154,179 +275,198 @@
   async function openPatientEditor(patientId) {
     try {
       const client = await assertActiveStaff();
-      const result = await client.from('patients').select('*').eq('id', patientId).maybeSingle();
+      const result = await client.rpc('staff_get_patient_record', { p_patient_id: String(patientId) });
       if (result.error) throw result.error;
-      if (!result.data) throw new Error('Patient record was not found. Refresh the list and try again.');
       const patient = result.data;
+      if (!patient || String(patient.id) !== String(patientId)) {
+        throw new Error('Patient record was not found. Refresh the list and try again.');
+      }
+
       activePatient = {
-        id: patient.id,
-        labResults: Array.isArray(patient.lab_results) ? patient.lab_results.slice() : []
+        id: String(patient.id),
+        labResults: Array.isArray(patient.lab_results) ? patient.lab_results.slice() : [],
+        removedLabEntries: []
       };
-      removedLabEntries = [];
-      byId('staffPatientEditId').value = String(patient.id);
       byId('staffPatientEditName').textContent = patient.full_name || 'Patient';
       byId('staffPatientEditStatus').value = patient.status || 'Green';
       byId('staffPatientEditBirthDate').value = patient.birth_date || '';
-      const today = new Date();
-      byId('staffPatientEditBirthDate').max = [today.getFullYear(), String(today.getMonth() + 1).padStart(2, '0'), String(today.getDate()).padStart(2, '0')].join('-');
-      byId('staffPatientEditPrescription').value = patient.prescriptions?.[0]?.medicine || '';
-      byId('staffPatientEditDoctorNote').value = patient.doctor_notes || '';
-      byId('staffPatientEditGuardianNum').value = patient.guardian_num || '';
+      byId('staffPatientEditBirthDate').max = localDateString(new Date());
       byId('staffPatientEditLabText').value = '';
       byId('staffPatientEditLabPhoto').value = '';
+      const prescriptionField = byId('staffPatientPrescriptionField');
+      const canEditPrescriptions = patient.can_edit_prescriptions === true;
+      prescriptionField.hidden = !canEditPrescriptions;
+      prescriptionField.classList.toggle('hidden', !canEditPrescriptions);
+      byId('staffPatientEditPrescription').value = canEditPrescriptions
+        ? patient.prescriptions?.[0]?.medicine || ''
+        : '';
+      byId('staffPatientEditDoctorNote').value = patient.doctor_notes || '';
+      byId('staffPatientEditGuardianNum').value = patient.guardian_num || '';
       renderLabEntries(activePatient.labResults);
-      setStatus('', false);
-      byId('staffPatientEditModal').classList.remove('hidden');
-      byId('staffPatientEditModal').setAttribute('aria-hidden', 'false');
+      const modal = byId('staffPatientEditModal');
+      modal.classList.remove('hidden');
+      modal.setAttribute('aria-hidden', 'false');
+      byId('staffPatientEditStatus').focus();
     } catch (error) {
-      console.error('[ERecPass] Staff patient editor failed:', error);
-      setStatus(error?.message || 'Could not open this patient record.', true);
-      alert(error?.message || 'Could not open this patient record.');
+      console.error('[ERecPass] Staff patient record load failed:', error);
+      setStatus(error?.message || 'Could not load the patient record.', 'error');
     }
   }
 
-  function closePatientEditor() {
+  function closeStaffPatientEditor(force) {
+    if (!force && byId('staffPatientSaveButton')?.disabled) return;
     const modal = byId('staffPatientEditModal');
     if (modal) {
       modal.classList.add('hidden');
       modal.setAttribute('aria-hidden', 'true');
     }
     activePatient = null;
-    removedLabEntries = [];
   }
 
-  function readImage(file) {
+  function readLabPhoto(file) {
+    if (!file) return Promise.resolve('');
+    if (!file.type || !file.type.startsWith('image/')) {
+      return Promise.reject(new Error('Please choose a valid lab result image.'));
+    }
+    if (file.size > MAX_LAB_PHOTO_BYTES) {
+      return Promise.reject(new Error('Lab result photos must be 2 MB or smaller.'));
+    }
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
-      reader.onload = event => resolve(String(event.target?.result || ''));
-      reader.onerror = () => reject(new Error('Could not read the selected lab-result image.'));
+      reader.onload = event => resolve(event.target?.result || '');
+      reader.onerror = () => reject(new Error('Could not read the lab result photo.'));
       reader.readAsDataURL(file);
     });
   }
 
-  async function savePatientEdit() {
-    const saveButton = byId('staffPatientSaveButton');
+  function canonicalize(value) {
+    if (Array.isArray(value)) return value.map(canonicalize);
+    if (value && typeof value === 'object') {
+      return Object.keys(value).sort().reduce((result, key) => {
+        result[key] = canonicalize(value[key]);
+        return result;
+      }, {});
+    }
+    return value;
+  }
+
+  function stableJSON(value) {
+    return JSON.stringify(canonicalize(value));
+  }
+
+  async function saveStaffPatientEdit() {
     if (!activePatient) {
-      setStatus('Open a patient record before saving.', true);
+      setStatus('Select a patient before saving.', 'error');
       return;
     }
     const values = {
-      status: byId('staffPatientEditStatus')?.value || '',
-      birthDate: byId('staffPatientEditBirthDate')?.value || '',
-      guardianNum: String(byId('staffPatientEditGuardianNum')?.value || '').trim(),
-      doctorNotes: String(byId('staffPatientEditDoctorNote')?.value || '').trim()
+      status: byId('staffPatientEditStatus').value,
+      birthDate: byId('staffPatientEditBirthDate').value,
+      guardianNum: byId('staffPatientEditGuardianNum').value.trim(),
+      doctorNotes: byId('staffPatientEditDoctorNote').value.trim(),
+      labText: byId('staffPatientEditLabText').value.trim(),
+      prescription: byId('staffPatientEditPrescription').value.trim()
     };
     const validationError = validateEdit(values);
     if (validationError) {
-      setStatus(validationError, true);
-      alert(validationError);
+      setStatus(validationError, 'error');
       return;
     }
-    const photoFile = byId('staffPatientEditLabPhoto')?.files?.[0] || null;
-    if (photoFile && (!photoFile.type?.startsWith('image/') || photoFile.size > 2 * 1024 * 1024)) {
-      const message = 'Choose an image file no larger than 2 MB.';
-      setStatus(message, true);
-      alert(message);
-      return;
-    }
-    if (saveButton) {
-      saveButton.disabled = true;
-      saveButton.textContent = 'SAVING…';
-    }
-    try {
-      const client = await assertActiveStaff();
-      const patientId = String(activePatient.id);
-      const latest = await client.from('patients')
-        .select('id,lab_results,prescriptions')
-        .eq('id', patientId)
-        .maybeSingle();
-      if (latest.error) throw latest.error;
-      if (!latest.data) throw new Error('Patient record was not found in Supabase.');
 
-      let labs = Array.isArray(latest.data.lab_results) ? latest.data.lab_results.slice() : [];
-      removedLabEntries.forEach(signature => {
-        const index = labs.findIndex(entry => JSON.stringify(entry) === signature);
-        if (index >= 0) labs.splice(index, 1);
-      });
-      const labText = String(byId('staffPatientEditLabText')?.value || '').trim();
-      const photoData = photoFile ? await readImage(photoFile) : '';
-      if (labText || photoData) {
-        labs.push({
-          date: new Date().toISOString().slice(0, 10),
-          type: 'Laboratory Result',
-          result: labText || 'Result Attachment',
-          photo: photoData
-        });
+    const button = byId('staffPatientSaveButton');
+    button.disabled = true;
+    button.textContent = 'Saving…';
+    byId('staffPatientEditModal').querySelectorAll('input, select, textarea, button').forEach(control => {
+      control.disabled = true;
+    });
+    try {
+      const photo = await readLabPhoto(byId('staffPatientEditLabPhoto').files?.[0]);
+      const patientId = activePatient.id;
+      const client = await assertActiveStaff();
+      const latest = await client.rpc('staff_get_patient_record', { p_patient_id: patientId });
+      if (latest.error) throw latest.error;
+      if (!latest.data || String(latest.data.id) !== patientId) {
+        throw new Error('Patient record was not found. Refresh the list and try again.');
       }
 
-      let prescriptions = Array.isArray(latest.data.prescriptions) ? latest.data.prescriptions.slice() : [];
-      const prescriptionText = String(byId('staffPatientEditPrescription')?.value || '').trim();
-      if (prescriptionText) {
-        prescriptions = [{
-          medicine: prescriptionText,
+      const labs = Array.isArray(latest.data.lab_results) ? latest.data.lab_results.slice() : [];
+      activePatient.removedLabEntries.forEach(removed => {
+        const index = labs.findIndex(lab => stableJSON(lab) === removed);
+        if (index >= 0) labs.splice(index, 1);
+      });
+      if (values.labText || photo) {
+        labs.push({
+          date: localDateString(new Date()),
+          type: 'Laboratory Result',
+          result: values.labText || 'Result Attachment',
+          photo
+        });
+      }
+      const prescriptions = Array.isArray(latest.data.prescriptions) ? latest.data.prescriptions.slice() : [];
+      if (values.prescription) {
+        prescriptions.splice(0, prescriptions.length, {
+          medicine: values.prescription,
           dosage: 'As prescribed',
           days: 'Active',
           active: true
-        }];
+        });
       }
 
-      const update = await client.rpc('staff_update_patient_record', {
+      const result = await client.rpc('admin_staff_update_patient_record', {
         p_patient_id: patientId,
         p_status: values.status,
         p_birth_date: values.birthDate || null,
-        p_guardian_num: values.guardianNum || null,
-        p_doctor_notes: values.doctorNotes || null,
+        p_guardian_num: values.guardianNum,
+        p_doctor_notes: values.doctorNotes,
         p_lab_results: labs,
         p_prescriptions: prescriptions
       });
-      if (update.error) throw update.error;
-      if (!update.data) throw new Error('Supabase did not confirm the patient update.');
-
-      const verified = await client.from('patients')
-        .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date')
-        .eq('id', patientId)
-        .maybeSingle();
-      if (verified.error) throw verified.error;
-      if (!verified.data) throw new Error('The updated patient record could not be verified.');
-      if (verified.data.status !== values.status ||
-          JSON.stringify(verified.data.lab_results || []) !== JSON.stringify(labs) ||
-          JSON.stringify(verified.data.prescriptions || []) !== JSON.stringify(prescriptions) ||
-          String(verified.data.guardian_num || '') !== values.guardianNum ||
-          String(verified.data.doctor_notes || '') !== values.doctorNotes ||
-          String(verified.data.birth_date || '') !== values.birthDate) {
-        throw new Error('The saved patient data did not match the verification read. Refresh and try again.');
+      if (result.error) throw result.error;
+      if (!result.data || String(result.data.id) !== patientId) {
+        throw new Error('Supabase did not confirm the patient record save.');
+      }
+      if (result.data.status !== values.status ||
+          (result.data.birth_date || null) !== (values.birthDate || null) ||
+          (result.data.guardian_num || null) !== (values.guardianNum || null) ||
+          (result.data.doctor_notes || null) !== (values.doctorNotes || null) ||
+          stableJSON(result.data.lab_results || []) !== stableJSON(labs) ||
+          stableJSON(result.data.prescriptions || []) !== stableJSON(prescriptions)) {
+        throw new Error('Patient record save verification failed. Please refresh and try again.');
       }
 
-      closePatientEditor();
-      setStatus('Patient record saved and verified in Supabase.', false);
+      closeStaffPatientEditor(true);
       await renderStaffPatients();
-      alert('Patient record saved and verified in Supabase.');
+      setStatus('Patient record saved and verified in Supabase.', 'success');
+      byId('staffPatientEditLabText').value = '';
+      byId('staffPatientEditLabPhoto').value = '';
     } catch (error) {
-      console.error('[ERecPass] Staff patient save failed:', error);
-      setStatus(error?.message || 'Could not save the patient record.', true);
-      alert('Could not save the patient record: ' + (error?.message || 'Please try again.'));
+      console.error('[ERecPass] Staff patient record save failed:', error);
+      setStatus(error?.message || 'Could not save the patient record.', 'error');
     } finally {
-      if (saveButton) {
-        saveButton.disabled = false;
-        saveButton.textContent = 'Save Changes';
-      }
+      byId('staffPatientEditModal').querySelectorAll('input, select, textarea, button').forEach(control => {
+        control.disabled = false;
+      });
+      button.disabled = false;
+      button.textContent = 'Save Changes';
     }
   }
 
-  window.ERecPassStaffPatients = { escapeHTML, validateEdit };
   window.renderStaffPatients = renderStaffPatients;
+  window.renderStaffPatientAccounts = renderPatientAccounts;
+  window.refreshStaffPatientAccounts = loadStaffPatientAccounts;
+  window.switchStaffPatientSection = switchPatientSection;
   window.openStaffPatientEditor = openPatientEditor;
-  window.saveStaffPatientEdit = savePatientEdit;
-  window.closeStaffPatientEditor = closePatientEditor;
+  window.closeStaffPatientEditor = closeStaffPatientEditor;
+  window.saveStaffPatientEdit = saveStaffPatientEdit;
+  window.ERecPassStaffPatients = { validateEdit, isClinicalStaff };
 
-  const originalNavigate = window.staffNavigateTo;
-  if (typeof originalNavigate === 'function' && !originalNavigate.__staffPatientsWrapped) {
-    const wrappedNavigate = function (destination) {
-      const result = originalNavigate.call(this, destination);
-      if (result && destination === 'patients') renderStaffPatients();
-      return result;
-    };
-    wrappedNavigate.__staffPatientsWrapped = true;
-    window.staffNavigateTo = wrappedNavigate;
+  const modal = byId('staffPatientEditModal');
+  if (modal) {
+    modal.addEventListener('click', event => {
+      if (event.target === modal) closeStaffPatientEditor();
+    });
+    document.addEventListener('keydown', event => {
+      if (event.key === 'Escape' && !modal.classList.contains('hidden')) closeStaffPatientEditor();
+    });
   }
 })();

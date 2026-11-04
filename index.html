@@ -4535,8 +4535,11 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <!-- STAFF DASHBOARD: Hospital Updates -->
 <div class="glass-card p-5 rounded-2xl" id="staffHospitalAnnouncementsCard">
-  <div class="flex items-center justify-between gap-3 mb-3">
-    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-bullhorn mr-1"></i> Updates</h2>
+  <div class="staff-announcement-card-heading flex items-center justify-between gap-3 mb-3">
+    <h2 class="text-sm font-tech text-cyan-300 uppercase tracking-wider"><i class="fa-solid fa-bullhorn mr-1" aria-hidden="true"></i> Updates</h2>
+    <button type="button" class="staff-announcement-create-button" onclick="openStaffAnnouncementComposer()" aria-label="Create hospital announcement" title="Create hospital announcement">
+      <i class="fa-solid fa-plus" aria-hidden="true"></i><span>Post update</span>
+    </button>
   </div>
   <details class="staff-updates-disclosure">
     <summary><span>Hospital announcements</span><span id="staffAnnouncementCount">Loading…</span></summary>
@@ -4545,19 +4548,69 @@ Review the user agreement before continuing. You can enlarge the document in the
     </div>
   </details>
 </div>
+<div id="staffAnnouncementComposer" class="staff-announcement-composer" hidden role="dialog" aria-modal="true" aria-labelledby="staffAnnouncementComposerTitle" aria-hidden="true">
+  <form class="staff-announcement-composer-dialog" onsubmit="event.preventDefault(); submitStaffAnnouncement(this.querySelector('[type=submit]'))">
+    <div class="staff-announcement-composer-heading">
+      <div>
+        <h2 id="staffAnnouncementComposerTitle">Post a hospital update</h2>
+        <p>Updates are visible to signed-in patients and staff.</p>
+      </div>
+      <button type="button" class="staff-secondary-action" onclick="closeStaffAnnouncementComposer()" aria-label="Close announcement form"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
+    <label for="staffAnnouncementText">Announcement</label>
+    <textarea id="staffAnnouncementText" maxlength="4000" rows="5" placeholder="Write a clear update for patients and staff." required></textarea>
+    <label for="staffAnnouncementExpirationDate">Show until</label>
+    <input id="staffAnnouncementExpirationDate" type="date">
+    <label class="staff-announcement-no-expiration"><input id="staffAnnouncementNoExpiration" type="checkbox" onchange="document.getElementById('staffAnnouncementExpirationDate').disabled=this.checked"> No expiration</label>
+    <label for="staffAnnouncementPhoto">Optional image (max 2 MB)</label>
+    <input id="staffAnnouncementPhoto" type="file" accept="image/*">
+    <p id="staffAnnouncementComposerStatus" role="status" aria-live="polite"></p>
+    <div class="staff-announcement-composer-actions">
+      <button type="button" class="staff-secondary-action" onclick="closeStaffAnnouncementComposer()">Cancel</button>
+      <button type="submit" class="staff-primary-action"><i class="fa-solid fa-paper-plane" aria-hidden="true"></i> Post update</button>
+    </div>
+  </form>
+</div>
+<div id="announcementEditor" class="announcement-editor-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="announcementEditorTitle" aria-hidden="true">
+  <form class="announcement-editor-dialog" onsubmit="event.preventDefault(); saveAnnouncementEdit(this.querySelector('[type=submit]'))">
+    <div class="announcement-editor-heading">
+      <div><h2 id="announcementEditorTitle">Edit announcement</h2><p>Changes will appear in the announcement feed.</p></div>
+      <button type="button" class="announcement-editor-close" onclick="closeAnnouncementEditor()" aria-label="Close editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+    </div>
+    <input id="announcementEditorId" type="hidden">
+    <input id="announcementEditorRole" type="hidden">
+    <input id="announcementEditorHasPhoto" type="hidden">
+    <label for="announcementEditorText">Announcement</label>
+    <textarea id="announcementEditorText" maxlength="4000" rows="5" required></textarea>
+    <label for="announcementEditorExpirationDate">Show until</label>
+    <input id="announcementEditorExpirationDate" type="date">
+    <label class="announcement-editor-no-expiration"><input id="announcementEditorNoExpiration" type="checkbox" onchange="document.getElementById('announcementEditorExpirationDate').disabled=this.checked"> No expiration</label>
+    <p id="announcementEditorStatus" role="status" aria-live="polite"></p>
+    <div class="announcement-editor-actions">
+      <button type="button" class="announcement-editor-cancel" onclick="closeAnnouncementEditor()">Cancel</button>
+      <button type="submit" class="announcement-editor-save">Save changes</button>
+    </div>
+  </form>
+</div>
 </section>
 
 
 <section class="staff-tab-panel space-y-6" data-staff-panel="patients" aria-label="Staff patient management" hidden>
+  <div class="staff-patient-tool-tabs" role="group" aria-label="Staff patient tools">
+    <button id="staffPatientRecordsTab" type="button" aria-pressed="true" aria-controls="staffPatientRecordsSection" onclick="switchStaffPatientSection('records')"><i class="fa-solid fa-hospital-user" aria-hidden="true"></i> Patient Records</button>
+    <button id="staffPatientAccountsTab" type="button" aria-pressed="false" aria-controls="staffPatientAccountsSection" onclick="switchStaffPatientSection('accounts')"><i class="fa-solid fa-user-shield" aria-hidden="true"></i> Patient Accounts</button>
+  </div>
+
+  <div id="staffPatientRecordsSection" role="tabpanel" aria-labelledby="staffPatientRecordsTab" class="space-y-6">
   <div class="glass-card p-5 rounded-2xl space-y-4">
     <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
       <div>
         <h2 class="staff-panel-heading"><i class="fa-solid fa-hospital-user mr-1" aria-hidden="true"></i> Patient Management</h2>
-        <p class="text-sm text-slate-500 mt-1">Find a patient and update the permitted patient record fields.</p>
+        <p class="text-sm text-slate-500 mt-1">Search patient records and update permitted health information.</p>
       </div>
       <button type="button" class="staff-secondary-action" onclick="renderStaffPatients()">Refresh Patients <i class="fa-solid fa-rotate" aria-hidden="true"></i></button>
     </div>
-    <label class="block text-xs text-slate-400" for="staffPatientSearch">Search patients by name, ID, email, status, or guardian contact</label>
+    <label class="block text-xs text-slate-400" for="staffPatientSearch">Search by name, ID, email, status, or guardian contact</label>
     <input id="staffPatientSearch" type="search" class="input-box w-full p-3 rounded-xl text-sm" placeholder="Search patient records..." oninput="renderStaffPatients()">
     <p id="staffPatientManagementStatus" class="text-xs text-slate-400" role="status" aria-live="polite"></p>
     <div id="staffPatientManagementList" class="staff-patient-list space-y-3">
@@ -4565,14 +4618,13 @@ Review the user agreement before continuing. You can enlarge the document in the
     </div>
   </div>
 
-  <div id="staffPatientEditModal" class="fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="staffPatientEditTitle" aria-hidden="true">
-    <div class="glass-card p-5 rounded-2xl w-full max-w-lg space-y-3 max-h-[90vh] overflow-y-auto">
-      <div class="flex items-center justify-between gap-3">
+  <div id="staffPatientEditModal" class="staff-patient-edit-overlay fixed inset-0 z-50 bg-black/80 hidden flex items-center justify-center p-4" role="dialog" aria-modal="true" aria-labelledby="staffPatientEditTitle" aria-hidden="true">
+    <div class="staff-patient-edit-dialog glass-card p-5 rounded-2xl w-full max-w-lg space-y-3 max-h-[90vh] overflow-y-auto">
+      <div class="staff-patient-edit-header flex items-center justify-between gap-3">
         <h2 id="staffPatientEditTitle" class="text-base font-tech font-bold text-cyan-300">Edit Patient Record</h2>
         <button type="button" class="staff-secondary-action" onclick="closeStaffPatientEditor()" aria-label="Close patient editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
       </div>
       <p class="text-xs text-slate-400">Patient: <strong id="staffPatientEditName">Patient</strong></p>
-      <input type="hidden" id="staffPatientEditId">
       <label class="block text-xs text-slate-400">Health Status
         <select id="staffPatientEditStatus" class="input-box w-full p-2 mt-1 rounded-xl text-xs">
           <option value="Green">Green</option><option value="Yellow">Yellow</option><option value="Red">Red</option>
@@ -4592,7 +4644,7 @@ Review the user agreement before continuing. You can enlarge the document in the
         <p class="block text-xs text-slate-400 mb-2">Existing Laboratory Results</p>
         <div id="staffPatientExistingLabs" class="space-y-2"></div>
       </div>
-      <label class="block text-xs text-slate-400">Prescription & Medication Reminder
+      <label id="staffPatientPrescriptionField" class="block text-xs text-slate-400" hidden>Prescription & Medication Reminder (Doctors only)
         <input type="text" id="staffPatientEditPrescription" maxlength="500" class="input-box w-full p-2 mt-1 rounded-xl text-xs" placeholder="Medication and dosage as prescribed">
       </label>
       <label class="block text-xs text-slate-400">Doctor's Notes & Next Steps
@@ -4601,12 +4653,44 @@ Review the user agreement before continuing. You can enlarge the document in the
       <label class="block text-xs text-slate-400">Guardian Emergency Contact Number
         <input type="text" id="staffPatientEditGuardianNum" maxlength="40" class="input-box w-full p-2 mt-1 rounded-xl text-xs" placeholder="Guardian contact number">
       </label>
-      <div class="flex gap-2 pt-2">
-        <button id="staffPatientSaveButton" type="button" onclick="saveStaffPatientEdit()" class="staff-primary-action flex-1">Save Changes</button>
+      <p id="staffPatientEditorStatus" class="text-xs text-slate-400" role="status" aria-live="polite"></p>
+      <div class="staff-patient-edit-actions pt-2">
+        <button id="staffPatientSaveButton" type="button" onclick="saveStaffPatientEdit()" class="staff-primary-action">Save Changes</button>
         <button type="button" onclick="closeStaffPatientEditor()" class="staff-secondary-action">Cancel</button>
       </div>
     </div>
   </div>
+  </div>
+
+  <section id="staffPatientAccountsSection" aria-labelledby="staffPatientAccountsTab" class="glass-card p-5 rounded-2xl space-y-4" hidden>
+    <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+      <div>
+        <h2 class="staff-panel-heading"><i class="fa-solid fa-user-shield mr-1" aria-hidden="true"></i> Patient Accounts</h2>
+        <p class="text-sm text-slate-500 mt-1">View account access and email verification for linked patient records.</p>
+      </div>
+      <button type="button" class="staff-secondary-action" onclick="refreshStaffPatientAccounts()">Refresh Accounts <i class="fa-solid fa-rotate" aria-hidden="true"></i></button>
+    </div>
+    <p class="staff-account-permissions"><i class="fa-solid fa-lock" aria-hidden="true"></i><span>Staff can view account status only. Account edits, password changes, activation, and deletion are Admin-only.</span></p>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-3">
+      <label class="block text-xs text-slate-400">Search accounts
+        <input id="staffPatientAccountSearch" type="search" class="input-box w-full p-3 mt-1 rounded-xl text-sm" placeholder="Name, patient ID, or email" oninput="renderStaffPatientAccounts()">
+      </label>
+      <label class="block text-xs text-slate-400">Account status
+        <select id="staffPatientAccountStatusFilter" class="input-box w-full p-3 mt-1 rounded-xl text-sm" onchange="renderStaffPatientAccounts()">
+          <option value="all">All accounts</option><option value="active">Active</option><option value="deactivated">Deactivated</option><option value="unlinked">Not linked</option>
+        </select>
+      </label>
+      <label class="block text-xs text-slate-400">Email verification
+        <select id="staffPatientAccountVerificationFilter" class="input-box w-full p-3 mt-1 rounded-xl text-sm" onchange="renderStaffPatientAccounts()">
+          <option value="all">All statuses</option><option value="verified">Verified</option><option value="unverified">Not verified</option><option value="unlinked">Not linked</option>
+        </select>
+      </label>
+    </div>
+    <p id="staffPatientAccountsStatus" class="text-xs text-slate-400" role="status" aria-live="polite"></p>
+    <div id="staffPatientAccountsList" class="staff-patient-list space-y-3">
+      <p class="staff-patient-empty">Open Patient Accounts to load account status.</p>
+    </div>
+  </section>
 </section>
 
 <section class="staff-tab-panel space-y-6" data-staff-panel="appointments" aria-label="Staff appointments" hidden>
@@ -4800,27 +4884,56 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <section class="staff-tab-panel space-y-6" data-staff-panel="profile" aria-label="Staff profile" hidden>
 <div class="glass-card p-5 rounded-2xl staff-profile-card">
-  <div class="staff-panel-heading-wrap">
+  <div class="staff-panel-heading-wrap staff-profile-heading-wrap">
     <h1 class="staff-panel-heading">My Profile</h1>
     <p class="text-sm text-slate-500">Your staff account information.</p>
+    <details class="announcement-actions-menu staff-profile-actions-menu">
+      <summary aria-label="Staff profile actions" title="Staff profile actions"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></summary>
+      <div class="announcement-actions-menu-items">
+        <button type="button" onclick="this.closest('details').open=false; openStaffProfileEditor()"><i class="fa-solid fa-pen" aria-hidden="true"></i><span>Edit profile</span></button>
+        <button type="button" class="staff-profile-photo-change" onclick="this.closest('details').open=false; document.getElementById('staffProfilePhotoInput').click()"><i class="fa-solid fa-camera" aria-hidden="true"></i><span>Change picture</span></button>
+        <button type="button" class="announcement-actions-delete" onclick="this.closest('details').open=false; staffDeleteProfilePhoto(this)"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Delete photo</span></button>
+      </div>
+    </details>
   </div>
   <div class="staff-profile-summary">
     <div class="staff-profile-photo-wrap">
       <img id="staffProfilePhoto" class="staff-profile-photo" alt="" hidden>
       <div id="staffProfilePhotoPlaceholder" class="staff-profile-avatar" aria-hidden="true"><i class="fa-solid fa-user-doctor"></i></div>
-      <button type="button" class="staff-profile-photo-upload" aria-label="Change profile photo" title="Change profile photo" onclick="document.getElementById('staffProfilePhotoInput').click()">
-        <i class="fa-solid fa-camera" aria-hidden="true"></i>
-      </button>
       <input id="staffProfilePhotoInput" type="file" accept="image/*" class="hidden" tabindex="-1" aria-label="Choose a staff profile photo" onchange="handleStaffProfilePhotoUpload(event)">
     </div>
     <div class="min-w-0">
       <p class="staff-profile-label">Staff account</p>
       <h2 id="staffPortalNameDisplay" class="staff-profile-name">Staff Member</h2>
+      <p class="staff-profile-label mt-2">Contact email</p>
+      <p id="staffProfileEmailDisplay" class="staff-profile-task">Not provided</p>
       <p class="staff-profile-label mt-2">Role or department</p>
       <p id="staffProfileRoleDisplay" class="staff-profile-task">Role not provided</p>
       <p class="staff-profile-label mt-2">Assigned task</p>
       <p id="staffAssignedTaskDisplay" class="staff-profile-task">General Triage</p>
     </div>
+  </div>
+  <div id="staffProfileEditor" class="staff-profile-editor-overlay" hidden role="dialog" aria-modal="true" aria-labelledby="staffProfileEditorTitle" aria-hidden="true">
+    <form class="staff-profile-editor-dialog" onsubmit="event.preventDefault(); saveStaffProfile(this.querySelector('[type=submit]'))">
+      <div class="staff-profile-editor-heading">
+        <div><h2 id="staffProfileEditorTitle">Edit profile</h2><p>Update your basic staff information.</p></div>
+        <button type="button" class="staff-profile-editor-close" onclick="closeStaffProfileEditor()" aria-label="Close profile editor"><i class="fa-solid fa-xmark" aria-hidden="true"></i></button>
+      </div>
+      <label for="staffProfileEditName">Name</label>
+      <input id="staffProfileEditName" type="text" maxlength="120" autocomplete="name" required>
+      <label for="staffProfileEditTitle">Role / department</label>
+      <input id="staffProfileEditTitle" type="text" maxlength="160" placeholder="Optional">
+      <label for="staffProfileEditTask">Assigned task</label>
+      <input id="staffProfileEditTask" type="text" maxlength="500" placeholder="Optional">
+      <label for="staffProfileEditEmail">Contact email</label>
+      <input id="staffProfileEditEmail" type="email" readonly aria-describedby="staffProfileEmailHelp">
+      <p id="staffProfileEmailHelp" class="staff-profile-editor-help">Login email is managed by the hospital administrator.</p>
+      <p id="staffProfileEditorStatus" role="status" aria-live="polite"></p>
+      <div class="staff-profile-editor-actions">
+        <button type="button" class="staff-profile-editor-cancel" onclick="closeStaffProfileEditor()">Cancel</button>
+        <button type="submit" class="staff-profile-editor-save">Save changes</button>
+      </div>
+    </form>
   </div>
   <div id="staffDoctorProfileSection" class="mt-6 pt-5 border-t border-slate-700/60" hidden>
     <h2 class="staff-panel-heading"><i class="fa-solid fa-user-doctor mr-1" aria-hidden="true"></i> My Professional Profile</h2>
@@ -4921,25 +5034,25 @@ Review the user agreement before continuing. You can enlarge the document in the
 </main>
 
 <nav id="staffBottomNav" class="staff-bottom-nav" aria-label="Staff navigation">
-  <button type="button" data-staff-destination="dashboard" aria-current="page" onclick="staffNavigateTo('dashboard')">
-    <i class="fa-solid fa-house" aria-hidden="true"></i><span>Dashboard</span>
+  <button type="button" data-staff-destination="dashboard" aria-label="Dashboard" aria-current="page" onclick="staffNavigateTo('dashboard')">
+    <i class="fa-solid fa-house" aria-hidden="true"></i><span data-compact-label="Home">Dashboard</span>
   </button>
 
-  <button type="button" data-staff-destination="patients" onclick="staffNavigateTo('patients')">
-    <i class="fa-solid fa-hospital-user" aria-hidden="true"></i><span>Patients</span>
+  <button type="button" data-staff-destination="patients" aria-label="Patients" onclick="staffNavigateTo('patients')">
+    <i class="fa-solid fa-hospital-user" aria-hidden="true"></i><span data-compact-label="Patients">Patients</span>
   </button>
 
-  <button type="button" data-staff-destination="appointments" onclick="staffNavigateTo('appointments')">
-    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span>Appointments</span>
+  <button type="button" data-staff-destination="appointments" aria-label="Appointments" onclick="staffNavigateTo('appointments')">
+    <i class="fa-solid fa-calendar-check" aria-hidden="true"></i><span data-compact-label="Appts">Appointments</span>
   </button>
-  <button type="button" data-staff-destination="scanner" onclick="staffNavigateTo('scanner')">
-    <i class="fa-solid fa-qrcode" aria-hidden="true"></i><span>QR Scanner</span>
+  <button type="button" data-staff-destination="scanner" aria-label="QR Scanner" onclick="staffNavigateTo('scanner')">
+    <i class="fa-solid fa-qrcode" aria-hidden="true"></i><span data-compact-label="QR">QR Scanner</span>
   </button>
-  <button type="button" data-staff-destination="chat" onclick="staffNavigateTo('chat')">
-    <i class="fa-solid fa-comments" aria-hidden="true"></i><span>Chat</span>
+  <button type="button" data-staff-destination="chat" aria-label="Chat" onclick="staffNavigateTo('chat')">
+    <i class="fa-solid fa-comments" aria-hidden="true"></i><span data-compact-label="Chat">Chat</span>
   </button>
-  <button type="button" data-staff-destination="profile" onclick="staffNavigateTo('profile')">
-    <i class="fa-solid fa-user" aria-hidden="true"></i><span>Profile</span>
+  <button type="button" data-staff-destination="profile" aria-label="Profile" onclick="staffNavigateTo('profile')">
+    <i class="fa-solid fa-user" aria-hidden="true"></i><span data-compact-label="Profile">Profile</span>
   </button>
 </nav>
 
@@ -5168,6 +5281,12 @@ Review the user agreement before continuing. You can enlarge the document in the
 
 <textarea id="adminAnnouncementText" placeholder="Free vaccination drive starting Monday..." class="input-box w-full p-2 rounded-xl text-xs h-20"></textarea>
 
+</div>
+
+<div>
+<label class="block text-xs font-tech text-slate-300 mb-1" for="adminAnnouncementExpirationDate">Show until</label>
+<input id="adminAnnouncementExpirationDate" type="date" class="input-box w-full p-2 rounded-xl text-xs">
+<label class="mt-2 inline-flex items-center gap-2 text-xs text-slate-300" for="adminAnnouncementNoExpiration"><input id="adminAnnouncementNoExpiration" type="checkbox" onchange="document.getElementById('adminAnnouncementExpirationDate').disabled=this.checked"> No expiration</label>
 </div>
 
 <div>
@@ -6870,21 +6989,119 @@ function cacheSupabaseSnapshot(key, value) {
   else epStore.setItem(key, JSON.stringify(value));
 }
 
-async function loadHospitalAnnouncementsFromSupabase() {
+function announcementDateInManila(date = new Date()) {
+  const parts = new Intl.DateTimeFormat('en-CA', {
+    timeZone: 'Asia/Manila',
+    year: 'numeric',
+    month: '2-digit',
+    day: '2-digit'
+  }).formatToParts(date);
+  const values = Object.fromEntries(parts.map(part => [part.type, part.value]));
+  return values.year + '-' + values.month + '-' + values.day;
+}
+
+function announcementDateAfterDays(dateValue, days) {
+  const [year, month, day] = dateValue.split('-').map(Number);
+  return new Date(Date.UTC(year, month - 1, day + days)).toISOString().slice(0, 10);
+}
+
+function announcementExpirationFromDate(dateValue, noExpiration) {
+  if (noExpiration) return null;
+  if (!/^\d{4}-\d{2}-\d{2}$/.test(String(dateValue || ''))) {
+    throw new Error('Choose an expiration date or select no expiration.');
+  }
+  const date = new Date(dateValue + 'T23:59:59.999+08:00');
+  if (Number.isNaN(date.getTime()) || announcementDateInManila(date) !== dateValue) {
+    throw new Error('Choose a valid expiration date.');
+  }
+  if (dateValue < announcementDateInManila()) {
+    throw new Error('The expiration date cannot be in the past.');
+  }
+  return date.toISOString();
+}
+
+function setAnnouncementExpirationDate(input, noExpiration, expiresAt, defaultDays = 7, noExpirationIfEmpty = true) {
+  if (!input || !noExpiration) return;
+  input.min = announcementDateInManila();
+  input.value = expiresAt ? announcementDateInManila(new Date(expiresAt)) : announcementDateAfterDays(input.min, defaultDays);
+  noExpiration.checked = expiresAt ? false : noExpirationIfEmpty;
+  input.disabled = noExpiration.checked;
+}
+
+function isAnnouncementActive(announcement, now = Date.now()) {
+  if (!announcement?.expires_at) return true;
+  const expiresAt = Date.parse(announcement.expires_at);
+  return Number.isFinite(expiresAt) && expiresAt > now;
+}
+
+function formatAnnouncementExpiration(expiresAt) {
+  if (!expiresAt) return 'No expiration';
+  const date = new Date(expiresAt);
+  if (Number.isNaN(date.getTime())) return 'Expiration unavailable';
+  return 'Expires ' + date.toLocaleString('en-PH', {
+    timeZone: 'Asia/Manila',
+    month: 'short',
+    day: 'numeric',
+    year: 'numeric',
+    hour: 'numeric',
+    minute: '2-digit'
+  }) + ' PHT';
+}
+
+function announcementActionsMenu(announcementId, audience, canManage = true) {
+  const rawId = String(announcementId || '');
+  if (!/^\d+$/.test(rawId)) {
+    return '<details class="announcement-actions-menu">' +
+      '<summary aria-label="Announcement actions" title="Announcement actions"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></summary>' +
+      '<div class="announcement-actions-menu-items"><p class="announcement-actions-note">This older announcement is not linked to a Supabase record, so it cannot be edited or deleted here.</p></div></details>';
+  }
+  const id = escapeStaffDashboardText(rawId);
+  const prefix = audience === 'staff' ? 'staff' : 'admin';
+  if (!canManage) {
+    return '<details class="announcement-actions-menu">' +
+      '<summary aria-label="Announcement actions" title="Announcement actions"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></summary>' +
+      '<div class="announcement-actions-menu-items"><p class="announcement-actions-note">Only the author or an Admin can edit or delete this announcement.</p></div></details>';
+  }
+  return '<details class="announcement-actions-menu">' +
+    '<summary aria-label="Announcement actions" title="Announcement actions"><i class="fa-solid fa-ellipsis" aria-hidden="true"></i></summary>' +
+    '<div class="announcement-actions-menu-items">' +
+    '<button type="button" onclick="this.closest(\'details\').open=false; openAnnouncementEditor(\'' + id + '\', \'' + prefix + '\')"><i class="fa-solid fa-pen" aria-hidden="true"></i><span>Edit announcement</span></button>' +
+    '<button type="button" class="announcement-actions-delete" onclick="this.closest(\'details\').open=false; ' + (prefix === 'staff' ? 'staffDeleteAnnouncement' : 'deleteAdminAnnouncement') + '(\'' + id + '\', this)"><i class="fa-solid fa-trash" aria-hidden="true"></i><span>Delete</span></button>' +
+    '</div></details>';
+}
+
+async function loadHospitalAnnouncementsFromSupabase(options = {}) {
   const client = window.erecpassSupabase;
   if (!client?.from || !client?.auth) return null;
   const session = await client.auth.getSession();
   if (session.error) throw session.error;
   if (!session.data?.session) return null;
+  const columns = 'id,legacy_id,body,photo,published_on,expires_at,created_by';
   const result = await client.from('announcements')
-    .select('legacy_id,body,photo,published_on')
+    .select(columns)
     .order('published_on', { ascending: false });
   if (result.error) throw result.error;
-  const list = (result.data || []).map(row => ({
+  const rows = (result.data || []).filter(row => isAnnouncementActive(row));
+  const authorIds = [...new Set(rows.map(row => row.created_by).filter(Boolean))];
+  const staffByUserId = new Map();
+  if (authorIds.length) {
+    const staffResult = await client.from('staff')
+      .select('user_id,name')
+      .in('user_id', authorIds);
+    if (staffResult.error) throw staffResult.error;
+    for (const staff of staffResult.data || []) {
+      if (staff.user_id && staff.name) staffByUserId.set(String(staff.user_id), String(staff.name));
+    }
+  }
+  const list = rows.filter(row => isAnnouncementActive(row)).map(row => ({
     id: row.legacy_id || row.id,
+    db_id: row.id,
     text: row.body || '',
     photo: row.photo || '',
-    date: row.published_on || ''
+    date: row.published_on || '',
+    expires_at: row.expires_at || null,
+    author_name: staffByUserId.get(String(row.created_by || '')) || 'Admin',
+    ...(options.includeOwner ? { created_by: row.created_by || null } : {})
   }));
   cacheSupabaseSnapshot(DB_KEYS.ANNOUNCEMENTS, list);
   return list;
@@ -6902,6 +7119,7 @@ async function renderPatientAnnouncements() {
     cloudLoadFailed = true;
     console.error('[ERecPass] Could not load announcements from Supabase:', error);
   }
+  list = list.filter(announcement => isAnnouncementActive(announcement));
   container.innerHTML = '';
   if (list.length === 0) {
   container.innerHTML = `
@@ -6929,6 +7147,8 @@ async function renderPatientAnnouncements() {
             <i class="fa-solid fa-bullhorn text-cyan-400 text-base mt-0.5"></i>
             <div class="min-w-0 flex-1">
               <strong class="text-white block font-tech">Announcement (${escapeStaffDashboardText(a.date || '')})</strong>
+              <p class="announcement-author text-[11px] mt-1">Posted by ${escapeStaffDashboardText(a.author_name || 'Admin')}</p>
+              <p class="staff-announcement-expiry text-[10px] mt-1">${escapeStaffDashboardText(formatAnnouncementExpiration(a.expires_at))}</p>
             </div>
           </div>
           <button type="button" class="announcement-toggle shrink-0" onclick="togglePatientAnnouncement(this)" aria-expanded="true" aria-label="Minimize announcement" title="Minimize announcement">
@@ -7651,26 +7871,6 @@ function printPatientDigitalID() {
     </article>
   </main>
 
-<style id="staff-patient-management-styles">
-  #staffApp .staff-patient-card { display:flex; align-items:center; justify-content:space-between; gap:14px; padding:14px; border:1px solid rgba(45,224,208,.22); border-radius:14px; background:rgba(3,25,29,.66); }
-  #staffApp .staff-patient-card-copy { min-width:0; }
-  #staffApp .staff-patient-card-copy strong { display:block; color:#e6fffb; font-size:14px; overflow-wrap:anywhere; }
-  #staffApp .staff-patient-card-copy p { color:#9bbab7; font-size:11px; margin-top:3px; overflow-wrap:anywhere; }
-  #staffApp .staff-patient-card-actions { display:flex; align-items:flex-end; flex-direction:column; gap:8px; flex-shrink:0; }
-  #staffApp .staff-patient-status { font-size:10px; font-weight:700; padding:3px 8px; border-radius:999px; }
-  #staffApp .staff-patient-status.status-green { color:#bbf7d0; background:rgba(22,163,74,.2); }
-  #staffApp .staff-patient-status.status-yellow { color:#fde68a; background:rgba(217,119,6,.2); }
-  #staffApp .staff-patient-status.status-red { color:#fecaca; background:rgba(220,38,38,.2); }
-  #staffApp .staff-patient-empty { color:#9bbab7; font-size:12px; padding:10px; }
-  #staffApp .staff-patient-error { color:#fecaca; font-size:12px; padding:10px; }
-  #staffApp .staff-patient-lab-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px; border:1px solid rgba(45,224,208,.18); border-radius:10px; color:#c8e5e1; font-size:11px; }
-  #staffApp .staff-patient-lab-row span { min-width:0; overflow-wrap:anywhere; }
-  #staffApp .staff-patient-remove-lab { flex-shrink:0; border:1px solid rgba(248,113,113,.35); border-radius:8px; padding:5px 8px; color:#fecaca; font-size:10px; }
-  #staffApp #staffPatientManagementStatus[data-state="error"] { color:#fecaca; }
-  @media(max-width:560px) { #staffApp .staff-patient-card { align-items:flex-start; flex-direction:column; } #staffApp .staff-patient-card-actions { align-items:center; flex-direction:row; } }
-</style>
-
-<script src="./staff-patient-management.js"></script>
 </body>
 </html>`;
   let preview = document.getElementById('patientDigitalIDPreview');
@@ -8305,10 +8505,16 @@ function refreshStaffPortal() {
 
 const staffName = currentSession.data.name || currentSession.data.fullName || 'Staff Member';
 const staffAppRoot = document.getElementById('staffApp');
-if (staffAppRoot) staffAppRoot.dataset.accountType = String(currentSession.data.account_type || '').toLowerCase();
+const staffAccountType = String(currentSession.data.account_type || '').toLowerCase();
+const canManagePatientRecords = ['doctor', 'nurse'].includes(staffAccountType);
+if (staffAppRoot) staffAppRoot.dataset.accountType = staffAccountType;
+const patientNavigation = document.querySelector('#staffBottomNav [data-staff-destination="patients"]');
+if (patientNavigation) patientNavigation.hidden = !canManagePatientRecords;
 document.getElementById('staffPortalNameDisplay').innerText = staffName;
 const dashboardName = document.getElementById('staffDashboardName');
 if (dashboardName) dashboardName.innerText = staffName;
+const profileEmail = document.getElementById('staffProfileEmailDisplay');
+if (profileEmail) profileEmail.innerText = currentSession.data.email || 'Not provided';
 
 document.getElementById('staffAssignedTaskDisplay').innerText = currentSession.data.task || "General Triage";
 
@@ -8353,6 +8559,166 @@ if (typeof window.staffNavigateTo === 'function') window.staffNavigateTo('dashbo
 
 }
 
+let staffProfileEditorReturnFocus = null;
+
+function openStaffProfileEditor() {
+  if (currentSession?.role !== 'staff') {
+    alert('Sign in with your Staff account to edit this profile.');
+    return;
+  }
+  const modal = document.getElementById('staffProfileEditor');
+  if (!modal) return;
+  document.getElementById('staffProfileEditName').value = String(currentSession.data.name || currentSession.data.fullName || '');
+  document.getElementById('staffProfileEditTitle').value = String(currentSession.data.professional_title || currentSession.data.role_title || '');
+  document.getElementById('staffProfileEditTask').value = String(currentSession.data.task || '');
+  document.getElementById('staffProfileEditEmail').value = String(currentSession.data.email || '');
+  document.getElementById('staffProfileEditorStatus').textContent = '';
+  staffProfileEditorReturnFocus = document.activeElement;
+  if (modal.parentElement !== document.body) document.body.append(modal);
+  modal.hidden = false;
+  modal.setAttribute('aria-hidden', 'false');
+  document.getElementById('staffProfileEditName').focus();
+}
+
+function closeStaffProfileEditor() {
+  const modal = document.getElementById('staffProfileEditor');
+  if (!modal) return;
+  modal.hidden = true;
+  modal.setAttribute('aria-hidden', 'true');
+  if (staffProfileEditorReturnFocus?.isConnected) staffProfileEditorReturnFocus.focus();
+  staffProfileEditorReturnFocus = null;
+}
+
+async function saveStaffProfile(button) {
+  const name = String(document.getElementById('staffProfileEditName')?.value || '').trim();
+  const title = String(document.getElementById('staffProfileEditTitle')?.value || '').trim();
+  const task = String(document.getElementById('staffProfileEditTask')?.value || '').trim();
+  const status = document.getElementById('staffProfileEditorStatus');
+  if (currentSession?.role !== 'staff') {
+    if (status) status.textContent = 'Sign in with your Staff account before saving.';
+    return;
+  }
+  if (!name || name.length > 120 || title.length > 160 || task.length > 500) {
+    if (status) status.textContent = 'Check the name, role / department, and assigned task lengths.';
+    return;
+  }
+  const client = window.erecpassSupabase;
+  if (!client?.auth || !client?.rpc) {
+    if (status) status.textContent = 'Supabase is not connected. Please refresh and sign in again.';
+    return;
+  }
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+  if (status) status.textContent = 'Saving profile…';
+  try {
+    const auth = await client.auth.getUser();
+    if (auth.error || !auth.data?.user?.id) throw new Error('Your Staff session has expired. Sign in again.');
+    const saved = await client.rpc('update_own_staff_profile', {
+      p_name: name,
+      p_title: title,
+      p_task: task
+    });
+    if (saved.error) throw saved.error;
+    if (!saved.data || saved.data.name !== name || saved.data.task !== task) {
+      throw new Error('Supabase did not confirm the profile changes.');
+    }
+    currentSession.data.name = saved.data.name;
+    currentSession.data.fullName = saved.data.name;
+    currentSession.data.role_title = saved.data.role_title;
+    currentSession.data.professional_title = saved.data.professional_title;
+    currentSession.data.task = saved.data.task;
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    const staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF) || '[]') || [];
+    const staff = staffList.find(item => String(item.user_id || '') === String(auth.data.user.id));
+    if (staff) {
+      staff.name = saved.data.name;
+      staff.fullName = saved.data.name;
+      staff.role_title = saved.data.role_title;
+      staff.professional_title = saved.data.professional_title;
+      staff.task = saved.data.task;
+    }
+    epStore.setItem(DB_KEYS.STAFF, JSON.stringify(staffList));
+    document.getElementById('staffPortalNameDisplay').innerText = saved.data.name;
+    const dashboardName = document.getElementById('staffDashboardName');
+    if (dashboardName) dashboardName.innerText = saved.data.name;
+    const accountTypeLabel = ({ nurse: 'Nurse', doctor: 'Doctor', other: 'Other Staff' })[String(currentSession.data.account_type || '').toLowerCase()] || currentSession.data.account_type || '';
+    document.getElementById('staffProfileRoleDisplay').innerText =
+      [accountTypeLabel, saved.data.professional_title].filter(Boolean).join(' · ') || saved.data.role_title || currentSession.data.role || 'Role not provided';
+    document.getElementById('staffAssignedTaskDisplay').innerText = saved.data.task || 'General Triage';
+    if (status) status.textContent = 'Profile updated.';
+    window.setTimeout(closeStaffProfileEditor, 500);
+  } catch (error) {
+    console.error('[ERecPass] Staff profile update failed:', error);
+    if (status) status.textContent = 'Could not save your profile: ' + (error.message || 'Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+}
+
+async function staffDeleteProfilePhoto(button) {
+  if (currentSession?.role !== 'staff') {
+    alert('Sign in with your Staff account to remove the profile photo.');
+    return;
+  }
+  const confirmed = await window.erecpassConfirm('Delete your profile photo? Your profile will show the default avatar.');
+  if (!confirmed) return;
+  const client = window.erecpassSupabase;
+  if (!client?.auth || !client?.rpc) {
+    alert('Supabase is not connected. Please refresh and sign in again.');
+    return;
+  }
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+  const status = document.getElementById('staffProfilePhotoStatus');
+  if (status) status.textContent = 'Removing profile photo…';
+  try {
+    const auth = await client.auth.getUser();
+    if (auth.error || !auth.data?.user?.id) throw new Error('Your Staff session has expired. Sign in again.');
+    const removed = await client.rpc('remove_own_staff_photo');
+    if (removed.error) throw removed.error;
+    if (removed.data !== true) throw new Error('Supabase did not confirm that the photo was removed.');
+    currentSession.data.photo = '';
+    currentSession.data.profilePhoto = '';
+    epStore.setItem(DB_KEYS.SESSION, JSON.stringify(currentSession));
+    const staffList = JSON.parse(epStore.getItem(DB_KEYS.STAFF) || '[]') || [];
+    const staff = staffList.find(item => String(item.user_id || '') === String(auth.data.user.id));
+    if (staff) {
+      staff.photo = '';
+      staff.profilePhoto = '';
+    }
+    epStore.setItem(DB_KEYS.STAFF, JSON.stringify(staffList));
+    for (const [imageId, placeholderId] of [
+      ['staffProfilePhoto', 'staffProfilePhotoPlaceholder'],
+      ['staffDashboardPhoto', 'staffDashboardPhotoPlaceholder']
+    ]) {
+      const image = document.getElementById(imageId);
+      const placeholder = document.getElementById(placeholderId);
+      if (image) {
+        image.removeAttribute('src');
+        image.hidden = true;
+      }
+      if (placeholder) placeholder.hidden = false;
+    }
+    if (status) status.textContent = 'Profile photo deleted.';
+  } catch (error) {
+    console.error('[ERecPass] Staff profile photo removal failed:', error);
+    if (status) status.textContent = 'Could not remove the photo: ' + (error.message || 'Please try again.');
+    alert('Profile photo was not removed. ' + (error.message || 'Please try again.'));
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+}
+
 window.handleStaffProfilePhotoUpload = async function(event) {
   const input = event?.target;
   const file = input?.files?.[0];
@@ -8371,7 +8737,7 @@ window.handleStaffProfilePhotoUpload = async function(event) {
     input.value = '';
     return;
   }
-  const button = document.querySelector('#staffApp .staff-profile-photo-upload');
+  const button = document.querySelector('#staffApp .staff-profile-photo-change');
   if (button) button.setAttribute('aria-busy', 'true');
   setStatus('Preparing your photo…');
   try {
@@ -9581,6 +9947,279 @@ window.staffAddUnavailability = staffAddUnavailability;
 window.staffRemoveUnavailability = staffRemoveUnavailability;
 window.staffLoadAvailabilityDay = staffLoadAvailabilityDay;
 
+let announcementEditorReturnFocus = null;
+
+async function openAnnouncementEditor(announcementId, audience) {
+  const role = audience === 'staff' ? 'staff' : 'admin';
+  if (currentSession?.role !== role) {
+    alert('Sign in with the appropriate account to edit this announcement.');
+    return;
+  }
+  const status = document.getElementById('announcementEditorStatus');
+  try {
+    let announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
+    if (!announcements.some(item => String(item.db_id || '') === String(announcementId))) {
+      announcements = await loadHospitalAnnouncementsFromSupabase({ includeOwner: role === 'staff' }) || announcements;
+    }
+    const announcement = announcements.find(item => String(item.db_id || '') === String(announcementId));
+    if (!announcement) throw new Error('This announcement is no longer available. Refresh the list and try again.');
+    if (role === 'staff') {
+      const auth = await window.erecpassSupabase?.auth?.getUser();
+      if (auth?.error || !auth?.data?.user) throw new Error('Your Staff session has expired. Sign in again.');
+      if (String(announcement.created_by || '') !== String(auth.data.user.id)) {
+        throw new Error('You can only edit announcements you posted.');
+      }
+    }
+    announcementEditorReturnFocus = document.activeElement;
+    document.getElementById('announcementEditorId').value = String(announcement.db_id);
+    document.getElementById('announcementEditorRole').value = role;
+    document.getElementById('announcementEditorHasPhoto').value = announcement.photo ? 'true' : '';
+    document.getElementById('announcementEditorText').value = String(announcement.text || announcement.body || '');
+    setAnnouncementExpirationDate(
+      document.getElementById('announcementEditorExpirationDate'),
+      document.getElementById('announcementEditorNoExpiration'),
+      announcement.expires_at || null
+    );
+    if (status) status.textContent = '';
+    const modal = document.getElementById('announcementEditor');
+    if (modal.parentElement !== document.body) document.body.append(modal);
+    modal.hidden = false;
+    modal.setAttribute('aria-hidden', 'false');
+    document.getElementById('announcementEditorText').focus();
+  } catch (error) {
+    if (status) status.textContent = error.message || 'Could not open this announcement.';
+    else alert(error.message || 'Could not open this announcement.');
+  }
+}
+
+function closeAnnouncementEditor() {
+  const modal = document.getElementById('announcementEditor');
+  if (!modal) return;
+  modal.hidden = true;
+  modal.setAttribute('aria-hidden', 'true');
+  if (announcementEditorReturnFocus?.isConnected) announcementEditorReturnFocus.focus();
+  announcementEditorReturnFocus = null;
+}
+
+async function saveAnnouncementEdit(button) {
+  const id = String(document.getElementById('announcementEditorId')?.value || '');
+  const role = String(document.getElementById('announcementEditorRole')?.value || '');
+  const text = String(document.getElementById('announcementEditorText')?.value || '').trim();
+  const hasPhoto = document.getElementById('announcementEditorHasPhoto')?.value === 'true';
+  const expirationInput = document.getElementById('announcementEditorExpirationDate');
+  const noExpiration = document.getElementById('announcementEditorNoExpiration')?.checked;
+  const status = document.getElementById('announcementEditorStatus');
+  if (!/^\d+$/.test(id) || !['staff', 'admin'].includes(role) || currentSession?.role !== role) {
+    if (status) status.textContent = 'Your session is not authorized to edit this announcement.';
+    return;
+  }
+  if ((!text && !hasPhoto) || text.length > 4000) {
+    if (status) status.textContent = hasPhoto
+      ? 'Enter up to 4,000 characters, or keep the existing announcement image.'
+      : 'Enter an announcement of up to 4,000 characters.';
+    return;
+  }
+  let expiresAt;
+  try {
+    expiresAt = announcementExpirationFromDate(expirationInput?.value, noExpiration);
+  } catch (error) {
+    if (status) status.textContent = error.message;
+    return;
+  }
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+  if (status) status.textContent = 'Saving changes…';
+  try {
+    const client = window.erecpassSupabase;
+    if (!client?.auth || !client?.from) throw new Error('Supabase is not connected. Please refresh and sign in again.');
+    const auth = await client.auth.getUser();
+    if (auth.error || !auth.data?.user) throw new Error('Your session has expired. Sign in again.');
+    const profile = await client.from('profiles').select('role,active').eq('id', auth.data.user.id).maybeSingle();
+    if (profile.error) throw profile.error;
+    if (profile.data?.role !== role || profile.data?.active !== true) throw new Error('Only an active ' + role + ' account can edit announcements.');
+    let update = client.from('announcements').update({ body: text, expires_at: expiresAt }).eq('id', id);
+    if (role === 'staff') {
+      const staffAccount = await client.from('staff').select('id').eq('user_id', auth.data.user.id).eq('active', true).maybeSingle();
+      if (staffAccount.error) throw staffAccount.error;
+      if (!staffAccount.data) throw new Error('Your Staff account is inactive or is not linked to this login.');
+      update = update.eq('created_by', auth.data.user.id);
+    }
+    const saved = await update.select('id');
+    if (saved.error) throw saved.error;
+    if (!(saved.data || []).length) throw new Error('The announcement was not updated. Check your permissions and try again.');
+    if (role === 'staff') await renderStaffHospitalAnnouncements();
+    else await renderAdminAnnouncementList();
+    await renderPatientAnnouncements();
+    if (status) status.textContent = 'Announcement updated.';
+    window.setTimeout(closeAnnouncementEditor, 500);
+  } catch (error) {
+    console.error('[ERecPass] Announcement edit failed:', error);
+    if (status) status.textContent = 'Could not save changes: ' + (error.message || 'Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+}
+
+function openStaffAnnouncementComposer() {
+  if (currentSession?.role !== 'staff') {
+    alert('Sign in with an active Staff account to post an announcement.');
+    return;
+  }
+  const modal = document.getElementById('staffAnnouncementComposer');
+  if (!modal) return;
+  const expirationInput = document.getElementById('staffAnnouncementExpirationDate');
+  if (expirationInput && !expirationInput.value) {
+    setAnnouncementExpirationDate(expirationInput, document.getElementById('staffAnnouncementNoExpiration'), null, 7, false);
+  }
+  if (modal.parentElement !== document.body) document.body.append(modal);
+  modal.hidden = false;
+  modal.setAttribute('aria-hidden', 'false');
+  document.getElementById('staffAnnouncementText')?.focus();
+}
+
+function closeStaffAnnouncementComposer() {
+  const modal = document.getElementById('staffAnnouncementComposer');
+  if (!modal) return;
+  modal.hidden = true;
+  modal.setAttribute('aria-hidden', 'true');
+  document.querySelector('#staffHospitalAnnouncementsCard [aria-label="Create hospital announcement"]')?.focus();
+}
+
+async function submitStaffAnnouncement(button) {
+  const textInput = document.getElementById('staffAnnouncementText');
+  const photoInput = document.getElementById('staffAnnouncementPhoto');
+  const expirationInput = document.getElementById('staffAnnouncementExpirationDate');
+  const noExpiration = document.getElementById('staffAnnouncementNoExpiration')?.checked;
+  const status = document.getElementById('staffAnnouncementComposerStatus');
+  const text = String(textInput?.value || '').trim();
+  const file = photoInput?.files?.[0] || null;
+  const client = window.erecpassSupabase;
+  if (!status || !text || text.length > 4000) {
+    if (status) status.textContent = 'Enter an announcement of up to 4,000 characters.';
+    return;
+  }
+  if (currentSession?.role !== 'staff' || !client?.auth || !client?.from) {
+    status.textContent = 'Sign in with an active Staff account before posting.';
+    return;
+  }
+  if (file && (!file.type.startsWith('image/') || file.size > 2 * 1024 * 1024)) {
+    status.textContent = file.size > 2 * 1024 * 1024
+      ? 'Choose an image smaller than 2 MB.'
+      : 'Choose a supported image file.';
+    return;
+  }
+  let expiresAt;
+  try {
+    if (expirationInput && !expirationInput.value && !noExpiration) {
+      setAnnouncementExpirationDate(expirationInput, document.getElementById('staffAnnouncementNoExpiration'), null, 7, false);
+    }
+    expiresAt = announcementExpirationFromDate(expirationInput?.value, noExpiration);
+  } catch (error) {
+    status.textContent = error.message;
+    return;
+  }
+
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+  status.textContent = 'Posting announcement…';
+  try {
+    const auth = await client.auth.getUser();
+    if (auth.error || !auth.data?.user) throw new Error('Your Staff session has expired. Sign in again.');
+    const profile = await client.from('profiles').select('role,active').eq('id', auth.data.user.id).maybeSingle();
+    if (profile.error) throw profile.error;
+    if (profile.data?.role !== 'staff' || profile.data?.active !== true) {
+      throw new Error('Only an active Staff account can post announcements.');
+    }
+    const staffAccount = await client.from('staff').select('id').eq('user_id', auth.data.user.id).eq('active', true).maybeSingle();
+    if (staffAccount.error) throw staffAccount.error;
+    if (!staffAccount.data) throw new Error('Your Staff account is inactive or is not linked to this login.');
+
+    let photo = '';
+    if (file) {
+      photo = await new Promise((resolve, reject) => {
+        const reader = new FileReader();
+        reader.onload = () => resolve(String(reader.result || ''));
+        reader.onerror = () => reject(new Error('Could not read the announcement image.'));
+        reader.readAsDataURL(file);
+      });
+    }
+    const id = String(Date.now());
+    const date = new Date().toISOString().slice(0, 10);
+    const saved = await client.from('announcements').insert({
+      legacy_id: id,
+      body: text,
+      photo,
+      published_on: date,
+      expires_at: expiresAt,
+      created_by: auth.data.user.id
+    }).select('legacy_id,body,photo,published_on,expires_at,created_by').single();
+    if (saved.error) throw saved.error;
+    if (textInput) textInput.value = '';
+    if (photoInput) photoInput.value = '';
+    setAnnouncementExpirationDate(expirationInput, document.getElementById('staffAnnouncementNoExpiration'), null, 7, false);
+    status.textContent = 'Announcement posted.';
+    await renderStaffHospitalAnnouncements();
+    window.setTimeout(closeStaffAnnouncementComposer, 700);
+  } catch (error) {
+    console.error('[ERecPass] Staff announcement post failed:', error);
+    status.textContent = 'Could not post the announcement: ' + (error.message || 'Please try again.');
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+}
+
+async function staffDeleteAnnouncement(announcementId, button) {
+  const rowId = String(announcementId || '').trim();
+  if (!/^\d+$/.test(rowId) || currentSession?.role !== 'staff') {
+    alert('Sign in with a Staff account to delete your announcement.');
+    return;
+  }
+  const confirmed = await window.erecpassConfirm('Delete your announcement? This cannot be undone.');
+  if (!confirmed) return;
+  const client = window.erecpassSupabase;
+  if (!client?.auth || !client?.from) {
+    alert('Supabase is not connected. Please refresh and sign in again.');
+    return;
+  }
+  if (button) {
+    button.disabled = true;
+    button.setAttribute('aria-busy', 'true');
+  }
+  try {
+    const auth = await client.auth.getUser();
+    if (auth.error || !auth.data?.user) throw new Error('Your Staff session has expired. Sign in again.');
+    const result = await client.from('announcements')
+      .delete()
+      .eq('id', rowId)
+      .eq('created_by', auth.data.user.id)
+      .select('id');
+    if (result.error) throw result.error;
+    if (!(result.data || []).length) {
+      throw new Error('The announcement was not deleted. Only its active Staff author or an Admin can delete it.');
+    }
+    await renderStaffHospitalAnnouncements();
+    await renderPatientAnnouncements();
+  } catch (error) {
+    console.error('[ERecPass] Staff announcement delete failed:', error);
+    alert('Could not delete the announcement: ' + (error.message || 'Please try again.'));
+  } finally {
+    if (button) {
+      button.disabled = false;
+      button.removeAttribute('aria-busy');
+    }
+  }
+}
+
 async function renderStaffHospitalAnnouncements() {
   const container = document.getElementById('staffHospitalAnnouncementsList');
   if (!container) return;
@@ -9589,8 +10228,15 @@ async function renderStaffHospitalAnnouncements() {
       card.dataset.announcementKey,card.querySelector('.staff-announcement-toggle')?.getAttribute('aria-expanded')==='true'
     ]));
     let announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
-    const cloudList = await loadHospitalAnnouncementsFromSupabase();
+    const cloudList = await loadHospitalAnnouncementsFromSupabase({ includeOwner: true });
     if (cloudList) announcements = cloudList;
+    announcements = announcements.filter(announcement => isAnnouncementActive(announcement));
+    let currentUserId = null;
+    if (currentSession?.role === 'staff') {
+      const auth = await window.erecpassSupabase?.auth?.getUser();
+      if (auth?.error) throw auth.error;
+      currentUserId = auth?.data?.user?.id || null;
+    }
     const count=document.getElementById('staffAnnouncementCount');
     if(count)count.textContent=announcements.length+' '+(announcements.length===1?'update':'updates');
     if (!announcements.length) {
@@ -9603,16 +10249,23 @@ async function renderStaffHospitalAnnouncements() {
       const title = escapeStaffDashboardText(a.title || 'Hospital Announcement');
       const text = escapeStaffDashboardText(a.text || a.body || '');
       const date = escapeStaffDashboardText(a.date || a.published_on || '');
+      const author = escapeStaffDashboardText(a.author_name || 'Admin');
+      const expiry = escapeStaffDashboardText(formatAnnouncementExpiration(a.expires_at));
       const photo = String(a.photo || a.image_url || '').trim();
       const photoHtml = photo ? '<div class="mt-3 overflow-hidden rounded-xl border border-cyan-500/20 bg-slate-950/40"><img src="' + escapeStaffDashboardText(photo) + '" alt="Hospital announcement image" class="photo-viewable w-full max-h-80 object-contain rounded-xl" loading="lazy" title="Tap to view, zoom in, and zoom out" onerror="this.parentElement.style.display=\'none\';"></div>' : '';
+      const canDelete = currentUserId && String(a.created_by || '') === String(currentUserId);
+      const actionsMenu = announcementActionsMenu(a.db_id, 'staff', !!canDelete);
       return '<article class="glass-card p-3 rounded-xl border border-cyan-500/20" data-announcement-key="'+escapeStaffDashboardText(key)+'">' +
         '<div class="staff-announcement-heading">' +
         '<div class="flex items-start gap-2 min-w-0"><i class="fa-solid fa-bullhorn text-cyan-400 mt-0.5" aria-hidden="true"></i><div class="min-w-0 flex-1">' +
         '<h3 class="staff-announcement-title text-sm font-bold">' + title + '</h3>' +
         (date ? '<p class="staff-announcement-date mt-1">' + date + '</p>' : '') +
+        '<p class="announcement-author mt-1">Posted by ' + author + '</p>' +
+        '<p class="staff-announcement-expiry mt-1">' + expiry + '</p>' +
         '</div></div>' +
+        '<div class="staff-announcement-actions">' + actionsMenu +
         '<button type="button" class="staff-announcement-toggle" onclick="toggleStaffAnnouncement(this)" aria-expanded="'+String(expanded)+'" aria-label="'+(expanded?'Minimize':'Expand')+' announcement" title="'+(expanded?'Minimize':'Expand')+' announcement">' +
-        '<i class="fa-solid fa-'+(expanded?'minus':'plus')+'" aria-hidden="true"></i><span>'+(expanded?'Minimize':'Show')+'</span></button></div>' +
+        '<i class="fa-solid fa-'+(expanded?'minus':'plus')+'" aria-hidden="true"></i><span>'+(expanded?'Minimize':'Show')+'</span></button></div></div>' +
         '<div class="staff-announcement-content"'+(expanded?'':' hidden')+'>' +
         (text ? '<p class="staff-announcement-body mt-2 whitespace-pre-wrap break-words">' + text + '</p>' : '') +
         photoHtml + '</div></article>';
@@ -10400,7 +11053,6 @@ async function saveAdminPatientEdit() {
 
   if (!pid) { alert('Patient ID is missing. Please close and reopen the patient record.'); return; }
   if (birthDate && birthAge === null) { alert('Please enter a valid birthday that is not in the future.'); return; }
-  const birthCategory = birthAge === null ? '' : (birthAge <= 17 ? 'Minor' : 'Adult');
   const client = window.erecpassSupabase;
   if (!client) { alert('Supabase is not ready. Please refresh and try again.'); return; }
 
@@ -10450,34 +11102,27 @@ async function saveAdminPatientEdit() {
       });
     }
 
-    const payload = {
-      status,
-      lab_results: labs,
-      prescriptions,
-      doctor_notes: docNote,
-      guardian_num: guardianNum,
-      birth_date: birthDate || null,
-      age: birthDate ? birthAge : null,
-      age_category: birthCategory || cloudPatient.age_category || 'Adult'
-    };
-    const saved = await client.from('patients')
-      .update(payload)
-      .eq('id', pid)
-      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age,age_category')
-      .maybeSingle();
+    const saved = await client.rpc('admin_staff_update_patient_record', {
+      p_patient_id: pid,
+      p_status: status,
+      p_birth_date: birthDate || null,
+      p_guardian_num: guardianNum,
+      p_doctor_notes: docNote,
+      p_lab_results: labs,
+      p_prescriptions: prescriptions
+    });
     if (saved.error) throw saved.error;
     if (!saved.data) throw new Error('Supabase did not confirm the patient record save.');
 
-    // Verify both records and prescription values before showing success.
-    const verified = await client.from('patients')
-      .select('id,status,lab_results,prescriptions,doctor_notes,guardian_num,birth_date,age,age_category')
-      .eq('id', pid)
-      .maybeSingle();
-    if (verified.error) throw verified.error;
-    if (!verified.data) throw new Error('The saved patient record could not be verified.');
-    if (JSON.stringify(verified.data.lab_results || []) !== JSON.stringify(labs) ||
+    const verified = { data: saved.data };
+    if (String(verified.data.id) !== pid ||
+        verified.data.status !== status ||
+        (verified.data.birth_date || null) !== (birthDate || null) ||
+        (verified.data.guardian_num || null) !== (guardianNum || null) ||
+        (verified.data.doctor_notes || null) !== (docNote || null) ||
+        JSON.stringify(verified.data.lab_results || []) !== JSON.stringify(labs) ||
         JSON.stringify(verified.data.prescriptions || []) !== JSON.stringify(prescriptions)) {
-      throw new Error('Lab results or prescription save verification failed. Please try again.');
+      throw new Error('Patient record save verification failed. Please try again.');
     }
 
     const patients = JSON.parse(epStore.getItem(DB_KEYS.PATIENTS) || '[]') || [];
@@ -10657,8 +11302,9 @@ async function renderAdminAnnouncementList() {
   }
 
   container.innerHTML = announcements.map(a => {
-    const id = escapeStaffDashboardText(a.id || '');
+    const id = escapeStaffDashboardText(a.db_id || '');
     const date = escapeStaffDashboardText(a.date || '');
+    const expires = escapeStaffDashboardText(formatAnnouncementExpiration(a.expires_at));
     const text = escapeStaffDashboardText(a.text || '');
     const photo = escapeStaffDashboardText(a.photo || '');
     return `
@@ -10667,21 +11313,22 @@ async function renderAdminAnnouncementList() {
           <div class="min-w-0 flex-1">
             <strong class="text-white text-xs block">Announcement</strong>
             <p class="text-[11px] text-slate-400 mt-0.5">${date}</p>
+            <p class="announcement-author text-[11px] mt-0.5">Posted by ${escapeStaffDashboardText(a.author_name || 'Admin')}</p>
+            <p class="text-[11px] text-slate-400 mt-0.5">${expires}</p>
             ${text ? `<p class="text-xs text-slate-300 mt-1 whitespace-pre-wrap">${text}</p>` : ''}
             ${photo ? `<img src="${photo}" alt="Announcement photo" class="w-full max-h-48 object-contain rounded-lg mt-2 bg-slate-950/50" onerror="this.style.display='none'">` : ''}
           </div>
-          <button onclick="deleteAdminAnnouncement('${id.replace(/'/g, "\\'")}')" class="px-2.5 py-1 rounded text-[10px] font-tech font-bold bg-rose-950 text-rose-300 border border-rose-500 shrink-0">Delete</button>
+          ${announcementActionsMenu(id, 'admin')}
         </div>
       </div>`;
   }).join('');
 }
 
 async function deleteAdminAnnouncement(announcementId) {
-  const email = String(currentSession?.data?.email || '').trim().toLowerCase();
   const role = String(currentSession?.role || '').toLowerCase();
 
-  if (role !== 'admin' || email !== 'admin2@gmail.com') {
-    alert('Only the authorized Admin account can delete announcements.');
+  if (role !== 'admin') {
+    alert('Sign in with an Admin account to delete announcements.');
     return;
   }
 
@@ -10699,11 +11346,15 @@ async function deleteAdminAnnouncement(announcementId) {
     return;
   }
   const profile = await client.from('profiles').select('role,active').eq('id', auth.data.user.id).maybeSingle();
-  if (profile.error || profile.data?.role !== 'admin' || profile.data?.active === false) {
+  if (profile.error) {
+    alert('Could not verify the Admin account: ' + profile.error.message);
+    return;
+  }
+  if (profile.data?.role !== 'admin' || profile.data?.active !== true) {
     alert('Only an active Supabase Admin account can delete announcements.');
     return;
   }
-  const removed = await client.from('announcements').delete().eq('legacy_id', String(announcementId)).select('legacy_id');
+  const removed = await client.from('announcements').delete().eq('id', String(announcementId)).select('id');
   if (removed.error) {
     alert('Could not delete the announcement from Supabase: ' + removed.error.message);
     return;
@@ -10713,7 +11364,7 @@ async function deleteAdminAnnouncement(announcementId) {
     return;
   }
   const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
-  const updated = announcements.filter(a => String(a.id) !== String(announcementId));
+  const updated = announcements.filter(a => String(a.db_id || '') !== String(announcementId));
 
   try {
     epStore.setItem(DB_KEYS.ANNOUNCEMENTS, JSON.stringify(updated));
@@ -10729,9 +11380,15 @@ async function deleteAdminAnnouncement(announcementId) {
 async function adminPostAnnouncement() {
   const text = document.getElementById('adminAnnouncementText').value.trim();
   const photoInput = document.getElementById('adminAnnouncementPhoto');
+  const expirationInput = document.getElementById('adminAnnouncementExpirationDate');
+  const noExpiration = document.getElementById('adminAnnouncementNoExpiration')?.checked;
   const file = photoInput && photoInput.files ? photoInput.files[0] : null;
   if (!text && !file) return;
   try {
+    if (expirationInput && !expirationInput.value && !noExpiration) {
+      setAnnouncementExpirationDate(expirationInput, document.getElementById('adminAnnouncementNoExpiration'), null, 7, false);
+    }
+    const expiresAt = announcementExpirationFromDate(expirationInput?.value, noExpiration);
     let photo = "";
     if (file) {
       if (!file.type.startsWith('image/')) throw new Error('Please select an image file.');
@@ -10757,19 +11414,22 @@ async function adminPostAnnouncement() {
       body: text,
       photo,
       published_on: date,
+      expires_at: expiresAt,
       created_by: auth.data.user.id
-    }).select('legacy_id,body,photo,published_on').single();
+    }).select('legacy_id,body,photo,published_on,expires_at').single();
     if (saved.error) throw saved.error;
     const announcements = JSON.parse(epStore.getItem(DB_KEYS.ANNOUNCEMENTS) || '[]') || [];
     announcements.unshift({
       id: saved.data.legacy_id || id,
       text: saved.data.body || '',
       photo: saved.data.photo || '',
-      date: saved.data.published_on || date
+      date: saved.data.published_on || date,
+      expires_at: saved.data.expires_at || null
     });
     epStore.setItem(DB_KEYS.ANNOUNCEMENTS, JSON.stringify(announcements));
     addLog("Posted Announcement: " + (text || 'Photo announcement'));
     if (photoInput) photoInput.value = '';
+    setAnnouncementExpirationDate(expirationInput, document.getElementById('adminAnnouncementNoExpiration'), null, 7, false);
     renderAdminAnnouncementList();
     renderPatientAnnouncements();
     alert("Announcement posted and saved to Supabase.");
@@ -12266,9 +12926,9 @@ window.requestErecPassCameraPermission = function () {
 #epThemeBtn .ep-theme-switch-label{font:inherit}
 #epThemeBtn .ep-theme-switch-frame{position:relative;display:inline-block;width:62px;height:36px;flex:0 0 62px}
 #epThemeBtn .ep-theme-switch-track{position:absolute;top:0;left:0;box-sizing:border-box;width:62px;height:36px;border:2px solid #d5d5d5;border-radius:999px;background:#fff;transition:background 500ms,border-color 500ms}
-#epThemeBtn .ep-theme-switch-thumb{position:absolute;top:3px;left:3px;display:grid;width:26px;height:26px;place-items:center;border-radius:50%;background:#111;color:#16834b;transform:translateX(0);transition:transform 550ms cubic-bezier(.2,.8,.2,1),background 450ms,color 450ms}
+#epThemeBtn .ep-theme-switch-thumb{position:absolute;top:3px;left:3px;display:grid;width:26px;height:26px;place-items:center;border:1px solid #edc65e;border-radius:50%;background:#fff8df;color:#d88900;box-shadow:0 1px 4px #65450040;transform:translateX(0);transition:transform 550ms cubic-bezier(.2,.8,.2,1),background 450ms,color 450ms}
 #epThemeBtn .ep-theme-switch-icon{--theme-icon-size:18px;position:absolute;width:var(--theme-icon-size);height:var(--theme-icon-size);border-radius:999px;background:transparent;color:#16834b;box-shadow:inset calc(var(--theme-icon-size)*.33) calc(var(--theme-icon-size)*-.25) 0 0 currentColor;transform:scale(1);transition:all 500ms}
-#epThemeBtn[data-theme="light"] .ep-theme-switch-icon{--ray-size:calc(var(--theme-icon-size)*-.4);--offset-orthogonal:calc(var(--theme-icon-size)*.65);--offset-diagonal:calc(var(--theme-icon-size)*.45);background:currentColor;color:#f5b932;box-shadow:0 calc(var(--offset-orthogonal)*-1) 0 var(--ray-size) currentColor,var(--offset-orthogonal) 0 0 var(--ray-size) currentColor,0 var(--offset-orthogonal) 0 var(--ray-size) currentColor,calc(var(--offset-orthogonal)*-1) 0 0 var(--ray-size) currentColor,var(--offset-diagonal) calc(var(--offset-diagonal)*-1) 0 var(--ray-size) currentColor,var(--offset-diagonal) var(--offset-diagonal) 0 var(--ray-size) currentColor,calc(var(--offset-diagonal)*-1) var(--offset-diagonal) 0 var(--ray-size) currentColor,calc(var(--offset-diagonal)*-1) calc(var(--offset-diagonal)*-1) 0 var(--ray-size) currentColor;transform:scale(.75)}
+#epThemeBtn[data-theme="light"] .ep-theme-switch-icon{--theme-icon-size:16px;--ray-size:-5px;--offset-orthogonal:9px;--offset-diagonal:6px;background:#ffbd24!important;color:#d88900!important;box-shadow:0 -9px 0 -5px currentColor,9px 0 0 -5px currentColor,0 9px 0 -5px currentColor,-9px 0 0 -5px currentColor,6px -6px 0 -5px currentColor,6px 6px 0 -5px currentColor,-6px 6px 0 -5px currentColor,-6px -6px 0 -5px currentColor;transform:scale(.82)}
 #epThemeBtn[data-theme="dark"] .ep-theme-switch-track{border-color:#72bd82;background:#203b29}
 #epThemeBtn[data-theme="dark"] .ep-theme-switch-thumb{background:#fff;color:#16834b;transform:translateX(28px)}
 #epThemeBtn[data-theme="dark"] .ep-theme-switch-icon{color:#16834b}
@@ -18141,7 +18801,7 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     left: 50%;
     bottom: 14px;
     display: grid;
-    grid-template-columns: repeat(5, minmax(0, 1fr));
+    grid-template-columns: repeat(6, minmax(0, 1fr));
     width: min(980px, calc(100% - 32px));
     min-height: 76px;
     padding: 8px;
@@ -18877,6 +19537,8 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   #staffApp .staff-appointment-meta { color: #52665A !important; font-size: 14px !important; line-height: 1.5; }
   #staffApp .staff-appointment-status { font-size: 12px !important; }
   #staffApp .staff-announcement-date { color: #52665A !important; font-size: 13px !important; line-height: 1.5; }
+  .announcement-author { color:#52665a !important; font-size:12px; line-height:1.45; }
+  html.ep-dark .announcement-author { color:#b7d1bc !important; }
   #patientApp .patient-directory-empty,
   #staffApp .staff-appointment-empty,
   #staffApp .staff-update-empty {
@@ -19618,6 +20280,11 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
       console.warn('[ERecPass] Staff navigation requires an authenticated staff session.');
       return false;
     }
+    if (destination === 'patients' &&
+        !['doctor', 'nurse'].includes(String(currentSession?.data?.account_type || '').toLowerCase())) {
+      console.warn('[ERecPass] Patient management is available only to Doctors and Nurses.');
+      return false;
+    }
     const nav = document.getElementById('staffBottomNav');
     const app = document.getElementById('staffApp');
     const panels = app ? Array.from(app.querySelectorAll('[data-staff-panel]')) : [];
@@ -19642,6 +20309,10 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     });
     window.scrollTo({ top: 0, behavior: window.matchMedia('(prefers-reduced-motion: reduce)').matches ? 'auto' : 'smooth' });
     if (destination === 'appointments') { renderStaffApprovedAppointments(); renderStaffRoutingWorkspace(); }
+    if (destination === 'patients') {
+      const accountsSelected = document.getElementById('staffPatientAccountsTab')?.getAttribute('aria-selected') === 'true';
+      window.switchStaffPatientSection(accountsSelected ? 'accounts' : 'records');
+    }
     if (destination === 'profile') { renderStaffRoutingWorkspace(); }
     if (destination === 'chat' && typeof window.renderStaffAdminChat === 'function') window.renderStaffAdminChat();
     return true;
@@ -20105,6 +20776,8 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     #staffApp .staff-appointment-meta { font-size: 13px !important; }
     #staffApp .staff-appointment-status { font-size: 10px !important; }
     #staffApp .staff-announcement-heading { gap: 8px; }
+    #staffApp .staff-announcement-actions { gap: 5px; }
+    #staffApp .staff-announcement-delete { min-height: 34px; padding: 6px 7px; font-size: 11px; }
     #staffApp .staff-announcement-toggle { gap: 4px; padding-inline: 7px; font-size: 10px; }
     #staffApp .staff-profile-summary { gap: 12px; padding: 14px; }
     #staffApp .staff-profile-card .staff-profile-name { font-size: 20px; }
@@ -20138,10 +20811,13 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
     #staffApp .staff-appointment-status { align-self: flex-start; }
     #staffApp .staff-appointment-meta { font-size: 12px !important; }
     #staffApp .staff-announcement-toggle span { display: none; }
+    #staffApp .staff-announcement-delete span { display: none; }
+    #staffApp .staff-announcement-delete { width: 34px; min-width: 34px; padding: 5px; }
     #staffApp #staffBottomNav { width: calc(100% - 12px); gap: 1px; }
     #staffApp #staffBottomNav button { padding-inline: 1px; font-size: 9px; }
   }
   #staffApp #staffBottomNav button[data-staff-destination="dashboard"] { --staff-nav-accent: #16834B; --staff-nav-tint: rgba(22,131,75,.12); }
+  #staffApp #staffBottomNav button[data-staff-destination="patients"] { --staff-nav-accent: #D56B31; --staff-nav-tint: rgba(213,107,49,.12); }
   #staffApp #staffBottomNav button[data-staff-destination="appointments"] { --staff-nav-accent: #168A83; --staff-nav-tint: rgba(22,138,131,.12); }
   #staffApp #staffBottomNav button[data-staff-destination="scanner"] { --staff-nav-accent: #7256B8; --staff-nav-tint: rgba(114,86,184,.12); }
   #staffApp #staffBottomNav button[data-staff-destination="chat"] { --staff-nav-accent: #3976C5; --staff-nav-tint: rgba(57,118,197,.12); }
@@ -23095,6 +23771,734 @@ html.ep-dark #patientApp .patient-digital-id-face .patient-digital-id-content #d
   panels.append(staffPage, adminPage);
 })();
 </script>
+
+<style id="staff-patient-management-styles">
+  #staffApp .staff-patient-edit-overlay { overflow-x:hidden; overscroll-behavior:contain; }
+  #staffApp .staff-patient-edit-dialog {
+    box-sizing:border-box;
+    width:min(100%, 32rem);
+    min-width:0;
+    max-height:min(90vh, 760px);
+    max-height:min(90dvh, 760px);
+    overflow-x:hidden;
+    overflow-y:auto;
+    overscroll-behavior:contain;
+  }
+  #staffApp .staff-patient-edit-dialog > * { min-width:0; max-width:100%; }
+  #staffApp .staff-patient-edit-dialog :is(input,select,textarea) { box-sizing:border-box; width:100%; max-width:100%; min-width:0; }
+  #staffApp .staff-patient-edit-dialog input[type="file"] { font-size:12px; }
+  #staffApp .staff-patient-edit-header h2 { min-width:0; flex:1 1 auto; }
+  #staffApp .staff-patient-edit-header button { width:auto; min-width:44px; flex:0 0 auto; }
+  #staffApp .staff-patient-edit-actions {
+    display:grid;
+    grid-template-columns:repeat(2, minmax(0, 1fr));
+    gap:10px;
+  }
+  #staffApp .staff-patient-edit-actions button {
+    box-sizing:border-box;
+    width:100%;
+    min-width:0;
+    min-height:44px;
+    padding:8px 10px;
+    white-space:normal;
+    overflow-wrap:anywhere;
+    text-align:center;
+  }
+  #staffApp .staff-patient-tool-tabs {
+    display:flex;
+    flex-wrap:wrap;
+    gap:8px;
+    padding:5px;
+    border:1px solid rgba(133,170,165,.65);
+    border-radius:14px;
+    background:rgba(232,240,238,.7);
+  }
+  #staffApp .staff-patient-tool-tabs button {
+    display:inline-flex;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    min-height:42px;
+    padding:8px 14px;
+    border:1px solid transparent;
+    border-radius:10px;
+    color:#355773;
+    font-size:13px;
+    font-weight:700;
+    transition:background-color .15s ease, color .15s ease, box-shadow .15s ease;
+  }
+  #staffApp .staff-patient-tool-tabs button[aria-pressed="true"] {
+    border-color:#245b35;
+    background:#245b35;
+    color:#fff;
+    box-shadow:0 2px 6px rgba(21,54,57,.16);
+  }
+  #staffApp .staff-patient-tool-tabs button:hover:not([aria-pressed="true"]) { background:#d8e9e3; }
+  #staffApp .staff-patient-tool-tabs button:focus-visible { outline:3px solid rgba(36,91,53,.35); outline-offset:2px; }
+  #staffApp .staff-account-permissions {
+    display:flex;
+    align-items:flex-start;
+    gap:9px;
+    padding:11px 13px;
+    border:1px solid #d5e0e5;
+    border-radius:12px;
+    background:#f2f6f7;
+    color:#355773;
+    font-size:12px;
+    line-height:1.5;
+  }
+  #staffApp .staff-account-permissions i { margin-top:2px; color:#245b35; }
+  #staffApp .staff-patient-card {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:16px;
+    min-height:90px;
+    padding:14px;
+    border:1px solid #85aaa5;
+    border-radius:14px;
+    background:#e8f0ee;
+    box-shadow:0 3px 10px rgba(21,54,57,.08);
+  }
+  #staffApp .staff-patient-card-copy { min-width:0; }
+  #staffApp .staff-patient-card-copy strong { display:block; color:#193b5b; font-size:14px; font-weight:700; line-height:1.35; overflow-wrap:anywhere; }
+  #staffApp .staff-patient-card-copy p { color:#355773; font-size:11px; line-height:1.45; margin-top:3px; overflow-wrap:anywhere; }
+  #staffApp .staff-patient-card-actions { display:flex; align-items:flex-end; flex-direction:column; gap:8px; flex-shrink:0; }
+  #staffApp .staff-patient-status { font-size:10px; font-weight:700; padding:4px 9px; border-radius:999px; }
+  #staffApp .staff-patient-status.status-green { color:#17633b; background:#ccebd8; }
+  #staffApp .staff-patient-status.status-yellow { color:#80520a; background:#f7e7b5; }
+  #staffApp .staff-patient-status.status-red { color:#96343b; background:#f7d5d5; }
+  #staffApp .staff-patient-account-badges { display:flex; flex-wrap:wrap; justify-content:flex-end; gap:6px; flex-shrink:0; }
+  #staffApp .staff-patient-card .staff-primary-action {
+    min-height:32px;
+    padding:3px 0;
+    border:0;
+    background:transparent;
+    color:#17619a;
+    font-size:14px;
+    font-weight:600;
+    text-align:right;
+    white-space:nowrap;
+  }
+  #staffApp .staff-patient-card .staff-primary-action:hover { color:#0d4774; text-decoration:underline; }
+  #staffApp .staff-patient-card .staff-primary-action:focus-visible { outline:2px solid #17619a; outline-offset:3px; border-radius:4px; }
+  #staffApp .staff-patient-empty { color:#9bbab7; font-size:12px; padding:10px; }
+  #staffApp .staff-patient-error, #staffApp #staffPatientManagementStatus[data-state="error"], #staffApp #staffPatientEditorStatus[data-state="error"] { color:#fecaca; font-size:12px; padding:10px; }
+  #staffApp .staff-patient-lab-row { display:flex; align-items:center; justify-content:space-between; gap:10px; padding:9px; border:1px solid rgba(45,224,208,.18); border-radius:10px; color:#c8e5e1; font-size:11px; }
+  #staffApp .staff-patient-lab-row span { min-width:0; overflow-wrap:anywhere; }
+  #staffApp .staff-patient-remove-lab {
+    flex-shrink:0;
+    min-height:36px;
+    border:1px solid #b63f49;
+    border-radius:8px;
+    padding:6px 10px;
+    background:#9f2631;
+    color:#fff;
+    -webkit-text-fill-color:#fff;
+    font-size:12px;
+    font-weight:700;
+  }
+  #staffApp .staff-patient-remove-lab:hover { background:#7f1d27; }
+  #staffApp .staff-patient-remove-lab:focus-visible { outline:2px solid #245b35; outline-offset:2px; }
+  #staffApp .staff-patient-edit-dialog #staffPatientEditStatus {
+    min-height:40px;
+    border:1px solid #cbd9cf !important;
+    background:#fff !important;
+    color:#24352a !important;
+    box-shadow:none !important;
+    outline:none;
+  }
+  #staffApp .staff-patient-edit-dialog #staffPatientEditStatus:focus { border-color:#47845b !important; }
+  #staffApp .staff-patient-edit-dialog #staffPatientEditStatus:focus-visible {
+    outline:2px solid #47845b !important;
+    outline-offset:2px !important;
+  }
+  #staffApp .staff-announcement-create-button {
+    display:inline-flex;
+    min-height:40px;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:1px solid #245b35;
+    border-radius:10px;
+    padding:8px 12px;
+    background:#245b35;
+    color:#fff;
+    font-size:13px;
+    font-weight:700;
+    white-space:nowrap;
+  }
+  #staffApp .staff-announcement-create-button :is(span,i) {
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+  }
+  #staffApp .staff-announcement-create-button,
+  #staffApp .staff-announcement-create-button:is(:hover,:focus-visible) {
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+  }
+  #staffApp .staff-announcement-create-button * {
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+  }
+  #staffApp .staff-announcement-create-button:hover { background:#1b482a; }
+  #staffApp .staff-announcement-create-button:focus-visible { outline:2px solid #245b35; outline-offset:3px; }
+  #staffApp .staff-announcement-card-heading { min-width:0; }
+  #staffApp .staff-updates-disclosure > summary {
+    display:grid;
+    grid-template-columns:minmax(0,1fr) auto;
+    align-items:center;
+    gap:4px 8px;
+  }
+  #staffApp .staff-updates-disclosure > summary > :first-child { min-width:0; overflow-wrap:anywhere; }
+  #staffApp .staff-updates-disclosure > summary > :last-child { white-space:nowrap; }
+  .announcement-actions-menu { position:relative; flex:0 0 auto; z-index:2; }
+  .announcement-actions-menu > summary {
+    display:inline-flex;
+    box-sizing:border-box;
+    width:36px;
+    height:36px;
+    align-items:center;
+    justify-content:center;
+    border:1px solid #d5e5dc;
+    border-radius:10px;
+    background:#fff;
+    color:#385b46;
+    cursor:pointer;
+    list-style:none;
+  }
+  .announcement-actions-menu > summary::-webkit-details-marker { display:none; }
+  .announcement-actions-menu > summary:hover,
+  .announcement-actions-menu > summary:focus-visible { border-color:#8bb99a; background:#f3faf5; outline:2px solid rgba(71,132,91,.2); }
+  .announcement-actions-menu-items {
+    position:absolute;
+    top:calc(100% + 5px);
+    right:0;
+    z-index:10;
+    display:grid;
+    min-width:176px;
+    padding:5px;
+    border:1px solid #d5e5dc;
+    border-radius:12px;
+    background:#fff;
+    box-shadow:0 10px 28px rgba(20,50,31,.18);
+  }
+  .announcement-actions-menu-items button {
+    display:flex;
+    min-height:38px;
+    align-items:center;
+    gap:9px;
+    padding:8px 10px;
+    border:0;
+    border-radius:8px;
+    background:transparent;
+    color:#294b39;
+    font:600 13px/1.3 'Inter',sans-serif;
+    text-align:left;
+    cursor:pointer;
+  }
+  .announcement-actions-menu-items button:hover,
+  .announcement-actions-menu-items button:focus-visible { background:#eef7f0; outline:none; }
+  .announcement-actions-menu-items .announcement-actions-delete { color:#9f2631; }
+  .announcement-actions-menu-items .announcement-actions-note {
+    max-width:220px;
+    margin:0;
+    padding:8px 10px;
+    color:#52665a;
+    font:500 12px/1.45 'Inter',sans-serif;
+  }
+  .announcement-editor-overlay[hidden] { display:none !important; }
+  .announcement-editor-overlay {
+    position:fixed;
+    inset:0;
+    z-index:110;
+    display:flex;
+    box-sizing:border-box;
+    align-items:center;
+    justify-content:center;
+    width:100vw;
+    width:100dvw;
+    height:100vh;
+    height:100dvh;
+    overflow-y:auto;
+    padding:16px;
+    background:rgba(12,24,17,.72);
+  }
+  .announcement-editor-dialog {
+    display:grid;
+    box-sizing:border-box;
+    width:min(100%,34rem);
+    min-width:0;
+    max-height:calc(100vh - 32px);
+    max-height:calc(100dvh - 32px);
+    overflow-y:auto;
+    gap:12px;
+    padding:20px;
+    border:1px solid #d5e5dc;
+    border-radius:18px;
+    background:#fff;
+    color:#24352a;
+    box-shadow:0 20px 60px rgba(0,0,0,.24);
+  }
+  .announcement-editor-heading,
+  .announcement-editor-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .announcement-editor-heading > div { min-width:0; flex:1 1 auto; }
+  .announcement-editor-heading h2 { color:#173c2a; font-size:18px; font-weight:800; }
+  .announcement-editor-heading p { color:#52665a; font-size:13px; line-height:1.5; }
+  .announcement-editor-dialog > label { color:#294b39; font-size:13px; font-weight:700; }
+  .announcement-editor-dialog textarea,
+  .announcement-editor-dialog input[type=date] {
+    box-sizing:border-box;
+    width:100%;
+    min-width:0;
+    min-height:42px;
+    border:1px solid #cbd9cf;
+    border-radius:10px;
+    padding:9px 10px;
+    background:#fff;
+    color:#24352a;
+    font:400 15px/1.4 'Inter',sans-serif;
+  }
+  .announcement-editor-dialog textarea { min-height:120px; resize:vertical; }
+  .announcement-editor-no-expiration,
+  #staffAnnouncementComposer .staff-announcement-no-expiration { display:flex; align-items:center; gap:8px; color:#52665a; font-size:13px; }
+  .announcement-editor-no-expiration input,
+  #staffAnnouncementComposer .staff-announcement-no-expiration input { width:16px; height:16px; accent-color:#287c50; }
+  .announcement-editor-dialog :is(textarea,input):focus-visible { outline:2px solid #47845b; outline-offset:2px; }
+  .announcement-editor-close,
+  .announcement-editor-cancel,
+  .announcement-editor-save {
+    display:inline-flex;
+    min-height:42px;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:1px solid #d5e8d9;
+    border-radius:10px;
+    padding:8px 12px;
+    background:#eaf8ed;
+    color:#245b35;
+    font:700 13px/1.3 'Inter',sans-serif;
+    cursor:pointer;
+  }
+  .announcement-editor-close { width:42px; min-width:42px; padding:0; }
+  .announcement-editor-save { border-color:#245b35; background:#245b35; color:#fff; }
+  .announcement-editor-dialog :is(button):focus-visible { outline:2px solid #47845b; outline-offset:2px; }
+  .announcement-editor-dialog :disabled { opacity:.65; cursor:wait; }
+  #announcementEditorStatus { min-height:1.4em; color:#52665a; font-size:13px; line-height:1.4; }
+  #staffApp .staff-profile-heading-wrap { position:relative; min-width:0; padding-right:44px; }
+  #staffApp .staff-profile-actions-menu { position:absolute; top:0; right:0; z-index:12; }
+  #staffApp .staff-profile-actions-menu > summary { width:38px; height:38px; }
+  #staffApp .staff-profile-actions-menu .announcement-actions-menu-items { min-width:176px; }
+  #staffApp .staff-profile-actions-menu .announcement-actions-menu-items {
+    border-color:rgba(213,229,220,.55);
+    background:rgba(255,255,255,.58);
+    -webkit-backdrop-filter:blur(8px);
+    backdrop-filter:blur(8px);
+    box-shadow:0 8px 22px rgba(20,50,31,.10);
+  }
+  #staffApp .staff-profile-actions-menu .announcement-actions-menu-items button:hover,
+  #staffApp .staff-profile-actions-menu .announcement-actions-menu-items button:focus-visible { background:rgba(238,247,240,.62); }
+  html.ep-dark #staffApp .staff-profile-actions-menu .announcement-actions-menu-items {
+    border-color:rgba(73,102,83,.58);
+    background:rgba(29,48,36,.58);
+    box-shadow:0 8px 22px rgba(0,0,0,.14);
+  }
+  html.ep-dark #staffApp .staff-profile-actions-menu .announcement-actions-menu-items button:hover,
+  html.ep-dark #staffApp .staff-profile-actions-menu .announcement-actions-menu-items button:focus-visible { background:rgba(41,67,51,.65); }
+  .staff-profile-editor-overlay[hidden] { display:none !important; }
+  .staff-profile-editor-overlay {
+    position:fixed;
+    inset:0;
+    z-index:120;
+    display:flex;
+    box-sizing:border-box;
+    align-items:center;
+    justify-content:center;
+    width:100vw;
+    width:100dvw;
+    height:100vh;
+    height:100dvh;
+    overflow-y:auto;
+    padding:16px;
+    background:rgba(12,24,17,.72);
+  }
+  .staff-profile-editor-dialog {
+    display:grid;
+    box-sizing:border-box;
+    width:min(100%,34rem);
+    min-width:0;
+    max-height:calc(100vh - 32px);
+    max-height:calc(100dvh - 32px);
+    overflow-y:auto;
+    gap:10px;
+    padding:20px;
+    border:1px solid #d5e5dc;
+    border-radius:18px;
+    background:#fff;
+    color:#24352a;
+    box-shadow:0 20px 60px rgba(0,0,0,.24);
+  }
+  .staff-profile-editor-heading,
+  .staff-profile-editor-actions { display:flex; align-items:center; justify-content:space-between; gap:12px; }
+  .staff-profile-editor-heading > div { min-width:0; flex:1 1 auto; }
+  .staff-profile-editor-heading h2 { color:#173c2a; font-size:18px; font-weight:800; }
+  .staff-profile-editor-heading p,
+  .staff-profile-editor-help { color:#52665a; font-size:13px; line-height:1.5; }
+  .staff-profile-editor-dialog > label { color:#294b39; font-size:13px; font-weight:700; }
+  .staff-profile-editor-dialog input {
+    box-sizing:border-box;
+    width:100%;
+    min-width:0;
+    min-height:42px;
+    border:1px solid #cbd9cf;
+    border-radius:10px;
+    padding:9px 10px;
+    background:#fff;
+    color:#24352a;
+    font:400 15px/1.4 'Inter',sans-serif;
+  }
+  .staff-profile-editor-dialog input[readonly] { background:#f3f7f4; color:#52665a; }
+  .staff-profile-editor-dialog :is(input,button):focus-visible { outline:2px solid #47845b; outline-offset:2px; }
+  .staff-profile-editor-close,
+  .staff-profile-editor-cancel,
+  .staff-profile-editor-save {
+    display:inline-flex;
+    min-height:42px;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:1px solid #d5e8d9;
+    border-radius:10px;
+    padding:8px 12px;
+    background:#eaf8ed;
+    color:#245b35;
+    font:700 13px/1.3 'Inter',sans-serif;
+    cursor:pointer;
+  }
+  .staff-profile-editor-close { width:42px; min-width:42px; padding:0; }
+  .staff-profile-editor-save { border-color:#245b35; background:#245b35; color:#fff; }
+  .staff-profile-editor-dialog :disabled { opacity:.65; cursor:wait; }
+  #staffProfileEditorStatus { min-height:1.4em; color:#52665a; font-size:13px; line-height:1.4; }
+  #staffAnnouncementComposer[hidden] { display:none !important; }
+  #staffAnnouncementComposer {
+    position:fixed;
+    inset:0;
+    z-index:100;
+    display:flex;
+    align-items:center;
+    justify-content:center;
+    box-sizing:border-box;
+    width:100vw;
+    width:100dvw;
+    height:100vh;
+    height:100dvh;
+    overflow-x:hidden;
+    overflow-y:auto;
+    padding:16px;
+    background:rgba(12,24,17,.72);
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-dialog {
+    display:grid;
+    box-sizing:border-box;
+    width:min(100%, 34rem);
+    min-width:0;
+    max-height:calc(100vh - 32px);
+    max-height:calc(100dvh - 32px);
+    overflow-x:hidden;
+    overflow-y:auto;
+    gap:12px;
+    padding:20px;
+    border:1px solid #d5e5dc;
+    border-radius:18px;
+    background:#fff;
+    color:#24352a;
+    box-shadow:0 20px 60px rgba(0,0,0,.24);
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-heading,
+  #staffAnnouncementComposer .staff-announcement-composer-actions {
+    display:flex;
+    align-items:center;
+    justify-content:space-between;
+    gap:12px;
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-heading > div { min-width:0; flex:1 1 auto; }
+  #staffAnnouncementComposer .staff-announcement-composer-heading h2 { color:#173c2a; font-size:18px; font-weight:800; }
+  #staffAnnouncementComposer .staff-announcement-composer-heading p,
+  #staffAnnouncementComposer #staffAnnouncementComposerStatus { color:#52665a; font-size:13px; line-height:1.5; }
+  #staffAnnouncementComposer .staff-secondary-action {
+    display:inline-flex;
+    min-height:44px;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:1px solid #D5E8D9;
+    border-radius:12px;
+    padding:9px 14px;
+    background:#EAF8ED;
+    color:#245B35;
+    font-size:14px;
+    font-weight:700;
+    line-height:1.25;
+    text-align:center;
+    cursor:pointer;
+  }
+  #staffAnnouncementComposer .staff-secondary-action:hover { background:#dff3e4; }
+  #staffAnnouncementComposer .staff-secondary-action:focus-visible,
+  #staffAnnouncementComposer .staff-primary-action:focus-visible { outline:2px solid #47845b; outline-offset:2px; }
+  #staffAnnouncementComposer .staff-primary-action {
+    display:inline-flex;
+    min-height:44px;
+    align-items:center;
+    justify-content:center;
+    gap:8px;
+    border:1px solid #245b35;
+    border-radius:12px;
+    padding:9px 14px;
+    background:#245b35;
+    color:#fff;
+    font-size:14px;
+    font-weight:700;
+    line-height:1.25;
+    text-align:center;
+    cursor:pointer;
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+  }
+  #staffAnnouncementComposer .staff-primary-action:hover { background:#1b482a; }
+  #staffAnnouncementComposer .staff-primary-action :is(span,i) { color:#fff !important; -webkit-text-fill-color:#fff !important; }
+  #staffAnnouncementComposer .staff-primary-action:disabled { cursor:wait; opacity:.72; }
+  #staffAnnouncementComposer .staff-announcement-composer-heading > button.staff-secondary-action {
+    box-sizing:border-box;
+    width:44px !important;
+    min-width:44px;
+    max-width:44px !important;
+    min-height:44px;
+    flex:0 0 44px;
+    align-self:flex-start;
+    padding:0;
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-dialog > label { color:#294b39; font-size:13px; font-weight:700; }
+  #staffAnnouncementComposer .staff-announcement-composer-dialog :is(textarea,input[type="file"],input[type="date"],select) {
+    box-sizing:border-box;
+    width:100%;
+    min-width:0;
+    color:#24352a;
+    font-size:15px;
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-dialog :is(select,input[type="date"]) {
+    min-height:42px;
+    border:1px solid #cbd9cf;
+    border-radius:10px;
+    padding:8px 10px;
+    background:#fff;
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-dialog textarea {
+    min-height:120px;
+    resize:vertical;
+    border:1px solid #cbd9cf;
+    border-radius:10px;
+    padding:10px 12px;
+    background:#fff;
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-dialog :is(textarea,input[type="file"],input[type="date"],select):focus-visible {
+    outline:2px solid #47845b;
+    outline-offset:2px;
+  }
+  #staffAnnouncementComposer .staff-announcement-composer-actions button { min-height:44px; }
+  #staffAnnouncementComposer .staff-announcement-composer-actions .staff-primary-action { white-space:normal; }
+  #staffApp .staff-appointments-list > .appointment-card {
+    border-radius:14px !important;
+    padding:16px !important;
+    box-shadow:0 3px 12px rgba(27,74,51,.06) !important;
+  }
+  #staffApp .staff-appointments-list .staff-appointment-meta { line-height:1.55; }
+  #staffApp .staff-announcement-expiry { color:#52665a !important; font-size:12px !important; line-height:1.45; }
+  #staffApp .staff-announcement-actions { display:flex; flex:0 0 auto; align-items:center; gap:8px; }
+  #staffApp .staff-announcement-delete {
+    display:inline-flex;
+    min-height:38px;
+    align-items:center;
+    justify-content:center;
+    gap:6px;
+    border:1px solid #b63f49;
+    border-radius:9px;
+    padding:7px 10px;
+    background:#fff;
+    color:#8f1d29 !important;
+    -webkit-text-fill-color:#8f1d29 !important;
+    font-size:12px;
+    font-weight:700;
+  }
+  #staffApp .staff-announcement-delete:hover { background:#fff0f0; }
+  #staffApp .staff-announcement-delete:focus-visible { outline:2px solid #8f1d29; outline-offset:2px; }
+  #staffApp .staff-announcement-delete:disabled { opacity:.65; cursor:wait; }
+  #staffApp .staff-appointments-list [data-staff-appointment-time],
+  #staffApp .staff-appointments-list [data-staff-appointment-note] {
+    min-height:42px;
+    border-color:#cbd9cf !important;
+    background:#fff !important;
+    color:#24352a !important;
+    font-size:14px !important;
+  }
+  #staffApp .staff-appointments-list :is([data-staff-appointment-time],[data-staff-appointment-note]):focus-visible {
+    outline:2px solid #47845b;
+    outline-offset:2px;
+    box-shadow:none !important;
+  }
+  #staffApp #staffMedicationWorkflow #nurseMedicationCurrentList {
+    font-size:14px !important;
+    color:#294b39 !important;
+    -webkit-text-fill-color:#294b39 !important;
+  }
+  #staffApp #staffMedicationWorkflow #nurseMedicationCurrentList :is(p,span) {
+    color:#385b46 !important;
+    -webkit-text-fill-color:#385b46 !important;
+  }
+  #staffApp #staffMedicationWorkflow #nurseMedicationCompose > .staff-primary-action {
+    display:flex;
+    width:100%;
+    min-width:0;
+    min-height:48px;
+    align-items:center;
+    justify-content:center;
+    padding:10px 16px;
+    white-space:normal;
+    line-height:1.35;
+    text-align:center;
+  }
+  html.ep-dark #staffApp .staff-patient-edit-dialog #staffPatientEditStatus {
+    border-color:#496653 !important;
+    background:#142119 !important;
+    color:#edf8ef !important;
+  }
+  html.ep-dark #staffApp .staff-patient-remove-lab { border-color:#f18a91; background:#8b2631; color:#fff; -webkit-text-fill-color:#fff; }
+  html.ep-dark #staffApp .staff-announcement-create-button { border-color:#62c891; background:#287c50; color:#fff; }
+  html.ep-dark #staffApp .staff-announcement-create-button :is(span,i) { color:#fff !important; -webkit-text-fill-color:#fff !important; }
+  html.ep-dark #staffAnnouncementComposer .staff-announcement-composer-dialog { border-color:#355342; background:#182820; color:#e4f1e8; }
+  html.ep-dark #staffAnnouncementComposer .staff-announcement-composer-heading h2 { color:#eff8f1; }
+  html.ep-dark #staffAnnouncementComposer .staff-announcement-composer-heading p,
+  html.ep-dark #staffAnnouncementComposer #staffAnnouncementComposerStatus,
+  html.ep-dark #staffAnnouncementComposer .staff-announcement-composer-dialog > label { color:#c7ddce; }
+  html.ep-dark #staffAnnouncementComposer .staff-secondary-action { border-color:#4a6954; background:#24392a; color:#c7ebd2; }
+  html.ep-dark #staffAnnouncementComposer .staff-secondary-action:hover { border-color:#70bd8b; background:#2b4934; }
+  html.ep-dark #staffAnnouncementComposer .staff-primary-action { border-color:#62c891; background:#287c50; color:#f3fff6; }
+  html.ep-dark #staffAnnouncementComposer .staff-primary-action:hover { background:#32905f; }
+  html.ep-dark #staffAnnouncementComposer .staff-announcement-composer-dialog :is(textarea,select,input[type="date"]) {
+    border-color:#496653;
+    background:#142119;
+    color:#edf8ef;
+  }
+  html.ep-dark #staffApp .staff-announcement-expiry { color:#b7d1bc !important; }
+  html.ep-dark #staffApp .staff-announcement-delete {
+    border-color:#d97b84;
+    background:#392329;
+    color:#ffd7db !important;
+    -webkit-text-fill-color:#ffd7db !important;
+  }
+  html.ep-dark #staffApp .staff-announcement-delete:hover { background:#4a2930; }
+  html.ep-dark .announcement-actions-menu > summary { border-color:#496653; background:#1d3024; color:#d5ead9; }
+  html.ep-dark .announcement-actions-menu-items { border-color:#496653; background:#1d3024; }
+  html.ep-dark .announcement-actions-menu-items button { color:#d5ead9; }
+  html.ep-dark .announcement-actions-menu-items button:hover,
+  html.ep-dark .announcement-actions-menu-items button:focus-visible { background:#294333; }
+  html.ep-dark .announcement-actions-menu-items .announcement-actions-delete { color:#ffb6bd; }
+  html.ep-dark .announcement-actions-menu-items .announcement-actions-note { color:#c7ddce; }
+  html.ep-dark .announcement-editor-dialog { border-color:#355342; background:#182820; color:#e4f1e8; }
+  html.ep-dark .announcement-editor-heading h2 { color:#eff8f1; }
+  html.ep-dark .announcement-editor-heading p,
+  html.ep-dark .announcement-editor-no-expiration,
+  html.ep-dark #announcementEditorStatus { color:#c7ddce; }
+  html.ep-dark .announcement-editor-dialog > label { color:#c7ddce; }
+  html.ep-dark .announcement-editor-dialog :is(textarea,input[type=date]) { border-color:#496653; background:#142119; color:#edf8ef; }
+  html.ep-dark .announcement-editor-close,
+  html.ep-dark .announcement-editor-cancel { border-color:#4a6954; background:#24392a; color:#c7ebd2; }
+  html.ep-dark .announcement-editor-save { border-color:#62c891; background:#287c50; color:#fff; }
+  html.ep-dark .staff-profile-editor-dialog { border-color:#355342; background:#182820; color:#e4f1e8; }
+  html.ep-dark .staff-profile-editor-heading h2 { color:#eff8f1; }
+  html.ep-dark .staff-profile-editor-heading p,
+  html.ep-dark .staff-profile-editor-help,
+  html.ep-dark #staffProfileEditorStatus { color:#c7ddce; }
+  html.ep-dark .staff-profile-editor-dialog > label { color:#c7ddce; }
+  html.ep-dark .staff-profile-editor-dialog input { border-color:#496653; background:#142119; color:#edf8ef; }
+  html.ep-dark .staff-profile-editor-dialog input[readonly] { background:#203b29; color:#c7ddce; }
+  html.ep-dark .staff-profile-editor-close,
+  html.ep-dark .staff-profile-editor-cancel { border-color:#4a6954; background:#24392a; color:#c7ebd2; }
+  html.ep-dark .staff-profile-editor-save { border-color:#62c891; background:#287c50; color:#fff; }
+  html.ep-dark #staffAnnouncementComposer .staff-primary-action,
+  html.ep-dark #staffAnnouncementComposer .staff-primary-action :is(span,i) {
+    color:#fff !important;
+    -webkit-text-fill-color:#fff !important;
+  }
+  html.ep-dark #staffApp .staff-appointments-list [data-staff-appointment-time],
+  html.ep-dark #staffApp .staff-appointments-list [data-staff-appointment-note] {
+    border-color:#496653 !important;
+    background:#142119 !important;
+    color:#edf8ef !important;
+  }
+  html.ep-dark #staffApp #staffMedicationWorkflow #nurseMedicationCurrentList,
+  html.ep-dark #staffApp #staffMedicationWorkflow #nurseMedicationCurrentList :is(p,span) {
+    color:#c3d8c9 !important;
+    -webkit-text-fill-color:#c3d8c9 !important;
+  }
+  @media(max-width:560px) {
+    #staffApp .staff-announcement-create-button { padding:7px 9px; font-size:12px; }
+    #staffAnnouncementComposer { align-items:flex-start; padding:12px; }
+    #staffAnnouncementComposer .staff-announcement-composer-dialog { padding:16px; }
+    #staffAnnouncementComposer .staff-announcement-composer-actions { align-items:stretch; }
+    #staffAnnouncementComposer .staff-announcement-composer-actions button { flex:1 1 0; min-width:0; }
+    #staffApp .staff-appointments-list > .appointment-card { padding:13px !important; }
+  }
+  @media(max-width:400px) {
+    #staffApp .staff-announcement-card-heading { gap:5px !important; }
+    #staffApp .staff-announcement-card-heading h2 { font-size:11px !important; letter-spacing:.03em; white-space:nowrap; }
+    #staffApp .staff-announcement-create-button { min-height:34px; gap:5px; padding:6px 8px; font-size:10px; }
+    #staffApp .staff-announcement-create-button i { font-size:11px; }
+    #staffApp .staff-updates-disclosure > summary { gap:4px 6px; font-size:12px; line-height:1.35; }
+    .announcement-editor-dialog { padding:16px; }
+  }
+  @media(max-width:420px) {
+    #staffApp #staffBottomNav button { min-width:0; overflow:visible; }
+    #staffApp #staffBottomNav button span {
+      display:block;
+      width:100%;
+      min-width:0;
+      overflow:hidden;
+      font-size:0 !important;
+      line-height:1.1;
+      white-space:nowrap;
+      text-overflow:clip;
+    }
+    #staffApp #staffBottomNav button span::after {
+      content:attr(data-compact-label);
+      display:block;
+      overflow:hidden;
+      font-size:8px;
+      font-weight:700;
+      line-height:1.1;
+      letter-spacing:-.15px;
+      text-overflow:clip;
+      white-space:nowrap;
+    }
+  }
+  @media(max-width:560px) {
+    #staffApp .staff-patient-edit-overlay { align-items:center; padding:8px; }
+    #staffApp .staff-patient-edit-dialog { padding:16px; max-height:calc(100vh - 40px); max-height:calc(100dvh - 40px); }
+    #staffApp .staff-patient-card { gap:10px; padding:12px; }
+    #staffApp .staff-patient-card-actions { align-self:stretch; justify-content:space-between; }
+    #staffApp .staff-patient-tool-tabs { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+    #staffApp .staff-patient-tool-tabs button { padding:8px 7px; font-size:12px; }
+    #staffApp .staff-patient-account-badges { flex-direction:column; align-items:flex-end; }
+  }
+  @media(max-width:360px) {
+    #staffApp .staff-patient-edit-actions { grid-template-columns:minmax(0, 1fr); gap:8px; }
+    #staffApp .staff-patient-card { align-items:flex-start; }
+    #staffApp .staff-patient-card-copy p { font-size:10px; }
+    #staffApp .staff-patient-card .staff-primary-action { font-size:12px; }
+  }
+</style>
+
+<script src="./staff-patient-management.js"></script>
 
 </body>
 </html>
